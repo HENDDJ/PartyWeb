@@ -129,7 +129,12 @@
             // 请求根路径，对应后台Controller @RequestMapping注解的值
             apiRoot: String,
             // 表单字段
-            formColumns: Array,
+            formColumns: {
+                type: Array,
+                default: () => {
+                    return [];
+                }
+            },
             // 查询字段集
             queryFormColumns: {
                 type: Array,

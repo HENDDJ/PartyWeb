@@ -29,17 +29,17 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     NProgress.start();
-    if (to.path === '/login') {
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("menu");
-        next();
-        return;
-    }
-    let token = sessionStorage.getItem("token");
-    if (!token) {
-        next('/login');
-        return;
-    }
+    // if (to.path === '/login') {
+    //     sessionStorage.removeItem("token");
+    //     sessionStorage.removeItem("menu");
+    //     next();
+    //     return;
+    // }
+    // let token = sessionStorage.getItem("token");
+    // if (!token) {
+    //     next('/login');
+    //     return;
+    // }
     next();
 });
 

@@ -40,10 +40,6 @@ Vue.prototype.$screen = () => {
     return screenWidth/1920;
 };
 
-getRouter(router);
-
-DynamicRoutes.flushHandler(router, store);
-
 new Vue({
     el: '#app',
     router,

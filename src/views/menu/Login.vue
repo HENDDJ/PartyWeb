@@ -4,11 +4,11 @@
             <div class="title-container">
                 <h3 class="title">登 录</h3>
             </div>
-            <el-form-item prop="code">
+            <el-form-item prop="userName">
                 <span class="svg-container svg-container_login">
                   <icon name="user" scale="2.5"></icon>
                 </span>
-                <el-input name="code" size="small" type="text" v-model="loginForm.code" autoComplete="on" placeholder="code"></el-input>
+                <el-input name="code" size="small" type="text" v-model="loginForm.userName" autoComplete="on" placeholder="code"></el-input>
             </el-form-item>
 
             <el-form-item prop="password">
@@ -39,11 +39,11 @@ export default {
         return {
             src:"https://www.baidu.com",
             loginForm: {
-                code: '',
+                userName: '',
                 password: ''
             },
             loginRules: {
-                code: [
+                userName: [
                     { required: true, trigger: 'blur', message: "请输入用户名" },
                     { pattern: regex.low_case, trigger: 'blur', message: "请输入小写用户名"}
                 ],
@@ -62,15 +62,12 @@ export default {
             this.passwordType = this.passwordType === 'password' ? '' : 'password';
         },
         handleLogin () {
-            this.$http('POST', `/identity/principal/login`, this.loginForm).then(data => {
-                let token = data.split("$")[0];
-                sessionStorage.setItem('token', token);
+            this.$http('POST', `/identity/sysUser/login`, this.loginForm).then(data => {
+                sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('user', this.loginForm.code);
-                return data.split("$")[1];
-            }).then((userId) => {
-                this.$http('GET',`/identity/principal/${userId}id`,false).then(data => {
-                    sessionStorage.setItem('userInfo',JSON.stringify(data));
-                });
+                sessionStorage.setItem('userInfo',JSON.stringify(data.userInfo));
+                return 'success';
+            }).then(() => {
                 this.$http('GET', `/identity/roleMenu/menu`, false).then(data => {
                     sessionStorage.setItem("menu",JSON.stringify(data));
                     this.$store.commit("getMenu",data);

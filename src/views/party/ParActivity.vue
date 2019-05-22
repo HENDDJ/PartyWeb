@@ -1,5 +1,27 @@
 <template>
+
     <div>
+        <div style="margin-left: 10px;float: left">
+
+
+              <el-select v-model="chooseType" placeholder="请选择" size="small" @change="select">
+                    <el-option
+                        v-for="item in options"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+
+        </div>
+        <div >
+            <el-radio-group size="medium" v-model="checkboxGroup" style="margin-left: 10px;">
+                <el-radio-button  label="Party" key="Party" >党建任务</el-radio-button>
+                <el-radio-button  label="DistLearning" key="DistLearning" >远教任务</el-radio-button>
+            </el-radio-group>
+
+        </div>
+        <div>
     <el-table
         :data="tableData"
         stripe
@@ -32,13 +54,11 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
             <template slot-scope="scope">
-                <el-button
-                    size="mini"
-                    @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                <el-button
-                    size="mini"
-                    type="danger"
-                    @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">提醒</el-button>
+                <el-button type="text" size="small">跟踪</el-button>
+                <el-button type="text" size="small">编辑</el-button>
+                <el-button type="text" size="small">附件</el-button>
+                <el-button type="text" size="small">删除</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -46,18 +66,16 @@
                    :total="pageable.total" :current-page.sync="pageable.currentPage" :page-size.sync="pageable.pageSize"
                    @current-change="currentChange" @size-change="sizeChange" layout="total, sizes, prev, pager, next">
     </el-pagination>
+        </div>
     </div>
 </template>
 
 <script>
 
-
-    import CommonCRUD from '@/components/CommonCRUD';
+    import LookUp from '@/lookup';
+    import { tansfer } from "../../lookup/transfer";
     export default {
         name: "ParActivity",
-        components: {
-            CommonCRUD
-        },
         data() {
             return {
                 formColumns: [
@@ -83,7 +101,17 @@
                     currentPage: 1,
                     pageSize: 10
                 },
-                apiRoot:'/identity/parActivity'
+                apiRoot:'/identity/parActivity',
+                checkboxGroup: 'Party',
+                options: [],
+                chooseType:''
+            }
+        },
+        watch: {
+            checkboxGroup: {
+                handler: function (newVal, oldVal) {
+                    console.log(newVal)
+                }
             }
         },
         methods: {
@@ -107,8 +135,21 @@
                     this.loading = false;
                 });
             },
+            checkbox1(val) {
+                    this.checkboxGroup = 'Party'
+            } ,
+            checkbox2(val) {
+                this.checkboxGroup = 'DistLearning'
+            } ,
+            handleSelectOptions() {
+                        this.options = LookUp [ 'Mission']
+            },
+            select(val){
+                console.log(val)
+            }
         },
         created() {
+            this.handleSelectOptions();
             let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
             this.loadTableData(path);
         }

@@ -1,41 +1,49 @@
 <template>
-    <section>
-        <CommonCRUD :columns="$store.state.classInfo.properties" apiRoot="/identity/sysUser"
-                    :formColumns="formColumns">
-        </CommonCRUD>
-        <!--<CommonCRUD :columns="$store.state.classInfo.properties" apiRoot="/identity/sysClass" :formColumns="$store.state.classInfo.properties"></CommonCRUD>-->
-    </section>
+    <CommonCRUD :columns="columns" apiRoot="/identity/sysUser" :formColumns="formColumns"></CommonCRUD>
 </template>
 
 <script>
     import CommonCRUD from '@/components/CommonCRUD';
+    import UserStrcutre from '../data/UserStrcutre';
     export default {
-        name: 'User',
+        name: "User",
         data() {
             return {
-                formColumns: []
+                columns: UserStrcutre.columns,
+                formColumns: UserStrcutre.columns,
             }
         },
         methods: {
-            loadDepartmentOptions() {
-                this.$http('POST', 'identity/organization/list', false).then(
-                    data => {
-                        this.formColumns.filter( item => item.name === 'organizationId')[0].options = data.map(item => { return {value: item.id, label: item.name}});
-                    }
+            changeCol() {
+                this.columns.forEach(
+                    item=>{
+                        if(item.name == 'enable'){
+                            item.formatter = (row, cell,val,index)=>{
+                                console.log(val)
+                                if(val == '1'){
+                                    return '是'
+                                }else{
+                                    return '否'
+                                }
+                            }
+                        }
+
+                }
                 )
-                this.$http('POST', 'identity/role/list', false).then(
-                    data => {
-                        this.formColumns.filter( item => item.name === 'roleId')[0].options = data.map(item => { return {value: item.id, label: item.name}});
-                    }
-                )
-            }
+                this.$http('Post','identity/role/list',false).then((data)=>{
+                    this.formColumns.filter(item=>item.name === 'roleID')[0].options =data.map(item=>{return {label:item.name,value:item.id}})
+                })
+                this.$http('Post','identity/sysDistrict/list',false).then((data)=>{
+                    this.formColumns.filter(item=>item.name === 'organizationId')[0].options =data.map(item=>{return {label:item.districtName,value:item.id}})
+                })
+            },
+
+        },
+        created(){
+            this.changeCol();
         },
         components: {
             CommonCRUD
-        },
-        created() {
-            this.formColumns = this.$store.state.classInfo.properties;
-            this.loadDepartmentOptions();
         }
     }
 </script>

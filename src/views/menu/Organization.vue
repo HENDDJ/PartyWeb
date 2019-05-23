@@ -1,6 +1,6 @@
 <template>
     <section>
-        <CommonCRUD :columns="$store.state.classInfo.properties" apiRoot="/identity/organization"
+        <CommonCRUD :columns="$store.state.classInfo.properties" apiRoot="/identity/sysDistrict"
                     :formColumns="$store.state.classInfo.properties">
         </CommonCRUD>
         <!--<CommonCRUD :columns="$store.state.classInfo.properties" apiRoot="/identity/sysClass" :formColumns="$store.state.classInfo.properties"></CommonCRUD>-->

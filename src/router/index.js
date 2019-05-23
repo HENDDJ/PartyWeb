@@ -11,14 +11,18 @@ const router = new Router({
     mode: 'hash',
     routes: [
         {
-            path: '/404',
-            name: 'NotFound',
-            component: NotFound
+            path: '/',
+            redirect: '/login'
         },
         {
             path: '/login',
             name: 'Login',
             component: Login
+        },
+        {
+            path: '/404',
+            name: 'NotFound',
+            component: NotFound
         },
         {
             path: '*',

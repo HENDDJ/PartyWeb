@@ -69,5 +69,20 @@ export default {
             value :'female',
             label :'女'
         }
+    ],
+    'Mission': [
+        {
+            value :'Party',
+            label :'党建任务'
+        },
+        {
+            value :'DistLearning',
+            label :'远教任务'
+        }
+        ,
+        {
+            value :'',
+            label :'全部'
+        }
     ]
 }

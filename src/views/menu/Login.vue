@@ -63,8 +63,9 @@ export default {
         },
         handleLogin () {
             this.$http('POST', `/identity/sysUser/login`, this.loginForm).then(data => {
+                console.log(data)
                 sessionStorage.setItem('token', data.token);
-                sessionStorage.setItem('user', this.loginForm.code);
+                sessionStorage.setItem('user', this.loginForm.userName);
                 sessionStorage.setItem('userInfo',JSON.stringify(data.userInfo));
                 return 'success';
             }).then(() => {

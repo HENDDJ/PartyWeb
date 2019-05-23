@@ -65,12 +65,12 @@
         v-if="dialogVisible"
         :title="title"
         :visible.sync="dialogVisible"
-        width="60%"
+        width="880px"
         align="left"
         :modal-append-to-body='false'
         :append-to-body="true"
         :before-close="handleClose">
-        <el-form :inline="true" :model="form" :rules="rules" ref="form" class="demo-form-inline" label-width="100px" >
+        <el-form :inline="true" :model="form" :rules="rules" ref="form" class="demo-form-inline" label-width="170px" >
             <el-form-item v-for="item in formColumns"  :key="item.des" :label="item.des" :prop="item.name" v-if="item.formShow !== 'false'">
                 <el-input v-model="form[item.name]" v-if="item.type === 'string'" :disabled="item.disabled || disabled"></el-input>
                 <el-select v-model="form[item.name]" v-else-if="item.type === 'select'" filterable :disabled="item.disabled || disabled">
@@ -86,13 +86,20 @@
                                 placeholder="选择日期"
                                 >
                 </el-date-picker>
+                <el-date-picker v-if="item.type === 'datetime'"
+                                v-model="form[item.name]"
+                                type="datetime"
+                                value-format="yyyy-MM-ddTHH:mm:ss"
+                                placeholder="选择日期"
+                >
+                </el-date-picker>
                 <el-input v-model="form[item.name]" type="textarea" :rows="2" v-if="item.type === 'textarea'" :disabled="item.disabled || disabled"></el-input>
                 <!--预留富文本编辑-->
                 <Tinymce v-if="item.type === 'rich-editor'" v-model="form[item.name]"></Tinymce>
                 <CommonUpload v-if="item.type === 'file'" :value="form[item.name]" @getValue="form[item.name] = $event"></CommonUpload>
             </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer" class="dialog-footer  footer-position">
             <el-button type="primary" :loading="submitLoading" @click="submit('form')">确 定</el-button>
             <el-button @click="handleClose">取 消</el-button>
         </div>
@@ -413,5 +420,8 @@
     .self-look {
         background: url('../../static/img/look.png') !important;
         background-size: cover !important;
+    }
+    .footer-position {
+        margin-right: 86px;
     }
 </style>

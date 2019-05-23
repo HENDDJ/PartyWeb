@@ -4,7 +4,7 @@ import NotFound from '@/layout/components/NotFound';
 import Login from '@/views/menu/Login';
 import NProgress from "nprogress";
 import 'nprogress/nprogress.css';
-import ParActivity from '@/views/party/ParActivity';
+import ParActivityRelease from '@/views/menu/ParActivityRelease'
 Vue.use(Router);
 
 const router = new Router({
@@ -29,16 +29,16 @@ const router = new Router({
             redirect: '/404'
         },
         {
-            path: '/ParActivity',
-            name: 'ParActivity',
-            component: ParActivity
+            path: '/ParActivityRelease',
+            name: 'ParActivityRelease',
+            component: ParActivityRelease
         }
     ]
 });
 
 router.beforeEach((to, from, next) => {
     NProgress.start();
-   /* if (to.path === '/login') {
+    if (to.path === '/login') {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("menu");
         next();
@@ -48,7 +48,7 @@ router.beforeEach((to, from, next) => {
     if (!token) {
         next('/login');
         return;
-    }*/
+    }
     next();
 });
 

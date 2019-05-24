@@ -66,7 +66,8 @@ export default {
                 console.log(data)
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('user', this.loginForm.userName);
-                sessionStorage.setItem('userInfo',JSON.stringify(data.userInfo));
+                sessionStorage.setItem('userInfo',JSON.stringify(data.user));
+
                 return 'success';
             }).then(() => {
                 this.$http('GET', `/identity/roleMenu/menu`, false).then(data => {

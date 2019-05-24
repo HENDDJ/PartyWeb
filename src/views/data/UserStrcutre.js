@@ -25,6 +25,7 @@ export default {
             name: "lastTime",
             type: 'datetime',
             des: "最近登录时间",
+            formShow: false
         },
         {
             name: "organizationId",

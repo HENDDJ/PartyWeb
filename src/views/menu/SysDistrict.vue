@@ -3,12 +3,11 @@
         <div class="handler-btn">
             <el-button type="primary" plain @click="add()" class="self-btn">新增</el-button>
         </div>
-        <el-table :data="cameraList" v-loading="loading" border align="center" stripe
+        <el-table :data="districtList" v-loading="loading" border align="center" stripe
                   :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}">
-            <el-table-column prop="name" label="地名" align="center" ></el-table-column>
-            <el-table-column prop="ip" label="IP通道地址" align="center" :show-overflow-tooltip="true" ></el-table-column>
-            <el-table-column prop="number" label="机顶盒序列号" align="center"  ></el-table-column>
-            <el-table-column prop="remark" label="备注" align="center" ></el-table-column>
+            <el-table-column prop="districtName" label="组织名称" align="center" ></el-table-column>
+            <el-table-column prop="districtLevel" label="组织类型" :formatter="formatterColumn" align="center"></el-table-column>
+            <el-table-column prop="parentName" label="所属组织" align="center"  ></el-table-column>
             <el-table-column  label="操作" align="center" width="200">
                 <template slot-scope="scope">
                     <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
@@ -32,17 +31,18 @@
             :append-to-body="true"
             :before-close="handleClose">
             <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="100px">
-                <el-form-item label="村">
-                    <el-input v-model="form.name" :disabled="disabled"></el-input>
+                <el-form-item label="上级组织">
+                    <el-select v-model="form.attachTo" :disabled="disabled">
+                        <el-option
+                            v-for="(value, key) in parentList"
+                            :key="key"
+                            :label="value"
+                            :value="key">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="IP通道地址">
-                    <el-input v-model="form.ip" :disabled="disabled"></el-input>
-                </el-form-item>
-                <el-form-item label="机顶盒序列号">
-                    <el-input v-model="form.number" :disabled="disabled"></el-input>
-                </el-form-item>
-                <el-form-item label="备注">
-                    <el-input v-model="form.remark" :disabled="disabled"></el-input>
+                <el-form-item label="组织名称">
+                    <el-input v-model="form.districtName" :disabled="disabled"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -55,16 +55,21 @@
 
 <script>
     export default {
-        name: "ParCamera",
+        name: "SysDistrict",
         data() {
             return {
-                cameraList:[],
+                districtList:[],
+                parentList:[],
                 pageable: {
                     total: 0,
                     currentPage: 1,
                     pageSize: 10
                 },
-                form:{},
+                form:{
+                    districtName:'',
+                    districtLevel:'',
+                    attachTo:''
+                },
                 dialogVisible: false,
                 loading: false,
                 title:'',
@@ -75,16 +80,16 @@
         methods: {
             currentChange(currentPage){
                 this.pageable.currentPage = currentPage;
-                this.showCameraList();
+                this.showDistrictList();
             },
             sizeChange(size){
                 this.pageable.pageSize = size;
-                this.showCameraList();
+                this.showDistrictList();
             },
-            showCameraList(){
+            showDistrictList(){
                 this.loading = true;
-                this.$http('POST',`identity/parCamera/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,false).then(data => {
-                    this.cameraList = data.content;
+                this.$http('POST',`/identity/sysDistrict/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,false).then(data => {
+                    this.districtList = data.content;
                     this.pageable.total= data.totalElements;
                     this.loading = false;
                 });
@@ -95,7 +100,6 @@
                 this.disabled = false;
             },
             edit(row){
-                console.log(row);
                 this.title = "编辑";
                 this.dialogVisible = true;
                 this.disabled = false;
@@ -108,32 +112,47 @@
                 this.form = row;
             },
             del(row){
-                console.log(row);
                 this.$confirm('确认删除？')
                     .then(_ => {
-                        this.$http(`DELETE`, `identity/parCamera/${row.id}id`).then(_ => {
-                            this.showCameraList();
+                        this.$http(`DELETE`, `identity/sysDistrict/${row.id}id`).then(_ => {
+                            this.showDistrictList();
                         });
                     })
                     .catch(_ => {});
             },
             submit (form) {
                 this.submitLoading = true;
-                //上报
+                //新增
                 if(form.id==null){
-                    this.$http('POST',`identity/parCamera/`,form).then(() => {
+                    //通过上级组织的长度给组织类型赋值（上级组织长度分为2、4）
+                   let length = form.attachTo.length;
+                   if(length === 2){
+                       form.districtLevel = 2;
+                   }
+                    if(length === 4){
+                        form.districtLevel = 3;
+                    }
+                    this.$http('POST',`/identity/sysDistrict/`,form).then(() => {
                         this.submitLoading = false;
                         this.dialogVisible = false;
-                       this.showCameraList();
+                        this.showDistrictList();
                         this.form ={};
                     });
                 }
                 //编辑
                 if((form.id!=null)&&(this.disabled===false)){
-                    this.$http('PUT', `identity/parCamera/${form.id}id`,form).then(() =>{
+                    //通过上级组织的长度给组织类型赋值（上级组织长度分为2、4）
+                    let length = form.attachTo.length;
+                    if(length === 2){
+                        form.districtLevel = 2;
+                    }
+                    if(length === 4){
+                        form.districtLevel = 3;
+                    }
+                    this.$http('PUT', `identity/sysDistrict/${form.id}id`,form).then(() =>{
                         this.submitLoading = false;
                         this.dialogVisible = false;
-                        this.showCameraList();
+                        this.showDistrictList();
                         this.form={};
                     });
                 }else{//查看
@@ -154,9 +173,19 @@
                     })
                     .catch(_ => {});
             },
+            formatterColumn(row, column, cellValue, index) {
+                return row.districtLevel == 1 ? '句容市委' : row.districtLevel == 2 ? '镇级组织' :  row.districtLevel == 3 ? '村级组织' :' ';
+            },
+            showParentList() {
+                this.$http('POST',`identity/sysDistrict/listSome` ,false).then(data => {
+                    this.parentList = data;
+                    console.log(this.parentList)
+                })
+            }
         },
         mounted() {
-            this.showCameraList();
+            this.showDistrictList();
+            this.showParentList();
         }
     }
 </script>

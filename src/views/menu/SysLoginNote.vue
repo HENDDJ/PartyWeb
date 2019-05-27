@@ -42,7 +42,7 @@
                 this.showLoginNoteList();
             },
             showLoginNoteList(){
-                this.$http('POST',`/identity/sysLoginNote/page?page=${this.pageable.currentPage}&size=${this.pageable.pageSize}`,false).then(data => {
+                this.$http('POST',`identity/sysLoginNote/page?page=${this.pageable.currentPage}&size=${this.pageable.pageSize}`,false).then(data => {
                     this.loginNoteList = data.content;
                     this.pageable.total= data.totalElements;
                 });

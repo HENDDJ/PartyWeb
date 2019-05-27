@@ -82,10 +82,10 @@
             :before-close="handleClose">
             <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" label-width="170px" >
                 <el-form-item label="任务分类" prop="taskType" >
-                    <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;">
-                        <el-radio-button  label="Party" key="Party" >党建任务</el-radio-button>
-                        <el-radio-button  label="DistLearning" key="DistLearning" >远教任务</el-radio-button>
-                    </el-radio-group>
+                        <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;">
+                            <el-radio label="Party">党建任务</el-radio>
+                            <el-radio label="DistLearning">远教任务</el-radio>
+                        </el-radio-group>
                 </el-form-item>
                 <el-form-item label="计划名称" prop="title" >
                     <el-input v-model="form.title" :disabled=disabled></el-input>
@@ -155,7 +155,7 @@
                 checkboxGroup: 'Party',
                 options: [],
                 chooseType:'',
-                form:{},
+                form:{taskType:'Party'},
                 disabled:false,
                 dialogVisible:false,
                 title:'任务发布',
@@ -224,24 +224,29 @@
 
             },
             add(){
-                this.form.taskType = 'Party'
                 this.dialogVisible = true
             },
+
             submit(form){
                 this.$refs[form].validate((valid) => {
                         if (valid) {
                             this.submitLoading = false
+                            this.form.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
+                            this.form.status = '1'
+                            this.form.releaseTime = new Date().Format("yyyy-MM-ddTHH:mm:ss");
                             this.$http('Post', '/identity/parActivity/',this.form, false).then(
                                 (data)=>{
-                                    var formTwo = new FormData()
-                                    formTwo.append('activityID',data.id)
-                                    formTwo.append('Url',this.Url)
-                                    this.$http('Post', '/identity/parActivityReleaseFile/',formTwo, false).then(
+                                    var formTwo = {}
+                                    formTwo.activityID=data.id
+                                    formTwo.Url=this.Url
+                                    this.$http('Post', '/identity/parActivityReleaseFile/',formTwo, false).then(()=>{
                                         this.$message({
                                             type: 'success',
                                             message: '上传成功'
                                         })
-                                    ).catch(res => {
+                                        this.$refs[form].resetFields();
+                                        this.dialogVisible = false
+                                    }).catch(res => {
                                         this.dialogVisible = true;
                                         this.$message({
                                             type: 'error',

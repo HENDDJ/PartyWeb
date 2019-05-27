@@ -13,6 +13,7 @@ import './style/index.scss';
 import Icon from 'vue-svg-icon/Icon.vue';
 import { generate, common, getRouter ,ht } from '@/api';
 import store from '@/store';
+import '@/utils/DateFormatter.js'
 import DynamicRoutes from '@/utils/dynamic-routes';
 
 Vue.config.productionTip = false;
@@ -34,6 +35,10 @@ Vue.prototype.$validate = (selected) => {
     }
     return true;
 };
+
+getRouter(router);
+
+DynamicRoutes.flushHandler(router, store);
 
 Vue.prototype.$screen = () => {
     let screenWidth = window.screen.width;

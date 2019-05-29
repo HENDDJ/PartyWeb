@@ -62,12 +62,12 @@ export default {
             this.passwordType = this.passwordType === 'password' ? '' : 'password';
         },
         handleLogin () {
+            this.loading = true;
             this.$http('POST', `/identity/sysUser/login`, this.loginForm).then(data => {
                 console.log(data)
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('user', this.loginForm.userName);
                 sessionStorage.setItem('userInfo',JSON.stringify(data.user));
-
                 return 'success';
             }).then(() => {
                 this.$http('GET', `/identity/roleMenu/menu`, false).then(data => {
@@ -75,7 +75,7 @@ export default {
                     this.$store.commit("getMenu",data);
                     DynamicRoutes.transfer(data);
                     this.$router.addRoutes(data);
-                    this.$router.push({path: 'Home'});
+                    this.$router.push({path: 'MainView'});
                     this.loading = false;
                 });
             });

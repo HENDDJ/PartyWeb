@@ -4,7 +4,8 @@ import NotFound from '@/layout/components/NotFound';
 import Login from '@/views/menu/Login';
 import NProgress from "nprogress";
 import 'nprogress/nprogress.css';
-import ParActivityRelease from '@/views/menu/ParActivityRelease'
+import MainView from '@/layout/components/MainView';
+
 Vue.use(Router);
 
 const router = new Router({
@@ -29,10 +30,10 @@ const router = new Router({
             redirect: '/404'
         },
         {
-            path: '/ParActivityRelease',
-            name: 'ParActivityRelease',
-            component: ParActivityRelease
-        }
+            path: '/mainView',
+            name: 'MainView',
+            component: MainView
+        },
     ]
 });
 

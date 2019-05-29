@@ -3,12 +3,11 @@
         <div class="handler-btn">
             <el-button type="primary" plain @click="add()" class="self-btn">新增</el-button>
         </div>
-        <el-table :data="cameraList" v-loading="loading" border align="center" stripe
+        <el-table :data="informationList" v-loading="loading" border align="center" stripe
                   :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}">
-            <el-table-column prop="name" label="地名" align="center" ></el-table-column>
-            <el-table-column prop="ip" label="IP通道地址" align="center" :show-overflow-tooltip="true" ></el-table-column>
-            <el-table-column prop="number" label="机顶盒序列号" align="center"  ></el-table-column>
-            <el-table-column prop="remark" label="备注" align="center" ></el-table-column>
+            <el-table-column prop="name" label="发布组织" align="center" ></el-table-column>
+            <el-table-column prop="title" label="标题" align="center" ></el-table-column>
+            <el-table-column prop="description" label="内容" align="center"></el-table-column>
             <el-table-column  label="操作" align="center" width="200">
                 <template slot-scope="scope">
                     <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
@@ -32,18 +31,22 @@
             :append-to-body="true"
             :before-close="handleClose">
             <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="100px">
-                <el-form-item label="村">
-                    <el-input v-model="form.name" :disabled="disabled"></el-input>
+                <el-form-item label="标题">
+                    <el-input v-model="form.title" :disabled="disabled"></el-input>
                 </el-form-item>
-                <el-form-item label="IP通道地址">
-                    <el-input v-model="form.ip" :disabled="disabled"></el-input>
+                <el-form-item label="内容">
+                    <el-input v-model="form.description" :disabled="disabled"></el-input>
                 </el-form-item>
-                <el-form-item label="机顶盒序列号">
-                    <el-input v-model="form.number" :disabled="disabled"></el-input>
-                </el-form-item>
-                <el-form-item label="备注">
-                    <el-input v-model="form.remark" :disabled="disabled"></el-input>
-                </el-form-item>
+                <el-tree
+                    class="filter-tree"
+                    ref="tree"
+                    :data="district"
+                    node-key="id"
+                    :props="{children: 'children',label: labelHandler}"
+                    :default-checked-keys="districtList"
+                    check-strictly
+                    show-checkbox>
+                </el-tree>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" :loading="submitLoading" @click="submit(form)">确 认</el-button>
@@ -55,10 +58,10 @@
 
 <script>
     export default {
-        name: "ParCamera",
+        name: "Information",
         data() {
             return {
-                cameraList:[],
+                informationList:[],
                 pageable: {
                     total: 0,
                     currentPage: 1,
@@ -75,16 +78,16 @@
         methods: {
             currentChange(currentPage){
                 this.pageable.currentPage = currentPage;
-                this.showCameraList();
+                this.showInformationList();
             },
             sizeChange(size){
                 this.pageable.pageSize = size;
-                this.showCameraList();
+                this.showInformationList();
             },
-            showCameraList(){
+            showInformationList(){
                 this.loading = true;
-                this.$http('POST',`identity/parCamera/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,false).then(data => {
-                    this.cameraList = data.content;
+                this.$http('POST',`/identity/information/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,false).then(data => {
+                    this.informationList = data.content;
                     this.pageable.total= data.totalElements;
                     this.loading = false;
                 });
@@ -95,7 +98,6 @@
                 this.disabled = false;
             },
             edit(row){
-                console.log(row);
                 this.title = "编辑";
                 this.dialogVisible = true;
                 this.disabled = false;
@@ -108,32 +110,31 @@
                 this.form = row;
             },
             del(row){
-                console.log(row);
                 this.$confirm('确认删除？')
                     .then(_ => {
-                        this.$http(`DELETE`, `identity/parCamera/${row.id}id`).then(_ => {
-                            this.showCameraList();
+                        this.$http(`DELETE`, `identity/information/${row.id}id`).then(_ => {
+                            this.showInformationList();
                         });
                     })
                     .catch(_ => {});
             },
             submit (form) {
                 this.submitLoading = true;
-                //上报
+                //新增
                 if(form.id==null){
-                    this.$http('POST',`identity/parCamera/`,form).then(() => {
+                    this.$http('POST',`identity/information/`,form).then(() => {
                         this.submitLoading = false;
                         this.dialogVisible = false;
-                       this.showCameraList();
+                        this.showInformationList();
                         this.form ={};
                     });
                 }
                 //编辑
                 if((form.id!=null)&&(this.disabled===false)){
-                    this.$http('PUT', `identity/parCamera/${form.id}id`,form).then(() =>{
+                    this.$http('PUT', `identity/information/${form.id}id`,form).then(() =>{
                         this.submitLoading = false;
                         this.dialogVisible = false;
-                        this.showCameraList();
+                        this.showInformationList();
                         this.form={};
                     });
                 }else{//查看
@@ -156,7 +157,7 @@
             },
         },
         mounted() {
-            this.showCameraList();
+            this.showInformationList();
         }
     }
 </script>
@@ -187,5 +188,8 @@
     }
     .footer-position {
         margin-right: 84px;
+    }
+    .filter-tree {
+        font-size: 14px;
     }
 </style>

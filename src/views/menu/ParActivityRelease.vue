@@ -110,9 +110,9 @@
                             </el-form-item>
 
                             <el-form-item label="分值" prop="context">
-                                <template v-if="lookType">{{this.datailForm.context}}</template>
+                                <template v-if="lookType">{{this.datailForm.score}}</template>
                                 <template v-if="editType">
-                                    <el-input v-model="datailForm.score" :disabled=disabled></el-input>
+                                    <el-input-number v-model="datailForm.score" label="分值" style="width: 200px"></el-input-number>
                                 </template>
                             </el-form-item>
 
@@ -230,6 +230,8 @@
                 </el-col>
             </el-row>
         </div>
+        <template lang="html">
+            <div class="centerx">
         <el-dialog
             v-if="dialogVisible"
             :title="title"
@@ -242,8 +244,8 @@
             <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" label-width="170px">
                 <template v-if="fileType">
                     <el-form-item label="任务分类" prop="taskType">
-                        <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;">
-                            <el-radio label="Party">党建任务</el-radio>
+                        <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;" @change="radioChoose">
+                            <el-radio label="Party" >党建任务</el-radio>
                             <el-radio label="DistLearning">远教任务</el-radio>
                         </el-radio-group>
                     </el-form-item>
@@ -257,7 +259,7 @@
                         <el-input v-model="form.context" :disabled=disabled></el-input>
                     </el-form-item>
                     <el-form-item label="分值" prop="score">
-                        <el-input v-model="form.score" :disabled=disabled></el-input>
+                        <el-input-number v-model="form.score" label="分值" style="width: 200px"></el-input-number>
                     </el-form-item>
                     <el-form-item label="截止时间" prop="monVal">
                         <el-date-picker
@@ -271,21 +273,39 @@
                     <CommonFileUpload :value="form.fileUrls" @getValue="form.fileUrls = $event"></CommonFileUpload>
                 </el-form-item>
             </el-form>
+            <el-form v-if="addVideo" :inline="true" :model="addVideoForm" ref="addVideoForm" class="demo-form-inline" label-width="170px">
+                <el-form-item label="上传视频" prop="value4">
+                    <template>
+                        <el-transfer
+                            v-model="value4"
+                            :titles="['可选视频', '已选视频']"
+                            :props="{
+                                      key: 'value',
+                                      label: 'desc'
+                                    }"
+                            :data="data3">
+                        </el-transfer>
+                    </template>
+                </el-form-item>
+            </el-form>
             <div slot="footer" class="dialog-footer  footer-position">
                 <el-button type="primary" :loading="submitLoading" @click="submit('form')">确 定</el-button>
                 <el-button @click="handleClose">取 消</el-button>
             </div>
         </el-dialog>
-
+            </div>
+        </template>
         <el-dialog
             v-if="townDetailVis"
             :title="townTitle + '完成情况详情'"
             :visible.sync="townDetailVis"
-            width="880px"
+            width="920px"
             align="left"
             :modal-append-to-body='false'
             :append-to-body="true"
             :before-close="townDetailClose">
+            <el-row :gutter="10">
+                <el-col :span="12">
             <el-table
                 :data="townDetailTable"
                 stripe
@@ -304,7 +324,7 @@
                 <el-table-column
                     label="状态"
                     align="center"
-                    width="125px"
+                    width="120px"
                     :show-overflow-tooltip="true"
                 >
                     <template slot-scope="scope">
@@ -316,16 +336,35 @@
                 <el-table-column
                     label="记录查看"
                     align="center"
-                    width="200px"
+                    width="205px"
                     :show-overflow-tooltip="true"
                 >
                     <template slot-scope="scope">
-                    <el-button type="text" icon="el-icon-picture-outline" @click="TVShow">电视截图</el-button>
-                    <el-button type="text" icon="el-icon-mobile-phone" @click="PhoneShow">手机截图</el-button>
+                    <el-button type="text" icon="el-icon-picture-outline" @click="">电视截图</el-button>
+                    <el-button type="text" icon="el-icon-mobile-phone" @click="">手机截图</el-button>
                     </template>
                 </el-table-column>
             </el-table>
+                </el-col>
+                    <el-col :span="10">
+            <div style="border:1px solid #F00;">
+                    <el-steps direction="vertical" >
+                        <el-step title="时间" status="process">
 
+                            <template slot="description" >
+                            <vs-images hover="scale">
+                                <vs-image :key="index" :src="`https://picsum.photos/400/400?image=2${index}`" v-for="(image, index) in 9" />
+                                <vs-image :key="index" :src="`https://picsum.photos/400/400?image=1${index}`" v-for="(image, index) in 7" />
+                            </vs-images>
+                            </template>
+                        </el-step>
+                        <el-step title="时间" status="process"></el-step>
+                        <el-step title="时间" status="process"></el-step>
+                        <el-step title="时间" status="process"></el-step>
+                    </el-steps>
+            </div>
+                    </el-col>
+            </el-row>
             <div slot="footer" class="dialog-footer  footer-position">
                 <el-button @click="townDetailClose">关 闭</el-button>
             </div>
@@ -381,8 +420,11 @@
                         des: "长度",
                     },
                 ],
+                addVideo:false,
                 queryForm: {taskType: ''},
                 queryFormTrack:{ActivityID: ''},
+                //视频添加
+                addVideoForm:{},
                 tableData: [],
                 trackTable:[],
                 townDetailTable:[],
@@ -402,7 +444,7 @@
                 checkboxGroup: 'Party',
                 options: [],
                 chooseType: '',
-                form: {taskType: 'Party'},
+                form: {taskType: 'Party',score:10},
                 datailForm:{},
                 disabled: false,
                 dialogVisible: false,
@@ -453,6 +495,15 @@
             //         .catch(_ => {
             //         });
             // },
+            radioChoose(val){
+                if(val == 'Party'){
+                    this.addVideo = false
+                }else {
+                    this.addVideo = true
+                }
+
+            },
+
             //关闭镇详情
             townDetailClose(){
                 this.$confirm('确认关闭？')
@@ -657,7 +708,7 @@
             add() {
                 this.dialogVisible = true
                 var type = this.queryForm.taskType
-                this.form = {taskType:'Party'}
+                this.form = {taskType:'Party', score : 10}
                 this.$nextTick(() => {
                     this.$refs['form'].resetFields();
                 })

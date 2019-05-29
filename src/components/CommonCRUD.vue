@@ -288,6 +288,7 @@
                         this.$refs['form'].resetFields();
                         this.disabled = false;
                         this.dialogVisible = false;
+                        this.submitLoading = false;
                         done();
                     })
                     .catch(_ => {});
@@ -316,7 +317,6 @@
             },
             //生成验证策略
             validationRules(){
-                console.log(this.formColumns)
                 this.formColumns.forEach((item) => {
                     this.rules[item.name] = [];
                     if (item.triggerCheck) {

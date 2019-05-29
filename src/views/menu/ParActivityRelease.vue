@@ -78,7 +78,7 @@
                         <el-button type="primary" @click="lookOrEdit"v-if="lookType">编辑</el-button>
                         <el-button type="primary" @click="lookOrEdit"v-if="editType">查看</el-button>
                         <el-button type="danger" @click="del(row)">删除</el-button>
-                        <el-form>
+                        <el-form :model="datailForm" ref="datailForm" >
                             <el-form-item label="任务分类" prop="taskType">
                                 <template v-if="lookType"><template v-if="datailForm.taskType === 'Party'">党建任务</template>
                                     <template v-if="this.datailForm.taskType === 'DistLearning'">远教任务</template></template>
@@ -159,12 +159,40 @@
                                     >
                                     </el-table-column>
                                     <el-table-column
-                                        prop="finishRatio"
-                                        label="完成比例"
+                                        prop="passed"
+                                        label="完成个数"
                                         align="center"
-                                        width="150px"
+                                        width="85px"
                                         :show-overflow-tooltip="true"
                                     >
+                                    </el-table-column>
+                                    <el-table-column
+                                        prop="waitCheck"
+                                        label="待审核个数"
+                                        align="center"
+                                        width="85px"
+                                        :show-overflow-tooltip="true"
+                                    >
+                                    </el-table-column>
+                                    <el-table-column
+                                        prop="fail"
+                                        label="未完成个数"
+                                        align="center"
+                                        width="85px"
+                                        :show-overflow-tooltip="true"
+                                    >
+                                    </el-table-column>
+                                    <el-table-column
+                                        label="完成比例"
+                                        align="left"
+                                        width="120px"
+                                        :show-overflow-tooltip="true"
+                                    >
+                                        <template slot-scope="scope">
+                                            <el-progress :percentage="percent(scope.row.finishRatio)" v-if="scope.row.finishRatio < 0.1"  :stroke-width="5"></el-progress>
+                                            <el-progress :percentage="percent(scope.row.finishRatio)" v-else-if="scope.row.finishRatio < 1"  :stroke-width="5"></el-progress>
+                                            <el-progress :percentage="percent(scope.row.finishRatio)" v-else status="success"  :stroke-width="5"></el-progress>
+                                        </template>
                                     </el-table-column>
                                     <!--<el-table-column-->
                                         <!--label="工作进度"-->
@@ -179,12 +207,14 @@
                                         <!--</template>-->
                                     <!--</el-table-column>-->
                                     <el-table-column
-                                        prop="title"
-                                        label="记录查看"
+                                        label="查看详细"
                                         align="center"
-                                        width="200px"
+                                        width="120px"
                                         :show-overflow-tooltip="true"
                                     >
+                                        <template slot-scope="scope">
+                                            <el-button @click="townDetailClick(scope.row)" type="text" size="small">查看</el-button>
+                                        </template>
                                     </el-table-column>
                                 </el-table>
                                 <!--<el-pagination style="text-align: right;margin-top: 20px;" background-->
@@ -195,6 +225,7 @@
                                 <!--</el-pagination>-->
                             </el-form-item>
                         </el-form>
+                        <el-button type="primary" :loading="submitLoading" @click="detailSubmit('datailForm')" v-if="editType">确 定</el-button>
                     </div>
                 </el-col>
             </el-row>
@@ -243,6 +274,60 @@
             <div slot="footer" class="dialog-footer  footer-position">
                 <el-button type="primary" :loading="submitLoading" @click="submit('form')">确 定</el-button>
                 <el-button @click="handleClose">取 消</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog
+            v-if="townDetailVis"
+            :title="townTitle + '完成情况详情'"
+            :visible.sync="townDetailVis"
+            width="880px"
+            align="left"
+            :modal-append-to-body='false'
+            :append-to-body="true"
+            :before-close="townDetailClose">
+            <el-table
+                :data="townDetailTable"
+                stripe
+                style="width:450px"
+                v-loading="loading" border
+                :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
+                :default-sort="{}">
+                <el-table-column
+                    prop="cn"
+                    label="下属组织"
+                    align="center"
+                    width="125px"
+                    :show-overflow-tooltip="true"
+                >
+                </el-table-column>
+                <el-table-column
+                    label="状态"
+                    align="center"
+                    width="125px"
+                    :show-overflow-tooltip="true"
+                >
+                    <template slot-scope="scope">
+                    <a style="color:blue;" v-if="scope.row.sa === '1'">待审核</a>
+                    <a style="color:greenyellow;" v-else-if="scope.row.sa === '2'">已完成</a>
+                    <a style="color:red;" v-else>未完成</a>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    label="记录查看"
+                    align="center"
+                    width="200px"
+                    :show-overflow-tooltip="true"
+                >
+                    <template slot-scope="scope">
+                    <el-button type="text" icon="el-icon-picture-outline" @click="TVShow">电视截图</el-button>
+                    <el-button type="text" icon="el-icon-mobile-phone" @click="PhoneShow">手机截图</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <div slot="footer" class="dialog-footer  footer-position">
+                <el-button @click="townDetailClose">关 闭</el-button>
             </div>
         </el-dialog>
         <!--<el-dialog v-if="remindVis"-->
@@ -300,6 +385,7 @@
                 queryFormTrack:{ActivityID: ''},
                 tableData: [],
                 trackTable:[],
+                townDetailTable:[],
                 loading: false,
                 pageable: {
                     total: 0,
@@ -321,11 +407,20 @@
                 disabled: false,
                 dialogVisible: false,
                 title: '任务发布',
+                //镇详情名
+                townTitle:'',
                 submitLoading: false,
                 Url: '',
                 fileType: true,
-                remindVis: false,
-                remindForm: {},
+                //各镇详细信息显示
+                townDetailVis:false,
+                //镇ID（detail）
+                townAcId:'',
+                //各镇详细信息
+                townDetailForm:{},
+                townSubmitLoading:false,
+                // remindVis: false,
+                // remindForm: {},
                 //行数据
                 row: {},
                 //查看模式
@@ -347,16 +442,35 @@
             CommonFileUpload
         },
         methods: {
-            remindHandleClose(done) {
+            // remindHandleClose(done) {
+            //     this.$confirm('确认关闭？')
+            //         .then(_ => {
+            //             this.remindForm = {};
+            //             this.$refs['remindForm'].resetFields();
+            //             this.remindVis = false;
+            //             done();
+            //         })
+            //         .catch(_ => {
+            //         });
+            // },
+            //关闭镇详情
+            townDetailClose(){
                 this.$confirm('确认关闭？')
                     .then(_ => {
-                        this.remindForm = {};
-                        this.$refs['remindForm'].resetFields();
-                        this.remindVis = false;
+                        this.townDetailForm = {};
+                        this.townDetailVis = false;
                         done();
                     })
                     .catch(_ => {
                     });
+            },
+            //镇详情
+            townDetailClick(val){
+                this.townTitle = val.tn
+                let path = `${this.apiRootTrack}/${this.townAcId}&${val.tn}townDetailList`;
+                this.loadTownTable(path,{});
+
+                this.townDetailVis = true
             },
             handleClose() {
                 this.$confirm('确认关闭？')
@@ -378,14 +492,14 @@
                 let path = `${this.apiRoot}/page?page=0&size=${value}`;
                 this.loadTableData(path)
             },
-            currentChangeTrack(value) {
-                let path = `${this.apiRootTrack}/page?page=${value - 1}&size=${this.pageableTrack.pageSize}`;
-                this.loadTrackTable(path,this.queryFormTrack)
-            },
-            sizeChangeTrack(value) {
-                let path = `$${this.apiRootTrack}/page?page=0&size=${value}`;
-                this.loadTrackTable(path,this.queryFormTrack)
-            },
+            // currentChangeTrack(value) {
+            //     let path = `${this.apiRootTrack}/page?page=${value - 1}&size=${this.pageableTrack.pageSize}`;
+            //     this.loadTrackTable(path,this.queryFormTrack)
+            // },
+            // sizeChangeTrack(value) {
+            //     let path = `$${this.apiRootTrack}/page?page=0&size=${value}`;
+            //     this.loadTrackTable(path,this.queryFormTrack)
+            // },
             // 获取表格数据
             loadTableData(path) {
                 this.$http('POST', path, this.queryForm, false).then(
@@ -398,10 +512,11 @@
                     this.loading = false;
                 });
             },
+            //跟踪数据
             loadTrackTable(path,query){
                 this.$http('POST', path, query, false).then(
                     data => {
-                        this.trackTable = data.content;
+                        this.trackTable = data;
                         this.pageableTrack.total = data.totalElements;
                     }
                 ).catch(res => {
@@ -409,6 +524,20 @@
                     this.$message({
                         type: 'warning',
                         message: '跟踪信息拉取失败'
+                    })
+                });
+            },
+            //镇详情数据
+            loadTownTable(path,query){
+                this.$http('POST', path, query, false).then(
+                    data => {
+                        this.townDetailTable = data;
+                    }
+                ).catch(res => {
+                    console.log(res)
+                    this.$message({
+                        type: 'warning',
+                        message: '信息拉取失败'
                     })
                 });
             },
@@ -420,12 +549,6 @@
                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                 this.queryForm.taskType = val
                 this.loadTableData(path);
-            },
-            //提醒
-            remind(val) {
-                this.remindForm.id = val.id
-                this.remindForm.alarmTime = val.alarmTime
-                this.remindVis = true
             },
             //详情
             details(val) {
@@ -439,11 +562,14 @@
                         fileStr = fileStr + val.urls[i].url + ','
                     }
                 }
+
                 this.datailForm.fileUrls = fileStr
                 this.lookType = true
                 this.editType = false
                 let path = `${this.apiRootTrack}/${val.id}perList`;
-                this.loadTrackTable(path);
+                this.loadTrackTable(path,{});
+                this.townAcId = val.id
+
             },
             //编辑查看
             lookOrEdit(){
@@ -455,37 +581,39 @@
                     this.editType = false
                 }
             },
+            //转换百分比
+            percent(val){
+                var s = val*100 + ""
+                var ss = Math.round(s*100)/100
+                return ss
+            },
             //提醒确认
-            submitAlarm(form) {
-                this.$refs[form].validate((valid) => {
-                    if (valid) {
-                        this.submitLoading = false
-                        this.$http("Put", this.apiRoot + `/${this.remindForm.id}idAlarm`, this.remindForm, false).then((data) => {
-                            this.$message({
-                                type: 'success',
-                                message: '提醒设定成功'
-                            })
-                            this.$refs[form].resetFields();
-                            this.remindForm = {}
-                            this.remindVis = false
-                        }).catch(
-                            () => {
-                                this.submitLoading = true
-                                this.$message({
-                                    type: 'error',
-                                    message: '提醒设定失败'
-                                })
-                            }
-                        )
-                    } else {
-                    }
-                })
-            },
-            follow(val) {
-
-            },
+            // submitAlarm(form) {
+            //     this.$refs[form].validate((valid) => {
+            //         if (valid) {
+            //             this.submitLoading = false
+            //             this.$http("Put", this.apiRoot + `/${this.remindForm.id}idAlarm`, this.remindForm, false).then((data) => {
+            //                 this.$message({
+            //                     type: 'success',
+            //                     message: '提醒设定成功'
+            //                 })
+            //                 this.$refs[form].resetFields();
+            //                 this.remindForm = {}
+            //                 this.remindVis = false
+            //             }).catch(
+            //                 () => {
+            //                     this.submitLoading = true
+            //                     this.$message({
+            //                         type: 'error',
+            //                         message: '提醒设定失败'
+            //                     })
+            //                 }
+            //             )
+            //         } else {
+            //         }
+            //     })
+            // },
             edit(val) {
-
                 this.dialogVisible = true
                 this.form = val
                 var fileStr = ''
@@ -496,7 +624,7 @@
                         fileStr = fileStr + val.urls[i].url + ','
                     }
                 }
-                console.log(fileStr, 1)
+               // console.log(fileStr, 1)
                 this.form.fileUrls = fileStr
             },
             enclosure(val) {
@@ -535,7 +663,6 @@
                 })
 
             },
-
             submit(form) {
                 this.$refs[form].validate((valid) => {
                     if (valid) {
@@ -548,6 +675,7 @@
                             var ss = this.form.fileUrls.toString().split(",")
                             this.form.fileUrls = ss
                         }
+                        console.log(this.form)
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {
                                 this.$message({
@@ -567,6 +695,39 @@
                             this.$message({
                                 type: 'error',
                                 message: '上传文件失败'
+                            });
+                            return false;
+                        });
+                    } else {
+
+                    }
+                })
+            },
+            detailSubmit(form){
+                this.$refs[form].validate((valid) => {
+                    if (valid) {
+                        this.datailForm.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
+                        var beforeUrl = this.datailForm.fileUrls
+                        if (this.datailForm.fileUrls) {
+                            var ss = this.datailForm.fileUrls.toString().split(",")
+                            this.datailForm.fileUrls = ss
+                        }
+                        this.$http('Post', '/identity/parActivity/', this.datailForm, false).then(
+                            (data) => {
+                                this.$message({
+                                    type: 'success',
+                                    message: '修改成功'
+                                })
+                                let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+                                this.loadTableData(path);
+
+                                this.datailForm.fileUrls = beforeUrl
+                                this.lookType = true
+                                this.editType = false
+                            }).catch(res => {
+                            this.$message({
+                                type: 'error',
+                                message: '修改失败'
                             });
                             return false;
                         });

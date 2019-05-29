@@ -33,6 +33,7 @@
                     this.files = [];
                     return;
                 }
+                this.files = [];
                 this.value.split(',').forEach(item => {
                     console.log(item);
                     this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})

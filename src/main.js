@@ -15,6 +15,10 @@ import { generate, common, getRouter ,ht } from '@/api';
 import store from '@/store';
 import '@/utils/DateFormatter.js'
 import DynamicRoutes from '@/utils/dynamic-routes';
+import Vuesax from 'vuesax'
+
+import 'vuesax/dist/vuesax.css' //Vuesax styles
+Vue.use(Vuesax)
 
 Vue.config.productionTip = false;
 

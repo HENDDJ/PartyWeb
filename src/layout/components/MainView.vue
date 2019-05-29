@@ -89,11 +89,11 @@
         font-size: 24px;
         font-weight: 500;
         border-radius: 2px;
-        transition: all .2s;
+        transition: all .4s;
     }
     .sub {
         margin: 0 auto;
-        transition: all .2s;
+        transition: all .3s;
     }
     /*.jump :hover{*/
     /*    box-shadow: 0 0 10px grey;*/

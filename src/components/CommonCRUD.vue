@@ -338,6 +338,11 @@
                         }
                     }
                 });
+            },
+            refreshTableData() {
+                let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+                this.defaultRequestConfig(path);
+                this.loadTableData(path);
             }
         },
         created() {

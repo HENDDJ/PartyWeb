@@ -81,7 +81,7 @@
                         <el-form :model="datailForm" ref="datailForm" >
                             <el-form-item label="任务分类" prop="taskType">
                                 <template v-if="lookType"><template v-if="datailForm.taskType === 'Party'">党建任务</template>
-                                    <template v-if="this.datailForm.taskType === 'DistLearning'">远教任务</template></template>
+                                    <template v-if="datailForm.taskType === 'DistLearning'">远教任务</template></template>
                                 <template v-if="editType">
                                     <el-radio-group size="medium" v-model="datailForm.taskType" style="margin-left: 10px;">
                                         <el-radio label="Party">党建任务</el-radio>
@@ -141,6 +141,21 @@
                             </el-form-item>
                             <el-form-item label="上传文件">
                                 <CommonFileUpload :value="datailForm.fileUrls" @getValue="datailForm.fileUrls = $event" :diaabled="lookType"></CommonFileUpload>
+                            </el-form-item>
+                            <el-form-item label="上传视频" prop="video" v-if="datailForm.taskType === 'DistLearning'" size="mini">
+                                <template v-if="lookType">{{datailForm.video}}</template>
+                                <template v-if="editType" id="vd">
+                                    <el-transfer
+                                        filterable
+                                        v-model="datailForm.video"
+                                        :titles="['可选视频', '已选视频']"
+                                        :props="{
+                                      key: 'value',
+                                      label: 'desc'
+                                    }"
+                                        :data="addVideoList">
+                                    </el-transfer>
+                                </template>
                             </el-form-item>
                             <el-form-item label="跟踪" v-if="lookType">
                                 <el-table
@@ -224,6 +239,7 @@
                                                <!--layout="total, sizes, prev, pager, next">-->
                                 <!--</el-pagination>-->
                             </el-form-item>
+
                         </el-form>
                         <el-button type="primary" :loading="submitLoading" @click="detailSubmit('datailForm')" v-if="editType">确 定</el-button>
                     </div>
@@ -272,18 +288,17 @@
                 <el-form-item label="上传文件" prop="fileUrls">
                     <CommonFileUpload :value="form.fileUrls" @getValue="form.fileUrls = $event"></CommonFileUpload>
                 </el-form-item>
-            </el-form>
-            <el-form v-if="addVideo" :inline="true" :model="addVideoForm" ref="addVideoForm" class="demo-form-inline" label-width="170px">
-                <el-form-item label="上传视频" prop="value4">
+                <el-form-item label="上传视频" prop="video" v-if="addVideo">
                     <template>
                         <el-transfer
-                            v-model="value4"
+                            filterable
+                            v-model="form.video"
                             :titles="['可选视频', '已选视频']"
                             :props="{
                                       key: 'value',
                                       label: 'desc'
                                     }"
-                            :data="data3">
+                            :data="addVideoList">
                         </el-transfer>
                     </template>
                 </el-form-item>
@@ -424,7 +439,10 @@
                 queryForm: {taskType: ''},
                 queryFormTrack:{ActivityID: ''},
                 //视频添加
-                addVideoForm:{},
+                addVideoList:[],
+                //视频修改
+                editVideoForm:{},
+                editVideoList:[],
                 tableData: [],
                 trackTable:[],
                 townDetailTable:[],
@@ -495,15 +513,31 @@
             //         .catch(_ => {
             //         });
             // },
+            //选择radio时触发
             radioChoose(val){
                 if(val == 'Party'){
                     this.addVideo = false
                 }else {
                     this.addVideo = true
+                    this.loadVideo();
                 }
 
             },
+            //加载视频数据
+            loadVideo(){
+                this.$http('GET','/identity/distLearningActivityVideo/videoList',{},false).then(
+                    (data)=>{
+                        this.addVideoList = data.map(item=>{return {desc:item.name,value:'{"name":"'+item.name+'","lengthOfTime":"'+item.length+'","videoUrl":"'+item.playUrl+'","videoCover":"'+item.posterUrl+'"}'}})
 
+                    }
+                ).catch((res)=>{
+                    console.log(res)
+                    this.$message({
+                        type: 'warning',
+                        message: '视频信息拉取失败'
+                    })
+                })
+            },
             //关闭镇详情
             townDetailClose(){
                 this.$confirm('确认关闭？')
@@ -603,7 +637,9 @@
             },
             //详情
             details(val) {
+                console.log(val)
                 this.row = val
+                this.datailForm = {}
                 this.datailForm = val
                 var fileStr = ''
                 for (var i in val.urls) {
@@ -627,6 +663,12 @@
                 if(this.lookType == true && this.editType == false){
                     this.lookType = false
                     this.editType = true
+                    this.loadVideo();
+                    var data = this.datailForm.video
+                    this.datailForm.video = data.map(item=>{
+                        return '{"name":"'+item.name+'","lengthOfTime":"'+item.lengthOfTime+'","videoUrl":"'+item.videoUrl+'","videoCover":"'+item.videoCover+'"}'
+                    })
+                    console.log(this.datailForm.video)
                 }else{
                     this.lookType = true
                     this.editType = false
@@ -726,6 +768,12 @@
                             var ss = this.form.fileUrls.toString().split(",")
                             this.form.fileUrls = ss
                         }
+                       var video = this.form.video
+                        var videoList = []
+                        video.forEach(item=>{
+                            videoList.push(JSON.parse(item))
+                        })
+                        this.form.video = videoList
                         console.log(this.form)
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {
@@ -743,6 +791,7 @@
 
                             }).catch(res => {
                             this.dialogVisible = true;
+                            console.log(res)
                             this.$message({
                                 type: 'error',
                                 message: '上传文件失败'
@@ -763,6 +812,13 @@
                             var ss = this.datailForm.fileUrls.toString().split(",")
                             this.datailForm.fileUrls = ss
                         }
+                        var video = this.datailForm.video
+                        var videoList = []
+                        video.forEach(item=>{
+                            videoList.push(JSON.parse(item))
+                        })
+                        this.datailForm.video = videoList
+                        console.log(this.datailForm.video)
                         this.$http('Post', '/identity/parActivity/', this.datailForm, false).then(
                             (data) => {
                                 this.$message({
@@ -823,5 +879,8 @@
     .self-add {
         background: url('../../../static/img/add.png') !important;
         background-size: cover !important;
+    }
+    #vd .el-checkbox__inner{
+        margin-left: -100px !important;
     }
 </style>

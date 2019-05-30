@@ -16,7 +16,7 @@
         data() {
             return {
                 picMenu: [
-                    {alt:"基本活动",path:"/project/gismap", className: 'activity'},
+                    {alt:"基本活动",path:"/activity/parActivityRelease", className: 'activity'},
                     {alt:"基本队伍",path:"/latentDanger/hiddenIssueMsg", className: 'team'},
                     {alt:"基本阵地",path:"/enterpriseSafety/safetyRegulations", className: 'position'},
                     {alt:"基本组织",path:"/emergencyManagement/emergencyPrevention", className: 'org'},

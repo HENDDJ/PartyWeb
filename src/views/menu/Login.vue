@@ -1,5 +1,6 @@
 <template>
     <div class="login-container">
+        <div class="login-title"></div>
         <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
             <div class="title-container">
                 <h3 class="title">登 录</h3>
@@ -20,9 +21,7 @@
                     <icon name="eye" scale="2"/>
                 </span>
             </el-form-item>
-
-            <el-button type="primary" size="small" style="width:100%;margin:15px 0;" :loading="loading" @click.native.prevent="handleLogin">登 录</el-button>
-
+            <vs-button id="button-with-loading" class="vs-con-loading__container"  style="width:100%;margin:15px 0;border-radius: 50px" ref="loginBtn" type="gradient" @click.native.prevent="handleLogin">登&emsp;&emsp;录</vs-button>
         </el-form>
 
     </div>
@@ -62,9 +61,8 @@ export default {
             this.passwordType = this.passwordType === 'password' ? '' : 'password';
         },
         handleLogin () {
-            this.loading = true;
+            this.$vs.loading({container: this.refs.loginBtn, text: '登录验证中', background: 'rgba(255,255,255,0.7)', textAfter: true});
             this.$http('POST', `/identity/sysUser/login`, this.loginForm).then(data => {
-                console.log(data)
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('user', this.loginForm.userName);
                 sessionStorage.setItem('userInfo',JSON.stringify(data.user));
@@ -96,6 +94,13 @@ export default {
 
     /* reset element-ui css */
     .login-container {
+        .login-title{
+            background: url("/static/img/inactive/title.png") center no-repeat;
+            background-size: 100% 100%;
+            width: calc(1318 * 100vw/1920);
+            height: calc(84 * 100vw/1920);
+            margin: 3% auto;
+        }
         .el-input {
             display: inline-block;
             width: 85%;
@@ -104,19 +109,24 @@ export default {
                 border: 0;
                 -webkit-appearance: none;
                 border-radius: 0;
-                padding: 12px 5px 12px 15px;
+                padding: 12px 5px 20px 15px;
                 color: $light_gray;
                 &:-webkit-autofill {
-                    -webkit-box-shadow: 0 0 0px 1000px $bg inset !important;
-                    -webkit-text-fill-color: #fff !important;
+                    background-color: transparent;
+                    -webkit-text-fill-color: #000 !important;
                 }
             }
         }
         .el-form-item {
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
             color: #454545;
+            margin: 25px 0;
+            transition: all .2s linear;
+        }
+        .el-form-item:focus-within {
+            border-bottom: 1px solid #008afb;
+            box-shadow: 0 8px 25px -8px #aaa;
         }
     }
 </style>
@@ -131,7 +141,7 @@ export default {
         height: 100%;
         width: 100%;
         //<!--background-color: $bg;-->
-        background-image: url("../../assets/loginBg.png");
+        background-image: url("/static/img/inactive/bg.jpg");
         background-size: cover;
         .login-form {
             position: absolute;
@@ -140,7 +150,7 @@ export default {
             width: 380px;
             height: 330px;
             padding: 35px 35px 15px 35px;
-            margin: 15% auto;
+            margin: 5% auto;
             background-color: rgba(255,255,255,.9);
             box-shadow: 1px 1px 1px gray;
             border-radius: 5px;
@@ -169,11 +179,10 @@ export default {
             position: relative;
             .title {
                 font-size: 24px;
-                font-weight: 400;
                 color: $light_gray;
-                margin: 0px auto 40px auto;
+                margin: 0 auto 30px auto;
                 text-align: left;
-                font-weight: bold;
+                font-weight: 300;
             }
             .set-language {
                 color: #fff;

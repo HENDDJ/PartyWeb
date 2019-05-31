@@ -344,7 +344,7 @@
                         this.submitLoading = false;
                         this.dialogVisible = false;
                         this.$refs.table.refreshTableData();
-                        this.$refs.form.resetFields();
+                        this.initForm();
                         this.checkBoxList=[];
                     });
                 }
@@ -354,13 +354,13 @@
                         this.submitLoading = false;
                         this.dialogVisible = false;
                         this.$refs.table.refreshTableData();
-                        this.$refs.form.resetFields();
+                        this.initForm();
                         this.checkBoxList=[];
                     });
                 }else{//查看
                     this.submitLoading = false;
                     this.dialogVisible = false;
-                    this.$refs.form.resetFields();
+                    this.initForm();
                     this.checkBoxList=[];
                 }
             },

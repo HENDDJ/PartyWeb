@@ -27,20 +27,14 @@
                 default: false
             },
         },
-        watch: {
-            value() {
-                if (!this.value) {
-                    this.files = [];
-                    return;
-                }
+        created() {
+            if (!this.value) {
                 this.files = [];
-                this.value.split(',').forEach(item => {
-                    console.log(item);
-                    this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
-                    //  this.files.push({name: item,  active: false})
-                })
+                return;
             }
-
+            this.value.split(',').forEach(item => {
+                this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
+            })
         },
         data() {
             return {
@@ -53,7 +47,6 @@
                 let file = http.file;
                 let formData = new FormData();
                 formData.append('file', file);
-                console.log(formData.get('file'))
                 this.$http('POST', '/identity/accessory/', formData, false).then(
                     res => {
                         this.files.push({name: res.name, path: res.path, active: false});

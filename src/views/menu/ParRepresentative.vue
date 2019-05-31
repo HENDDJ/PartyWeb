@@ -77,7 +77,6 @@
 
 <script>
     import CommonCRUD from '@/components/CommonCRUD';
-    import { tansfer } from "../../lookup/transfer";
     export default {
         name: "ParRepresentative",
         data(){
@@ -87,7 +86,19 @@
                 partyMemberList:[],
                 dialogVisible:false,
                 form:{
-
+                    partyMemberId:'',
+                    name:'',
+                    sex:'',
+                    birth:'',
+                    joinDate:'',
+                    education:'',
+                    talent:'',
+                    resume:'',
+                    performance:'',
+                    politicalTrial:'',
+                    rewardPunish:'',
+                    opinion:'',
+                    remark:''
                 },
                 submitLoading:false,
                 title:'',
@@ -167,23 +178,22 @@
                         this.submitLoading = false;
                         this.dialogVisible = false;
                         this.$refs.table.refreshTableData();
-                        this.form={};
+                       this.initForm();
                     });
                 }else{//查看
                     this.submitLoading = false;
                     this.dialogVisible = false;
-                    this.form={};
+                    this.initForm();
                 }
             },
             //关闭dialog
             handleClose (done) {
                 this.$confirm('确认关闭？')
                     .then(_ => {
-                        this.from = {};
                         this.$refs['form'].resetFields();
                         this.disabled = false;
                         this.dialogVisible = false;
-                        this.form = {};
+                        this.initForm();
                         done();
                     })
                     .catch(_ => {});
@@ -193,6 +203,23 @@
                     this.partyMemberList = data;
                 });
             },
+            initForm(){
+                this.form={
+                    partyMemberId:'',
+                        name:'',
+                        sex:'',
+                        birth:'',
+                        joinDate:'',
+                        education:'',
+                        talent:'',
+                        resume:'',
+                        performance:'',
+                        politicalTrial:'',
+                        rewardPunish:'',
+                        opinion:'',
+                        remark:''
+                }
+            }
         },
         components: {
             CommonCRUD
@@ -201,6 +228,7 @@
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns =this.$store.state.classInfo.properties;
             this.handleSelect();
+            this.initForm();
           //  tansfer(this.columns);
         }
     }

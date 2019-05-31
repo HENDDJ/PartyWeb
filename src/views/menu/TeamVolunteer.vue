@@ -53,14 +53,71 @@
                 <el-form-item label="入党时间">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.joinDate" disabled></el-date-picker>
                 </el-form-item>
-                <el-form-item label="服务目录">
-                    <el-input v-model="form.category" :disabled="disabled"></el-input>
+                <el-form-item label="一对一长期结对服务">
+                    <div style="display: flex;">
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="01">民政优抚对象</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="02">老人</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="03">儿童</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="04">残疾人</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="05">下岗职工</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="06">精神/心理病人</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="07">其他</vs-checkbox >
+                    </div>
+                </el-form-item>
+                <el-form-item label="社区教育、科普、文化">
+                    <div style="display: flex;min-width: 400px;">
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="08">教育</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="09">科普</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="10">文化</vs-checkbox >
+                    </div>
+                </el-form-item>
+                <el-form-item label="健康救助">
+                    <div style="display: flex;min-width: 400px;">
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="11">献血</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="12">献骨髓</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="13">其他</vs-checkbox >
+                    </div>
+                </el-form-item>
+                <el-form-item label="环保活动">
+                    <div style="display: flex;width: 400px;">
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="14">环保宣传</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="15">环境清理</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="16">其他</vs-checkbox >
+                    </div>
+                </el-form-item>
+                <el-form-item label="大型赛会服务">
+                    <div style="display: flex;width: 400px;">
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="17">技能服务</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="18">体力服务</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="19">其他</vs-checkbox >
+                    </div>
+                </el-form-item>
+                <el-form-item label="志愿者组织管理">
+                    <div style="display: flex;">
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="20">组织管理</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="21">技能培训</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="22">其他</vs-checkbox >
+                    </div>
+                </el-form-item>
+                <el-form-item label="家政服务">
+                    <div style="display: flex;">
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="23">电脑网络服务</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="24">水电管道维修</vs-checkbox >
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="25">其他</vs-checkbox >
+                    </div>
+                </el-form-item>
+                <el-form-item label="维权服务">
+                    <div style="display: flex;">
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="26">法律法规咨询</vs-checkbox>
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="27">妇女青少年维权</vs-checkbox>
+                        <vs-checkbox :disabled="disabled" v-model=" checkBoxList" vs-value="28">其他</vs-checkbox >
+                    </div>
+                </el-form-item>
+                <el-form-item label="其他服务项目">
+                    <el-input v-model="form.otherCategory" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="服务志愿">
                     <el-input v-model="form.promise" :disabled="disabled"></el-input>
-                </el-form-item>
-                <el-form-item label="其他服务目录">
-                    <el-input v-model="form.otherCategory" :disabled="disabled"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer footer-position">
@@ -92,6 +149,7 @@
                     promise:'',
                     otherCategory:'',
                 },//志愿者表单
+                checkBoxList:[],//多选框数组
                 submitLoading:false,
                 title:'',
                 //服务队伍列表
@@ -234,6 +292,9 @@
                     });
                     return;
                 }
+                if(data[0].category){
+                    this.checkBoxList = data[0].category.split(",");
+                }
                 this.title = "编辑";
                 this.dialogVisible = true;
                 this.disabled = false;
@@ -247,13 +308,15 @@
                     });
                     return;
                 }
+                if(data[0].category){
+                    this.checkBoxList = data[0].category.split(",");
+                }
                 this.title = "查看";
                 this.dialogVisible = true;
                 this.disabled = true;
                 this.form = data[0];
             },
             del(data){
-                console.log(data[0].id);
                 if (data.length !== 1) {
                     this.$message({
                         type: 'warning',
@@ -271,38 +334,44 @@
             },
             submit (form) {
                 this.submitLoading = true;
+                //复选框内容转换为字符类型
+                if(this.checkBoxList){
+                    form.category = this.checkBoxList.join(",");
+                }
                 //新增
                 if(form.id==null){
                     this.$http('POST',`identity/volunteer/`,form).then(() => {
                         this.submitLoading = false;
                         this.dialogVisible = false;
                         this.$refs.table.refreshTableData();
+                        this.$refs.form.resetFields();
+                        this.checkBoxList=[];
                     });
                 }
                 //编辑
                 if((form.id!=null)&&(this.disabled===false)){
-                    form.state = "TO_BE_CONFIRMED";
                     this.$http('PUT', `identity/volunteer/${form.id}id`,form).then(() =>{
                         this.submitLoading = false;
                         this.dialogVisible = false;
                         this.$refs.table.refreshTableData();
-                        this.form={};
+                        this.$refs.form.resetFields();
+                        this.checkBoxList=[];
                     });
                 }else{//查看
                     this.submitLoading = false;
                     this.dialogVisible = false;
-                    this.form={};
+                    this.$refs.form.resetFields();
+                    this.checkBoxList=[];
                 }
             },
             //关闭dialog
             handleClose (done) {
                 this.$confirm('确认关闭？')
-                    .then(_ => {
-                        this.from = {};
-                        this.$refs['form'].resetFields();
+                    .then(_=> {
                         this.disabled = false;
                         this.dialogVisible = false;
-                        this.form = {};
+                        this.checkBoxList=[];
+                        this.initForm();
                         done();
                     })
                     .catch(_ => {});
@@ -313,6 +382,18 @@
                     this.partyMemberList = data;
                 });
             },
+            initForm() {
+                this.form = {
+                    partyMemberId:'',
+                    name:'',
+                    sex:'',
+                    birthday:'',
+                    joinDate:'',
+                    category:'',
+                    promise:'',
+                    otherCategory:'',
+                };
+            }
         },
         components: {
             CommonCRUD
@@ -322,6 +403,7 @@
             this.volunteerFormColumns =this.$store.state.classInfo.properties;
             this.handleSelect();
             tansfer(this.volunteerColumns);
+            this.initForm();
         }
     }
 </script>

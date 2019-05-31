@@ -54,5 +54,16 @@
     .el-textarea__inner{
         width:200px !important;
     }
-
+    body::-webkit-scrollbar {
+        /*width: 0;*/
+    }
+    body {
+        overflow: hidden;
+    }
+    html {
+        font-size: 18px;
+    }
+    .vs-tabs--btn {
+        font-size: 16px !important
+    }
 </style>

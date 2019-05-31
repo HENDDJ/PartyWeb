@@ -143,7 +143,12 @@
                                 <CommonFileUpload :value="datailForm.fileUrls" @getValue="datailForm.fileUrls = $event" :diaabled="lookType"></CommonFileUpload>
                             </el-form-item>
                             <el-form-item label="上传视频" prop="video" v-if="datailForm.taskType === 'DistLearning'" size="mini">
-                                <template v-if="lookType">{{datailForm.video}}</template>
+                                <template v-if="lookType">
+                                    <vs-chip v-for="items in datailForm.video" :key="items.name">
+                                        <vs-avatar icon="send" />
+                                        {{items.name}}
+                                    </vs-chip>
+                                </template>
                                 <template v-if="editType" id="vd">
                                     <el-transfer
                                         filterable
@@ -363,20 +368,20 @@
                 </el-col>
                     <el-col :span="10">
             <div style="border:1px solid #F00;">
-                    <el-steps direction="vertical" >
-                        <el-step title="时间" status="process">
 
-                            <template slot="description" >
+                <el-timeline>
+                    <el-timeline-item
+                        v-for="(activity, index) in activities"
+                        :key="index"
+                        :timestamp="activity.timestamp"
+                        :placement="activity.placement">
+                        <template>
                             <vs-images hover="scale">
-                                <vs-image :key="index" :src="`https://picsum.photos/400/400?image=2${index}`" v-for="(image, index) in 9" />
                                 <vs-image :key="index" :src="`https://picsum.photos/400/400?image=1${index}`" v-for="(image, index) in 7" />
                             </vs-images>
-                            </template>
-                        </el-step>
-                        <el-step title="时间" status="process"></el-step>
-                        <el-step title="时间" status="process"></el-step>
-                        <el-step title="时间" status="process"></el-step>
-                    </el-steps>
+                        </template>
+                    </el-timeline-item>
+                </el-timeline>
             </div>
                     </el-col>
             </el-row>
@@ -464,6 +469,7 @@
                 chooseType: '',
                 form: {taskType: 'Party',score:10},
                 datailForm:{},
+                datailFormNext:{},
                 disabled: false,
                 dialogVisible: false,
                 title: '任务发布',
@@ -488,7 +494,30 @@
                 //修改模式
                 editType: false,
                 //截止日期（month冲突）
-                monVal:''
+                monVal:'',
+                //时间线
+                activities:[{
+                    content: '支持使用图标',
+                    timestamp: '2018-04-12 20:46',
+                    size: 'large',
+                    type: 'primary',
+                    icon: 'el-icon-more',
+                    placement:"top"
+                }, {
+                    content: '支持自定义颜色',
+                    timestamp: '2018-04-03 20:46',
+                    color: '#0bbd87',
+                    placement:"top"
+                }, {
+                    content: '支持自定义尺寸',
+                    timestamp: '2018-04-03 20:46',
+                    size: 'large',
+                    placement:"top"
+                }, {
+                    content: '默认样式的节点',
+                    timestamp: '2018-04-03 20:46',
+                    placement:"top"
+                }]
             }
         },
         watch: {
@@ -639,8 +668,8 @@
             details(val) {
                 console.log(val)
                 this.row = val
-                this.datailForm = {}
-                this.datailForm = val
+                this.datailForm = JSON.parse(JSON.stringify(val))
+                this.datailFormNext = JSON.parse(JSON.stringify(val))
                 var fileStr = ''
                 for (var i in val.urls) {
                     if (i == val.urls.length - 1) {
@@ -664,12 +693,16 @@
                     this.lookType = false
                     this.editType = true
                     this.loadVideo();
+                    console.log( this.datailForm,1)
                     var data = this.datailForm.video
                     this.datailForm.video = data.map(item=>{
                         return '{"name":"'+item.name+'","lengthOfTime":"'+item.lengthOfTime+'","videoUrl":"'+item.videoUrl+'","videoCover":"'+item.videoCover+'"}'
                     })
-                    console.log(this.datailForm.video)
+                    console.log( this.datailForm,2)
                 }else{
+                    console.log( this.datailFormNext)
+                    this.datailForm =  JSON.parse( JSON.stringify(this.datailFormNext))
+                    console.log( this.datailForm)
                     this.lookType = true
                     this.editType = false
                 }

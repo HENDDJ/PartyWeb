@@ -21,7 +21,7 @@
                     <icon name="eye" scale="2"/>
                 </span>
             </el-form-item>
-            <vs-button id="button-with-loading" class="vs-con-loading__container"  style="width:100%;margin:15px 0;border-radius: 50px" ref="loginBtn" type="gradient" @click.native.prevent="handleLogin">登&emsp;&emsp;录</vs-button>
+            <vs-button ref="loadableButton"  id="button-with-loading" class="vs-con-loading__container"  style="width:100%;margin:15px 0;border-radius: 50px" type="gradient" vslor="primary" @click.native.prevent="handleLogin">{{btnText}}</vs-button>
         </el-form>
 
     </div>
@@ -43,17 +43,16 @@ export default {
             },
             loginRules: {
                 userName: [
-                    { required: true, trigger: 'blur', message: "请输入用户名" },
-                    { pattern: regex.low_case, trigger: 'blur', message: "请输入小写用户名"}
+                    { required: true, trigger: 'blur', message: '请输入用户名' },
                 ],
                 password: [
-                    { required: true, trigger: 'blur', message: "请输入用户名" },
-                    { pattern: /^[0-9]+$/ , trigger: 'blur', message: "请输入小写用户名"}
+                    { required: true, trigger: 'blur', message: '请输入密码' },
                 ]
             },
             passwordType: 'password',
             loading: false,
-            showDialog: false
+            showDialog: false,
+            btnText: '登' + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + '录'
         };
     },
     methods: {
@@ -61,7 +60,8 @@ export default {
             this.passwordType = this.passwordType === 'password' ? '' : 'password';
         },
         handleLogin () {
-            this.$vs.loading({container: this.refs.loginBtn, text: '登录验证中', background: 'rgba(255,255,255,0.7)', textAfter: true});
+            this.btnText = '';
+            this.$vs.loading({container: '#button-with-loading',color: 'white', background: 'transparent', scale: 0.45});
             this.$http('POST', `/identity/sysUser/login`, this.loginForm).then(data => {
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('user', this.loginForm.userName);
@@ -76,6 +76,17 @@ export default {
                     this.$router.push({path: 'MainView'});
                     this.loading = false;
                 });
+            }).catch(e => {
+                setTimeout(() => {
+                    this.$vs.loading.close('#button-with-loading > .con-vs-loading');
+                    this.$nextTick(() => {
+                        this.btnText = '登' + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + '录';
+                        this.$message({
+                            type: 'error',
+                            message: e
+                        });
+                    });
+                }, 1000);
             });
         }
     },

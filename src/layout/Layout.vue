@@ -1,10 +1,15 @@
 <template>
     <div class="app-wrapper">
-        <sidebar class="sidebar-container "></sidebar>
-        <div class="main-container">
-            <nav-bar></nav-bar>
-            <!--<tags-view></tags-view>-->
-            <app-main></app-main>
+        <TopBar></TopBar>
+        <div style="display: flex">
+            <!--占位元素-->
+            <div style="width: 200px"></div>
+            <sidebar class="sidebar-container "></sidebar>
+            <div class="main-container">
+                <nav-bar></nav-bar>
+                <!--<tags-view></tags-view>-->
+                <app-main></app-main>
+            </div>
         </div>
     </div>
 </template>
@@ -13,13 +18,15 @@
     import Sidebar from './components/SideBar';
     import AppMain from './components/AppMain';
     import NavBar from './components/Navbar';
+    import TopBar from './components/TopBar';
 
     export default {
         name: 'layout',
         components: {
             Sidebar,
             AppMain,
-            NavBar
+            NavBar,
+            TopBar
         },
         computed: {
         },
@@ -50,7 +57,7 @@
         width: 200px !important;
         height: 100%;
         position: fixed;
-        top: 0;
+        top: calc(60 * 100vw/1920);
         bottom: 0;
         left: 0;
         z-index: 1001;
@@ -59,8 +66,10 @@
 
     // 主体区域
     .main-container {
+        flex: 1;
         min-height: 100%;
+        background-color: #f2f2f2;
+        padding: 10px 20px;
         transition: margin-left .28s;
-        margin-left: 200px;
     }
 </style>

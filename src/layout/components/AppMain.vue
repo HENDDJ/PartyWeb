@@ -21,3 +21,9 @@ export default {
     }
 }
 </script>
+<style>
+    .app-main {
+        background-color: white;
+        padding: 20px 30px;
+    }
+</style>

@@ -53,8 +53,13 @@
                 width="55"
                 align="center">
             </el-table-column>
-            <el-table-column v-for="item in columns" v-if="item.notShow !== 'true'" :key="item.name" :prop="item.aliasName || item.name" :label="item.des"
-                             :width="item.width || ''" :formatter="item.formatter" align="center"></el-table-column>
+            <el-table-column v-for="item in columns" v-if="item.notShow !== 'true' && !item.slot" :key="item.name" :prop="item.aliasName || item.name" :label="item.des"
+                             :width="item.width || ''" :formatter="item.formatter" align="center" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column v-for="item in columns" v-if="item.slot" :label="item.des" :key="item.name" align="center" >
+                <template slot-scope="scope">
+                    <slot :name="item.slotName" :row="scope.row"></slot>
+                </template>
+            </el-table-column>
         </el-table>
         <el-pagination style="text-align: right;margin-top: 20px;"
                        background
@@ -96,7 +101,8 @@
                 <el-input v-model="form[item.name]" type="textarea" :rows="2" v-if="item.type === 'textarea'" :disabled="item.disabled || disabled"></el-input>
                 <!--预留富文本编辑-->
                 <Tinymce v-if="item.type === 'rich-editor'" v-model="form[item.name]"></Tinymce>
-                <CommonUpload v-if="item.type === 'file'" :value="form[item.name]" @getValue="form[item.name] = $event"></CommonUpload>
+                <CommonFileUpload v-if="item.type === 'file'" :value="form[item.name]" :disabled="item.disabled || disabled" @getValue="form[item.name] = $event"></CommonFileUpload>
+                <CommonUpload v-if="item.type === 'image'" :value="form[item.name]" :disabled="item.disabled || disabled" @getValue="form[item.name] = $event"></CommonUpload>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer  footer-position">
@@ -111,6 +117,7 @@
     import reqType from '@/api/reqType';
     import CommonUpload from '@/components/UpLoad';
     import Tinymce from '@/components/Tinymce';
+    import CommonFileUpload from '@/components/FileUpLoad';
     export default {
         name: 'CommonCRUD',
         props: {
@@ -184,6 +191,7 @@
             }
         },
         components: {
+            CommonFileUpload,
             CommonUpload,
             Tinymce
         },
@@ -363,12 +371,7 @@
 
 <style scoped>
     .common-crud {
-        width: 95%;
-        margin: 1% 2.5%;
-        padding: 2%;
-        background-color: rgba(255, 255, 255, .9);
-        border-radius: 2px;
-        box-shadow: #e0e0e0 1px 1px 3px;
+        margin: 30px auto;
     }
     .btn-right {
         float: right;

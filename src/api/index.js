@@ -55,9 +55,8 @@ service.interceptors.response.use(
             return Promise.reject(response.data.msg);
         } else if (response.data.code === CODE_MAP.PWD_ERROR) {
             // 请求失败则要弹提示框
-            Message.error(response.data.msg);
             return Promise.reject(response.data.msg);
-        }else if (response.data.code === CODE_MAP.TOKEN_ERROR) {
+        } else if (response.data.code === CODE_MAP.TOKEN_ERROR) {
             // 请求失败则要弹提示框
             Message.error("用户已失效，请重新登录");
             this.router.push({path:'/login'});

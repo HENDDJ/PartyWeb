@@ -7,10 +7,9 @@
                     <template>
                         <el-form-item label="任务对象" prop="taskObject">
                             <el-tree
-                                :data="objectData"
                                 :props="props"
                                 ref="tree"
-
+                                :load="loadNode"
                                 lazy
                                 show-checkbox
                                 >
@@ -85,10 +84,13 @@
                     taskObject:{
                         label: 'name',
                         children: 'children'
-                    }},
+                    }
+                },
                 props: {
+                    id: 'id',
+                    label: 'label',
                     children: 'children',
-                    label: 'label'
+                    isLeaf: 'leaf'
                 },
                 loading: false,
                 addVideo: false,
@@ -106,41 +108,6 @@
                 row: {},
                 monVal:'',
                 count: 1,
-                objectData:[{
-                    id: 1,
-                    label: '一级 1',
-                    children: [{
-                        id: 4,
-                        label: '二级 1-1',
-                        children: [{
-                            id: 9,
-                            label: '三级 1-1-1'
-                        }, {
-                            id: 10,
-                            label: '三级 1-1-2'
-                        }]
-                    }]
-                }, {
-                    id: 2,
-                    label: '一级 2',
-                    children: [{
-                        id: 5,
-                        label: '二级 2-1'
-                    }, {
-                        id: 6,
-                        label: '二级 2-2'
-                    }]
-                }, {
-                    id: 3,
-                    label: '一级 3',
-                    children: [{
-                        id: 7,
-                        label: '二级 3-1'
-                    }, {
-                        id: 8,
-                        label: '二级 3-2'
-                    }]
-                }]
             }
         },
         watch: {
@@ -160,40 +127,15 @@
               console.log(this.$refs.tree.getCheckedNodes())
 
             },
-            // loadNode(node, resolve){
-            //     this.$http('Post','/identity/sysDistrict/list',{districtType:'Party'},false).then((data)=>{
-            //         var partyList = []
-            //         var townList = []
-            //         var cunList = []
-            //         var one = {}
-            //         if (node.level === 0) {
-            //             data.forEach(item=>{
-            //                 if(item.districtLevel == '1'){
-            //                      one = {name : item.districtName,value:item.id}
-            //
-            //                 }
-            //             })
-            //
-            //             partyList.push(one)
-            //             console.log(partyList)
-            //             return resolve(partyList);
-            //         }
-            //         if(node.level === 1){
-            //             data.forEach(item=>{
-            //                 if(item.districtLevel == '2'){
-            //                     townList.push({name : item.districtName,value:item.id})
-            //                 }
-            //                 return resolve(townList);
-            //             })
-            //         }
-            //         if(node.level === 2 && ){
-            //             node.data.name
-            //         }
-            //     }).catch((res)=>{
-            //
-            //     })
-            //
-            // },
+            loadNode(node, resolve){
+                if (node.level === 0) {
+                    return resolve([{ id: '01', label: '句容市委', children: [] }]);
+                }
+                console.log(node);
+                this.$http('GET',`/identity/sysDistrict/${node.data.id}tree`,false).then((data)=>{
+                    return resolve(data);
+                })
+            },
             //加载视频数据
             loadVideo() {
                 this.$http('GET', '/identity/distLearningActivityVideo/videoList', {}, false).then(

@@ -47,7 +47,7 @@
         height: calc(60 * 100vw/1920);
     }
     .top_bar_content {
-        height: 55px;
+        height: calc(60 * 100vw/1920);
         font-size: 16px !important;
     }
 </style>

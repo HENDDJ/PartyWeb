@@ -1,10 +1,125 @@
 <template>
-    <div>
-        <template lang="html">
-            <div class="centerx">
-                <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" align="left"
-                         label-width="170px">
-                    <template>
+<div> <div>
+    <template lang="html">
+
+
+
+        <div class="centerx">
+            <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" align="left"
+                     label-width="170px" id="labelOne">
+
+                <template>
+                    <el-row>
+                        <div>&nbsp;</div>
+                    </el-row>
+                    <el-row>
+                        <div>&nbsp;</div>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="2">
+                            <div>&nbsp;</div>
+                        </el-col>
+                        <el-col :span="10" >
+                            <el-form-item label="任务分类" prop="taskType">
+                                <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;"
+                                                @change="radioChoose">
+                                    <el-radio label="Party">党建任务</el-radio>
+                                    <el-radio label="DistLearning">远教任务</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <vs-divider/>
+                    <el-row>
+                        <div>&nbsp;</div>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="2">
+                            <div>&nbsp;</div>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="计划名称" prop="title">
+                                <el-input v-model="form.title" :disabled=disabled></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="任务类型" prop="type">
+                                <el-input v-model="form.type" :disabled=disabled></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="2">
+                            <div>&nbsp;</div>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="工作要求" prop="context">
+                                <el-input v-model="form.context" :disabled=disabled></el-input>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="分值" prop="score">
+                                <el-input-number v-model="form.score" label="分值" style="width: 200px"></el-input-number>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="2">
+                            <div>&nbsp;</div>
+                        </el-col>
+                        <el-col :span="8">
+                            <el-form-item label="截止时间" prop="monVal">
+                                <el-date-picker
+                                    v-model="monVal"
+                                    type="date"
+                                    placeholder="选择日期">
+                                </el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </template>
+                <el-row>
+                    <el-col :span="2">
+                        <div>&nbsp;</div>
+                    </el-col>
+                    <el-col :span="14">
+                        <el-form-item label="上传文件" prop="fileUrls">
+                            <CommonFileUpload :value="form.fileUrls" @getValue="form.fileUrls = $event"></CommonFileUpload>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="2">
+                        <div>&nbsp;</div>
+                    </el-col>
+                    <el-col :span="14">
+
+                        <el-form-item label="上传视频" prop="video" v-if="addVideo">
+                            <template>
+                                <el-collapse v-model="activeNames" @change="handleChange">
+                                    <el-collapse-item name="1" :title="videoColl">
+                                        <el-transfer
+                                            filterable
+                                            v-model="form.video"
+                                            :titles="['可选视频', '已选视频']"
+                                            :props="{
+                                      key: 'value',
+                                      label: 'desc'
+                                    }"
+                                            :data="addVideoList">
+                                        </el-transfer>
+                                    </el-collapse-item>
+                                </el-collapse>
+                            </template>
+                        </el-form-item>
+
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="2">
+                        <div>&nbsp;</div>
+                    </el-col>
+                    <el-col :span="8">
                         <el-form-item label="任务对象" prop="taskObject">
                             <el-tree
                                 :props="props"
@@ -12,69 +127,31 @@
                                 :load="loadNode"
                                 lazy
                                 show-checkbox
-                                >
+                                v-model="form.taskObject"
+                                @check = "ss"
+                            >
                             </el-tree>
                         </el-form-item>
-                        <el-form-item label="任务分类" prop="taskType">
-                            <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;"
-                                            @change="radioChoose">
-                                <el-radio label="Party">党建任务</el-radio>
-                                <el-radio label="DistLearning">远教任务</el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-                        <el-form-item label="计划名称" prop="title">
-                            <el-input v-model="form.title" :disabled=disabled></el-input>
-                        </el-form-item>
-                        <el-form-item label="任务类型" prop="type">
-                            <el-input v-model="form.type" :disabled=disabled></el-input>
-                        </el-form-item>
-                        <el-form-item label="工作要求" prop="context">
-                            <el-input v-model="form.context" :disabled=disabled></el-input>
-                        </el-form-item>
-                        <el-form-item label="分值" prop="score">
-                            <el-input-number v-model="form.score" label="分值" style="width: 200px"></el-input-number>
-                        </el-form-item>
-                        <el-form-item label="截止时间" prop="monVal">
-                            <el-date-picker
-                                v-model="monVal"
-                                type="date"
-                                placeholder="选择日期">
-                            </el-date-picker>
-                        </el-form-item>
-                    </template>
-                    <el-form-item label="上传文件" prop="fileUrls">
-                        <CommonFileUpload :value="form.fileUrls" @getValue="form.fileUrls = $event"></CommonFileUpload>
-                    </el-form-item>
-                    <el-form-item label="上传视频" prop="video" v-if="addVideo">
-                        <template>
-                            <el-transfer
-                                filterable
-                                v-model="form.video"
-                                :titles="['可选视频', '已选视频']"
-                                :props="{
-                                      key: 'value',
-                                      label: 'desc'
-                                    }"
-                                :data="addVideoList">
-                            </el-transfer>
-                        </template>
-                    </el-form-item>
-                </el-form>
-                <div slot="footer" class="dialog-footer  footer-position">
-                    <el-button type="primary"  @click="submit('form')">确 定</el-button>
-                    <el-button @click="ss()">重 置</el-button>
-                </div>
-
+                    </el-col>
+                </el-row>
+            </el-form>
+            <div slot="footer" class="dialog-footer  footer-position">
+                <el-button type="primary"  @click="submit('form')">确 定</el-button>
+                <el-button @click="ss()">重 置</el-button>
             </div>
-        </template>
 
-    </div>
+        </div>
+    </template>
+
+</div>
+    <div class="el-loading"> <div class="load"><a style="color: #409EFF">数据上传中，请稍后</a>  <Spinner name="line-scale-pulse-out-rapid"  color="#7cff66"/><div><Spinner name="ball-scale-multiple" color="#b2ffea"/></div>
+        <Spinner name="ball-scale-multiple" color="#b2ffea"/></div>
+    </div></div>
 
 </template>
 
 <script>
     import CommonFileUpload from '@/components/FileUpLoad';
-
     export default {
         name: "ParActivityRelease",
         data() {
@@ -82,8 +159,9 @@
                 queryForm: {taskType: ''},
                 form:{
                     taskObject:{
-                        label: 'name',
-                        children: 'children'
+                        id: '',
+                        label: '',
+                        children: '',
                     }
                 },
                 props: {
@@ -108,6 +186,9 @@
                 row: {},
                 monVal:'',
                 count: 1,
+                activeNames:['1'],
+                videoColl:'点击隐藏',
+                isVisible:true
             }
         },
         watch: {
@@ -120,11 +201,25 @@
 
         },
         components: {
-            CommonFileUpload
+            CommonFileUpload,
         },
         methods: {
             ss(){
-              console.log(this.$refs.tree.getCheckedNodes())
+                var ids = {sid:[],zid:[],cid:[]}
+                this.$refs.tree.getCheckedNodes().forEach(item=>{
+                    console.log(item.id)
+                    if(item.id.length == 2){
+                        ids.sid.push(item.id)
+                    }
+                    if(item.id.length == 4){
+                        ids.zid.push(item.id)
+                    }
+                    if(item.id.length == 6){
+                        ids.cid.push(item.id)
+                    }
+                })
+                this.form.taskObject = ids
+
 
             },
             loadNode(node, resolve){
@@ -177,13 +272,14 @@
                             var ss = this.form.fileUrls.toString().split(",")
                             this.form.fileUrls = ss
                         }
-                        var video = this.form.video
-                        var videoList = []
-                        video.forEach(item => {
-                            videoList.push(JSON.parse(item))
-                        })
-                        this.form.video = videoList
-                        console.log(this.form)
+                        if(this.form.video){
+                            var video = this.form.video
+                            var videoList = []
+                            video.forEach(item => {
+                                videoList.push(JSON.parse(item))
+                            })
+                            this.form.video = videoList
+                        }
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {
                                 this.$message({
@@ -212,6 +308,13 @@
                     }
                 })
             },
+            handleChange(){
+                if(this.videoColl=='点击隐藏' ){
+                    this.videoColl = '点击展开'
+                }else {
+                    this.videoColl = '点击隐藏'
+                }
+            }
         },
         created() {
 
@@ -250,5 +353,43 @@
 
     #vd .el-checkbox__inner {
         margin-left: -100px !important;
+    }
+    #labelOne .el-form-item__label{
+        font-weight: bold;
+        font-size: 16px !important;
+    }
+    .el-loading{
+        position: absolute;
+        z-index:10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: .5;
+        background: #000;
+        background-image: initial;
+        background-position-x: initial;
+        background-position-y: initial;
+        background-size: initial;
+        background-repeat-x: initial;
+        background-repeat-y: initial;
+        background-attachment: initial;
+        background-origin: initial;
+        background-clip: initial;
+        background-color: rgb(0, 0, 0);
+
+    }
+    .load{
+        position: absolute;
+        top: 50%;
+       left: 50%;
+        -webkit-transform: translateY(-50%);
+        -ms-transform: translateY(-50%);
+        -o-transform: translateY(-50%);
+        transform: translateY(-50%);
+        -webkit-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+        -o-transform: translateX(-50%);
+        transform: translateX(-50%);
     }
 </style>

@@ -1,23 +1,54 @@
 <template>
+    <section class="activity-management">
+        <div style="width: 90%;margin: 0 auto">
+            <el-row :gutter="60" type="flex" justify="center">
+                <el-col :span="12" :xl="{span: 12}">
+                    <el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">
+                        <el-option
+                            v-for="item in options"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
 
-    <div>
-        <div style="margin-left: 10px;margin-top:5px">
+                    <div class="left-act-list">
 
-            <el-button type="primary" plain @click="add" class="self-add self-btn"></el-button>
-            <el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">
-                <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                </el-option>
-            </el-select>
+                        任务列表
+                        <template v-for="(item, index) in tableData">
+                            <div class="list-item">
+                                <div class="title-type">
+                                    <p class="title">{{item.title}}</p>
+                                    <p class="type">{{item.type}}</p>
+                                </div>
+                                <div class="left-date">
+                                    <p class="label">截止日期：<span class="value">{{item.month}}</span></p>
+                                </div>
+                                <div class="sepertor">
+                                    <p style="border-right: 1px solid #888">&nbsp;</p>
+                                </div>
+                                <div class="left-time">
+                                    <template v-if="calcLeftDays(item.month)">
+                                        <icon name="miaobiao" scale="3.5"></icon>
+                                        <p><span>{{calcLeftDays(item.month)}}</span>天</p>
+                                    </template>
+                                    <template v-else>&nbsp;</template>
+                                </div>
+                                <div class="processing">
+                                    <el-progress style="width: 100%" :stroke-width="6" :percentage="50"></el-progress>
+                                </div>
+                                <div class="detail">
+                                    <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
+                                        <icon name="more" scale="2" ></icon>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
 
-        </div>
 
-        <div style="margin-top: 50px">
-            <el-row :gutter="20">
-                <el-col :span="10">
+
+
                     <el-table
                         :data="tableData"
                         stripe
@@ -55,6 +86,17 @@
                             width="120px"
                             :show-overflow-tooltip="true">
                         </el-table-column>
+                        <el-table-column
+                            label="任务状态"
+                            align="center"
+                            width="120px">
+                            <template slot-scope="scope">
+                                    <a v-if="datedifference(scope.row.month)<0"  style="color:greenyellow">已完成</a>
+                                <a v-else-if="datedifference(scope.row.month)<7" style="color:darkorange">即将过期</a>
+                                <a v-else>进行中</a>
+                            </template>
+
+                        </el-table-column>
                         <el-table-column label="操作" align="center">
                             <template slot-scope="scope">
                                 <el-button @click="details(scope.row)" type="text" size="small">详情</el-button>
@@ -73,17 +115,20 @@
                                    layout="total, sizes, prev, pager, next">
                     </el-pagination>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" :xl="{span: 12}">
                     <div style="border:1px solid #F00;">
-                        <el-button type="primary" @click="lookOrEdit"v-if="lookType">编辑</el-button>
-                        <el-button type="primary" @click="lookOrEdit"v-if="editType">查看</el-button>
+                        <el-button type="primary" @click="lookOrEdit" v-if="lookType">编辑</el-button>
+                        <el-button type="primary" @click="lookOrEdit" v-if="editType">查看</el-button>
                         <el-button type="danger" @click="del(row)">删除</el-button>
-                        <el-form :model="datailForm" ref="datailForm" >
+                        <el-form :model="datailForm" ref="datailForm">
                             <el-form-item label="任务分类" prop="taskType">
-                                <template v-if="lookType"><template v-if="datailForm.taskType === 'Party'">党建任务</template>
-                                    <template v-if="datailForm.taskType === 'DistLearning'">远教任务</template></template>
+                                <template v-if="lookType">
+                                    <template v-if="datailForm.taskType === 'Party'">党建任务</template>
+                                    <template v-if="datailForm.taskType === 'DistLearning'">远教任务</template>
+                                </template>
                                 <template v-if="editType">
-                                    <el-radio-group size="medium" v-model="datailForm.taskType" style="margin-left: 10px;">
+                                    <el-radio-group size="medium" v-model="datailForm.taskType"
+                                                    style="margin-left: 10px;">
                                         <el-radio label="Party">党建任务</el-radio>
                                         <el-radio label="DistLearning">远教任务</el-radio>
                                     </el-radio-group>
@@ -112,7 +157,8 @@
                             <el-form-item label="分值" prop="context">
                                 <template v-if="lookType">{{this.datailForm.score}}</template>
                                 <template v-if="editType">
-                                    <el-input-number v-model="datailForm.score" label="分值" style="width: 200px"></el-input-number>
+                                    <el-input-number v-model="datailForm.score" label="分值"
+                                                     style="width: 200px"></el-input-number>
                                 </template>
                             </el-form-item>
 
@@ -140,12 +186,14 @@
                                 </template>
                             </el-form-item>
                             <el-form-item label="上传文件">
-                                <CommonFileUpload :value="datailForm.fileUrls" @getValue="datailForm.fileUrls = $event" :diaabled="lookType"></CommonFileUpload>
+                                <CommonFileUpload :value="datailForm.fileUrls" @getValue="datailForm.fileUrls = $event"
+                                                  :diaabled="lookType"></CommonFileUpload>
                             </el-form-item>
-                            <el-form-item label="上传视频" prop="video" v-if="datailForm.taskType === 'DistLearning'" size="mini">
+                            <el-form-item label="上传视频" prop="video" v-if="datailForm.taskType === 'DistLearning'"
+                                          size="mini">
                                 <template v-if="lookType">
                                     <vs-chip v-for="items in datailForm.video" :key="items.name">
-                                        <vs-avatar icon="send" />
+                                        <vs-avatar icon="send"/>
                                         {{items.name}}
                                     </vs-chip>
                                 </template>
@@ -209,9 +257,14 @@
                                         :show-overflow-tooltip="true"
                                     >
                                         <template slot-scope="scope">
-                                            <el-progress :percentage="percent(scope.row.finishRatio)" v-if="scope.row.finishRatio < 0.1"  :stroke-width="5"></el-progress>
-                                            <el-progress :percentage="percent(scope.row.finishRatio)" v-else-if="scope.row.finishRatio < 1"  :stroke-width="5"></el-progress>
-                                            <el-progress :percentage="percent(scope.row.finishRatio)" v-else status="success"  :stroke-width="5"></el-progress>
+                                            <el-progress :percentage="percent(scope.row.finishRatio)"
+                                                         v-if="scope.row.finishRatio < 0.1"
+                                                         :stroke-width="5"></el-progress>
+                                            <el-progress :percentage="percent(scope.row.finishRatio)"
+                                                         v-else-if="scope.row.finishRatio < 1"
+                                                         :stroke-width="5"></el-progress>
+                                            <el-progress :percentage="percent(scope.row.finishRatio)" v-else
+                                                         status="success" :stroke-width="5"></el-progress>
                                         </template>
                                     </el-table-column>
                                     <!--<el-table-column-->
@@ -233,7 +286,8 @@
                                         :show-overflow-tooltip="true"
                                     >
                                         <template slot-scope="scope">
-                                            <el-button @click="townDetailClick(scope.row)" type="text" size="small">查看</el-button>
+                                            <el-button @click="townDetailClick(scope.row)" type="text" size="small">查看
+                                            </el-button>
                                         </template>
                                     </el-table-column>
                                 </el-table>
@@ -246,7 +300,9 @@
                             </el-form-item>
 
                         </el-form>
-                        <el-button type="primary" :loading="submitLoading" @click="detailSubmit('datailForm')" v-if="editType">确 定</el-button>
+                        <el-button type="primary" :loading="submitLoading" @click="detailSubmit('datailForm')"
+                                   v-if="editType">确 定
+                        </el-button>
                     </div>
                 </el-col>
             </el-row>
@@ -265,8 +321,9 @@
                     <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" label-width="170px">
                         <template v-if="fileType">
                             <el-form-item label="任务分类" prop="taskType">
-                                <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;" @change="radioChoose">
-                                    <el-radio label="Party" >党建任务</el-radio>
+                                <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;"
+                                                @change="radioChoose">
+                                    <el-radio label="Party">党建任务</el-radio>
                                     <el-radio label="DistLearning">远教任务</el-radio>
                                 </el-radio-group>
                             </el-form-item>
@@ -291,7 +348,8 @@
                             </el-form-item>
                         </template>
                         <el-form-item label="上传文件" prop="fileUrls">
-                            <CommonFileUpload :value="form.fileUrls" @getValue="form.fileUrls = $event"></CommonFileUpload>
+                            <CommonFileUpload :value="form.fileUrls"
+                                              @getValue="form.fileUrls = $event"></CommonFileUpload>
                         </el-form-item>
                         <el-form-item label="上传视频" prop="video" v-if="addVideo">
                             <template>
@@ -377,7 +435,8 @@
                                 :placement="activity.placement">
                                 <template>
                                     <vs-images hover="scale">
-                                        <vs-image :key="index" :src="`https://picsum.photos/400/400?image=1${index}`" v-for="(image, index) in 7" />
+                                        <vs-image :key="index" :src="`https://picsum.photos/400/400?image=1${index}`"
+                                                  v-for="(image, index) in 7"/>
                                     </vs-images>
                                 </template>
                             </el-timeline-item>
@@ -411,7 +470,7 @@
         <!--<el-button @click="remindHandleClose">取 消</el-button>-->
         <!--</div>-->
         <!--</el-dialog>-->
-    </div>
+    </section>
 
 </template>
 
@@ -440,51 +499,51 @@
                         des: "长度",
                     },
                 ],
-                addVideo:false,
+                addVideo: false,
                 queryForm: {taskType: ''},
-                queryFormTrack:{ActivityID: ''},
+                queryFormTrack: {ActivityID: ''},
                 //视频添加
-                addVideoList:[],
+                addVideoList: [],
                 //视频修改
-                editVideoForm:{},
-                editVideoList:[],
+                editVideoForm: {},
+                editVideoList: [],
                 tableData: [],
-                trackTable:[],
-                townDetailTable:[],
+                trackTable: [],
+                townDetailTable: [],
                 loading: false,
                 pageable: {
                     total: 0,
                     currentPage: 1,
                     pageSize: 10
                 },
-                pageableTrack:{
+                pageableTrack: {
                     total: 0,
                     currentPage: 1,
-                    pageSize: 10
+                    pageSize: 5
                 },
                 apiRoot: '/identity/parActivity',
                 apiRootTrack: 'identity/parActivityPerform',
                 checkboxGroup: 'Party',
                 options: [],
                 chooseType: '',
-                form: {taskType: 'Party',score:10},
-                datailForm:{},
-                datailFormNext:{},
+                form: {taskType: 'Party', score: 10},
+                datailForm: {},
+                datailFormNext: {},
                 disabled: false,
                 dialogVisible: false,
                 title: '任务发布',
                 //镇详情名
-                townTitle:'',
+                townTitle: '',
                 submitLoading: false,
                 Url: '',
                 fileType: true,
                 //各镇详细信息显示
-                townDetailVis:false,
+                townDetailVis: false,
                 //镇ID（detail）
-                townAcId:'',
+                townAcId: '',
                 //各镇详细信息
-                townDetailForm:{},
-                townSubmitLoading:false,
+                townDetailForm: {},
+                townSubmitLoading: false,
                 // remindVis: false,
                 // remindForm: {},
                 //行数据
@@ -494,29 +553,29 @@
                 //修改模式
                 editType: false,
                 //截止日期（month冲突）
-                monVal:'',
+                monVal: '',
                 //时间线
-                activities:[{
+                activities: [{
                     content: '支持使用图标',
                     timestamp: '2018-04-12 20:46',
                     size: 'large',
                     type: 'primary',
                     icon: 'el-icon-more',
-                    placement:"top"
+                    placement: "top"
                 }, {
                     content: '支持自定义颜色',
                     timestamp: '2018-04-03 20:46',
                     color: '#0bbd87',
-                    placement:"top"
+                    placement: "top"
                 }, {
                     content: '支持自定义尺寸',
                     timestamp: '2018-04-03 20:46',
                     size: 'large',
-                    placement:"top"
+                    placement: "top"
                 }, {
                     content: '默认样式的节点',
                     timestamp: '2018-04-03 20:46',
-                    placement:"top"
+                    placement: "top"
                 }]
             }
         },
@@ -542,24 +601,45 @@
             //         .catch(_ => {
             //         });
             // },
+            //计算隔天
+            datedifference(sDate1) {    //sDate1和sDate2是2006-12-18格式
+                var dateSpan,
+                    iDays;
+                sDate1 = Date.parse(sDate1);
+                var sDate2 = new Date().Format("yyyy-MM-dd");
+                sDate2 = Date.parse(sDate2);
+                dateSpan = sDate1 - sDate2;
+                if(dateSpan >= 0){
+                    iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
+                    return iDays
+                }else{
+                    return -1
+                }
+
+            },
             //选择radio时触发
-            radioChoose(val){
-                if(val == 'Party'){
+            radioChoose(val) {
+                if (val == 'Party') {
                     this.addVideo = false
-                }else {
+                } else {
                     this.addVideo = true
                     this.loadVideo();
                 }
 
             },
             //加载视频数据
-            loadVideo(){
-                this.$http('GET','/identity/distLearningActivityVideo/videoList',{},false).then(
-                    (data)=>{
-                        this.addVideoList = data.map(item=>{return {desc:item.name,value:'{"name":"'+item.name+'","lengthOfTime":"'+item.length+'","videoUrl":"'+item.playUrl+'","videoCover":"'+item.posterUrl+'"}'}})
+            loadVideo() {
+                this.$http('GET', '/identity/distLearningActivityVideo/videoList', {}, false).then(
+                    (data) => {
+                        this.addVideoList = data.map(item => {
+                            return {
+                                desc: item.name,
+                                value: '{"name":"' + item.name + '","lengthOfTime":"' + item.length + '","videoUrl":"' + item.playUrl + '","videoCover":"' + item.posterUrl + '"}'
+                            }
+                        })
 
                     }
-                ).catch((res)=>{
+                ).catch((res) => {
                     console.log(res)
                     this.$message({
                         type: 'warning',
@@ -568,7 +648,7 @@
                 })
             },
             //关闭镇详情
-            townDetailClose(){
+            townDetailClose() {
                 this.$confirm('确认关闭？')
                     .then(_ => {
                         this.townDetailForm = {};
@@ -579,10 +659,10 @@
                     });
             },
             //镇详情
-            townDetailClick(val){
+            townDetailClick(val) {
                 this.townTitle = val.tn
                 let path = `${this.apiRootTrack}/${this.townAcId}&${val.tn}townDetailList`;
-                this.loadTownTable(path,{});
+                this.loadTownTable(path, {});
 
                 this.townDetailVis = true
             },
@@ -616,6 +696,7 @@
             // },
             // 获取表格数据
             loadTableData(path) {
+                path += `&sort=month,desc`;
                 this.$http('POST', path, this.queryForm, false).then(
                     data => {
                         this.tableData = data.content;
@@ -627,7 +708,7 @@
                 });
             },
             //跟踪数据
-            loadTrackTable(path,query){
+            loadTrackTable(path, query) {
                 this.$http('POST', path, query, false).then(
                     data => {
                         this.trackTable = data;
@@ -642,7 +723,7 @@
                 });
             },
             //镇详情数据
-            loadTownTable(path,query){
+            loadTownTable(path, query) {
                 this.$http('POST', path, query, false).then(
                     data => {
                         this.townDetailTable = data;
@@ -683,34 +764,33 @@
                 this.lookType = true
                 this.editType = false
                 let path = `${this.apiRootTrack}/${val.id}perList`;
-                this.loadTrackTable(path,{});
+                this.loadTrackTable(path, {});
                 this.townAcId = val.id
 
             },
             //编辑查看
-            lookOrEdit(){
-                if(this.lookType == true && this.editType == false){
+            lookOrEdit() {
+                if (this.lookType == true && this.editType == false) {
                     this.lookType = false
                     this.editType = true
                     this.loadVideo();
-                    console.log( this.datailForm,1)
                     var data = this.datailForm.video
-                    this.datailForm.video = data.map(item=>{
-                        return '{"name":"'+item.name+'","lengthOfTime":"'+item.lengthOfTime+'","videoUrl":"'+item.videoUrl+'","videoCover":"'+item.videoCover+'"}'
+                    this.datailForm.video = data.map(item => {
+                        return '{"name":"' + item.name + '","lengthOfTime":"' + item.lengthOfTime + '","videoUrl":"' + item.videoUrl + '","videoCover":"' + item.videoCover + '"}'
                     })
-                    console.log( this.datailForm,2)
-                }else{
-                    console.log( this.datailFormNext)
-                    this.datailForm =  JSON.parse( JSON.stringify(this.datailFormNext))
-                    console.log( this.datailForm)
+                    console.log(this.datailForm, 2)
+                } else {
+                    console.log(this.datailFormNext)
+                    this.datailForm = JSON.parse(JSON.stringify(this.datailFormNext))
+                    console.log(this.datailForm)
                     this.lookType = true
                     this.editType = false
                 }
             },
             //转换百分比
-            percent(val){
-                var s = val*100 + ""
-                var ss = Math.round(s*100)/100
+            percent(val) {
+                var s = val * 100 + ""
+                var ss = Math.round(s * 100) / 100
                 return ss
             },
             //提醒确认
@@ -783,7 +863,7 @@
             add() {
                 this.dialogVisible = true
                 var type = this.queryForm.taskType
-                this.form = {taskType:'Party', score : 10}
+                this.form = {taskType: 'Party', score: 10}
                 this.$nextTick(() => {
                     this.$refs['form'].resetFields();
                 })
@@ -803,7 +883,7 @@
                         }
                         var video = this.form.video
                         var videoList = []
-                        video.forEach(item=>{
+                        video.forEach(item => {
                             videoList.push(JSON.parse(item))
                         })
                         this.form.video = videoList
@@ -836,7 +916,7 @@
                     }
                 })
             },
-            detailSubmit(form){
+            detailSubmit(form) {
                 this.$refs[form].validate((valid) => {
                     if (valid) {
                         this.datailForm.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
@@ -847,7 +927,7 @@
                         }
                         var video = this.datailForm.video
                         var videoList = []
-                        video.forEach(item=>{
+                        video.forEach(item => {
                             videoList.push(JSON.parse(item))
                         })
                         this.datailForm.video = videoList
@@ -875,7 +955,19 @@
 
                     }
                 })
-            }
+            },
+            calcLeftDays(date){
+                //开始时间
+                let stop = new Date(date);
+                //结束时间
+                let now = new Date();
+                let distance = stop.getTime()-now.getTime();
+                if (distance < 0) {
+                    return false
+                }
+                //计算出相差天数
+                return Math.floor(distance/(24*3600*1000))
+            },
         },
         created() {
             this.handleSelectOptions();
@@ -888,6 +980,12 @@
 <style>
     .footer-position {
         margin-right: 86px;
+    }
+
+    .activity-management {
+        /*width: 100%;*/
+        /*height: 100%;*/
+        /*background-color: #D6FFFE;*/
     }
 
     .el-checkbox.is-bordered.el-checkbox--mini {
@@ -913,8 +1011,87 @@
         background: url('../../../static/img/add.png') !important;
         background-size: cover !important;
     }
-    #vd .el-checkbox__inner{
+
+    #vd .el-checkbox__inner {
         margin-left: -100px !important;
+    }
+</style>
+<style type="scss">
+    .left-act-list {
+        width: 100%;
+        background-color: rgb(250, 250, 250);
+        padding: 0 20px;
+        line-height: 24px;
+
+    }
+    .list-item {
+        background-color: white;
+        text-align: left;
+        margin: 10px 0;
+        display: flex;
+        padding: 14px 20px;
+        transition: all .4s;
+        /*box-shadow: 2px 2px 2px #444;*/
+    }
+    .title-type {
+        flex: 1;
+    }
+    .title-type .title {
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .title-type .type {
+        font-size: 12px;
+        color: #999999;
+    }
+    .left-date {
+        flex: 1.2;
+        display: flex;
+        align-items:center;
+    }
+    .left-date .label {
+        font-size: 12px;
+        color: #999999;
+        margin-right: 4px;
+    }
+    .left-date .value {
+        font-size: 14px;
+        font-weight: bold;
+        text-align: right;
+        color: #444;
+    }
+    .sepertor {
+        flex: 0.1;
+        display: flex;
+        align-items:center;
+    }
+    .left-time {
+        flex: 1;
+        display: flex;
+        align-items:center;
+        font-size: 14px;
+    }
+    .processing {
+        flex: 1.2;
+        display: flex;
+        align-items:center;
+    }
+    .detail {
+        flex: .2;
+        display: flex;
+        padding-left: 20px;
+        align-items:center;
+    }
+    .detail svg {
+        margin: 5px 0 0 4px;
+    }
+    .left-time svg {
+        margin: 0 6px 0 6px;
+    }
+    .list-item:hover {
+        transform: translateY(-5px) scale3d(1.05,1.05,1.05);
+        background-color: #2ae1ff38;
+        cursor: pointer;
     }
 </style>
 

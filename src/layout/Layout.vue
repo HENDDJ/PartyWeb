@@ -1,15 +1,20 @@
 <template>
     <div class="app-wrapper">
         <TopBar></TopBar>
-        <div style="display: flex">
+        <div class="main">
             <!--占位元素-->
-            <div style="width: 200px"></div>
+            <div class="side-position"></div>
             <sidebar class="sidebar-container "></sidebar>
             <div class="main-container">
                 <nav-bar></nav-bar>
                 <!--<tags-view></tags-view>-->
                 <app-main></app-main>
+                <div class="copyright">
+                    Copyright ©2017-2019
+                    <strong>中共句容市委组织部 句容广电网络有限公司 苏州佳图智绘信息技术有限公司</strong>
+                    版权所有</div>
             </div>
+
         </div>
     </div>
 </template>
@@ -52,6 +57,15 @@
         z-index: 1;
     }
 
+    .main {
+        height: calc(100vh - (60 * 100vw/1920));
+        display: flex;
+        overflow: hidden;
+    }
+
+    .side-position {
+        width: 200px;
+    }
     .sidebar-container {
         transition: width 0.28s;
         width: 200px !important;
@@ -67,9 +81,22 @@
     // 主体区域
     .main-container {
         flex: 1;
-        min-height: 100%;
+        height: 100%;
         background-color: #f2f2f2;
-        padding: 10px 20px;
+        padding: 10px 20px 30px 20px;
         transition: margin-left .28s;
+        overflow: hidden;
+    }
+    .copyright {
+        padding-right: 20px;
+        width: calc(100vw - 200px);
+        height: 24px;
+        line-height: 24px;
+        font-size: 14px;
+        background-color: white;
+        text-align: right;
+        position: fixed;
+        bottom: 0;
+        right: 0;
     }
 </style>

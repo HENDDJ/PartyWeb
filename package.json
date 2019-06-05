@@ -51,6 +51,8 @@
     "vue-i18n": "7.3.2",
     "vue-multiselect": "2.0.8",
     "vue-router": "3.0.1",
+    "vue-spinkit": "^1.4.1",
+    "vue-spinner": "^1.0.3",
     "vue-splitpane": "1.0.2",
     "vuedraggable": "^2.16.0",
     "vuesax": "^3.8.73",

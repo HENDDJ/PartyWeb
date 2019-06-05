@@ -55,6 +55,17 @@
                             width="120px"
                             :show-overflow-tooltip="true">
                         </el-table-column>
+                        <el-table-column
+                            label="任务状态"
+                            align="center"
+                            width="120px">
+                            <template slot-scope="scope">
+                                    <a v-if="datedifference(scope.row.month)<0"  style="color:greenyellow">已完成</a>
+                                <a v-else-if="datedifference(scope.row.month)<7" style="color:darkorange">即将过期</a>
+                                <a v-else>进行中</a>
+                            </template>
+
+                        </el-table-column>
                         <el-table-column label="操作" align="center">
                             <template slot-scope="scope">
                                 <el-button @click="details(scope.row)" type="text" size="small">详情</el-button>
@@ -542,6 +553,22 @@
             //         .catch(_ => {
             //         });
             // },
+            //计算隔天
+            datedifference(sDate1) {    //sDate1和sDate2是2006-12-18格式
+                var dateSpan,
+                    iDays;
+                sDate1 = Date.parse(sDate1);
+                var sDate2 = new Date().Format("yyyy-MM-dd");
+                sDate2 = Date.parse(sDate2);
+                dateSpan = sDate1 - sDate2;
+                if(dateSpan >= 0){
+                    iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
+                    return iDays
+                }else{
+                    return -1
+                }
+
+            },
             //选择radio时触发
             radioChoose(val){
                 if(val == 'Party'){

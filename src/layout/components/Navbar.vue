@@ -1,7 +1,8 @@
 <template>
     <section class="nav-bar">
         <div class="menu-bar">
-            <el-breadcrumb separator="/">
+            <icon name="home" scale="2" style="display: inline-block;"></icon>
+            <el-breadcrumb separator="/"  style="display: inline-block;">
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item v-for="item in breadList" :key="item.path">
                     {{item.meta.title}}
@@ -73,9 +74,12 @@ export default {
 
 <style lang="scss" scoped>
 .menu-bar {
-    line-height: 50px;
+    svg {
+        margin: 0 6px 0 0 !important;
+    }
     overflow: hidden;
-    padding-bottom: 10px;
+    padding-bottom: 4px;
+    text-align: left;
     .fl {
         float: left;
         vertical-align: center;

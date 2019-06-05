@@ -25,7 +25,7 @@ export default {
     .app-main {
         background-color: white;
         padding: 20px 30px;
-        height: calc(100% - 24px);
+        height: calc(100% - 35px);
         overflow-x: hidden;
         overflow-y: auto;
     }

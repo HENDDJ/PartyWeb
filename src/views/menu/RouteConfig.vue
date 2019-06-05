@@ -62,9 +62,7 @@
         methods: {
             addFirstClassMenu() {
                 this.handlerVis = true;
-                this.$nextTick(()=> {
-                    this.$refs['handlerForm'].resetFields();
-                })
+
                 this.handlerForm = {};
                 this.handlerForm.meta = {};
             },
@@ -121,8 +119,8 @@
                 // this.$nextTick(()=> {
                 //     this.$refs.handlerForm.resetFields();
                 // })
-                this.handlerForm = {};
-                this.handlerForm.meta = {};
+                this.handlerForm = {   meta: {}};
+
                 this.handlerForm.parentId = data.id;
             },
             /**

@@ -371,7 +371,6 @@
 
 <style scoped>
     .common-crud {
-        margin: 30px auto;
     }
     .btn-right {
         float: right;

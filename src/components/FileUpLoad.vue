@@ -8,7 +8,7 @@
             :on-preview="downLoad"
             :http-request="uploadFile"
             :disabled="disabled">
-            <el-button size="small" type="primary">点击上传</el-button>
+            <el-button v-if="!disabled" size="small" type="primary">点击上传</el-button>
         </el-upload>
     </div>
 </template>
@@ -27,14 +27,19 @@
                 default: false
             },
         },
-        created() {
-            if (!this.value) {
+        watch: {
+            value() {
+                if (!this.value) {
+                    this.files = [];
+                    return;
+                }
                 this.files = [];
-                return;
+                this.value.split(',').forEach(item => {
+                    console.log(item);
+                    this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
+                    //  this.files.push({name: item,  active: false})
+                })
             }
-            this.value.split(',').forEach(item => {
-                this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
-            })
         },
         data() {
             return {

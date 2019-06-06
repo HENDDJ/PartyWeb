@@ -3,19 +3,21 @@
         <div style="width: 100%;margin: 0 auto">
             <el-row :gutter="60" type="flex" justify="center">
                 <el-col :span="12" :xl="{span: 12}">
-                    <el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">
-                        <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
+                    <div class="list-header">
+                        任务列表
+                        <el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">
+                            <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
                     <div class="left-act-list" >
-                            任务列表
                             <transition name="translate" mode="out-in">
                                 <div v-show="activityLoading">
-                                    <div class="list-item" v-for="(item, index) in tableData" :key="item.id">
+                                    <div class="list-item" v-for="(item, index) in tableData" :key="item.id" @click="details(item)">
                                         <div class="status">
                                             <icon name="finished" scale="4.5"></icon>
                                         </div>
@@ -39,7 +41,7 @@
                                         <div class="processing">
                                             <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="50"></el-progress>
                                         </div>
-                                        <div class="detail" @click="details(item)">
+                                        <div class="detail">
                                             <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
                                                 <icon name="more" scale="2" ></icon>
                                             </div>
@@ -57,339 +59,383 @@
                     </el-pagination>
                 </el-col>
                 <el-col :span="12" :xl="{span: 12}">
-                    <div style="border:1px solid #F00;">
-                        <el-button type="primary" @click="lookOrEdit" v-if="lookType">编辑</el-button>
-                        <el-button type="primary" @click="lookOrEdit" v-if="editType">查看</el-button>
-                        <el-button type="danger" @click="del(row)">删除</el-button>
-                        <el-form :model="datailForm" ref="datailForm">
-                            <el-form-item label="任务分类" prop="taskType">
-                                <template v-if="lookType">
-                                    <template v-if="datailForm.taskType === 'Party'">党建任务</template>
-                                    <template v-if="datailForm.taskType === 'DistLearning'">远教任务</template>
-                                </template>
-                                <template v-if="editType">
-                                    <el-radio-group size="medium" v-model="datailForm.taskType"
-                                                    style="margin-left: 10px;">
-                                        <el-radio label="Party">党建任务</el-radio>
-                                        <el-radio label="DistLearning">远教任务</el-radio>
-                                    </el-radio-group>
-                                </template>
-                            </el-form-item>
-                            <el-form-item label="计划名称" prop="title">
-                                <template v-if="lookType">{{this.datailForm.title}}</template>
-                                <template v-if="editType">
-                                    <el-input v-model="datailForm.title" :disabled=disabled></el-input>
-                                </template>
-                            </el-form-item>
-                            <el-form-item label="任务类型" prop="type">
-                                <template v-if="lookType">{{this.datailForm.type}}</template>
-                                <template v-if="editType">
-                                    <el-input v-model="datailForm.type" :disabled=disabled></el-input>
-                                </template>
-                            </el-form-item>
+                    <div class="detail-header">
+                        任务详情
+                        <el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">
+                            <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div class="right-detail">
+                        <!--<el-button type="primary" @click="lookOrEdit" v-if="lookType">编辑</el-button>-->
+                        <!--<el-button type="primary" @click="lookOrEdit" v-if="editType">查看</el-button>-->
+                        <!--<el-button type="danger" @click="del(row)">删除</el-button>-->
 
-                            <el-form-item label="工作要求" prop="context">
-                                <template v-if="lookType">{{this.datailForm.context}}</template>
-                                <template v-if="editType">
-                                    <el-input v-model="datailForm.context" :disabled=disabled></el-input>
-                                </template>
-                            </el-form-item>
 
-                            <el-form-item label="分值" prop="context">
-                                <template v-if="lookType">{{this.datailForm.score}}</template>
-                                <template v-if="editType">
-                                    <el-input-number v-model="datailForm.score" label="分值"
-                                                     style="width: 200px"></el-input-number>
-                                </template>
-                            </el-form-item>
 
-                            <el-form-item label="截止时间" prop="month">
-                                <template v-if="lookType">{{this.datailForm.month}}</template>
-                                <template v-if="editType">
-                                    <el-date-picker v-model="datailForm.month"
-                                                    v-if="editType"
-                                                    type="date"
-                                                    value-format="yyyy-MM-dd"
-                                                    placeholder="选择日期">
-                                    </el-date-picker>
-                                </template>
-                            </el-form-item>
+                        <!--<el-form :model="detailForm" ref="detailForm">-->
+                            <!--<el-form-item label="任务分类" prop="taskType">-->
+                                <!--<template v-if="lookType">-->
+                                    <!--<template v-if="detailForm.taskType === 'Party'">党建任务</template>-->
+                                    <!--<template v-if="detailForm.taskType === 'DistLearning'">远教任务</template>-->
+                                <!--</template>-->
+                                <!--<template v-if="editType">-->
+                                    <!--<el-radio-group size="medium" v-model="detailForm.taskType"-->
+                                                    <!--style="margin-left: 10px;">-->
+                                        <!--<el-radio label="Party">党建任务</el-radio>-->
+                                        <!--<el-radio label="DistLearning">远教任务</el-radio>-->
+                                    <!--</el-radio-group>-->
+                                <!--</template>-->
+                            <!--</el-form-item>-->
+                            <!--<el-form-item label="计划名称" prop="title">-->
+                                <!--<template v-if="lookType">{{this.detailForm.title}}</template>-->
+                                <!--<template v-if="editType">-->
+                                    <!--<el-input v-model="detailForm.title" :disabled=disabled></el-input>-->
+                                <!--</template>-->
+                            <!--</el-form-item>-->
+                            <!--<el-form-item label="任务类型" prop="type">-->
+                                <!--<template v-if="lookType">{{this.detailForm.type}}</template>-->
+                                <!--<template v-if="editType">-->
+                                    <!--<el-input v-model="detailForm.type" :disabled=disabled></el-input>-->
+                                <!--</template>-->
+                            <!--</el-form-item>-->
 
-                            <el-form-item label="提醒时间" prop="alarmTime">
-                                <template v-if="lookType">{{this.datailForm.alarmTime}}</template>
-                                <template v-if="editType">
-                                    <el-date-picker v-model="datailForm.alarmTime"
-                                                    v-if="editType"
-                                                    type="date"
-                                                    value-format="yyyy-MM-ddT00:00:00"
-                                                    placeholder="选择日期">
-                                    </el-date-picker>
-                                </template>
-                            </el-form-item>
-                            <el-form-item label="上传文件">
-                                <CommonFileUpload :value="datailForm.fileUrls" @getValue="datailForm.fileUrls = $event"
-                                                  :diaabled="lookType"></CommonFileUpload>
-                            </el-form-item>
-                            <el-form-item label="上传视频" prop="video" v-if="datailForm.taskType === 'DistLearning'"
-                                          size="mini">
-                                <template v-if="lookType">
-                                    <vs-chip v-for="items in datailForm.video" :key="items.name">
-                                        <vs-avatar icon="send"/>
-                                        {{items.name}}
-                                    </vs-chip>
-                                </template>
-                                <template v-if="editType" id="vd">
-                                    <el-transfer
-                                        filterable
-                                        v-model="datailForm.video"
-                                        :titles="['可选视频', '已选视频']"
-                                        :props="{
-                                      key: 'value',
-                                      label: 'desc'
-                                    }"
-                                        :data="addVideoList">
-                                    </el-transfer>
-                                </template>
-                            </el-form-item>
-                            <el-form-item label="跟踪" v-if="lookType">
-                                <el-table
-                                    :data="trackTable"
-                                    stripe
-                                    style=""
-                                    v-loading="loading" border
-                                    :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
-                                    :default-sort="{}">
-                                    <el-table-column
-                                        prop="tn"
-                                        label="组织名称"
-                                        align="center"
-                                        width="150px"
-                                        :show-overflow-tooltip="true"
-                                    >
-                                    </el-table-column>
-                                    <el-table-column
-                                        prop="passed"
-                                        label="完成个数"
-                                        align="center"
-                                        width="85px"
-                                        :show-overflow-tooltip="true"
-                                    >
-                                    </el-table-column>
-                                    <el-table-column
-                                        prop="waitCheck"
-                                        label="待审核个数"
-                                        align="center"
-                                        width="85px"
-                                        :show-overflow-tooltip="true"
-                                    >
-                                    </el-table-column>
-                                    <el-table-column
-                                        prop="fail"
-                                        label="未完成个数"
-                                        align="center"
-                                        width="85px"
-                                        :show-overflow-tooltip="true"
-                                    >
-                                    </el-table-column>
-                                    <el-table-column
-                                        label="完成比例"
-                                        align="left"
-                                        width="120px"
-                                        :show-overflow-tooltip="true"
-                                    >
-                                        <template slot-scope="scope">
-                                            <el-progress :percentage="percent(scope.row.finishRatio)"
-                                                         v-if="scope.row.finishRatio < 0.1"
-                                                         :stroke-width="5"></el-progress>
-                                            <el-progress :percentage="percent(scope.row.finishRatio)"
-                                                         v-else-if="scope.row.finishRatio < 1"
-                                                         :stroke-width="5"></el-progress>
-                                            <el-progress :percentage="percent(scope.row.finishRatio)" v-else
-                                                         status="success" :stroke-width="5"></el-progress>
-                                        </template>
-                                    </el-table-column>
+                            <!--<el-form-item label="工作要求" prop="context">-->
+                                <!--<template v-if="lookType">{{this.detailForm.context}}</template>-->
+                                <!--<template v-if="editType">-->
+                                    <!--<el-input v-model="detailForm.context" :disabled=disabled></el-input>-->
+                                <!--</template>-->
+                            <!--</el-form-item>-->
+
+                            <!--<el-form-item label="分值" prop="context">-->
+                                <!--<template v-if="lookType">{{this.detailForm.score}}</template>-->
+                                <!--<template v-if="editType">-->
+                                    <!--<el-input-number v-model="detailForm.score" label="分值"-->
+                                                     <!--style="width: 200px"></el-input-number>-->
+                                <!--</template>-->
+                            <!--</el-form-item>-->
+
+                            <!--<el-form-item label="截止时间" prop="month">-->
+                                <!--<template v-if="lookType">{{this.detailForm.month}}</template>-->
+                                <!--<template v-if="editType">-->
+                                    <!--<el-date-picker v-model="detailForm.month"-->
+                                                    <!--v-if="editType"-->
+                                                    <!--type="date"-->
+                                                    <!--value-format="yyyy-MM-dd"-->
+                                                    <!--placeholder="选择日期">-->
+                                    <!--</el-date-picker>-->
+                                <!--</template>-->
+                            <!--</el-form-item>-->
+
+                            <!--<el-form-item label="提醒时间" prop="alarmTime">-->
+                                <!--<template v-if="lookType">{{this.detailForm.alarmTime}}</template>-->
+                                <!--<template v-if="editType">-->
+                                    <!--<el-date-picker v-model="detailForm.alarmTime"-->
+                                                    <!--v-if="editType"-->
+                                                    <!--type="date"-->
+                                                    <!--value-format="yyyy-MM-ddT00:00:00"-->
+                                                    <!--placeholder="选择日期">-->
+                                    <!--</el-date-picker>-->
+                                <!--</template>-->
+                            <!--</el-form-item>-->
+                            <!--<el-form-item label="上传文件">-->
+                                <!--<CommonFileUpload :value="detailForm.fileUrls" @getValue="detailForm.fileUrls = $event"-->
+                                                  <!--:diaabled="lookType"></CommonFileUpload>-->
+                            <!--</el-form-item>-->
+                            <!--<el-form-item label="上传视频" prop="video" v-if="detailForm.taskType === 'DistLearning'"-->
+                                          <!--size="mini">-->
+                                <!--<template v-if="lookType">-->
+                                    <!--<vs-chip v-for="items in detailForm.video" :key="items.name">-->
+                                        <!--<vs-avatar icon="send"/>-->
+                                        <!--{{items.name}}-->
+                                    <!--</vs-chip>-->
+                                <!--</template>-->
+                                <!--<template v-if="editType" id="vd">-->
+                                    <!--<el-transfer-->
+                                        <!--filterable-->
+                                        <!--v-model="detailForm.video"-->
+                                        <!--:titles="['可选视频', '已选视频']"-->
+                                        <!--:props="{-->
+                                      <!--key: 'value',-->
+                                      <!--label: 'desc'-->
+                                    <!--}"-->
+                                        <!--:data="addVideoList">-->
+                                    <!--</el-transfer>-->
+                                <!--</template>-->
+                            <!--</el-form-item>-->
+                            <!--<el-form-item label="跟踪" v-if="lookType">-->
+                                <!--<el-table-->
+                                    <!--:data="trackTable"-->
+                                    <!--stripe-->
+                                    <!--style=""-->
+                                    <!--v-loading="loading" border-->
+                                    <!--:header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"-->
+                                    <!--:default-sort="{}">-->
                                     <!--<el-table-column-->
-                                    <!--label="工作进度"-->
-                                    <!--align="center"-->
-                                    <!--width="100px"-->
-                                    <!--:show-overflow-tooltip="true"-->
+                                        <!--prop="tn"-->
+                                        <!--label="组织名称"-->
+                                        <!--align="center"-->
+                                        <!--width="150px"-->
+                                        <!--:show-overflow-tooltip="true"-->
                                     <!--&gt;-->
-                                    <!--<template slot-scope="scope">-->
-                                    <!--<a style="color:blue;" v-if="scope.row.status === '1'">待审核</a>-->
-                                    <!--<a style="color:greenyellow;" v-if="scope.row.status === '2'">已完成</a>-->
-                                    <!--<a style="color:red;" v-if="scope.row.status === '3'">审核未通过</a>-->
-                                    <!--</template>-->
                                     <!--</el-table-column>-->
-                                    <el-table-column
-                                        label="查看详细"
-                                        align="center"
-                                        width="120px"
-                                        :show-overflow-tooltip="true"
-                                    >
-                                        <template slot-scope="scope">
-                                            <el-button @click="townDetailClick(scope.row)" type="text" size="small">查看
-                                            </el-button>
-                                        </template>
-                                    </el-table-column>
-                                </el-table>
-                                <!--<el-pagination style="text-align: right;margin-top: 20px;" background-->
-                                <!--:total="pageableTrack.total" :current-page.sync="pageableTrack.currentPage"-->
-                                <!--:page-size.sync="pageableTrack.pageSize"-->
-                                <!--@current-change="currentChangeTrack" @size-change="sizeChangeTrack"-->
-                                <!--layout="total, sizes, prev, pager, next">-->
-                                <!--</el-pagination>-->
-                            </el-form-item>
+                                    <!--<el-table-column-->
+                                        <!--prop="passed"-->
+                                        <!--label="完成个数"-->
+                                        <!--align="center"-->
+                                        <!--width="85px"-->
+                                        <!--:show-overflow-tooltip="true"-->
+                                    <!--&gt;-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                        <!--prop="waitCheck"-->
+                                        <!--label="待审核个数"-->
+                                        <!--align="center"-->
+                                        <!--width="85px"-->
+                                        <!--:show-overflow-tooltip="true"-->
+                                    <!--&gt;-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                        <!--prop="fail"-->
+                                        <!--label="未完成个数"-->
+                                        <!--align="center"-->
+                                        <!--width="85px"-->
+                                        <!--:show-overflow-tooltip="true"-->
+                                    <!--&gt;-->
+                                    <!--</el-table-column>-->
+                                    <!--<el-table-column-->
+                                        <!--label="完成比例"-->
+                                        <!--align="left"-->
+                                        <!--width="120px"-->
+                                        <!--:show-overflow-tooltip="true"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--<el-progress :percentage="percent(scope.row.finishRatio)"-->
+                                                         <!--v-if="scope.row.finishRatio < 0.1"-->
+                                                         <!--:stroke-width="5"></el-progress>-->
+                                            <!--<el-progress :percentage="percent(scope.row.finishRatio)"-->
+                                                         <!--v-else-if="scope.row.finishRatio < 1"-->
+                                                         <!--:stroke-width="5"></el-progress>-->
+                                            <!--<el-progress :percentage="percent(scope.row.finishRatio)" v-else-->
+                                                         <!--status="success" :stroke-width="5"></el-progress>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+                                    <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                                    <!--&lt;!&ndash;label="工作进度"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;width="100px"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;:show-overflow-tooltip="true"&ndash;&gt;-->
+                                    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<template slot-scope="scope">&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<a style="color:blue;" v-if="scope.row.status === '1'">待审核</a>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<a style="color:greenyellow;" v-if="scope.row.status === '2'">已完成</a>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<a style="color:red;" v-if="scope.row.status === '3'">审核未通过</a>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+                                    <!--<el-table-column-->
+                                        <!--label="查看详细"-->
+                                        <!--align="center"-->
+                                        <!--width="120px"-->
+                                        <!--:show-overflow-tooltip="true"-->
+                                    <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                            <!--<el-button @click="townDetailClick(scope.row)" type="text" size="small">查看-->
+                                            <!--</el-button>-->
+                                        <!--</template>-->
+                                    <!--</el-table-column>-->
+                                <!--</el-table>-->
+                                <!--&lt;!&ndash;<el-pagination style="text-align: right;margin-top: 20px;" background&ndash;&gt;-->
+                                <!--&lt;!&ndash;:total="pageableTrack.total" :current-page.sync="pageableTrack.currentPage"&ndash;&gt;-->
+                                <!--&lt;!&ndash;:page-size.sync="pageableTrack.pageSize"&ndash;&gt;-->
+                                <!--&lt;!&ndash;@current-change="currentChangeTrack" @size-change="sizeChangeTrack"&ndash;&gt;-->
+                                <!--&lt;!&ndash;layout="total, sizes, prev, pager, next">&ndash;&gt;-->
+                                <!--&lt;!&ndash;</el-pagination>&ndash;&gt;-->
+                            <!--</el-form-item>-->
 
-                        </el-form>
-                        <el-button type="primary" :loading="submitLoading" @click="detailSubmit('datailForm')"
-                                   v-if="editType">确 定
-                        </el-button>
-                    </div>
-                </el-col>
-            </el-row>
-        </div>
-        <template lang="html">
-            <div class="centerx">
-                <el-dialog
-                    v-if="dialogVisible"
-                    :title="title"
-                    :visible.sync="dialogVisible"
-                    width="880px"
-                    align="left"
-                    :modal-append-to-body='false'
-                    :append-to-body="true"
-                    :before-close="handleClose">
-                    <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" label-width="170px">
-                        <template v-if="fileType">
-                            <el-form-item label="任务分类" prop="taskType">
-                                <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;"
-                                                @change="radioChoose">
-                                    <el-radio label="Party">党建任务</el-radio>
-                                    <el-radio label="DistLearning">远教任务</el-radio>
-                                </el-radio-group>
-                            </el-form-item>
-                            <el-form-item label="计划名称" prop="title">
-                                <el-input v-model="form.title" :disabled=disabled></el-input>
-                            </el-form-item>
-                            <el-form-item label="任务类型" prop="type">
-                                <el-input v-model="form.type" :disabled=disabled></el-input>
-                            </el-form-item>
-                            <el-form-item label="工作要求" prop="context">
-                                <el-input v-model="form.context" :disabled=disabled></el-input>
-                            </el-form-item>
-                            <el-form-item label="分值" prop="score">
-                                <el-input-number v-model="form.score" label="分值" style="width: 200px"></el-input-number>
-                            </el-form-item>
-                            <el-form-item label="截止时间" prop="monVal">
-                                <el-date-picker
-                                    v-model="monVal"
-                                    type="date"
-                                    placeholder="选择日期">
-                                </el-date-picker>
-                            </el-form-item>
-                        </template>
-                        <el-form-item label="上传文件" prop="fileUrls">
-                            <CommonFileUpload :value="form.fileUrls"
-                                              @getValue="form.fileUrls = $event"></CommonFileUpload>
-                        </el-form-item>
-                        <el-form-item label="上传视频" prop="video" v-if="addVideo">
-                            <template>
-                                <el-transfer
-                                    filterable
-                                    v-model="form.video"
-                                    :titles="['可选视频', '已选视频']"
-                                    :props="{
-                                      key: 'value',
-                                      label: 'desc'
-                                    }"
-                                    :data="addVideoList">
-                                </el-transfer>
-                            </template>
-                        </el-form-item>
-                    </el-form>
-                    <div slot="footer" class="dialog-footer  footer-position">
-                        <el-button type="primary" :loading="submitLoading" @click="submit('form')">确 定</el-button>
-                        <el-button @click="handleClose">取 消</el-button>
-                    </div>
-                </el-dialog>
-            </div>
-        </template>
-        <el-dialog
-            v-if="townDetailVis"
-            :title="townTitle + '完成情况详情'"
-            :visible.sync="townDetailVis"
-            width="920px"
-            align="left"
-            :modal-append-to-body='false'
-            :append-to-body="true"
-            :before-close="townDetailClose">
-            <el-row :gutter="10">
-                <el-col :span="12">
-                    <el-table
-                        :data="townDetailTable"
-                        stripe
-                        style="width:450px"
-                        v-loading="loading" border
-                        :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
-                        :default-sort="{}">
-                        <el-table-column
-                            prop="cn"
-                            label="下属组织"
-                            align="center"
-                            width="125px"
-                            :show-overflow-tooltip="true"
-                        >
-                        </el-table-column>
-                        <el-table-column
-                            label="状态"
-                            align="center"
-                            width="120px"
-                            :show-overflow-tooltip="true"
-                        >
-                            <template slot-scope="scope">
-                                <a style="color:blue;" v-if="scope.row.sa === '1'">待审核</a>
-                                <a style="color:greenyellow;" v-else-if="scope.row.sa === '2'">已完成</a>
-                                <a style="color:red;" v-else>未完成</a>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                            label="记录查看"
-                            align="center"
-                            width="205px"
-                            :show-overflow-tooltip="true"
-                        >
-                            <template slot-scope="scope">
-                                <el-button type="text" icon="el-icon-picture-outline" @click="">电视截图</el-button>
-                                <el-button type="text" icon="el-icon-mobile-phone" @click="">手机截图</el-button>
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                </el-col>
-                <el-col :span="10">
-                    <div style="border:1px solid #F00;">
+                        <!--</el-form>-->
+                        <!--<el-button type="primary" :loading="submitLoading" @click="detailSubmit('detailForm')"-->
+                                   <!--v-if="editType">确 定-->
+                        <!--</el-button>-->
+                    <el-row class="detail-row">
+                        <el-col :span="5" :xl="{span: 4, offset: 2}">任务名称：</el-col>
+                        <el-col :span="5">&nbsp;{{detailForm.title}}</el-col>
+                        <el-col :span="4" :xl="{span: 4, offset: 2}">任务类型:</el-col>
+                        <el-col :span="5">&nbsp;{{detailForm.type}}</el-col>
+                    </el-row>
+                    <el-row class="detail-row">
+                        <el-col :span="5" :xl="{span: 4, offset: 2}">截止日期：</el-col>
+                        <el-col :span="5">&nbsp;{{detailForm.month}}</el-col>
+                        <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">提醒时间:</el-col>
+                        <el-col :span="5">&nbsp;{{detailForm.alarmTime || '暂无'}}</el-col>
+                    </el-row>
+                    <el-row class="detail-row">
+                        <el-col :span="5" :xl="{span: 4, offset: 2}">任务分值：</el-col>
+                        <el-col :span="4" style="color: red;font-weight: bold">&nbsp;{{detailForm.score || 0}}分</el-col>
+                    </el-row>
+                    <el-row class="detail-row">
+                        <el-col :span="5"  :xl="{span: 4, offset: 2}">工作要求：</el-col>
+                        <el-col :span="15">&nbsp;{{detailForm.context}}</el-col>
+                    </el-row>
+                    <el-row class="detail-row">
+                        <el-col :span="5"  :xl="{span: 4, offset: 2}">附件清单：</el-col>
+                        <el-col :span="15">
+                            <CommonFileUpload :value="detailForm.fileUrls" @getValue="detailForm.fileUrls = $event" :disabled="lookType"></CommonFileUpload>
+                        </el-col>
+                    </el-row>
 
-                        <el-timeline>
-                            <el-timeline-item
-                                v-for="(activity, index) in activities"
-                                :key="index"
-                                :timestamp="activity.timestamp"
-                                :placement="activity.placement">
-                                <template>
-                                    <vs-images hover="scale">
-                                        <vs-image :key="index" :src="`https://picsum.photos/400/400?image=1${index}`"
-                                                  v-for="(image, index) in 7"/>
-                                    </vs-images>
-                                </template>
-                            </el-timeline-item>
-                        </el-timeline>
-                    </div>
-                </el-col>
-            </el-row>
-            <div slot="footer" class="dialog-footer  footer-position">
-                <el-button @click="townDetailClose">关 闭</el-button>
-            </div>
-        </el-dialog>
-        <!--<el-dialog v-if="remindVis"-->
+
+
+
+</div>
+</el-col>
+</el-row>
+</div>
+<template lang="html">
+<div class="centerx">
+<el-dialog
+v-if="dialogVisible"
+:title="title"
+:visible.sync="dialogVisible"
+width="880px"
+align="left"
+:modal-append-to-body='false'
+:append-to-body="true"
+:before-close="handleClose">
+<el-form :inline="true" :model="form" ref="form" class="demo-form-inline" label-width="170px">
+  <template v-if="fileType">
+	  <el-form-item label="任务分类" prop="taskType">
+		  <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;"
+						  @change="radioChoose">
+			  <el-radio label="Party">党建任务</el-radio>
+			  <el-radio label="DistLearning">远教任务</el-radio>
+		  </el-radio-group>
+	  </el-form-item>
+	  <el-form-item label="计划名称" prop="title">
+		  <el-input v-model="form.title" :disabled=disabled></el-input>
+	  </el-form-item>
+	  <el-form-item label="任务类型" prop="type">
+		  <el-input v-model="form.type" :disabled=disabled></el-input>
+	  </el-form-item>
+	  <el-form-item label="工作要求" prop="context">
+		  <el-input v-model="form.context" :disabled=disabled></el-input>
+	  </el-form-item>
+	  <el-form-item label="分值" prop="score">
+		  <el-input-number v-model="form.score" label="分值" style="width: 200px"></el-input-number>
+	  </el-form-item>
+	  <el-form-item label="截止时间" prop="monVal">
+		  <el-date-picker
+			  v-model="monVal"
+			  type="date"
+			  placeholder="选择日期">
+		  </el-date-picker>
+	  </el-form-item>
+  </template>
+  <el-form-item label="上传文件" prop="fileUrls">
+	  <CommonFileUpload :value="form.fileUrls"
+						@getValue="form.fileUrls = $event"></CommonFileUpload>
+  </el-form-item>
+  <el-form-item label="上传视频" prop="video" v-if="addVideo">
+	  <template>
+		  <el-transfer
+			  filterable
+			  v-model="form.video"
+			  :titles="['可选视频', '已选视频']"
+			  :props="{
+				key: 'value',
+				label: 'desc'
+			  }"
+			  :data="addVideoList">
+		  </el-transfer>
+	  </template>
+  </el-form-item>
+</el-form>
+<div slot="footer" class="dialog-footer  footer-position">
+  <el-button type="primary" :loading="submitLoading" @click="submit('form')">确 定</el-button>
+  <el-button @click="handleClose">取 消</el-button>
+</div>
+</el-dialog>
+</div>
+</template>
+<el-dialog
+v-if="townDetailVis"
+:title="townTitle + '完成情况详情'"
+:visible.sync="townDetailVis"
+width="920px"
+align="left"
+:modal-append-to-body='false'
+:append-to-body="true"
+:before-close="townDetailClose">
+<el-row :gutter="10">
+<el-col :span="12">
+<el-table
+  :data="townDetailTable"
+  stripe
+  style="width:450px"
+  v-loading="loading" border
+  :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
+  :default-sort="{}">
+  <el-table-column
+	  prop="cn"
+	  label="下属组织"
+	  align="center"
+	  width="125px"
+	  :show-overflow-tooltip="true"
+  >
+  </el-table-column>
+  <el-table-column
+	  label="状态"
+	  align="center"
+	  width="120px"
+	  :show-overflow-tooltip="true"
+  >
+	  <template slot-scope="scope">
+		  <a style="color:blue;" v-if="scope.row.sa === '1'">待审核</a>
+		  <a style="color:greenyellow;" v-else-if="scope.row.sa === '2'">已完成</a>
+		  <a style="color:red;" v-else>未完成</a>
+	  </template>
+  </el-table-column>
+  <el-table-column
+	  label="记录查看"
+	  align="center"
+	  width="205px"
+	  :show-overflow-tooltip="true"
+  >
+	  <template slot-scope="scope">
+		  <el-button type="text" icon="el-icon-picture-outline" @click="">电视截图</el-button>
+		  <el-button type="text" icon="el-icon-mobile-phone" @click="">手机截图</el-button>
+	  </template>
+  </el-table-column>
+</el-table>
+</el-col>
+<el-col :span="10">
+<div style="border:1px solid #F00;">
+
+  <el-timeline>
+	  <el-timeline-item
+		  v-for="(activity, index) in activities"
+		  :key="index"
+		  :timestamp="activity.timestamp"
+		  :placement="activity.placement">
+		  <template>
+			  <vs-images hover="scale">
+				  <vs-image :key="index" :src="`https://picsum.photos/400/400?image=1${index}`"
+							v-for="(image, index) in 7"/>
+			  </vs-images>
+		  </template>
+	  </el-timeline-item>
+  </el-timeline>
+</div>
+</el-col>
+</el-row>
+<div slot="footer" class="dialog-footer  footer-position">
+<el-button @click="townDetailClose">关 闭</el-button>
+</div>
+</el-dialog>
+<!--<el-dialog v-if="remindVis"-->
         <!--title="提醒"-->
         <!--:visible.sync="remindVis"-->
         <!--width="880px"-->
@@ -468,8 +514,8 @@
                 options: [],
                 chooseType: '',
                 form: {taskType: 'Party', score: 10},
-                datailForm: {},
-                datailFormNext: {},
+                detailForm: {},
+                detailFormNext: {},
                 disabled: false,
                 dialogVisible: false,
                 title: '任务发布',
@@ -691,12 +737,11 @@
             },
             //详情
             details(val) {
-                console.log(val)
                 this.row = val
-                this.datailForm = JSON.parse(JSON.stringify(val))
-                this.datailFormNext = JSON.parse(JSON.stringify(val))
-                var fileStr = ''
-                for (var i in val.urls) {
+                this.detailForm = JSON.parse(JSON.stringify(val))
+                this.detailFormNext = JSON.parse(JSON.stringify(val))
+                let fileStr = '';
+                for (let i in val.urls) {
                     if (i == val.urls.length - 1) {
                         fileStr = fileStr + val.urls[i].url
                     } else {
@@ -704,7 +749,7 @@
                     }
                 }
 
-                this.datailForm.fileUrls = fileStr
+                this.detailForm.fileUrls = fileStr
                 this.lookType = true
                 this.editType = false
                 let path = `${this.apiRootTrack}/${val.id}perList`;
@@ -718,15 +763,15 @@
                     this.lookType = false
                     this.editType = true
                     this.loadVideo();
-                    var data = this.datailForm.video
-                    this.datailForm.video = data.map(item => {
+                    var data = this.detailForm.video
+                    this.detailForm.video = data.map(item => {
                         return '{"name":"' + item.name + '","lengthOfTime":"' + item.lengthOfTime + '","videoUrl":"' + item.videoUrl + '","videoCover":"' + item.videoCover + '"}'
                     })
-                    console.log(this.datailForm, 2)
+                    console.log(this.detailForm, 2)
                 } else {
-                    console.log(this.datailFormNext)
-                    this.datailForm = JSON.parse(JSON.stringify(this.datailFormNext))
-                    console.log(this.datailForm)
+                    console.log(this.detailFormNext)
+                    this.detailForm = JSON.parse(JSON.stringify(this.detailFormNext))
+                    console.log(this.detailForm)
                     this.lookType = true
                     this.editType = false
                 }
@@ -863,20 +908,20 @@
             detailSubmit(form) {
                 this.$refs[form].validate((valid) => {
                     if (valid) {
-                        this.datailForm.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
-                        var beforeUrl = this.datailForm.fileUrls
-                        if (this.datailForm.fileUrls) {
-                            var ss = this.datailForm.fileUrls.toString().split(",")
-                            this.datailForm.fileUrls = ss
+                        this.detailForm.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
+                        var beforeUrl = this.detailForm.fileUrls
+                        if (this.detailForm.fileUrls) {
+                            var ss = this.detailForm.fileUrls.toString().split(",")
+                            this.detailForm.fileUrls = ss
                         }
-                        var video = this.datailForm.video
+                        var video = this.detailForm.video
                         var videoList = []
                         video.forEach(item => {
                             videoList.push(JSON.parse(item))
                         })
-                        this.datailForm.video = videoList
-                        console.log(this.datailForm.video)
-                        this.$http('Post', '/identity/parActivity/', this.datailForm, false).then(
+                        this.detailForm.video = videoList
+                        console.log(this.detailForm.video)
+                        this.$http('Post', '/identity/parActivity/', this.detailForm, false).then(
                             (data) => {
                                 this.$message({
                                     type: 'success',
@@ -885,7 +930,7 @@
                                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                                 this.loadTableData(path);
 
-                                this.datailForm.fileUrls = beforeUrl
+                                this.detailForm.fileUrls = beforeUrl
                                 this.lookType = true
                                 this.editType = false
                             }).catch(res => {
@@ -963,10 +1008,10 @@
 <style type="scss">
     .left-act-list {
         width: 100%;
-        background-color: rgb(250, 250, 250);
+        /*background-color: rgb(250, 250, 250);*/
         padding: 5px 20px;
         line-height: 24px;
-        min-height: 646px;
+        min-height: 668px;
     }
     .list-item {
         background-color: white;
@@ -975,7 +1020,8 @@
         display: flex;
         padding: 14px 20px;
         transition: all .4s;
-        /*box-shadow: 2px 2px 2px #444;*/
+        box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+        /*box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);*/
     }
     .title-type {
         flex: 1;
@@ -1047,6 +1093,20 @@
         transform: translateY(-5px) scale3d(1.05,1.05,1.05);
         background-color: #2ae1ff38;
         cursor: pointer;
+    }
+    .right-detail {
+        font-size: 16px;
+        width: 100%;
+        height: 100%;
+        padding: 5px 20px;
+        box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+        margin: 15px 0;
+    }
+    .detail-row {
+        margin: 20px 0;
+    }
+    .detail-row .el-col:nth-child(2n) {
+        text-align: left;
     }
 </style>
 <style>

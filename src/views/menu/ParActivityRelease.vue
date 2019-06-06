@@ -136,16 +136,23 @@
                 </el-row>
             </el-form>
             <div slot="footer" class="dialog-footer  footer-position">
+                <el-row>
+                    <el-col :span="2">
+                        <div>&nbsp;</div>
+                    </el-col>
+                    <el-col :span="8">
                 <el-button type="primary"  @click="submit('form')">确 定</el-button>
-                <el-button @click="ss()">重 置</el-button>
+                <el-button @click="reWrite()">重 置</el-button>
+                </el-col>
+                </el-row>
             </div>
 
         </div>
     </template>
 
 </div>
-    <div class="el-loading"> <div class="load"><a style="color: #409EFF">数据上传中，请稍后</a>  <Spinner name="line-scale-pulse-out-rapid"  color="#7cff66"/><div><Spinner name="ball-scale-multiple" color="#b2ffea"/></div>
-        <Spinner name="ball-scale-multiple" color="#b2ffea"/></div>
+    <div class="el-loading" v-if="isVisible"> <div class="load"><a style="color: #409EFF">数据上传中，请稍后</a>  <Spinner name="line-scale-pulse-out-rapid"  color="#7cff66"/><div></div>
+       </div>
     </div></div>
 
 </template>
@@ -188,7 +195,7 @@
                 count: 1,
                 activeNames:['1'],
                 videoColl:'点击隐藏',
-                isVisible:true
+                isVisible:false
             }
         },
         watch: {
@@ -204,6 +211,11 @@
             CommonFileUpload,
         },
         methods: {
+            reWrite(){
+                this.form = {taskType: 'Party',score:10}
+                this.$refs.tree.setChecked([]);
+            },
+            //给taskObject赋值
             ss(){
                 var ids = {sid:[],zid:[],cid:[]}
                 this.$refs.tree.getCheckedNodes().forEach(item=>{
@@ -264,6 +276,7 @@
             submit(form) {
                 this.$refs[form].validate((valid) => {
                     if (valid) {
+                        this.isVisible = true
                         this.form.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
                         this.form.status = '1'
                         this.form.month = this.monVal
@@ -282,20 +295,18 @@
                         }
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {
+                                this.isVisible = false
                                 this.$message({
                                     type: 'success',
                                     message: '上传成功'
                                 })
                                 this.$refs[form].resetFields();
-                                let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
-                                this.queryForm.taskType = this.form.taskType
-                                let type = this.form.taskType
-                                this.loadTableData(path);
-                                this.form = {taskType: type}
+                                this.form = {taskType: 'Party'}
                                 this.dialogVisible = false
 
                             }).catch(res => {
                             this.dialogVisible = true;
+                            this.isVisible = false
                             console.log(res)
                             this.$message({
                                 type: 'error',
@@ -324,7 +335,7 @@
 
 <style>
     .footer-position {
-        margin-right: 86px;
+        margin-right: -120px;
     }
 
     .el-checkbox.is-bordered.el-checkbox--mini {

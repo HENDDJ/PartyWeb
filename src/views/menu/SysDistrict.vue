@@ -179,7 +179,6 @@
             showParentList() {
                 this.$http('POST',`identity/sysDistrict/listSome` ,false).then(data => {
                     this.parentList = data;
-                    console.log(this.parentList)
                 })
             }
         },

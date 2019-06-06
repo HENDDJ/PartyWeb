@@ -24,41 +24,41 @@ export default {
         }
     ],
 
-        'Education': [
-            {
-                value: 'PrimarySchool',
-                label: '小学'
-            },
-            {
-                value: 'MiddleSchool',
-                label: '初中'
-            },
-            {
-                value: 'HighSchool',
-                label: '高中'
-            },
-            {
-                value: 'JuniorCollege',
-                label: '大专'
-            },
-            {
-                value: 'Undergraduate',
-                label: '本科'
-            },
-            {
-                value: 'Master',
-                label: '硕士及以上'
-            }
-            ],
-        'TrueFalse' :[
-            {
-                value: 'true',
-                label: '是'
-            },
-            {
-                value: 'false',
-                label: '否'
-            }
+    'Education': [
+        {
+            value: 'PrimarySchool',
+            label: '小学'
+        },
+        {
+            value: 'MiddleSchool',
+            label: '初中'
+        },
+        {
+            value: 'HighSchool',
+            label: '高中'
+        },
+        {
+            value: 'JuniorCollege',
+            label: '大专'
+        },
+        {
+            value: 'Undergraduate',
+            label: '本科'
+        },
+        {
+            value: 'Master',
+            label: '硕士及以上'
+        }
+        ],
+    'TrueFalse' :[
+        {
+            value: 'true',
+            label: '是'
+        },
+        {
+            value: 'false',
+            label: '否'
+        }
     ],
     'Sex': [
         {
@@ -84,5 +84,41 @@ export default {
             value :'',
             label :'全部'
         }
-    ]
+    ],
+    'PositionType': [
+        {
+            value :'MEMBER_EDUCATION',
+            label :'党员教育室'
+        },
+        {
+            value :'PARTY_CARE',
+            label :'党内关爱室'
+        },
+        {
+            value :'ORGANIZATIONAL_CONFERENCE',
+            label :'组织议事室'
+        },
+        {
+            value :'PARTY_STUDIO',
+            label :'党群工作室'
+        }
+    ],
+    'Post': [
+        {
+            value :'SECRETARY',
+            label :'书记'
+        },
+        {
+            value :'DEPUTY_SECRETARY',
+            label :'副书记'
+        },
+        {
+            value :'DIRECTOR',
+            label :'主任'
+        },
+        {
+            value :'DEPUTY_DIRECTOR',
+            label :'副主任'
+        }
+    ],
 }

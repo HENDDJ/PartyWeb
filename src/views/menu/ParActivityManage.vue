@@ -1,6 +1,6 @@
 <template>
     <section class="activity-management">
-        <div style="width: 90%;margin: 0 auto">
+        <div style="width: 100%;margin: 0 auto">
             <el-row :gutter="60" type="flex" justify="center">
                 <el-col :span="12" :xl="{span: 12}">
                     <el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">
@@ -11,104 +11,45 @@
                             :value="item.value">
                         </el-option>
                     </el-select>
-
-                    <div class="left-act-list">
-
-                        任务列表
-                        <template v-for="(item, index) in tableData">
-                            <div class="list-item">
-                                <div class="title-type">
-                                    <p class="title">{{item.title}}</p>
-                                    <p class="type">{{item.type}}</p>
-                                </div>
-                                <div class="left-date">
-                                    <p class="label">截止日期：<span class="value">{{item.month}}</span></p>
-                                </div>
-                                <div class="sepertor">
-                                    <p style="border-right: 1px solid #888">&nbsp;</p>
-                                </div>
-                                <div class="left-time">
-                                    <template v-if="calcLeftDays(item.month)">
-                                        <icon name="miaobiao" scale="3.5"></icon>
-                                        <p><span>{{calcLeftDays(item.month)}}</span>天</p>
-                                    </template>
-                                    <template v-else>&nbsp;</template>
-                                </div>
-                                <div class="processing">
-                                    <el-progress style="width: 100%" :stroke-width="6" :percentage="50"></el-progress>
-                                </div>
-                                <div class="detail">
-                                    <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
-                                        <icon name="more" scale="2" ></icon>
+                    <div class="left-act-list" >
+                            任务列表
+                            <transition name="translate" mode="out-in">
+                                <div v-show="activityLoading">
+                                    <div class="list-item" v-for="(item, index) in tableData" :key="item.id">
+                                        <div class="status">
+                                            <icon name="finished" scale="4.5"></icon>
+                                        </div>
+                                        <div class="title-type">
+                                            <p class="title">{{item.title}}</p>
+                                            <p class="type">{{item.type}}</p>
+                                        </div>
+                                        <div class="left-date">
+                                            <p class="label">截止日期：<span class="value">{{item.month}}</span></p>
+                                        </div>
+                                        <div class="sepertor">
+                                            <p style="border-right: 1px solid #888">&nbsp;</p>
+                                        </div>
+                                        <div class="left-time">
+                                            <template v-if="calcLeftDays(item.month)">
+                                                <icon name="miaobiao" scale="3.5"></icon>
+                                                <p><span>{{calcLeftDays(item.month)}}</span>天</p>
+                                            </template>
+                                            <template v-else>&nbsp;</template>
+                                        </div>
+                                        <div class="processing">
+                                            <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="50"></el-progress>
+                                        </div>
+                                        <div class="detail" @click="details(item)">
+                                            <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
+                                                <icon name="more" scale="2" ></icon>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </template>
-                    </div>
-
-
-
-
-                    <el-table
-                        :data="tableData"
-                        stripe
-                        style=""
-                        v-loading="loading" border
-                        :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
-                        :default-sort="{prop: 'month', order: 'descending'}">
-                        <el-table-column
-                            prop="title"
-                            label="计划名称"
-                            align="center"
-                            width="200px"
-                            :show-overflow-tooltip="true"
-                        >
-                        </el-table-column>
-                        <el-table-column
-                            prop="type"
-                            label="任务类型"
-                            align="center"
-                            width="150px"
-                            :show-overflow-tooltip="true">
-                        </el-table-column>
-                        <!--<el-table-column-->
-                        <!--prop="context"-->
-                        <!--label="工作要求"-->
-                        <!--align="center"-->
-                        <!--:show-overflow-tooltip="true"-->
-                        <!--&gt;-->
-                        <!--</el-table-column>-->
-                        <el-table-column
-                            label="截止时间"
-                            prop="month"
-                            sortable
-                            align="center"
-                            width="120px"
-                            :show-overflow-tooltip="true">
-                        </el-table-column>
-                        <el-table-column
-                            label="任务状态"
-                            align="center"
-                            width="120px">
-                            <template slot-scope="scope">
-                                    <a v-if="datedifference(scope.row.month)<0"  style="color:greenyellow">已完成</a>
-                                <a v-else-if="datedifference(scope.row.month)<7" style="color:darkorange">即将过期</a>
-                                <a v-else>进行中</a>
-                            </template>
-
-                        </el-table-column>
-                        <el-table-column label="操作" align="center">
-                            <template slot-scope="scope">
-                                <el-button @click="details(scope.row)" type="text" size="small">详情</el-button>
-                                <!--<el-button @click="remind(scope.row)" type="text" size="small">提醒</el-button>-->
-                                <!--<el-button @click="follow(scope.row)" type="text" size="small">跟踪</el-button>-->
-                                <!--<el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>-->
-                                <!--<el-button @click="enclosure(scope.row)" type="text" size="small">附件</el-button>-->
-                                <!--<el-button @click="del(scope.row)" type="text" size="small">删除</el-button>-->
-                            </template>
-                        </el-table-column>
-                    </el-table>
-                    <el-pagination style="text-align: right;margin-top: 20px;" background
+                            </transition>
+                        </div>
+                    <el-pagination style="text-align: right;margin-top: 10px;" background
+                                   :page-sizes="[5, 7, 10]"
                                    :total="pageable.total" :current-page.sync="pageable.currentPage"
                                    :page-size.sync="pageable.pageSize"
                                    @current-change="currentChange" @size-change="sizeChange"
@@ -514,12 +455,12 @@
                 pageable: {
                     total: 0,
                     currentPage: 1,
-                    pageSize: 10
+                    pageSize: 7
                 },
                 pageableTrack: {
                     total: 0,
                     currentPage: 1,
-                    pageSize: 5
+                    pageSize: 10
                 },
                 apiRoot: '/identity/parActivity',
                 apiRootTrack: 'identity/parActivityPerform',
@@ -576,7 +517,8 @@
                     content: '默认样式的节点',
                     timestamp: '2018-04-03 20:46',
                     placement: "top"
-                }]
+                }],
+                activityLoading: false
             }
         },
         watch: {
@@ -697,11 +639,13 @@
             // 获取表格数据
             loadTableData(path) {
                 path += `&sort=month,desc`;
+                this.activityLoading = false;
                 this.$http('POST', path, this.queryForm, false).then(
                     data => {
                         this.tableData = data.content;
                         this.pageable.total = data.totalElements;
                         this.loading = false;
+                        this.activityLoading = true;
                     }
                 ).catch(res => {
                     this.loading = false;
@@ -1020,9 +964,9 @@
     .left-act-list {
         width: 100%;
         background-color: rgb(250, 250, 250);
-        padding: 0 20px;
+        padding: 5px 20px;
         line-height: 24px;
-
+        min-height: 646px;
     }
     .list-item {
         background-color: white;
@@ -1048,11 +992,11 @@
         flex: 1.2;
         display: flex;
         align-items:center;
+        justify-content:center;
     }
     .left-date .label {
         font-size: 12px;
         color: #999999;
-        margin-right: 4px;
     }
     .left-date .value {
         font-size: 14px;
@@ -1061,26 +1005,29 @@
         color: #444;
     }
     .sepertor {
-        flex: 0.1;
+        flex: 0 0 6px;
         display: flex;
         align-items:center;
+        justify-content:center;
     }
     .left-time {
-        flex: 1;
+        flex:  0.8;
         display: flex;
         align-items:center;
         font-size: 14px;
+        justify-content:center;
     }
     .processing {
-        flex: 1.2;
+        flex: 1.4;
         display: flex;
         align-items:center;
+        justify-content:center;
     }
     .detail {
-        flex: .2;
+        flex: 0 0 30px;
         display: flex;
-        padding-left: 20px;
         align-items:center;
+        justify-content:center;
     }
     .detail svg {
         margin: 5px 0 0 4px;
@@ -1088,10 +1035,27 @@
     .left-time svg {
         margin: 0 6px 0 6px;
     }
+    .status {
+        flex: 0 0 45px;
+        justify-content: right;
+        align-items: center;
+    }
+    .status svg {
+        margin: 5px 0 0 0;
+    }
     .list-item:hover {
         transform: translateY(-5px) scale3d(1.05,1.05,1.05);
         background-color: #2ae1ff38;
         cursor: pointer;
+    }
+</style>
+<style>
+    .translate-enter,.translate-leave-to{
+        opacity: 0;
+        transform: translateY(80px);
+    }
+    .translate-enter-active, .translate-leave-active{
+        transition: all 0.5s ease;
     }
 </style>
 

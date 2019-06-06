@@ -3,7 +3,11 @@
         <vs-tabs :color="colorx">
             <vs-tab @click="colorx = 'success'" label="村干部信息">
                 <div class="con-tab-ejemplo">
-                    <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns"></CommonCRUD>
+                    <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns">
+                        <template slot="handle" slot-scope="scope" >
+                                {{ scope.row.post }}
+                        </template>
+                    </CommonCRUD>
                 </div>
             </vs-tab>
             <vs-tab @click="handleSelect()" label="岗位信息">
@@ -17,6 +21,8 @@
 
 <script>
     import CommonCRUD from '@/components/CommonCRUD';
+    import LookUp from '@/lookup';
+    import { tansfer } from "../../lookup/transfer";
     export default {
         name: "VillageCadres",
         data(){
@@ -29,6 +35,12 @@
                     {
                         name: 'name',
                         des: '名称'
+                    },
+                    {
+                        name: 'post',
+                        des: '职位',
+                        transferType: 'lookup',
+                        lookupKey: 'Post'
                     },
                     {
                         name: 'districtName',
@@ -52,7 +64,13 @@
                     {
                         name: 'name',
                         des: '名称',
-                        type: 'string'
+                        type: 'string',
+                        disabled: true,
+                    },
+                    {
+                        name: 'post',
+                        des: '职位',
+                        type: 'select',
                     },
                     {
                         name: 'districtId',
@@ -92,7 +110,17 @@
                     this.villageCadreList = data;
                     this.positionFormColumns.filter( item => item.name === 'cadreId')[0].options = data.map(item => { return {value: item.id, label: item.name}});
                 });
+                this.positionFormColumns.filter(item => item.name === 'post')[0].options = LookUp['Post'];
             },
+            addcadreColumns(){
+                this.cadreColumns = [];
+                this.cadreColumns.length = 0;
+                let temp = JSON.parse(JSON.stringify(this.$store.state.classInfo.properties));
+                this.cadreColumns = temp;
+                let columsItems = {slot:true,name:'post',des:'职位', transferType: 'lookup', lookupKey: 'Post',slotName:'handle'};
+                this.cadreColumns.push(columsItems);
+
+            }
         },
         components: {
             CommonCRUD
@@ -100,6 +128,9 @@
         created(){
             this.cadreColumns = this.$store.state.classInfo.properties;
             this.cadreFormColumns =this.$store.state.classInfo.properties;
+            this.addcadreColumns();
+            tansfer(this.positionColumns);
+            tansfer(this.cadreColumns);
         }
     }
 </script>

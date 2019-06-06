@@ -976,6 +976,7 @@
         padding: 14px 20px;
         transition: all .4s;
         /*box-shadow: 2px 2px 2px #444;*/
+        box-shadow:0px 15px 35px rgb(50, 50, 93,0.1),0px 5px 15px rgb(0,0,0,0.07);
     }
     .title-type {
         flex: 1;

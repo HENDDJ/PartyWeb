@@ -19,6 +19,7 @@ import Vuesax from 'vuesax'
 import 'material-icons/iconfont/material-icons.css';
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import Spinner from 'vue-spinkit'
+
 Vue.use(Vuesax)
 Vue.component('Spinner', Spinner)
 

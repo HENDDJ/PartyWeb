@@ -154,7 +154,6 @@
 <style type="scss">
     .left-act-list {
         width: 100%;
-        background-color: rgb(250, 250, 250);
         padding: 5px 20px;
         line-height: 24px;
         min-height: 646px;

@@ -37,16 +37,16 @@
                 <el-form-item label="内容">
                     <el-input v-model="form.description" :disabled="disabled"></el-input>
                 </el-form-item>
-                <el-tree
-                    class="filter-tree"
-                    ref="tree"
-                    :data="district"
-                    node-key="id"
-                    :props="{children: 'children',label: labelHandler}"
-                    :default-checked-keys="districtList"
-                    check-strictly
-                    show-checkbox>
-                </el-tree>
+                <el-form-item label="发布对象">
+                    <el-tree
+                        :props="props"
+                        ref="tree"
+                        :load="loadNode"
+                        lazy
+                        show-checkbox
+                        @check = "handleId">
+                    </el-tree>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" :loading="submitLoading" @click="submit(form)">确 认</el-button>
@@ -73,9 +73,45 @@
                 title:'',
                 disabled: false,
                 submitLoading: false,
+
+                props: {
+                    id: 'id',
+                    label: 'label',
+                    children: 'children',
+                    isLeaf: 'leaf'
+                },
             };
         },
         methods: {
+            //树节点数据
+            loadNode(node, resolve) {
+                if (node.level === 0) {
+                    return resolve([{ id: '01', label: '句容市委', children: [] }]);
+                }
+                this.$http('GET',`/identity/sysDistrict/${node.data.id}tree`,false).then((data)=>{
+                    return resolve(data);
+                })
+            },
+            handleId(){
+              //  let ids = {sid:[],zid:[],cid:[]}
+                let ids = [ ];
+                this.$refs.tree.getCheckedNodes().forEach(item=>{
+                   // console.log(item.id)
+                    /*if(item.id.length == 2){
+                        ids.sid.push(item.id)
+                    }
+                    if(item.id.length == 4){
+                        ids.zid.push(item.id)
+                    }
+                    if(item.id.length == 6){
+                        ids.cid.push(item.id)
+                    }*/
+                    ids.push(item.id);
+                })
+                this.form.districtIdList = ids;
+              //  this.form.districtID = '01';
+            },
+
             currentChange(currentPage){
                 this.pageable.currentPage = currentPage;
                 this.showInformationList();
@@ -122,6 +158,8 @@
                 this.submitLoading = true;
                 //新增
                 if(form.id==null){
+                    form.releaseTime = form.createdAt;
+                    form.districtID = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
                     this.$http('POST',`identity/information/`,form).then(() => {
                         this.submitLoading = false;
                         this.dialogVisible = false;
@@ -156,8 +194,9 @@
                     .catch(_ => {});
             },
         },
-        mounted() {
+        created() {
             this.showInformationList();
+            console.log(JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId);
         }
     }
 </script>

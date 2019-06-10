@@ -13,10 +13,10 @@ export default {
     name: 'AppMain',
     computed: {
         cachedViews() {
-            return this.$store.state.tagsView.cachedViews
+            return this.$store.state.tagsView.cachedViews;
         },
         key() {
-            return this.$route.fullPath
+            return this.$route.fullPath;
         }
     }
 }
@@ -27,7 +27,7 @@ export default {
         padding: 20px 30px;
         height: calc(100% - 35px);
         overflow-x: hidden;
-        overflow-y: auto;
+        overflow-y: scroll;
     }
 
     .app-main::-webkit-scrollbar-track {

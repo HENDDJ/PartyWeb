@@ -9,6 +9,7 @@ import App from './App';
 import router from './router';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+import 'element-ui/lib/theme-chalk/base.css';
 import './style/index.scss';
 import Icon from 'vue-svg-icon/Icon.vue';
 import { generate, common, getRouter ,ht } from '@/api';
@@ -18,7 +19,7 @@ import DynamicRoutes from '@/utils/dynamic-routes';
 import Vuesax from 'vuesax'
 import 'material-icons/iconfont/material-icons.css';
 import 'vuesax/dist/vuesax.css' //Vuesax styles
-import Spinner from 'vue-spinkit'
+import Spinner from 'vue-spinkit';
 
 Vue.use(Vuesax)
 Vue.component('Spinner', Spinner)

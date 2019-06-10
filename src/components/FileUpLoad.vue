@@ -35,10 +35,15 @@
                 }
                 this.files = [];
                 this.value.split(',').forEach(item => {
-                    console.log(item);
-                    this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
-                    //  this.files.push({name: item,  active: false})
+                    if (!item.split("&")[1]) {
+                        this.files.push({name: item, res: `http://122.97.218.162:18006/JRPartyService/Upload/Activity/${item}`, active: false})
+                    } else {
+                        this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
+                    }
                 })
+            },
+            disabled() {
+
             }
         },
         data() {
@@ -64,6 +69,11 @@
             },
             downLoad(file){
                 window.open(file.res,'_self');
+            }
+        },
+        mounted() {
+            if (this.disabled) {
+                document.getElementsByClassName('el-upload--text')[0].style.display = 'none';
             }
         }
     }

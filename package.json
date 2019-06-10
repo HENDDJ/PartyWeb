@@ -55,6 +55,7 @@
     "vue-spinkit": "^1.4.1",
     "vue-spinner": "^1.0.3",
     "vue-splitpane": "1.0.2",
+    "vue2-viewer": "^0.1.1",
     "vuedraggable": "^2.16.0",
     "vuesax": "^3.8.73",
     "vuex": "3.0.1",

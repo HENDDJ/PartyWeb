@@ -20,7 +20,13 @@ import Vuesax from 'vuesax'
 import 'material-icons/iconfont/material-icons.css';
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import Spinner from 'vue-spinkit';
+import ImageViewer from 'vue2-viewer';
 
+Vue.use(ImageViewer, {
+    defaultOptions: {
+        zIndex: 999999
+    }
+});
 Vue.use(Vuesax)
 Vue.component('Spinner', Spinner)
 

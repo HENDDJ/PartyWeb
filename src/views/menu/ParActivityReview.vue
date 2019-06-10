@@ -1,7 +1,7 @@
 <template>
 <div>
-    <el-row :gutter="40">
-        <el-col :span="14">
+    <el-row :gutter="30">
+        <el-col :span="12">
             <div style="border:1px solid black;width: 100%;height: 100%">
                 <div class="left-act-list" >
                     任务列表
@@ -10,6 +10,9 @@
                             <div class="list-item" v-for="(item, index) in tableData" :key="item.id">
                                 <div class="status">
                                     <icon name="finished" scale="4.5"></icon>
+                                </div>
+                                <div class="left-date">
+                                    <p class="label">组织名称：<span class="value">{{item.districtName}}</span></p>
                                 </div>
                                 <div class="title-type">
                                     <p class="title">{{item.title}}</p>
@@ -28,9 +31,7 @@
                                     </template>
                                     <template v-else>&nbsp;</template>
                                 </div>
-                                <div class="processing">
-                                    <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="50"></el-progress>
-                                </div>
+
                                 <div class="detail" @click="details(item)">
                                     <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
                                         <icon name="more" scale="2" ></icon>
@@ -49,10 +50,124 @@
                 </el-pagination>
             </div>
         </el-col>
-        <el-col :span="10">
-<div style="border:1px solid black;width: 100%;height: 100%">12</div>
+        <el-col :span="12">
+<div style="border:1px solid black;width: 100%;height: 100%">
+    任务列表
+    <transition name="el-zoom-in-center" mode="out-in">
+        <div v-show="activityDetailLoading" class="right-detail">
+
+            <el-row class="detail-row">
+                <el-col :span="5" :xl="{span: 4, offset: 2}">任务名称：</el-col>
+                <el-col :span="5">&nbsp;{{activityDetail.title}}</el-col>
+                <el-col :span="4" :xl="{span: 4, offset: 2}">任务类型:</el-col>
+                <el-col :span="5">&nbsp;{{activityDetail.type}}</el-col>
+            </el-row>
+            <el-row class="detail-row">
+                <el-col :span="5" :xl="{span: 4, offset: 2}">截止日期：</el-col>
+                <el-col :span="5">&nbsp;{{activityDetail.month}}</el-col>
+                <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">提醒时间:</el-col>
+                <el-col :span="5">&nbsp;{{activityDetail.alarmTime || '暂无'}}</el-col>
+            </el-row>
+            <el-row class="detail-row">
+                <el-col :span="5" :xl="{span: 4, offset: 2}">任务分值：</el-col>
+                <el-col :span="4" style="color: red;font-weight: bold">&nbsp;{{activityDetail.score || 0}}分</el-col>
+            </el-row>
+            <el-row class="detail-row">
+                <el-col :span="5"  :xl="{span: 4, offset: 2}">工作要求：</el-col>
+                <el-col :span="15">&nbsp;{{activityDetail.context}}</el-col>
+            </el-row>
+            <el-row class="detail-row">
+                <el-col :span="5"  :xl="{span: 4, offset: 2}">电视截图：</el-col>
+                <el-col :span="12">
+                    <el-timeline>
+                        <el-timeline-item
+                            v-for="(activity, index) in TvPic"
+                            :key="index"
+                            :timestamp="activity.timestamp"
+                            placement="top"
+                            v-if="index<2">
+                            <vue-viewer multiple
+                                        :thumb="TvPicFull"
+                                        list-ul-class="image-list"
+                                        :full="TvPicFull">
+                            </vue-viewer>
+
+                        </el-timeline-item>
+                    </el-timeline>
+
+                </el-col>
+
+                    <el-col :span="4" >
+                        <el-button type="text" @click="TvMore">更多</el-button>
+                    </el-col>
+
+            </el-row>
+            <el-row class="detail-row">
+                <el-col :span="5"  :xl="{span: 4, offset: 2}">手机截图：</el-col>
+                <el-col :span="12">
+                    <el-timeline>
+                        <el-timeline-item
+                            v-for="(activity, index) in TvPic"
+                            :key="index"
+                            :timestamp="activity.timestamp"
+                            placement="top">
+
+                                <el-row>
+                                    <el-col :span="10">
+                                        <el-image
+                                            style=""
+                                            :src="imgTF(activity.imgurl)"
+                                           ></el-image>
+                                    </el-col>
+                                </el-row>
+
+                        </el-timeline-item>
+                    </el-timeline>
+                </el-col>
+
+                <el-col :span="4" >
+                    <el-button type="text" >更多</el-button>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col>
+                    <el-button type="primary">审核</el-button>
+                </el-col>
+            </el-row>
+
+        </div>
+    </transition>
+
+</div>
         </el-col>
     </el-row>
+
+    <el-dialog
+        v-if="picDetail"
+        title="更多图片"
+        :visible.sync="picDetail"
+        width="920px"
+        align="left"
+        :modal-append-to-body='false'
+        :append-to-body="true"
+        :before-close="picDetailClose">
+        <el-timeline>
+            <el-timeline-item
+                v-for="(activity, index) in TvPic"
+                :key="index"
+                :timestamp="activity.timestamp"
+                placement="top">
+                    <el-row>
+                        <el-col :span="10">
+                            <el-image
+                                style=""
+                                :src="imgTF(activity.imgurl)"
+                            ></el-image>
+                        </el-col>
+                    </el-row>
+            </el-timeline-item>
+        </el-timeline>
+    </el-dialog>
 </div>
 </template>
 
@@ -67,8 +182,14 @@
                     currentPage: 1,
                     pageSize: 7
                 },
-                apiRoot: '/identity/parActivity',
-                activityLoading: false
+                apiRoot: '/identity/parActivityObject',
+                activityLoading: false,
+                activityDetailLoading:false,
+                queryForm:{attachTo: ""},
+                activityDetail: {},
+                TvPic: [],
+                TvPicFull:[],
+                picDetail:false
             }
         },
         methods:{
@@ -94,7 +215,9 @@
             },
             // 获取表格数据
             loadTableData(path) {
-                path += `&sort=month,desc`;
+                let attchId = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.attachTo
+                this.queryForm.attachTo = attchId
+                path += `&sort=createdAt,desc`;
                 this.activityLoading = false;
                 this.$http('POST', path, this.queryForm, false).then(
                     data => {
@@ -107,6 +230,52 @@
                     this.loading = false;
                 });
             },
+            details(item){
+                this.activityDetailLoading = true;
+                this.activityDetail = item
+                this.TvPic = []
+                this.TvPicFull = []
+                let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
+                let form = {organizationId:item.districtId,studyContent:item.activityId}
+                this.$http("Post",path,form,false).then(data=>{
+                    data.content.forEach(item=>{
+                        let formItem = {}
+                        formItem.timestamp =item.createTime
+                        formItem.imgurl = item.imageURL
+                        this.TvPic.push(formItem)
+                        this.TvPicFull.push(this.imgTF(item.imageURL))
+                    })
+
+                })
+console.log()
+            },
+            imgTF(val){
+                if (!val.split("&")[1]) {
+                    return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${val}`
+                }else {
+                    console.log(val)
+                    return val
+                }
+            },
+            TvMore(){
+                this.picDetail = true
+            },
+            //关闭详情
+            picDetailClose() {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        this.picDetail = false;
+                        done();
+                    })
+                    .catch(_ => {
+                    });
+            },
+
+        },
+        created() {
+                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+                    this.loadTableData(path);
+
         }
     }
 </script>
@@ -154,10 +323,10 @@
 <style type="scss">
     .left-act-list {
         width: 100%;
-        background-color: rgb(250, 250, 250);
+        /*background-color: rgb(250, 250, 250);*/
         padding: 5px 20px;
         line-height: 24px;
-        min-height: 646px;
+        min-height: 668px;
     }
     .list-item {
         background-color: white;
@@ -166,8 +335,8 @@
         display: flex;
         padding: 14px 20px;
         transition: all .4s;
-        /*box-shadow: 2px 2px 2px #444;*/
-        box-shadow:0px 15px 35px rgb(50, 50, 93,0.1),0px 5px 15px rgb(0,0,0,0.07);
+        box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+        /*box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);*/
     }
     .title-type {
         flex: 1;
@@ -239,6 +408,20 @@
         transform: translateY(-5px) scale3d(1.05,1.05,1.05);
         background-color: #2ae1ff38;
         cursor: pointer;
+    }
+    .right-detail {
+        font-size: 16px;
+        width: 100%;
+        height: 100%;
+        padding: 5px 20px;
+        box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+        margin: 15px 0;
+    }
+    .detail-row {
+        margin: 20px 0;
+    }
+    .detail-row .el-col:nth-child(2n) {
+        text-align: left;
     }
 </style>
 <style>

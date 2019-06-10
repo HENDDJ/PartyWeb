@@ -70,308 +70,319 @@
                             </el-option>
                         </el-select>
                     </div>
-                    <div class="right-detail">
-                        <!--<el-button type="primary" @click="lookOrEdit" v-if="lookType">编辑</el-button>-->
-                        <!--<el-button type="primary" @click="lookOrEdit" v-if="editType">查看</el-button>-->
-                        <!--<el-button type="danger" @click="del(row)">删除</el-button>-->
+                    <transition name="el-zoom-in-center" mode="out-in">
+                        <div class="right-detail" v-show="detailLoading">
+                            <!--<el-button type="primary" @click="lookOrEdit" v-if="lookType">编辑</el-button>-->
+                            <!--<el-button type="primary" @click="lookOrEdit" v-if="editType">查看</el-button>-->
+                            <!--<el-button type="danger" @click="del(row)">删除</el-button>-->
 
 
 
-                        <!--<el-form :model="detailForm" ref="detailForm">-->
+                            <!--<el-form :model="detailForm" ref="detailForm">-->
                             <!--<el-form-item label="任务分类" prop="taskType">-->
-                                <!--<template v-if="lookType">-->
-                                    <!--<template v-if="detailForm.taskType === 'Party'">党建任务</template>-->
-                                    <!--<template v-if="detailForm.taskType === 'DistLearning'">远教任务</template>-->
-                                <!--</template>-->
-                                <!--<template v-if="editType">-->
-                                    <!--<el-radio-group size="medium" v-model="detailForm.taskType"-->
-                                                    <!--style="margin-left: 10px;">-->
-                                        <!--<el-radio label="Party">党建任务</el-radio>-->
-                                        <!--<el-radio label="DistLearning">远教任务</el-radio>-->
-                                    <!--</el-radio-group>-->
-                                <!--</template>-->
+                            <!--<template v-if="lookType">-->
+                            <!--<template v-if="detailForm.taskType === 'Party'">党建任务</template>-->
+                            <!--<template v-if="detailForm.taskType === 'DistLearning'">远教任务</template>-->
+                            <!--</template>-->
+                            <!--<template v-if="editType">-->
+                            <!--<el-radio-group size="medium" v-model="detailForm.taskType"-->
+                            <!--style="margin-left: 10px;">-->
+                            <!--<el-radio label="Party">党建任务</el-radio>-->
+                            <!--<el-radio label="DistLearning">远教任务</el-radio>-->
+                            <!--</el-radio-group>-->
+                            <!--</template>-->
                             <!--</el-form-item>-->
                             <!--<el-form-item label="计划名称" prop="title">-->
-                                <!--<template v-if="lookType">{{this.detailForm.title}}</template>-->
-                                <!--<template v-if="editType">-->
-                                    <!--<el-input v-model="detailForm.title" :disabled=disabled></el-input>-->
-                                <!--</template>-->
+                            <!--<template v-if="lookType">{{this.detailForm.title}}</template>-->
+                            <!--<template v-if="editType">-->
+                            <!--<el-input v-model="detailForm.title" :disabled=disabled></el-input>-->
+                            <!--</template>-->
                             <!--</el-form-item>-->
                             <!--<el-form-item label="任务类型" prop="type">-->
-                                <!--<template v-if="lookType">{{this.detailForm.type}}</template>-->
-                                <!--<template v-if="editType">-->
-                                    <!--<el-input v-model="detailForm.type" :disabled=disabled></el-input>-->
-                                <!--</template>-->
+                            <!--<template v-if="lookType">{{this.detailForm.type}}</template>-->
+                            <!--<template v-if="editType">-->
+                            <!--<el-input v-model="detailForm.type" :disabled=disabled></el-input>-->
+                            <!--</template>-->
                             <!--</el-form-item>-->
 
                             <!--<el-form-item label="工作要求" prop="context">-->
-                                <!--<template v-if="lookType">{{this.detailForm.context}}</template>-->
-                                <!--<template v-if="editType">-->
-                                    <!--<el-input v-model="detailForm.context" :disabled=disabled></el-input>-->
-                                <!--</template>-->
+                            <!--<template v-if="lookType">{{this.detailForm.context}}</template>-->
+                            <!--<template v-if="editType">-->
+                            <!--<el-input v-model="detailForm.context" :disabled=disabled></el-input>-->
+                            <!--</template>-->
                             <!--</el-form-item>-->
 
                             <!--<el-form-item label="分值" prop="context">-->
-                                <!--<template v-if="lookType">{{this.detailForm.score}}</template>-->
-                                <!--<template v-if="editType">-->
-                                    <!--<el-input-number v-model="detailForm.score" label="分值"-->
-                                                     <!--style="width: 200px"></el-input-number>-->
-                                <!--</template>-->
+                            <!--<template v-if="lookType">{{this.detailForm.score}}</template>-->
+                            <!--<template v-if="editType">-->
+                            <!--<el-input-number v-model="detailForm.score" label="分值"-->
+                            <!--style="width: 200px"></el-input-number>-->
+                            <!--</template>-->
                             <!--</el-form-item>-->
 
                             <!--<el-form-item label="截止时间" prop="month">-->
-                                <!--<template v-if="lookType">{{this.detailForm.month}}</template>-->
-                                <!--<template v-if="editType">-->
-                                    <!--<el-date-picker v-model="detailForm.month"-->
-                                                    <!--v-if="editType"-->
-                                                    <!--type="date"-->
-                                                    <!--value-format="yyyy-MM-dd"-->
-                                                    <!--placeholder="选择日期">-->
-                                    <!--</el-date-picker>-->
-                                <!--</template>-->
+                            <!--<template v-if="lookType">{{this.detailForm.month}}</template>-->
+                            <!--<template v-if="editType">-->
+                            <!--<el-date-picker v-model="detailForm.month"-->
+                            <!--v-if="editType"-->
+                            <!--type="date"-->
+                            <!--value-format="yyyy-MM-dd"-->
+                            <!--placeholder="选择日期">-->
+                            <!--</el-date-picker>-->
+                            <!--</template>-->
                             <!--</el-form-item>-->
 
                             <!--<el-form-item label="提醒时间" prop="alarmTime">-->
-                                <!--<template v-if="lookType">{{this.detailForm.alarmTime}}</template>-->
-                                <!--<template v-if="editType">-->
-                                    <!--<el-date-picker v-model="detailForm.alarmTime"-->
-                                                    <!--v-if="editType"-->
-                                                    <!--type="date"-->
-                                                    <!--value-format="yyyy-MM-ddT00:00:00"-->
-                                                    <!--placeholder="选择日期">-->
-                                    <!--</el-date-picker>-->
-                                <!--</template>-->
+                            <!--<template v-if="lookType">{{this.detailForm.alarmTime}}</template>-->
+                            <!--<template v-if="editType">-->
+                            <!--<el-date-picker v-model="detailForm.alarmTime"-->
+                            <!--v-if="editType"-->
+                            <!--type="date"-->
+                            <!--value-format="yyyy-MM-ddT00:00:00"-->
+                            <!--placeholder="选择日期">-->
+                            <!--</el-date-picker>-->
+                            <!--</template>-->
                             <!--</el-form-item>-->
                             <!--<el-form-item label="上传文件">-->
-                                <!--<CommonFileUpload :value="detailForm.fileUrls" @getValue="detailForm.fileUrls = $event"-->
-                                                  <!--:diaabled="lookType"></CommonFileUpload>-->
+                            <!--<CommonFileUpload :value="detailForm.fileUrls" @getValue="detailForm.fileUrls = $event"-->
+                            <!--:diaabled="lookType"></CommonFileUpload>-->
                             <!--</el-form-item>-->
                             <!--<el-form-item label="上传视频" prop="video" v-if="detailForm.taskType === 'DistLearning'"-->
-                                          <!--size="mini">-->
-                                <!--<template v-if="lookType">-->
-                                    <!--<vs-chip v-for="items in detailForm.video" :key="items.name">-->
-                                        <!--<vs-avatar icon="send"/>-->
-                                        <!--{{items.name}}-->
-                                    <!--</vs-chip>-->
-                                <!--</template>-->
-                                <!--<template v-if="editType" id="vd">-->
-                                    <!--<el-transfer-->
-                                        <!--filterable-->
-                                        <!--v-model="detailForm.video"-->
-                                        <!--:titles="['可选视频', '已选视频']"-->
-                                        <!--:props="{-->
-                                      <!--key: 'value',-->
-                                      <!--label: 'desc'-->
-                                    <!--}"-->
-                                        <!--:data="addVideoList">-->
-                                    <!--</el-transfer>-->
-                                <!--</template>-->
+                            <!--size="mini">-->
+                            <!--<template v-if="lookType">-->
+                            <!--<vs-chip v-for="items in detailForm.video" :key="items.name">-->
+                            <!--<vs-avatar icon="send"/>-->
+                            <!--{{items.name}}-->
+                            <!--</vs-chip>-->
+                            <!--</template>-->
+                            <!--<template v-if="editType" id="vd">-->
+                            <!--<el-transfer-->
+                            <!--filterable-->
+                            <!--v-model="detailForm.video"-->
+                            <!--:titles="['可选视频', '已选视频']"-->
+                            <!--:props="{-->
+                            <!--key: 'value',-->
+                            <!--label: 'desc'-->
+                            <!--}"-->
+                            <!--:data="addVideoList">-->
+                            <!--</el-transfer>-->
+                            <!--</template>-->
                             <!--</el-form-item>-->
                             <!--<el-form-item label="跟踪" v-if="lookType">-->
-                                <!--<el-table-->
-                                    <!--:data="trackTable"-->
-                                    <!--stripe-->
-                                    <!--style=""-->
-                                    <!--v-loading="loading" border-->
-                                    <!--:header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"-->
-                                    <!--:default-sort="{}">-->
-                                    <!--<el-table-column-->
-                                        <!--prop="tn"-->
-                                        <!--label="组织名称"-->
-                                        <!--align="center"-->
-                                        <!--width="150px"-->
-                                        <!--:show-overflow-tooltip="true"-->
-                                    <!--&gt;-->
-                                    <!--</el-table-column>-->
-                                    <!--<el-table-column-->
-                                        <!--prop="passed"-->
-                                        <!--label="完成个数"-->
-                                        <!--align="center"-->
-                                        <!--width="85px"-->
-                                        <!--:show-overflow-tooltip="true"-->
-                                    <!--&gt;-->
-                                    <!--</el-table-column>-->
-                                    <!--<el-table-column-->
-                                        <!--prop="waitCheck"-->
-                                        <!--label="待审核个数"-->
-                                        <!--align="center"-->
-                                        <!--width="85px"-->
-                                        <!--:show-overflow-tooltip="true"-->
-                                    <!--&gt;-->
-                                    <!--</el-table-column>-->
-                                    <!--<el-table-column-->
-                                        <!--prop="fail"-->
-                                        <!--label="未完成个数"-->
-                                        <!--align="center"-->
-                                        <!--width="85px"-->
-                                        <!--:show-overflow-tooltip="true"-->
-                                    <!--&gt;-->
-                                    <!--</el-table-column>-->
-                                    <!--<el-table-column-->
-                                        <!--label="完成比例"-->
-                                        <!--align="left"-->
-                                        <!--width="120px"-->
-                                        <!--:show-overflow-tooltip="true"-->
-                                    <!--&gt;-->
-                                        <!--<template slot-scope="scope">-->
-                                            <!--<el-progress :percentage="percent(scope.row.finishRatio)"-->
-                                                         <!--v-if="scope.row.finishRatio < 0.1"-->
-                                                         <!--:stroke-width="5"></el-progress>-->
-                                            <!--<el-progress :percentage="percent(scope.row.finishRatio)"-->
-                                                         <!--v-else-if="scope.row.finishRatio < 1"-->
-                                                         <!--:stroke-width="5"></el-progress>-->
-                                            <!--<el-progress :percentage="percent(scope.row.finishRatio)" v-else-->
-                                                         <!--status="success" :stroke-width="5"></el-progress>-->
-                                        <!--</template>-->
-                                    <!--</el-table-column>-->
-                                    <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
-                                    <!--&lt;!&ndash;label="工作进度"&ndash;&gt;-->
-                                    <!--&lt;!&ndash;align="center"&ndash;&gt;-->
-                                    <!--&lt;!&ndash;width="100px"&ndash;&gt;-->
-                                    <!--&lt;!&ndash;:show-overflow-tooltip="true"&ndash;&gt;-->
-                                    <!--&lt;!&ndash;&gt;&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<template slot-scope="scope">&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<a style="color:blue;" v-if="scope.row.status === '1'">待审核</a>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<a style="color:greenyellow;" v-if="scope.row.status === '2'">已完成</a>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<a style="color:red;" v-if="scope.row.status === '3'">审核未通过</a>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;</template>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
-                                    <!--<el-table-column-->
-                                        <!--label="查看详细"-->
-                                        <!--align="center"-->
-                                        <!--width="120px"-->
-                                        <!--:show-overflow-tooltip="true"-->
-                                    <!--&gt;-->
-                                        <!--<template slot-scope="scope">-->
-                                            <!--<el-button @click="townDetailClick(scope.row)" type="text" size="small">查看-->
-                                            <!--</el-button>-->
-                                        <!--</template>-->
-                                    <!--</el-table-column>-->
-                                <!--</el-table>-->
-                                <!--&lt;!&ndash;<el-pagination style="text-align: right;margin-top: 20px;" background&ndash;&gt;-->
-                                <!--&lt;!&ndash;:total="pageableTrack.total" :current-page.sync="pageableTrack.currentPage"&ndash;&gt;-->
-                                <!--&lt;!&ndash;:page-size.sync="pageableTrack.pageSize"&ndash;&gt;-->
-                                <!--&lt;!&ndash;@current-change="currentChangeTrack" @size-change="sizeChangeTrack"&ndash;&gt;-->
-                                <!--&lt;!&ndash;layout="total, sizes, prev, pager, next">&ndash;&gt;-->
-                                <!--&lt;!&ndash;</el-pagination>&ndash;&gt;-->
-                            <!--</el-form-item>-->
-
-                        <!--</el-form>-->
-                        <!--<el-button type="primary" :loading="submitLoading" @click="detailSubmit('detailForm')"-->
-                                   <!--v-if="editType">确 定-->
-                        <!--</el-button>-->
-                    <el-row class="detail-row">
-                        <el-col :span="5" :xl="{span: 4}">任务名称：</el-col>
-                        <el-col :span="5">&nbsp;{{detailForm.title}}</el-col>
-                        <el-col :span="4" :xl="{span: 4, offset: 2}">任务类型:</el-col>
-                        <el-col :span="5">&nbsp;{{detailForm.type}}</el-col>
-                    </el-row>
-                    <el-row class="detail-row">
-                        <el-col :span="5" :xl="{span: 4}">截止日期：</el-col>
-                        <el-col :span="5">&nbsp;{{detailForm.month}}</el-col>
-                        <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">提醒时间:</el-col>
-                        <el-col :span="5">&nbsp;{{detailForm.alarmTime || '暂无'}}</el-col>
-                    </el-row>
-                    <el-row class="detail-row">
-                        <el-col :span="5" :xl="{span: 4}">任务分值：</el-col>
-                        <el-col :span="4" style="color: red;font-weight: bold">&nbsp;{{detailForm.score || 0}}分</el-col>
-                    </el-row>
-                    <el-row class="detail-row">
-                        <el-col :span="5"  :xl="{span: 4}">工作要求：</el-col>
-                        <el-col :span="15">&nbsp;{{detailForm.context}}</el-col>
-                    </el-row>
-                    <el-row class="detail-row">
-                        <el-col :span="5"  :xl="{span: 4}">附件清单：</el-col>
-                        <el-col :span="15">
-                            <CommonFileUpload :value="detailForm.fileUrls" @getValue="detailForm.fileUrls = $event" :disabled="lookType"></CommonFileUpload>
-                        </el-col>
-                    </el-row>
-                    <el-row class="detail-row" v-if="detailForm.type === 'DistLearning'">
-                        <el-col :span="5"  :xl="{span: 4}">视频列表：</el-col>
-                        <el-col :span="15">
-                            <vs-chip v-for="items in detailForm.video" :key="items.name">
-                                <vs-avatar icon="send"/>
-                                {{items.name}}
-                            </vs-chip>
-                        </el-col>
-                    </el-row>
-                    <el-row class="detail-row">
-                        <el-col :span="5"  :xl="{span: 4}">进度跟踪：</el-col>
-                        <el-col :span="18">
-                            <el-table
-                            :data="trackTable"
-                            stripe
-                            highlight-current-row
-                            v-loading="loading" border
-                            :header-cell-style="{'font-size': '14px', 'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
-                            :default-sort="{prop: 'finishRatio', order: 'descending'}">
-                            <el-table-column
-                            prop="tn"
-                            label="组织名称"
-                            align="center"
-                            width="130px"
-                            :show-overflow-tooltip="true"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                            prop="passed"
-                            label="已完成"
-                            align="center"
-                            width="85px"
-                            :show-overflow-tooltip="true"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                            prop="waitCheck"
-                            label="待审核"
-                            align="center"
-                            width="85px"
-                            :show-overflow-tooltip="true"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                            prop="fail"
-                            label="未完成"
-                            align="center"
-                            width="85px"
-                            :show-overflow-tooltip="true"
-                            >
-                            </el-table-column>
-                            <el-table-column
-                                label="完成进度"
-                                align="left"
-                                header-align="center"
-                                sortable
-                                prop="finishRatio">
-                                <template slot-scope="scope">
-                                    <el-progress v-if="scope.row.finishRatio < 0.3" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
-                                    <el-progress v-else-if="scope.row.finishRatio < 0.7" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
-                                    <el-progress v-else-if="scope.row.finishRatio < 1" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
-                                    <el-progress v-else-if="scope.row.finishRatio = 1" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
-                                    <span v-else>ERROR</span>
-                                </template>
-                            </el-table-column>
+                            <!--<el-table-->
+                            <!--:data="trackTable"-->
+                            <!--stripe-->
+                            <!--style=""-->
+                            <!--v-loading="loading" border-->
+                            <!--:header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"-->
+                            <!--:default-sort="{}">-->
                             <!--<el-table-column-->
-                            <!--label="工作进度"-->
+                            <!--prop="tn"-->
+                            <!--label="组织名称"-->
                             <!--align="center"-->
-                            <!--width="100px"-->
+                            <!--width="150px"-->
+                            <!--:show-overflow-tooltip="true"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                            <!--prop="passed"-->
+                            <!--label="完成个数"-->
+                            <!--align="center"-->
+                            <!--width="85px"-->
+                            <!--:show-overflow-tooltip="true"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                            <!--prop="waitCheck"-->
+                            <!--label="待审核个数"-->
+                            <!--align="center"-->
+                            <!--width="85px"-->
+                            <!--:show-overflow-tooltip="true"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                            <!--prop="fail"-->
+                            <!--label="未完成个数"-->
+                            <!--align="center"-->
+                            <!--width="85px"-->
+                            <!--:show-overflow-tooltip="true"-->
+                            <!--&gt;-->
+                            <!--</el-table-column>-->
+                            <!--<el-table-column-->
+                            <!--label="完成比例"-->
+                            <!--align="left"-->
+                            <!--width="120px"-->
                             <!--:show-overflow-tooltip="true"-->
                             <!--&gt;-->
                             <!--<template slot-scope="scope">-->
-                            <!--<a style="color:blue;" v-if="scope.row.status === '1'">待审核</a>-->
-                            <!--<a style="color:greenyellow;" v-if="scope.row.status === '2'">已完成</a>-->
-                            <!--<a style="color:red;" v-if="scope.row.status === '3'">审核未通过</a>-->
+                            <!--<el-progress :percentage="percent(scope.row.finishRatio)"-->
+                            <!--v-if="scope.row.finishRatio < 0.1"-->
+                            <!--:stroke-width="5"></el-progress>-->
+                            <!--<el-progress :percentage="percent(scope.row.finishRatio)"-->
+                            <!--v-else-if="scope.row.finishRatio < 1"-->
+                            <!--:stroke-width="5"></el-progress>-->
+                            <!--<el-progress :percentage="percent(scope.row.finishRatio)" v-else-->
+                            <!--status="success" :stroke-width="5"></el-progress>-->
                             <!--</template>-->
                             <!--</el-table-column>-->
-                            </el-table>
-                        </el-col>
-                    </el-row>
+                            <!--&lt;!&ndash;<el-table-column&ndash;&gt;-->
+                            <!--&lt;!&ndash;label="工作进度"&ndash;&gt;-->
+                            <!--&lt;!&ndash;align="center"&ndash;&gt;-->
+                            <!--&lt;!&ndash;width="100px"&ndash;&gt;-->
+                            <!--&lt;!&ndash;:show-overflow-tooltip="true"&ndash;&gt;-->
+                            <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+                            <!--&lt;!&ndash;<template slot-scope="scope">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<a style="color:blue;" v-if="scope.row.status === '1'">待审核</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<a style="color:greenyellow;" v-if="scope.row.status === '2'">已完成</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<a style="color:red;" v-if="scope.row.status === '3'">审核未通过</a>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</template>&ndash;&gt;-->
+                            <!--&lt;!&ndash;</el-table-column>&ndash;&gt;-->
+                            <!--<el-table-column-->
+                            <!--label="查看详细"-->
+                            <!--align="center"-->
+                            <!--width="120px"-->
+                            <!--:show-overflow-tooltip="true"-->
+                            <!--&gt;-->
+                            <!--<template slot-scope="scope">-->
+                            <!--<el-button @click="townDetailClick(scope.row)" type="text" size="small">查看-->
+                            <!--</el-button>-->
+                            <!--</template>-->
+                            <!--</el-table-column>-->
+                            <!--</el-table>-->
+                            <!--&lt;!&ndash;<el-pagination style="text-align: right;margin-top: 20px;" background&ndash;&gt;-->
+                            <!--&lt;!&ndash;:total="pageableTrack.total" :current-page.sync="pageableTrack.currentPage"&ndash;&gt;-->
+                            <!--&lt;!&ndash;:page-size.sync="pageableTrack.pageSize"&ndash;&gt;-->
+                            <!--&lt;!&ndash;@current-change="currentChangeTrack" @size-change="sizeChangeTrack"&ndash;&gt;-->
+                            <!--&lt;!&ndash;layout="total, sizes, prev, pager, next">&ndash;&gt;-->
+                            <!--&lt;!&ndash;</el-pagination>&ndash;&gt;-->
+                            <!--</el-form-item>-->
+
+                            <!--</el-form>-->
+                            <!--<el-button type="primary" :loading="submitLoading" @click="detailSubmit('detailForm')"-->
+                            <!--v-if="editType">确 定-->
+                            <!--</el-button>-->
+                            <el-row class="detail-row">
+                                <el-col :span="5" :xl="{span: 4}">任务名称：</el-col>
+                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.title}}</el-col>
+                                <el-col :span="4" :xl="{span: 4, offset: 2}">任务类型:</el-col>
+                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.type}}</el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="5" :xl="{span: 4}">截止日期：</el-col>
+                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.month}}</el-col>
+                                <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">提醒时间:</el-col>
+                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.alarmTime || '暂无'}}</el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="5" :xl="{span: 4}">任务分值：</el-col>
+                                <el-col :span="4" style="color: red;font-weight: bold">&nbsp;{{detailForm.score || 0}}分</el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="5"  :xl="{span: 4}">工作要求：</el-col>
+                                <el-col :span="15" style="color: #25252582">&nbsp;{{detailForm.context}}</el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="5"  :xl="{span: 4}">附件清单：</el-col>
+                                <el-col :span="15">
+                                    <CommonFileUpload :value="detailForm.fileUrls" @getValue="detailForm.fileUrls = $event" :disabled="lookType"></CommonFileUpload>
+                                </el-col>
+                            </el-row>
+                            <el-row class="detail-row" v-if="detailForm.type === 'DistLearning'">
+                                <el-col :span="5"  :xl="{span: 4}">视频列表：</el-col>
+                                <el-col :span="15">
+                                    <vs-chip v-for="items in detailForm.video" :key="items.name">
+                                        <vs-avatar icon="send"/>
+                                        {{items.name}}
+                                    </vs-chip>
+                                </el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="5"  :xl="{span: 4}">进度跟踪：</el-col>
+                                <el-col :span="18">
+                                    <el-table
+                                        :data="trackTable"
+                                        stripe
+                                        highlight-current-row
+                                        v-loading="loading" border
+                                        :header-cell-style="{'font-size': '14px', 'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6', 'padding': '1px 0'}"
+                                        :default-sort="{prop: 'finishRatio', order: 'descending'}"
+                                        show-summary
+                                        :summary-method="calcSummary"
+                                        @row-dblclick="townDetailClick">
+                                        <el-table-column
+                                            prop="tn"
+                                            label="组织名称"
+                                            align="center"
+                                            sortable
+                                            width="110px"
+                                            :show-overflow-tooltip="true"
+                                        >
+                                        </el-table-column>
+                                        <el-table-column
+                                            prop="passed"
+                                            label="已完成"
+                                            align="center"
+                                            sortable
+                                            width="90px"
+                                            :show-overflow-tooltip="true"
+                                        >
+                                        </el-table-column>
+                                        <el-table-column
+                                            prop="waitCheck"
+                                            label="待审核"
+                                            align="center"
+                                            sortable
+                                            width="90px"
+                                            :show-overflow-tooltip="true"
+                                        >
+                                        </el-table-column>
+                                        <el-table-column
+                                            prop="fail"
+                                            label="未完成"
+                                            align="center"
+                                            sortable
+                                            width="90px"
+                                            :show-overflow-tooltip="true"
+                                        >
+                                        </el-table-column>
+                                        <el-table-column
+                                            label="完成进度"
+                                            align="left"
+                                            header-align="center"
+                                            sortable
+                                            min-width="170px"
+                                            prop="finishRatio">
+                                            <template slot-scope="scope">
+                                                <el-progress v-if="scope.row.finishRatio < 0.3" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                                <el-progress v-else-if="scope.row.finishRatio < 0.7" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                                <el-progress v-else-if="scope.row.finishRatio < 1" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                                <el-progress v-else-if="scope.row.finishRatio = 1" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                                <span v-else>ERROR</span>
+                                            </template>
+                                        </el-table-column>
+                                        <!--<el-table-column-->
+                                        <!--label="工作进度"-->
+                                        <!--align="center"-->
+                                        <!--width="100px"-->
+                                        <!--:show-overflow-tooltip="true"-->
+                                        <!--&gt;-->
+                                        <!--<template slot-scope="scope">-->
+                                        <!--<a style="color:blue;" v-if="scope.row.status === '1'">待审核</a>-->
+                                        <!--<a style="color:greenyellow;" v-if="scope.row.status === '2'">已完成</a>-->
+                                        <!--<a style="color:red;" v-if="scope.row.status === '3'">审核未通过</a>-->
+                                        <!--</template>-->
+                                        <!--</el-table-column>-->
+                                    </el-table>
+                                </el-col>
+                            </el-row>
 
 
 
 
 
-</div>
+                        </div>
+                    </transition>
+
 </el-col>
 </el-row>
 </div>
@@ -645,7 +656,8 @@ align="left"
                     timestamp: '2018-04-03 20:46',
                     placement: "top"
                 }],
-                activityLoading: false
+                activityLoading: false,
+                detailLoading: false
             }
         },
         watch: {
@@ -764,6 +776,30 @@ align="left"
             //     let path = `$${this.apiRootTrack}/page?page=0&size=${value}`;
             //     this.loadTrackTable(path,this.queryFormTrack)
             // },
+            getSummary(par) {
+                const { columns, data} = par;
+                let sums = [];
+                columns.forEach((column, index) => {
+                    if (index === 0) {
+                        sums[index] = '总价';
+                        return;
+                    }
+                    const values = data.map(item => Number(item[column.property]));
+                    if (!values.every(value => isNaN(value))) {
+                        sums[index] = values.reduce((prev, curr) => {
+                            const value = Number(curr);
+                            if (!isNaN(value)) {
+                                return prev + curr;
+                            } else {
+                                return prev;
+                            }
+                        }, 0);
+                    } else {
+                        sums[index] = 'N/A';
+                    }
+                });
+                return sums;
+            },
             // 获取表格数据
             loadTableData(path) {
                 path += `&sort=month,desc`;
@@ -774,22 +810,38 @@ align="left"
                         this.pageable.total = data.totalElements;
                         this.loading = false;
                         this.activityLoading = true;
+                        if(!this.detailLoading) {
+                            this.detailForm = this.tableData[0];
+                            this.handleFile(this.detailForm);
+                            let path = `${this.apiRootTrack}/${this.detailForm.id}perList`;
+                            this.loadTrackTable(path, {});
+                        }
                     }
                 ).catch(res => {
                     this.loading = false;
                 });
             },
+            calcSummary() {
+                let temp = ['总计', 0, 0, 0, 0];
+                this.trackTable.forEach((item) => {
+                    temp[1] += item.waitCheck;
+                    temp[2] += item.passed;
+                    temp[3] += item.fail;
+                });
+                temp[4] = (temp[2] * 100/(temp[1] + temp[2] + temp[3])).toFixed(1) + '%';
+                return temp;
+            },
             //跟踪数据
             loadTrackTable(path, query) {
                 this.$http('POST', path, query, false).then(
                     data => {
-                        this.trackTable = [];
                         this.trackTable = data;
-                        console.log(data, 'da');
                         this.pageableTrack.total = data.totalElements;
+                        setTimeout(() => {
+                            this.detailLoading = true;
+                        }, 500);
                     }
                 ).catch(res => {
-                    console.log(res)
                     this.$message({
                         type: 'warning',
                         message: '跟踪信息拉取失败'
@@ -816,14 +868,10 @@ align="left"
             //任务类型选择
             select(val) {
                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
-                this.queryForm.taskType = val
+                this.queryForm.taskType = val;
                 this.loadTableData(path);
             },
-            //详情
-            details(val) {
-                this.row = val
-                this.detailForm = JSON.parse(JSON.stringify(val))
-                this.detailFormNext = JSON.parse(JSON.stringify(val))
+            handleFile(val) {
                 let fileStr = '';
                 for (let i in val.urls) {
                     if (i == val.urls.length - 1) {
@@ -832,10 +880,20 @@ align="left"
                         fileStr = fileStr + val.urls[i].url + ','
                     }
                 }
-
-                this.detailForm.fileUrls = fileStr
-                this.lookType = true
-                this.editType = false
+                this.detailForm.fileUrls = fileStr;
+            },
+            //详情
+            details(val) {
+                if (val.id === this.detailForm.id) {
+                    return;
+                }
+                this.detailLoading = false;
+                this.row = val;
+                this.detailForm = JSON.parse(JSON.stringify(val));
+                this.detailFormNext = JSON.parse(JSON.stringify(val));
+                this.handleFile(val);
+                this.lookType = true;
+                this.editType = false;
                 let path = `${this.apiRootTrack}/${val.id}perList`;
                 this.loadTrackTable(path, {});
                 this.townAcId = val.id
@@ -844,18 +902,15 @@ align="left"
             //编辑查看
             lookOrEdit() {
                 if (this.lookType == true && this.editType == false) {
-                    this.lookType = false
-                    this.editType = true
+                    this.lookType = false;
+                    this.editType = true;
                     this.loadVideo();
-                    var data = this.detailForm.video
+                    var data = this.detailForm.video;
                     this.detailForm.video = data.map(item => {
                         return '{"name":"' + item.name + '","lengthOfTime":"' + item.lengthOfTime + '","videoUrl":"' + item.videoUrl + '","videoCover":"' + item.videoCover + '"}'
                     })
-                    console.log(this.detailForm, 2)
                 } else {
-                    console.log(this.detailFormNext)
                     this.detailForm = JSON.parse(JSON.stringify(this.detailFormNext))
-                    console.log(this.detailForm)
                     this.lookType = true
                     this.editType = false
                 }
@@ -1174,10 +1229,14 @@ align="left"
     .right-detail {
         font-size: 16px;
         width: 100%;
-        height: 100%;
+        height: 690px;
         padding: 5px 20px;
         box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
         margin: 15px 0;
+        overflow-y: scroll;
+    }
+    .right-detail::-webkit-scrollbar {
+        width: 0;
     }
     .detail-row {
         margin: 20px 0;

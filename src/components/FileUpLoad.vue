@@ -74,7 +74,6 @@
         mounted() {
             if (this.disabled) {
                 document.getElementsByClassName('el-upload--text')[0].style.display = 'none';
-                console.log("233")
             }
         }
     }

@@ -263,15 +263,15 @@
                             <!--</el-button>-->
                             <el-row class="detail-row">
                                 <el-col :span="5" :xl="{span: 4}">任务名称：</el-col>
-                                <el-col :span="5">&nbsp;{{detailForm.title}}</el-col>
+                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.title}}</el-col>
                                 <el-col :span="4" :xl="{span: 4, offset: 2}">任务类型:</el-col>
-                                <el-col :span="5">&nbsp;{{detailForm.type}}</el-col>
+                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.type}}</el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="5" :xl="{span: 4}">截止日期：</el-col>
-                                <el-col :span="5">&nbsp;{{detailForm.month}}</el-col>
+                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.month}}</el-col>
                                 <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">提醒时间:</el-col>
-                                <el-col :span="5">&nbsp;{{detailForm.alarmTime || '暂无'}}</el-col>
+                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.alarmTime || '暂无'}}</el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="5" :xl="{span: 4}">任务分值：</el-col>
@@ -279,7 +279,7 @@
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="5"  :xl="{span: 4}">工作要求：</el-col>
-                                <el-col :span="15">&nbsp;{{detailForm.context}}</el-col>
+                                <el-col :span="15" style="color: #25252582">&nbsp;{{detailForm.context}}</el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="5"  :xl="{span: 4}">附件清单：</el-col>
@@ -305,7 +305,10 @@
                                         highlight-current-row
                                         v-loading="loading" border
                                         :header-cell-style="{'font-size': '14px', 'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6', 'padding': '1px 0'}"
-                                        :default-sort="{prop: 'finishRatio', order: 'descending'}">
+                                        :default-sort="{prop: 'finishRatio', order: 'descending'}"
+                                        show-summary
+                                        :summary-method="calcSummary"
+                                        @row-dblclick="townDetailClick">
                                         <el-table-column
                                             prop="tn"
                                             label="组织名称"
@@ -347,7 +350,7 @@
                                             align="left"
                                             header-align="center"
                                             sortable
-                                            min-width="160px"
+                                            min-width="170px"
                                             prop="finishRatio">
                                             <template slot-scope="scope">
                                                 <el-progress v-if="scope.row.finishRatio < 0.3" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
@@ -773,6 +776,30 @@ align="left"
             //     let path = `$${this.apiRootTrack}/page?page=0&size=${value}`;
             //     this.loadTrackTable(path,this.queryFormTrack)
             // },
+            getSummary(par) {
+                const { columns, data} = par;
+                let sums = [];
+                columns.forEach((column, index) => {
+                    if (index === 0) {
+                        sums[index] = '总价';
+                        return;
+                    }
+                    const values = data.map(item => Number(item[column.property]));
+                    if (!values.every(value => isNaN(value))) {
+                        sums[index] = values.reduce((prev, curr) => {
+                            const value = Number(curr);
+                            if (!isNaN(value)) {
+                                return prev + curr;
+                            } else {
+                                return prev;
+                            }
+                        }, 0);
+                    } else {
+                        sums[index] = 'N/A';
+                    }
+                });
+                return sums;
+            },
             // 获取表格数据
             loadTableData(path) {
                 path += `&sort=month,desc`;
@@ -793,6 +820,16 @@ align="left"
                 ).catch(res => {
                     this.loading = false;
                 });
+            },
+            calcSummary() {
+                let temp = ['总计', 0, 0, 0, 0];
+                this.trackTable.forEach((item) => {
+                    temp[1] += item.waitCheck;
+                    temp[2] += item.passed;
+                    temp[3] += item.fail;
+                });
+                temp[4] = (temp[2] * 100/(temp[1] + temp[2] + temp[3])).toFixed(1) + '%';
+                return temp;
             },
             //跟踪数据
             loadTrackTable(path, query) {

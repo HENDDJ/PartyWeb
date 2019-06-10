@@ -8,6 +8,7 @@
                     <el-select v-model="queryForm[item.name]" v-else-if="item.type === 'select'">
                         <el-option v-for="opItem in item.options" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
                     </el-select>
+                    <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'"  :options="item.options" :props="{ checkStrictly: true }" clearable></el-cascader>
                     <el-radio-group v-if="item.type === 'radio'" v-model="queryForm[item.name]" >
                         <el-radio :label="1">是</el-radio>
                         <el-radio :label="0">否</el-radio>
@@ -81,6 +82,7 @@
                 <el-select v-model="form[item.name]" v-else-if="item.type === 'select'" filterable :disabled="item.disabled || disabled">
                     <el-option v-for="opItem in item.options" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
                 </el-select>
+                <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'"  :options="item.options" :props="{ checkStrictly: true }" clearable></el-cascader>
                 <el-radio-group v-if="item.type === 'radio'" v-model="form[item.name]" :disabled="item.disabled || disabled" style="width: 178px" >
                     <el-radio v-for="opItem in item.options" :label="opItem.value" :key="opItem.value"> {{opItem.label}}</el-radio>
                 </el-radio-group>

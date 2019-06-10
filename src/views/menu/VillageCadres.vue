@@ -3,11 +3,7 @@
         <vs-tabs :color="colorx">
             <vs-tab @click="colorx = 'success'" label="村干部信息">
                 <div class="con-tab-ejemplo">
-                    <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns">
-                        <template slot="handle" slot-scope="scope" >
-                                {{ scope.row.post }}
-                        </template>
-                    </CommonCRUD>
+                    <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns"></CommonCRUD>
                 </div>
             </vs-tab>
             <vs-tab @click="handleSelect()" label="岗位信息">
@@ -112,15 +108,6 @@
                 });
                 this.positionFormColumns.filter(item => item.name === 'post')[0].options = LookUp['Post'];
             },
-            addcadreColumns(){
-                this.cadreColumns = [];
-                this.cadreColumns.length = 0;
-                let temp = JSON.parse(JSON.stringify(this.$store.state.classInfo.properties));
-                this.cadreColumns = temp;
-                let columsItems = {slot:true,name:'post',des:'职位', transferType: 'lookup', lookupKey: 'Post',slotName:'handle'};
-                this.cadreColumns.push(columsItems);
-
-            }
         },
         components: {
             CommonCRUD
@@ -128,9 +115,7 @@
         created(){
             this.cadreColumns = this.$store.state.classInfo.properties;
             this.cadreFormColumns =this.$store.state.classInfo.properties;
-            this.addcadreColumns();
-            tansfer(this.positionColumns);
-            tansfer(this.cadreColumns);
+            tansfer(this.positionColumns)
         }
     }
 </script>

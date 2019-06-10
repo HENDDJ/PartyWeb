@@ -40,8 +40,10 @@
                     } else {
                         this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
                     }
-                    //  this.files.push({name: item,  active: false})
                 })
+            },
+            disabled() {
+
             }
         },
         data() {
@@ -67,6 +69,12 @@
             },
             downLoad(file){
                 window.open(file.res,'_self');
+            }
+        },
+        mounted() {
+            if (this.disabled) {
+                document.getElementsByClassName('el-upload--text')[0].style.display = 'none';
+                console.log("233")
             }
         }
     }

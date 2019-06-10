@@ -897,12 +897,11 @@ align="left"
                         fileStr = fileStr + val.urls[i].url + ','
                     }
                 }
-                // console.log(fileStr, 1)
                 this.form.fileUrls = fileStr
             },
             enclosure(val) {
-                this.dialogVisible = true
-                this.form = val
+                this.dialogVisible = true;
+                this.form = val;
                 var fileStr = ''
                 for (var i in val.urls) {
                     if (i == val.urls.length - 1) {

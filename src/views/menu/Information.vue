@@ -1,7 +1,7 @@
 <template>
     <div class="common-crud">
-        <div class="handler-btn">
-            <el-button type="primary" plain @click="add()" class="self-btn">新增</el-button>
+        <div class="handler-btn" >
+            <el-button type="primary" plain @click="add()" class="self-btn" v-if="authorityControl">新增</el-button>
         </div>
         <el-table :data="informationList" v-loading="loading" border align="center" stripe
                   :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}">
@@ -10,9 +10,9 @@
             <el-table-column prop="description" label="内容" align="center"></el-table-column>
             <el-table-column  label="操作" align="center" width="200">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
-                    <el-button  type="text" size="small" @click="look(scope.row)">查看</el-button>
-                    <el-button  type="text" size="small" @click="del(scope.row)">删除</el-button>
+                    <el-button type="text" size="small" @click="edit(scope.row)" v-if="authorityControl">编辑</el-button>
+                    <el-button  type="text" size="small" @click="look(scope.row)" >查看</el-button>
+                    <el-button  type="text" size="small" @click="del(scope.row)"  v-if="authorityControl">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -37,7 +37,7 @@
                 <el-form-item label="内容">
                     <el-input v-model="form.description" :disabled="disabled"></el-input>
                 </el-form-item>
-                <el-form-item label="发布对象">
+                <el-form-item label="发布对象" v-if="acceptPerson">
                     <el-tree
                         :props="props"
                         ref="tree"
@@ -80,6 +80,10 @@
                     children: 'children',
                     isLeaf: 'leaf'
                 },
+                //按钮权限控制
+                authorityControl:true,
+                //发布的对象只有新增时可以看到，编辑查看都不能看到
+                acceptPerson:true,
             };
         },
         methods: {
@@ -93,23 +97,11 @@
                 })
             },
             handleId(){
-              //  let ids = {sid:[],zid:[],cid:[]}
                 let ids = [ ];
                 this.$refs.tree.getCheckedNodes().forEach(item=>{
-                   // console.log(item.id)
-                    /*if(item.id.length == 2){
-                        ids.sid.push(item.id)
-                    }
-                    if(item.id.length == 4){
-                        ids.zid.push(item.id)
-                    }
-                    if(item.id.length == 6){
-                        ids.cid.push(item.id)
-                    }*/
                     ids.push(item.id);
                 })
                 this.form.districtIdList = ids;
-              //  this.form.districtID = '01';
             },
 
             currentChange(currentPage){
@@ -122,28 +114,51 @@
             },
             showInformationList(){
                 this.loading = true;
-                this.$http('POST',`/identity/information/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,false).then(data => {
-                    this.informationList = data.content;
-                    this.pageable.total= data.totalElements;
-                    this.loading = false;
-                });
+                let currentUser = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
+                if(currentUser=== '01'){
+                    this.authorityControl = true;
+                    this.$http('POST',`/identity/information/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,false).then(data => {
+                        this.informationList = data.content;
+                        this.pageable.total= data.totalElements;
+                        this.loading = false;
+                    });
+                }else{
+                    this.authorityControl = false;
+                    this.$http('POST',`/identity/acceptInformation/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,{objs: currentUser },false).then(data => {
+                        this.informationList = data.content;
+                        this.pageable.total= data.totalElements;
+                        this.loading = false;
+                    });
+                }
+
             },
             add(){
                 this.title = "新增";
                 this.dialogVisible = true;
                 this.disabled = false;
+                this.acceptPerson = true;
             },
             edit(row){
                 this.title = "编辑";
                 this.dialogVisible = true;
                 this.disabled = false;
+                this.acceptPerson = false;
                 this.form = row;
             },
             look(row){
                 this.title = "查看";
                 this.dialogVisible = true;
                 this.disabled = true;
+                this.acceptPerson = false;
                 this.form = row;
+                let currentUser = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
+                //处理接收公告
+                if(currentUser != '01'){
+                    this.form.status = true;
+                    this.$http('PUT', `identity/acceptInformation/${this.form.id}id`,this.form).then(() =>{
+
+                    });
+                }
             },
             del(row){
                 this.$confirm('确认删除？')
@@ -196,7 +211,6 @@
         },
         created() {
             this.showInformationList();
-            console.log(JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId);
         }
     }
 </script>

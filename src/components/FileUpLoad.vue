@@ -35,7 +35,6 @@
                 }
                 this.files = [];
                 this.value.split(',').forEach(item => {
-                    http://122.97.218.162:18006/JRPartyService/Upload/Activity/%E7%BB%9F%E4%B8%80%E6%B4%BB%E5%8A%A8%E6%97%A520190225100215.docx
                     if (!item.split("&")[1]) {
                         this.files.push({name: item, res: `http://122.97.218.162:18006/JRPartyService/Upload/Activity/${item}`, active: false})
                     } else {

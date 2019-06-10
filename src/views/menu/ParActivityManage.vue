@@ -261,31 +261,112 @@
                                    <!--v-if="editType">确 定-->
                         <!--</el-button>-->
                     <el-row class="detail-row">
-                        <el-col :span="5" :xl="{span: 4, offset: 2}">任务名称：</el-col>
+                        <el-col :span="5" :xl="{span: 4}">任务名称：</el-col>
                         <el-col :span="5">&nbsp;{{detailForm.title}}</el-col>
                         <el-col :span="4" :xl="{span: 4, offset: 2}">任务类型:</el-col>
                         <el-col :span="5">&nbsp;{{detailForm.type}}</el-col>
                     </el-row>
                     <el-row class="detail-row">
-                        <el-col :span="5" :xl="{span: 4, offset: 2}">截止日期：</el-col>
+                        <el-col :span="5" :xl="{span: 4}">截止日期：</el-col>
                         <el-col :span="5">&nbsp;{{detailForm.month}}</el-col>
                         <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">提醒时间:</el-col>
                         <el-col :span="5">&nbsp;{{detailForm.alarmTime || '暂无'}}</el-col>
                     </el-row>
                     <el-row class="detail-row">
-                        <el-col :span="5" :xl="{span: 4, offset: 2}">任务分值：</el-col>
+                        <el-col :span="5" :xl="{span: 4}">任务分值：</el-col>
                         <el-col :span="4" style="color: red;font-weight: bold">&nbsp;{{detailForm.score || 0}}分</el-col>
                     </el-row>
                     <el-row class="detail-row">
-                        <el-col :span="5"  :xl="{span: 4, offset: 2}">工作要求：</el-col>
+                        <el-col :span="5"  :xl="{span: 4}">工作要求：</el-col>
                         <el-col :span="15">&nbsp;{{detailForm.context}}</el-col>
                     </el-row>
                     <el-row class="detail-row">
-                        <el-col :span="5"  :xl="{span: 4, offset: 2}">附件清单：</el-col>
+                        <el-col :span="5"  :xl="{span: 4}">附件清单：</el-col>
                         <el-col :span="15">
                             <CommonFileUpload :value="detailForm.fileUrls" @getValue="detailForm.fileUrls = $event" :disabled="lookType"></CommonFileUpload>
                         </el-col>
                     </el-row>
+                    <el-row class="detail-row" v-if="detailForm.type === 'DistLearning'">
+                        <el-col :span="5"  :xl="{span: 4}">视频列表：</el-col>
+                        <el-col :span="15">
+                            <vs-chip v-for="items in detailForm.video" :key="items.name">
+                                <vs-avatar icon="send"/>
+                                {{items.name}}
+                            </vs-chip>
+                        </el-col>
+                    </el-row>
+                    <el-row class="detail-row">
+                        <el-col :span="5"  :xl="{span: 4}">进度跟踪：</el-col>
+                        <el-col :span="18">
+                            <el-table
+                            :data="trackTable"
+                            stripe
+                            highlight-current-row
+                            v-loading="loading" border
+                            :header-cell-style="{'font-size': '14px', 'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
+                            :default-sort="{prop: 'finishRatio', order: 'descending'}">
+                            <el-table-column
+                            prop="tn"
+                            label="组织名称"
+                            align="center"
+                            width="130px"
+                            :show-overflow-tooltip="true"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                            prop="passed"
+                            label="已完成"
+                            align="center"
+                            width="85px"
+                            :show-overflow-tooltip="true"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                            prop="waitCheck"
+                            label="待审核"
+                            align="center"
+                            width="85px"
+                            :show-overflow-tooltip="true"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                            prop="fail"
+                            label="未完成"
+                            align="center"
+                            width="85px"
+                            :show-overflow-tooltip="true"
+                            >
+                            </el-table-column>
+                            <el-table-column
+                                label="完成进度"
+                                align="left"
+                                header-align="center"
+                                sortable
+                                prop="finishRatio">
+                                <template slot-scope="scope">
+                                    <el-progress v-if="scope.row.finishRatio < 0.3" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                    <el-progress v-else-if="scope.row.finishRatio < 0.7" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                    <el-progress v-else-if="scope.row.finishRatio < 1" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                    <el-progress v-else-if="scope.row.finishRatio = 1" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                    <span v-else>ERROR</span>
+                                </template>
+                            </el-table-column>
+                            <!--<el-table-column-->
+                            <!--label="工作进度"-->
+                            <!--align="center"-->
+                            <!--width="100px"-->
+                            <!--:show-overflow-tooltip="true"-->
+                            <!--&gt;-->
+                            <!--<template slot-scope="scope">-->
+                            <!--<a style="color:blue;" v-if="scope.row.status === '1'">待审核</a>-->
+                            <!--<a style="color:greenyellow;" v-if="scope.row.status === '2'">已完成</a>-->
+                            <!--<a style="color:red;" v-if="scope.row.status === '3'">审核未通过</a>-->
+                            <!--</template>-->
+                            <!--</el-table-column>-->
+                            </el-table>
+                        </el-col>
+                    </el-row>
+
 
 
 
@@ -589,6 +670,7 @@ align="left"
             //         .catch(_ => {
             //         });
             // },
+
             //计算隔天
             datedifference(sDate1) {    //sDate1和sDate2是2006-12-18格式
                 var dateSpan,
@@ -701,7 +783,9 @@ align="left"
             loadTrackTable(path, query) {
                 this.$http('POST', path, query, false).then(
                     data => {
+                        this.trackTable = [];
                         this.trackTable = data;
+                        console.log(data, 'da');
                         this.pageableTrack.total = data.totalElements;
                     }
                 ).catch(res => {
@@ -775,12 +859,6 @@ align="left"
                     this.lookType = true
                     this.editType = false
                 }
-            },
-            //转换百分比
-            percent(val) {
-                var s = val * 100 + ""
-                var ss = Math.round(s * 100) / 100
-                return ss
             },
             //提醒确认
             // submitAlarm(form) {

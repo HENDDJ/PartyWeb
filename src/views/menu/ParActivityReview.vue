@@ -1,7 +1,7 @@
 <template>
 <div>
-    <el-row :gutter="40">
-        <el-col :span="14">
+    <el-row :gutter="30">
+        <el-col :span="12">
             <div style="border:1px solid black;width: 100%;height: 100%">
                 <div class="left-act-list" >
                     任务列表
@@ -28,9 +28,7 @@
                                     </template>
                                     <template v-else>&nbsp;</template>
                                 </div>
-                                <div class="processing">
-                                    <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="50"></el-progress>
-                                </div>
+
                                 <div class="detail" @click="details(item)">
                                     <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
                                         <icon name="more" scale="2" ></icon>
@@ -49,8 +47,15 @@
                 </el-pagination>
             </div>
         </el-col>
-        <el-col :span="10">
-<div style="border:1px solid black;width: 100%;height: 100%">12</div>
+        <el-col :span="12">
+<div style="border:1px solid black;width: 100%;height: 100%">
+    <transition name="el-zoom-in-center" mode="out-in">
+        <div v-show="activityDetailLoading">
+            {{this.activityDetail.month}}
+        </div>
+    </transition>
+
+</div>
         </el-col>
     </el-row>
 </div>
@@ -67,8 +72,11 @@
                     currentPage: 1,
                     pageSize: 7
                 },
-                apiRoot: '/identity/parActivity',
-                activityLoading: false
+                apiRoot: '/identity/parActivityObject',
+                activityLoading: false,
+                activityDetailLoading:false,
+                queryForm:{attachTo: ""},
+                activityDetail: {}
             }
         },
         methods:{
@@ -94,7 +102,9 @@
             },
             // 获取表格数据
             loadTableData(path) {
-                path += `&sort=month,desc`;
+                let attchId = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.attachTo
+                this.queryForm.attachTo = attchId
+                path += `&sort=createdAt,desc`;
                 this.activityLoading = false;
                 this.$http('POST', path, this.queryForm, false).then(
                     data => {
@@ -107,6 +117,16 @@
                     this.loading = false;
                 });
             },
+            details(item){
+                this.activityDetailLoading = true;
+                this.activityDetail = item
+
+            }
+        },
+        created() {
+                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+                    this.loadTableData(path);
+
         }
     }
 </script>

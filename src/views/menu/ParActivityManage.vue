@@ -69,13 +69,15 @@
                     <transition name="el-zoom-in-center" mode="out-in">
                         <div class="right-detail" v-show="detailLoading">
                             <el-row style="margin: 10px 0 -20px 0" v-show="queryForm.currentStatus === 'PLAN'">
-                                <el-tooltip class="item" effect="light" content="删除" placement="top-start">
+                                <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
                                     <el-button style="float: right;" size="mini" type="danger" icon="el-icon-delete" circle @click="del(row)"></el-button>
                                 </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                                <el-tooltip class="item" effect="dark" content="保存" placement="top-start">
                                     <el-button style="float: right;margin-right: 10px" type="primary" icon="el-icon-receiving" :loading="submitLoading" circle @click="detailSubmit('detailForm')"></el-button>
                                 </el-tooltip>
-                                <vs-switch style="float: right;margin-right: 10px" v-model="editType" @click="lookOrEdit" vs-icon-off="edit" vs-icon-on="done"></vs-switch>
+                                <el-tooltip class="item" effect="dark" content="编辑/查看切换" placement="top-start">
+                                    <vs-switch style="float: right;margin-right: 3px" v-model="editType" @click="lookOrEdit" vs-icon-off="edit" vs-icon-on="done"></vs-switch>
+                                </el-tooltip>
                             </el-row>
 
                             <!--<el-button type="danger" @click="del(row)">删除</el-button>-->
@@ -273,7 +275,7 @@
                                         <el-input v-model="detailForm.title" :disabled="disabled"></el-input>
                                     </template>
                                 </el-col>
-                                <el-col :span="4" :xl="{span: 4, offset: 2}">任务类型:</el-col>
+                                <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">任务类型:</el-col>
                                 <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.type}}</el-col>
                             </el-row>
                             <el-row class="detail-row">

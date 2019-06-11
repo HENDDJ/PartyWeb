@@ -6,9 +6,11 @@
                 <el-form-item v-for="item in queryFormColumns" v-if="item.visible" :key="item.des" :label="item.type === 'checkbox' ? '' : item.des">
                     <el-input v-model="queryForm[item.name]" v-if="item.type === 'string'"></el-input>
                     <el-select v-model="queryForm[item.name]" v-else-if="item.type === 'select'">
-                        <el-option v-for="opItem in item.options" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
+                        <el-option v-for="opItem in item.options" :value="opItem.value" :label="opItem.label" :key="opItem.value" ></el-option>
                     </el-select>
-                    <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'"  :options="item.options" :props="{ checkStrictly: true }" clearable></el-cascader>
+                    <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'"
+                                 :options="item.options"  @change="handleChange" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf'}">
+                    </el-cascader>
                     <el-radio-group v-if="item.type === 'radio'" v-model="queryForm[item.name]" >
                         <el-radio :label="1">是</el-radio>
                         <el-radio :label="0">否</el-radio>
@@ -82,7 +84,9 @@
                 <el-select v-model="form[item.name]" v-else-if="item.type === 'select'" filterable :disabled="item.disabled || disabled">
                     <el-option v-for="opItem in item.options" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
                 </el-select>
-                <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'"  :options="item.options" :props="{ checkStrictly: true }" clearable></el-cascader>
+                <el-cascader v-model="form[item.name]" v-else-if="item.type === 'cascader'" :disabled="item.disabled || disabled"
+                             :options="item.options"  @change="handleChange" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf'}">
+                </el-cascader>
                 <el-radio-group v-if="item.type === 'radio'" v-model="form[item.name]" :disabled="item.disabled || disabled" style="width: 178px" >
                     <el-radio v-for="opItem in item.options" :label="opItem.value" :key="opItem.value"> {{opItem.label}}</el-radio>
                 </el-radio-group>
@@ -353,6 +357,12 @@
                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                 this.defaultRequestConfig(path);
                 this.loadTableData(path);
+            },
+            handleChange(value) {
+                //组织层级只传村级id
+                if(this.form.districtId){
+                    this.form.districtId = value[1];
+                }
             }
         },
         created() {

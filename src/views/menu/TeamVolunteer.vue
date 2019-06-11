@@ -11,7 +11,8 @@
                         :addBtnVis=false
                         :editBtnVis=false
                         :lookBtnVis = false
-                        :delBtnVis=false>
+                        :delBtnVis=false
+                        :queryFormColumns="volunteerQuery">
                         <template slot="header-btn" slot-scope="slotProps">
                             <el-button type="primary"  plain  class="self-btn self-add" @click="add()" >&nbsp;</el-button>
                             <el-button type="warning"  plain  class="self-btn self-edit" @click="edit(slotProps.selected)" >&nbsp;</el-button>
@@ -23,7 +24,7 @@
             </vs-tab>
             <vs-tab @click="handleSelect()" label="服务队伍信息">
                 <div class="con-tab-ejemplo">
-                    <CommonCRUD :columns="teamColumns" api-root="identity/volunteerGroup" :formColumns="teamFormColumns"></CommonCRUD>
+                    <CommonCRUD :columns="teamColumns" api-root="identity/volunteerGroup" :formColumns="teamFormColumns" :queryFormColumns="teamQuery"></CommonCRUD>
                 </div>
             </vs-tab>
         </vs-tabs>
@@ -138,6 +139,27 @@
                 colorx:'success',
                 volunteerColumns:[],//志愿者列表
                 volunteerFormColumns:{},//志愿者
+                //志愿者查询条件
+                volunteerQuery:[
+                    {
+                        des: '姓名',
+                        name: 'name',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    }
+                ],
+                //志愿者队伍查询条件
+                teamQuery:[
+                    {
+                        des: '名称',
+                        name: 'name',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    }
+                ],
+
                 dialogVisible:false,
                 form:{
                     partyMemberId:'',

@@ -43,7 +43,11 @@
                 })
             },
             disabled() {
-
+                if (!this.disabled) {
+                    document.getElementsByClassName('el-upload--text')[0].style.display = 'inline-block';
+                } else {
+                    document.getElementsByClassName('el-upload--text')[0].style.display = 'none';
+                }
             }
         },
         data() {

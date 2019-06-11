@@ -51,9 +51,6 @@
     i {
         font-size: 16px !important;
     }
-    .el-textarea__inner{
-        width:200px !important;
-    }
     body::-webkit-scrollbar {
         /*width: 0;*/
     }

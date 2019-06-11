@@ -4,15 +4,19 @@
             <el-row :gutter="60" type="flex" justify="center">
                 <el-col :span="12" :xl="{span: 12}">
                     <div class="list-header">
-                        任务列表
-                        <el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
+                        <h1>{{ taskTitle }}</h1>
+                        <!--<el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">-->
+                            <!--<el-option-->
+                                <!--v-for="item in options"-->
+                                <!--:key="item.value"-->
+                                <!--:label="item.label"-->
+                                <!--:value="item.value">-->
+                            <!--</el-option>-->
+                        <!--</el-select>-->
+                        <div style="flex: 1;text-align: right">
+                            <vs-button style="float: right" color="primary" type="flat" icon="assignment" @click="loadByStatus('PLAN')">计划中</vs-button>
+                            <vs-button style="float: right" color="success" type="flat" icon="alarm" @click="loadByStatus('ACTIVE')">进行中</vs-button>
+                        </div>
                     </div>
                     <div class="left-act-list" >
                             <transition name="translate" mode="out-in">
@@ -60,20 +64,20 @@
                 </el-col>
                 <el-col :span="12" :xl="{span: 12}">
                     <div class="detail-header">
-                        任务详情
-                        <el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">
-                            <el-option
-                                v-for="item in options"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
+                        <h1>任务详情</h1>
                     </div>
                     <transition name="el-zoom-in-center" mode="out-in">
                         <div class="right-detail" v-show="detailLoading">
-                            <!--<el-button type="primary" @click="lookOrEdit" v-if="lookType">编辑</el-button>-->
-                            <!--<el-button type="primary" @click="lookOrEdit" v-if="editType">查看</el-button>-->
+                            <el-row style="margin: 10px 0 -20px 0" v-show="queryForm.currentStatus === 'PLAN'">
+                                <el-tooltip class="item" effect="light" content="删除" placement="top-start">
+                                    <el-button style="float: right;" size="mini" type="danger" icon="el-icon-delete" circle @click="del(row)"></el-button>
+                                </el-tooltip>
+                                <el-tooltip class="item" effect="dark" content="Top Left 提示文字" placement="top-start">
+                                    <el-button style="float: right;margin-right: 10px" type="primary" icon="el-icon-receiving" :loading="submitLoading" circle @click="detailSubmit('detailForm')"></el-button>
+                                </el-tooltip>
+                                <vs-switch style="float: right;margin-right: 10px" v-model="editType" @click="lookOrEdit" vs-icon-off="edit" vs-icon-on="done"></vs-switch>
+                            </el-row>
+
                             <!--<el-button type="danger" @click="del(row)">删除</el-button>-->
 
 
@@ -263,23 +267,57 @@
                             <!--</el-button>-->
                             <el-row class="detail-row">
                                 <el-col :span="5" :xl="{span: 4}">任务名称：</el-col>
-                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.title}}</el-col>
+                                <el-col :span="5" style="color: #25252582">
+                                    <template v-if="lookType">&nbsp;{{detailForm.title}}</template>
+                                    <template v-if="editType">
+                                        <el-input v-model="detailForm.title" :disabled="disabled"></el-input>
+                                    </template>
+                                </el-col>
                                 <el-col :span="4" :xl="{span: 4, offset: 2}">任务类型:</el-col>
                                 <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.type}}</el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="5" :xl="{span: 4}">截止日期：</el-col>
-                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.month}}</el-col>
+                                <el-col :span="5" style="color: #25252582">
+                                    <template v-if="lookType">&nbsp;{{detailForm.month}}</template>
+                                    <template v-if="editType">
+                                        <el-date-picker v-model="detailForm.month"
+                                                        v-if="editType"
+                                                        type="date"
+                                                        value-format="yyyy-MM-dd"
+                                                        placeholder="选择日期">
+                                        </el-date-picker>
+                                    </template>
+                                </el-col>
                                 <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">提醒时间:</el-col>
-                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.alarmTime || '暂无'}}</el-col>
+                                <el-col :span="5" style="color: #25252582">
+                                    <template v-if="lookType">&nbsp;{{detailForm.alarmTime || '暂无'}}</template>
+                                    <template v-if="editType">
+                                        <el-date-picker v-model="detailForm.alarmTime"
+                                        v-if="editType"
+                                        type="date"
+                                        value-format="yyyy-MM-ddT00:00:00"
+                                        placeholder="选择日期">
+                                        </el-date-picker>
+                                    </template></el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="5" :xl="{span: 4}">任务分值：</el-col>
-                                <el-col :span="4" style="color: red;font-weight: bold">&nbsp;{{detailForm.score || 0}}分</el-col>
+                                <el-col :span="4" style="color: red;font-weight: bold">
+                                    <template v-if="lookType">&nbsp;{{detailForm.score || 0}}分</template>
+                                    <template v-if="editType">
+                                        <vs-input-number size="medium" v-model="detailForm.score"></vs-input-number>
+                                    </template>
+                                </el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="5"  :xl="{span: 4}">工作要求：</el-col>
-                                <el-col :span="15" style="color: #25252582">&nbsp;{{detailForm.context}}</el-col>
+                                <el-col :span="15" style="color: #25252582">
+                                    <template v-if="lookType">&nbsp;{{detailForm.context}}</template>
+                                    <template v-if="editType">
+                                        <el-input v-model="detailForm.context" type="textarea" :disabled=disabled></el-input>
+                                    </template>
+                                </el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="5"  :xl="{span: 4}">附件清单：</el-col>
@@ -287,13 +325,23 @@
                                     <CommonFileUpload :value="detailForm.fileUrls" @getValue="detailForm.fileUrls = $event" :disabled="lookType"></CommonFileUpload>
                                 </el-col>
                             </el-row>
-                            <el-row class="detail-row" v-if="detailForm.type === 'DistLearning'">
+                            <el-row class="detail-row" v-if="detailForm.taskType === 'DistLearning'">
                                 <el-col :span="5"  :xl="{span: 4}">视频列表：</el-col>
                                 <el-col :span="15">
-                                    <vs-chip v-for="items in detailForm.video" :key="items.name">
-                                        <vs-avatar icon="send"/>
-                                        {{items.name}}
-                                    </vs-chip>
+                                    <template v-if="lookType">
+                                        <vs-chip v-for="items in detailForm.video" :key="items.name">
+                                            <vs-avatar icon="send"></vs-avatar>
+                                            {{items.name}}
+                                        </vs-chip>
+                                    </template>
+                                    <template v-if="editType" id="vd">
+                                        <el-transfer filterable
+                                            v-model="detailForm.video"
+                                            :titles="['可选视频', '已选视频']"
+                                            :props="{key: 'value',label: 'desc'}"
+                                            :data="addVideoList">
+                                        </el-transfer>
+                                    </template>
                                 </el-col>
                             </el-row>
                             <el-row class="detail-row">
@@ -579,7 +627,7 @@ align="left"
                     },
                 ],
                 addVideo: false,
-                queryForm: {taskType: ''},
+                queryForm: {taskType: '', currentStatus: 'ACTIVE'},
                 queryFormTrack: {ActivityID: ''},
                 //视频添加
                 addVideoList: [],
@@ -667,38 +715,16 @@ align="left"
                 }
             }
         },
+        computed: {
+            taskTitle() {
+                console.log( this.queryForm.currentStatus, "ss")
+                return this.queryForm.currentStatus == 'ACTIVE' ? '正在进行' : '计划进行'
+            }
+        },
         components: {
             CommonFileUpload
         },
         methods: {
-            // remindHandleClose(done) {
-            //     this.$confirm('确认关闭？')
-            //         .then(_ => {
-            //             this.remindForm = {};
-            //             this.$refs['remindForm'].resetFields();
-            //             this.remindVis = false;
-            //             done();
-            //         })
-            //         .catch(_ => {
-            //         });
-            // },
-
-            //计算隔天
-            datedifference(sDate1) {    //sDate1和sDate2是2006-12-18格式
-                var dateSpan,
-                    iDays;
-                sDate1 = Date.parse(sDate1);
-                var sDate2 = new Date().Format("yyyy-MM-dd");
-                sDate2 = Date.parse(sDate2);
-                dateSpan = sDate1 - sDate2;
-                if(dateSpan >= 0){
-                    iDays = Math.floor(dateSpan / (24 * 3600 * 1000));
-                    return iDays
-                }else{
-                    return -1
-                }
-
-            },
             //选择radio时触发
             radioChoose(val) {
                 if (val == 'Party') {
@@ -731,14 +757,8 @@ align="left"
             },
             //关闭镇详情
             townDetailClose() {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        this.townDetailForm = {};
-                        this.townDetailVis = false;
-                        done();
-                    })
-                    .catch(_ => {
-                    });
+                this.townDetailForm = {};
+                this.townDetailVis = false;
             },
             //镇详情
             townDetailClick(val) {
@@ -801,8 +821,7 @@ align="left"
                 return sums;
             },
             // 获取表格数据
-            loadTableData(path) {
-                path += `&sort=month,desc`;
+            loadTableData(path, statusChange) {
                 this.activityLoading = false;
                 this.$http('POST', path, this.queryForm, false).then(
                     data => {
@@ -810,7 +829,7 @@ align="left"
                         this.pageable.total = data.totalElements;
                         this.loading = false;
                         this.activityLoading = true;
-                        if(!this.detailLoading) {
+                        if(!this.detailLoading || statusChange) {
                             this.detailForm = this.tableData[0];
                             this.handleFile(this.detailForm);
                             let path = `${this.apiRootTrack}/${this.detailForm.id}perList`;
@@ -855,7 +874,6 @@ align="left"
                         this.townDetailTable = data;
                     }
                 ).catch(res => {
-                    console.log(res)
                     this.$message({
                         type: 'warning',
                         message: '信息拉取失败'
@@ -870,6 +888,13 @@ align="left"
                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                 this.queryForm.taskType = val;
                 this.loadTableData(path);
+            },
+            //进行中、计划中获取
+            loadByStatus(val) {
+                this.pageable.currentPage = 1;
+                let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+                this.queryForm.currentStatus = val;
+                this.loadTableData(path, true);
             },
             handleFile(val) {
                 let fileStr = '';
@@ -889,9 +914,9 @@ align="left"
                 }
                 this.detailLoading = false;
                 this.row = val;
+                this.handleFile(val);
                 this.detailForm = JSON.parse(JSON.stringify(val));
                 this.detailFormNext = JSON.parse(JSON.stringify(val));
-                this.handleFile(val);
                 this.lookType = true;
                 this.editType = false;
                 let path = `${this.apiRootTrack}/${val.id}perList`;
@@ -1148,7 +1173,7 @@ align="left"
     .list-item {
         background-color: white;
         text-align: left;
-        margin: 10px 0;
+        margin: 15px 0;
         display: flex;
         padding: 14px 20px;
         transition: all .4s;
@@ -1229,10 +1254,10 @@ align="left"
     .right-detail {
         font-size: 16px;
         width: 100%;
-        height: 690px;
+        height: 710px;
         padding: 5px 20px;
         box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
-        margin: 15px 0;
+        margin: 25px 0;
         overflow-y: scroll;
     }
     .right-detail::-webkit-scrollbar {
@@ -1244,6 +1269,14 @@ align="left"
     .detail-row .el-col:nth-child(2n) {
         text-align: left;
     }
+    .list-header {
+        display: flex;
+        padding: 0 20px;
+    }
+    .detail-header {
+        display: flex;
+        padding: 0;
+    }
 </style>
 <style>
     .translate-enter,.translate-leave-to{
@@ -1252,6 +1285,9 @@ align="left"
     }
     .translate-enter-active, .translate-leave-active{
         transition: all 0.5s ease;
+    }
+    .right-detail .el-button.is-circle {
+        padding: 2px;
     }
 </style>
 

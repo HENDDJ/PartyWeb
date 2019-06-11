@@ -73,7 +73,7 @@
                                     <el-button style="float: right;" size="mini" type="danger" icon="el-icon-delete" circle @click="del(row)"></el-button>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="保存" placement="top-start">
-                                    <el-button style="float: right;margin-right: 10px" type="primary" icon="el-icon-receiving" :loading="submitLoading" circle @click="detailSubmit('detailForm')"></el-button>
+                                    <el-button :disabled="!editType" style="float: right;margin-right: 10px" type="primary" icon="el-icon-receiving" :loading="submitLoading" circle @click="detailSubmit('detailForm')"></el-button>
                                 </el-tooltip>
                                 <el-tooltip class="item" effect="dark" content="编辑/查看切换" placement="top-start">
                                     <vs-switch style="float: right;margin-right: 3px" v-model="editType" @click="lookOrEdit" vs-icon-off="edit" vs-icon-on="done"></vs-switch>
@@ -268,20 +268,20 @@
                             <!--v-if="editType">确 定-->
                             <!--</el-button>-->
                             <el-row class="detail-row">
-                                <el-col :span="5" :xl="{span: 4}">任务名称：</el-col>
-                                <el-col :span="5" style="color: #25252582">
+                                <el-col :span="4">任务名称：</el-col>
+                                <el-col :span="6" style="color: #25252582">
                                     <template v-if="lookType">&nbsp;{{detailForm.title}}</template>
                                     <template v-if="editType">
                                         <el-input v-model="detailForm.title" :disabled="disabled"></el-input>
                                     </template>
                                 </el-col>
-                                <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">任务类型:</el-col>
-                                <el-col :span="5" style="color: #25252582">&nbsp;{{detailForm.type}}</el-col>
+                                <el-col :span="4">任务类型:</el-col>
+                                <el-col :span="6" style="color: #25252582">&nbsp;{{detailForm.type}}</el-col>
                             </el-row>
                             <el-row class="detail-row">
-                                <el-col :span="5" :xl="{span: 4}">截止日期：</el-col>
-                                <el-col :span="5" style="color: #25252582">
-                                    <template v-if="lookType">&nbsp;{{detailForm.month}}</template>
+                                <el-col :span="4">截止日期：</el-col>
+                                <el-col :span="6" style="color: #25252582">
+                                    <template v-if="lookType">&nbsp;{{new Date(detailForm.month).toLocaleDateString()}}</template>
                                     <template v-if="editType">
                                         <el-date-picker v-model="detailForm.month"
                                                         v-if="editType"
@@ -291,9 +291,9 @@
                                         </el-date-picker>
                                     </template>
                                 </el-col>
-                                <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">提醒时间:</el-col>
-                                <el-col :span="5" style="color: #25252582">
-                                    <template v-if="lookType">&nbsp;{{detailForm.alarmTime || '暂无'}}</template>
+                                <el-col :span="4">提醒时间:</el-col>
+                                <el-col :span="6" style="color: #25252582">
+                                    <template v-if="lookType">&nbsp;{{detailForm.alarmTime ? new Date(detailForm.alarmTime).toLocaleDateString() : '暂无'}}</template>
                                     <template v-if="editType">
                                         <el-date-picker v-model="detailForm.alarmTime"
                                         v-if="editType"
@@ -304,8 +304,8 @@
                                     </template></el-col>
                             </el-row>
                             <el-row class="detail-row">
-                                <el-col :span="5" :xl="{span: 4}">任务分值：</el-col>
-                                <el-col :span="4" style="color: red;font-weight: bold">
+                                <el-col :span="4">任务分值：</el-col>
+                                <el-col :span="6" style="color: red;font-weight: bold">
                                     <template v-if="lookType">&nbsp;{{detailForm.score || 0}}分</template>
                                     <template v-if="editType">
                                         <vs-input-number size="medium" v-model="detailForm.score"></vs-input-number>
@@ -313,8 +313,8 @@
                                 </el-col>
                             </el-row>
                             <el-row class="detail-row">
-                                <el-col :span="5"  :xl="{span: 4}">工作要求：</el-col>
-                                <el-col :span="15" style="color: #25252582">
+                                <el-col :span="4" >工作要求：</el-col>
+                                <el-col :span="16" style="color: #25252582">
                                     <template v-if="lookType">&nbsp;{{detailForm.context}}</template>
                                     <template v-if="editType">
                                         <el-input v-model="detailForm.context" type="textarea" :disabled=disabled></el-input>
@@ -328,11 +328,11 @@
                                 </el-col>
                             </el-row>
                             <el-row class="detail-row" v-if="detailForm.taskType === 'DistLearning'">
-                                <el-col :span="5"  :xl="{span: 4}">视频列表：</el-col>
-                                <el-col :span="15">
+                                <el-col :span="4" >视频列表：</el-col>
+                                <el-col :span="18">
                                     <template v-if="lookType">
-                                        <vs-chip v-for="items in detailForm.video" :key="items.name">
-                                            <vs-avatar icon="send"></vs-avatar>
+                                        <vs-chip v-for="items in detailForm.video" :key="items.name" @click.native="showVideo(items)">
+                                            <vs-avatar icon="videocam"></vs-avatar>
                                             {{items.name}}
                                         </vs-chip>
                                     </template>
@@ -347,7 +347,7 @@
                                 </el-col>
                             </el-row>
                             <el-row class="detail-row">
-                                <el-col :span="5"  :xl="{span: 4}">进度跟踪：</el-col>
+                                <el-col :span="4" >进度跟踪：</el-col>
                                 <el-col :span="18">
                                     <el-table
                                         :data="trackTable"
@@ -400,7 +400,7 @@
                                             align="left"
                                             header-align="center"
                                             sortable
-                                            min-width="170px"
+                                            min-width="140px"
                                             prop="finishRatio">
                                             <template slot-scope="scope">
                                                 <el-progress v-if="scope.row.finishRatio < 0.3" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
@@ -727,6 +727,9 @@ align="left"
             CommonFileUpload
         },
         methods: {
+            showVideo(data) {
+                console.log(data)
+            },
             //选择radio时触发
             radioChoose(val) {
                 if (val == 'Party') {
@@ -1035,7 +1038,6 @@ align="left"
                             videoList.push(JSON.parse(item))
                         })
                         this.form.video = videoList
-                        console.log(this.form)
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {
                                 this.$message({
@@ -1065,44 +1067,38 @@ align="left"
                 })
             },
             detailSubmit(form) {
-                this.$refs[form].validate((valid) => {
-                    if (valid) {
-                        this.detailForm.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
-                        var beforeUrl = this.detailForm.fileUrls
-                        if (this.detailForm.fileUrls) {
-                            var ss = this.detailForm.fileUrls.toString().split(",")
-                            this.detailForm.fileUrls = ss
-                        }
-                        var video = this.detailForm.video
-                        var videoList = []
-                        video.forEach(item => {
-                            videoList.push(JSON.parse(item))
-                        })
-                        this.detailForm.video = videoList
-                        console.log(this.detailForm.video)
-                        this.$http('Post', '/identity/parActivity/', this.detailForm, false).then(
-                            (data) => {
-                                this.$message({
-                                    type: 'success',
-                                    message: '修改成功'
-                                })
-                                let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
-                                this.loadTableData(path);
-
-                                this.detailForm.fileUrls = beforeUrl
-                                this.lookType = true
-                                this.editType = false
-                            }).catch(res => {
-                            this.$message({
-                                type: 'error',
-                                message: '修改失败'
-                            });
-                            return false;
-                        });
-                    } else {
-
-                    }
+                this.detailForm.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
+                let beforeUrl = this.detailForm.fileUrls
+                if (this.detailForm.fileUrls) {
+                    var ss = this.detailForm.fileUrls.toString().split(",")
+                    this.detailForm.fileUrls = ss
+                }
+                let video = this.detailForm.video
+                let videoList = []
+                video.forEach(item => {
+                    videoList.push(JSON.parse(item))
                 })
+                this.detailForm.video = videoList
+                this.$http('put', `/identity/parActivity/${this.detailForm.id}id`, this.detailForm, false).then(
+                    (data) => {
+                        this.$message({
+                            type: 'success',
+                            message: '修改成功'
+                        })
+                        let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+                        this.loadTableData(path);
+
+                        this.detailForm.fileUrls = beforeUrl
+                        this.lookType = true
+                        this.editType = false
+                    }).catch(res => {
+                    this.$message({
+                        type: 'error',
+                        message: '修改失败'
+                    });
+                    return false;
+                });
+
             },
             calcLeftDays(date){
                 //开始时间
@@ -1290,6 +1286,9 @@ align="left"
     }
     .right-detail .el-button.is-circle {
         padding: 2px;
+    }
+    .detail-row .el-input--mini .el-input__inner {
+        width: 185px !important;
     }
 </style>
 

@@ -14,6 +14,13 @@
                 formColumns:{},
                 queryForm:[
                     {
+                        des: '姓名',
+                        name: 'name',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    },
+                    {
                         name: 'post',
                         type: 'string',
                         value: '',
@@ -28,7 +35,7 @@
         created(){
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns =this.$store.state.classInfo.properties;
-            this.queryForm[0].value = 'SECRETARY';
+            this.queryForm[1].value = 'SECRETARY';
         }
     }
 </script>

@@ -79,6 +79,7 @@
             <el-row class="detail-row">
                 <el-col :span="5"  :xl="{span: 4, offset: 2}">电视截图：</el-col>
                 <el-col :span="12">
+                    <viewer :images="TvPicFull">
                     <el-timeline>
                         <el-timeline-item
                             v-for="(activity, index) in TvPic"
@@ -86,14 +87,14 @@
                             :timestamp="activity.timestamp"
                             placement="top"
                             v-if="index<2">
-                            <vue-viewer multiple
-                                        :thumb="TvPicFull"
-                                        list-ul-class="image-list"
-                                        :full="TvPicFull">
-                            </vue-viewer>
-
+                                <img
+                                    :src="TvPicFull[index]"
+                                    :key="index"
+                                    style="width: 200px"
+                                >
                         </el-timeline-item>
                     </el-timeline>
+                    </viewer>
 
                 </el-col>
 
@@ -146,27 +147,35 @@
         v-if="picDetail"
         title="更多图片"
         :visible.sync="picDetail"
-        width="920px"
+        width="820px"
         align="left"
         :modal-append-to-body='false'
         :append-to-body="true"
         :before-close="picDetailClose">
-        <el-timeline>
-            <el-timeline-item
-                v-for="(activity, index) in TvPic"
-                :key="index"
-                :timestamp="activity.timestamp"
-                placement="top">
-                    <el-row>
-                        <el-col :span="10">
-                            <el-image
-                                style=""
-                                :src="imgTF(activity.imgurl)"
-                            ></el-image>
-                        </el-col>
-                    </el-row>
-            </el-timeline-item>
-        </el-timeline>
+        <el-row>
+            <el-col :span="3">
+                &nbsp;
+            </el-col>
+            <el-col :span="18">
+                <viewer :images="TvPicFull">
+                <el-timeline>
+                    <el-timeline-item
+                        v-for="(activity, index) in TvPic"
+                        :key="index"
+                        :timestamp="activity.timestamp"
+                        placement="top">
+                        <img
+                            :src="TvPicFull[index]"
+                            :key="index"
+                            style="width: 100%"
+                        >
+
+                    </el-timeline-item>
+                </el-timeline>
+                </viewer>
+            </el-col>
+        </el-row>
+
     </el-dialog>
 </div>
 </template>
@@ -247,7 +256,6 @@
                     })
 
                 })
-console.log()
             },
             imgTF(val){
                 if (!val.split("&")[1]) {
@@ -270,7 +278,6 @@ console.log()
                     .catch(_ => {
                     });
             },
-
         },
         created() {
                  let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;

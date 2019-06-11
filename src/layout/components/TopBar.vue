@@ -50,4 +50,7 @@
         height: calc(60 * 100vw/1920);
         font-size: 16px !important;
     }
+    .vs-navbar{
+        z-index: 99 !important;
+    }
 </style>

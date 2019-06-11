@@ -292,6 +292,8 @@
                                 videoList.push(JSON.parse(item))
                             })
                             this.form.video = videoList
+                        }else{
+                            return null
                         }
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {

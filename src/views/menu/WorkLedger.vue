@@ -1,6 +1,6 @@
 <template>
     <section>
-        <CommonCRUD  :columns="columns" apiRoot="/identity/workLedger" :formColumns="formColumns" >
+        <CommonCRUD  :columns="columns" apiRoot="/identity/workLedger" :formColumns="formColumns" :queryFormColumns="queryForm">
             <template slot="handle" slot-scope="scope" >
                 <div class="encStyle" @click="downLoad(scope.row)">
                     {{(scope.row.enclosure) ? scope.row.enclosure.split("&")[1] : ' ' }}
@@ -18,6 +18,15 @@
             return {
                 columns:[],
                 formColumns:[],
+                queryForm:[
+                    {
+                        des: '标题',
+                        name: 'title',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    },
+                ]
             }
         },
         methods: {

@@ -25,7 +25,7 @@
                                     <p style="border-right: 1px solid #888">&nbsp;</p>
                                 </div>
                                 <div class="left-time">
-                                    <template v-if="calcLeftDays(item.month)">
+                                    <template v-if="item.month">
                                         <icon name="miaobiao" scale="3.5"></icon>
                                         <p><span>{{calcLeftDays(item.month)}}</span>天</p>
                                     </template>
@@ -79,6 +79,7 @@
             <el-row class="detail-row">
                 <el-col :span="5"  :xl="{span: 4, offset: 2}">电视截图：</el-col>
                 <el-col :span="12">
+                    <viewer :images="TvPicFull">
                     <el-timeline>
                         <el-timeline-item
                             v-for="(activity, index) in TvPic"
@@ -86,14 +87,14 @@
                             :timestamp="activity.timestamp"
                             placement="top"
                             v-if="index<2">
-                            <vue-viewer multiple
-                                        :thumb="TvPicFull"
-                                        list-ul-class="image-list"
-                                        :full="TvPicFull">
-                            </vue-viewer>
-
+                                <img
+                                    :src="TvPicFull[index]"
+                                    :key="index"
+                                    style="width: 200px"
+                                >
                         </el-timeline-item>
                     </el-timeline>
+                    </viewer>
 
                 </el-col>
 
@@ -105,33 +106,30 @@
             <el-row class="detail-row">
                 <el-col :span="5"  :xl="{span: 4, offset: 2}">手机截图：</el-col>
                 <el-col :span="12">
-                    <el-timeline>
-                        <el-timeline-item
-                            v-for="(activity, index) in TvPic"
-                            :key="index"
-                            :timestamp="activity.timestamp"
-                            placement="top">
-
-                                <el-row>
-                                    <el-col :span="10">
-                                        <el-image
-                                            style=""
-                                            :src="imgTF(activity.imgurl)"
-                                           ></el-image>
-                                    </el-col>
-                                </el-row>
-
-                        </el-timeline-item>
-                    </el-timeline>
+                    <viewer :images="PhonePicFull">
+                        <el-timeline>
+                            <el-timeline-item
+                                v-for="(activity, index) in PhonePic"
+                                :key="index"
+                                :timestamp="activity.timestamp"
+                                placement="top"
+                                v-if="index<2">
+                                <img
+                                    :src="PhonePicFull[index]"
+                                    :key="index"
+                                    style="width: 200px"
+                                >
+                            </el-timeline-item>
+                        </el-timeline>
+                    </viewer>
                 </el-col>
-
                 <el-col :span="4" >
-                    <el-button type="text" >更多</el-button>
+                    <el-button type="text" @click="PhonePicShow">更多</el-button>
                 </el-col>
             </el-row>
             <el-row>
                 <el-col>
-                    <el-button type="primary">审核</el-button>
+                    <el-button type="primary" @click="exam">审核</el-button>
                 </el-col>
             </el-row>
 
@@ -146,27 +144,69 @@
         v-if="picDetail"
         title="更多图片"
         :visible.sync="picDetail"
-        width="920px"
+        width="820px"
         align="left"
         :modal-append-to-body='false'
         :append-to-body="true"
         :before-close="picDetailClose">
-        <el-timeline>
-            <el-timeline-item
-                v-for="(activity, index) in TvPic"
-                :key="index"
-                :timestamp="activity.timestamp"
-                placement="top">
-                    <el-row>
-                        <el-col :span="10">
-                            <el-image
-                                style=""
-                                :src="imgTF(activity.imgurl)"
-                            ></el-image>
-                        </el-col>
-                    </el-row>
-            </el-timeline-item>
-        </el-timeline>
+        <el-row>
+            <el-col :span="3">
+                &nbsp;
+            </el-col>
+            <el-col :span="18">
+                <viewer :images="TvPicFull">
+                <el-timeline>
+                    <el-timeline-item
+                        v-for="(activity, index) in TvPic"
+                        :key="index"
+                        :timestamp="activity.timestamp"
+                        placement="top">
+                        <img
+                            :src="TvPicFull[index]"
+                            :key="index"
+                            style="width: 100%"
+                        >
+
+                    </el-timeline-item>
+                </el-timeline>
+                </viewer>
+            </el-col>
+        </el-row>
+
+    </el-dialog>
+    <el-dialog
+        v-if="picPhoneDetail"
+        title="更多图片"
+        :visible.sync="picPhoneDetail"
+        width="820px"
+        align="left"
+        :modal-append-to-body='false'
+        :append-to-body="true"
+        :before-close="picPhoneDetailClose">
+        <el-row>
+            <el-col :span="3">
+                &nbsp;
+            </el-col>
+            <el-col :span="18">
+                <viewer :images="PhonePicFull">
+                    <el-timeline>
+                        <el-timeline-item
+                            v-for="(activity, index) in PhonePic"
+                            :key="index"
+                            :timestamp="activity.timestamp"
+                            placement="top">
+                            <img
+                                :src="PhonePicFull[index]"
+                                :key="index"
+                                style="width: 100%"
+                            >
+
+                        </el-timeline-item>
+                    </el-timeline>
+                </viewer>
+            </el-col>
+        </el-row>
+
     </el-dialog>
 </div>
 </template>
@@ -189,7 +229,10 @@
                 activityDetail: {},
                 TvPic: [],
                 TvPicFull:[],
-                picDetail:false
+                picDetail:false,
+                PhonePic:[],
+                PhonePicFull:[],
+                picPhoneDetail:false
             }
         },
         methods:{
@@ -233,7 +276,10 @@
             details(item){
                 this.activityDetailLoading = true;
                 this.activityDetail = item
+                console.log(item)
                 this.TvPic = []
+                this.PhonePic = []
+                this.PhonePicFull = []
                 this.TvPicFull = []
                 let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
                 let form = {organizationId:item.districtId,studyContent:item.activityId}
@@ -246,8 +292,24 @@
                         this.TvPicFull.push(this.imgTF(item.imageURL))
                     })
 
+                }).catch(()=>{
+                    this.$message({
+                        type: 'warning',
+                        message: '电视截图拉取失败'
+                    })
                 })
-console.log()
+                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=6&sort=time,desc`;
+                let phoneForm = {userId:item.districtId,snId:item.activityId}
+                this.$http("Post",phonePath,phoneForm,false).then(data=>{
+                    data.content.forEach(item=>{
+                        let formItem = {}
+                        formItem.timestamp =item.time
+                        formItem.imgurl = item.imageUrl
+                        this.PhonePic.push(formItem)
+                        this.PhonePicFull.push(this.imgTFPhone(item))
+                    })
+                })
+
             },
             imgTF(val){
                 if (!val.split("&")[1]) {
@@ -257,8 +319,27 @@ console.log()
                     return val
                 }
             },
+            imgTFPhone(item){
+                console.log(item)
+                let imgUrl = item.imageUrl.toString()
+                console.log(item.time.toString())
+                if (!imgUrl.split("&")[1]) {
+                    let time1 = item.time.toString().split("T")[0]
+                    let time2 =  Number(time1.split("-")[0])
+                    let time3 = Number(time1.split("-")[1])
+                    let time4 = Number(time1.split("-")[2])
+                    console.log(time1,111)
+                    let time5 = time3.toString()+time4.toString()
+                    return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${item.imageUrl}`
+                }else {
+                    return item.imageUrl
+                }
+            },
             TvMore(){
                 this.picDetail = true
+            },
+            PhonePicShow(){
+                this.picPhoneDetail = true
             },
             //关闭详情
             picDetailClose() {
@@ -270,7 +351,20 @@ console.log()
                     .catch(_ => {
                     });
             },
+            //关闭详情
+            picPhoneDetailClose() {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        this.picPhoneDetail = false;
+                        done();
+                    })
+                    .catch(_ => {
+                    });
+            },
+            //审核
+            exam(){
 
+            }
         },
         created() {
                  let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;

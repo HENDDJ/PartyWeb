@@ -1,6 +1,6 @@
 <template>
     <section>
-        <CommonCRUD :columns="columns" api-root="identity/reserve" :formColumns="formColumns"></CommonCRUD>
+        <CommonCRUD :columns="columns" api-root="identity/reserve" :formColumns="formColumns" :queryFormColumns="queryForm"></CommonCRUD>
     </section>
 </template>
 
@@ -12,6 +12,15 @@
             return {
                 columns:[],
                 formColumns:{},
+                queryForm:[
+                    {
+                        des: '姓名',
+                        name: 'name',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    }
+                ]
             }
         },
         components: {

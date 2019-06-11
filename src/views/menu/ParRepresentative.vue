@@ -8,7 +8,8 @@
             :addBtnVis=false
             :editBtnVis=false
             :lookBtnVis = false
-            :delBtnVis=false>
+            :delBtnVis=false
+            :queryFormColumns="queryForm">
             <template slot="header-btn" slot-scope="slotProps">
                 <el-button type="primary"  plain  class="self-btn self-add" @click="add()" >&nbsp;</el-button>
                 <el-button type="warning"  plain  class="self-btn self-edit" @click="edit(slotProps.selected)" >&nbsp;</el-button>
@@ -102,6 +103,15 @@
                 },
                 submitLoading:false,
                 title:'',
+                queryForm:[
+                    {
+                        des: '姓名',
+                        name: 'name',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    }
+                ]
             }
         },
         methods: {

@@ -1,6 +1,6 @@
 <template>
     <section>
-        <CommonCRUD :columns="columns" api-root="identity/positionInformation" :formColumns="formColumns" ></CommonCRUD>
+        <CommonCRUD :columns="columns" api-root="identity/positionInformation" :formColumns="formColumns" :queryFormColumns="queryColumns"></CommonCRUD>
     </section>
 </template>
 
@@ -15,6 +15,40 @@
                 columns:[],
                 formColumns:{},
                 districtList:[],
+                ceshi:[
+                    {
+                        value: 'zhinan',
+                        label: '指南',
+                        children: [{
+                            value: 'shejiyuanze',
+                            label: '设计原则',
+                        }],
+                    },
+                    {
+                        value: 'zhinan1',
+                        label: '指南1',
+                        children: [{
+                            value: 'shejiyuanze',
+                            label: '设计原则1',
+                        }],
+                    },
+                ],
+                queryColumns:[
+                    {
+                        des: '名称',
+                        name: 'name',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    },
+                    {
+                        des: '阵地类型',
+                        name: 'type',
+                        type: 'select',
+                        visible: true,
+                        options:LookUp['PositionType']
+                    }
+                ],
             }
         },
         methods: {
@@ -26,12 +60,9 @@
                 })
             },
             showAllOrg(){
-                this.$http('POST',`identity/sysDistrict/list?districtLevel=3` ,false).then(data => {
-                   data.forEach(item => {
-                       this.districtList.push( {label:item.districtName,value:item.districtId})
-                    });
-                    this.formColumns.filter(sub => sub.name === 'districtId')[0].options= this.districtList;
-                });
+
+
+              //  this.formColumns.filter(sub => sub.name === 'districtId')[0].options= this.ceshi;
 
             }
         },

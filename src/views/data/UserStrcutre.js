@@ -1,6 +1,12 @@
 export default {
     columns: [
         {
+            name: "image",
+            type: 'image',
+            des: "头像",
+            notShow:'true'
+        },
+        {
             name: "name",
             type: 'string',
             des: "用户名",
@@ -47,6 +53,12 @@ export default {
             name: "phone",
             type: 'string',
             des: "手机号",
+        },
+        {
+            name: "introduction",
+            type: 'textarea',
+            des: "组织简介",
+            notShow:'true'
         },
     ]
 }

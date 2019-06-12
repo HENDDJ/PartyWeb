@@ -1,5 +1,9 @@
 <template>
-    <CommonCRUD :columns="columns" apiRoot="/identity/sysUser" :formColumns="formColumns"></CommonCRUD>
+    <CommonCRUD :columns="columns" apiRoot="/identity/sysUser" :formColumns="formColumns"  :queryFormColumns="queryColumns">
+        <template slot="header-btn" slot-scope="slotProps">
+            <el-button type="primary" v-if="resetPsw" plain  @click="resetPassword(slotProps.selected)" >重置密码</el-button>
+        </template>
+    </CommonCRUD>
 </template>
 
 <script>
@@ -11,33 +15,73 @@
             return {
                 columns: UserStrcutre.columns,
                 formColumns: UserStrcutre.columns,
+                resetPsw:true,//重置密码按钮
+                queryColumns:[
+                    {
+                        des: '用户名',
+                        name: 'name',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    },
+                    {
+                        des: '登录名',
+                        name: 'userName',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    },
+                    {
+                        des: '组织',
+                        name: 'districtId',
+                        type: 'string',
+                        value: '',
+                        visible: false
+                    },
+                ]
             }
         },
         methods: {
             changeCol() {
-                this.columns.forEach(
-                    item=>{
-                        if(item.name == 'enable'){
-                            item.formatter = (row, cell,val,index)=>{
-                                console.log(val)
-                                if(val == '1'){
-                                    return '是'
-                                }else{
-                                    return '否'
-                                }
+                this.columns.forEach(item=>{
+                    if(item.name == 'enable'){
+                        item.formatter = (row, cell,val,index)=>{
+                            if(val == '1'){
+                                return '是'
+                            }else{
+                                return '否'
                             }
                         }
-
-                }
-                )
+                    }
+                });
                 this.$http('Post','identity/role/list',false).then((data)=>{
                     this.formColumns.filter(item=>item.name === 'roleID')[0].options =data.map(item=>{return {label:item.name,value:item.id}})
                 })
                 this.$http('Post','identity/sysDistrict/list',false).then((data)=>{
                     this.formColumns.filter(item=>item.name === 'organizationId')[0].options =data.map(item=>{return {label:item.districtName,value:item.id}})
                 })
+                //权限控制(districtId)
+                this.queryColumns[2].value = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
             },
-
+            resetPassword(data){
+                if (data.length !== 1) {
+                    this.$message({
+                        type: 'warning',
+                        message: data.length > 1 ? '仅能选择一行记录' : '请选择一行记录'
+                    });
+                    return;
+                }
+                if(data[0].id === JSON.parse(sessionStorage.getItem("userInfo")).id){
+                    this.$message({
+                        type: 'warning',
+                        message: '不能重置当前用户密码'
+                    })
+                }
+                data[0].password = "123456";
+                this.$http('PUT',`identity/sysUser/${data[0].id}id`,data[0]).then( () => {
+                    this.$refs.table.refreshTableData();
+                })
+            }
         },
         created(){
             this.changeCol();

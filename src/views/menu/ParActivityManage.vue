@@ -275,7 +275,7 @@
                                         <el-input v-model="detailForm.title" :disabled="disabled"></el-input>
                                     </template>
                                 </el-col>
-                                <el-col :span="4">任务类型:</el-col>
+                                <el-col :span="4">任务类型：</el-col>
                                 <el-col :span="6" style="color: #25252582">&nbsp;{{detailForm.type}}</el-col>
                             </el-row>
                             <el-row class="detail-row">
@@ -291,7 +291,7 @@
                                         </el-date-picker>
                                     </template>
                                 </el-col>
-                                <el-col :span="4">提醒时间:</el-col>
+                                <el-col :span="4">提醒时间：</el-col>
                                 <el-col :span="6" style="color: #25252582">
                                     <template v-if="lookType">&nbsp;{{detailForm.alarmTime ? new Date(detailForm.alarmTime).toLocaleDateString() : '暂无'}}</template>
                                     <template v-if="editType">
@@ -310,6 +310,18 @@
                                     <template v-if="editType">
                                         <vs-input-number size="medium" v-model="detailForm.score"></vs-input-number>
                                     </template>
+                                </el-col>
+                                <el-col :span="4">
+                                    当前进度：
+                                </el-col>
+                                <el-col :span="6">
+                                    <div style="margin-top: 3px">
+                                        <el-progress v-if="detailForm.percent < 0.3" :percentage="Math.round(detailForm.percent * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                        <el-progress v-else-if="detailForm.percent < 0.7" :percentage="Math.round(detailForm.percent * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                        <el-progress v-else-if="detailForm.percent < 1" :percentage="Math.round(detailForm.percent * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                        <el-progress v-else-if="detailForm.percent = 1" :percentage="Math.round(detailForm.percent * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                        <span v-else>ERROR</span>
+                                    </div>
                                 </el-col>
                             </el-row>
                             <el-row class="detail-row">

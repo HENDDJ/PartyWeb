@@ -18,21 +18,30 @@ export default {
         },
         {
             name: "enable",
-            type: 'string',
+            type: 'radio',
             des: "是否可用",
+            options:[
+                {
+                    label:'是',
+                    value: 1
+                },
+                {
+                    label:'否',
+                    value: 0
+                }
+            ]
         },
         {
             name: "lastTime",
             type: 'datetime',
             des: "最近登录时间",
-            formShow: false
+            formShow: 'false'
         },
         {
             name: "organizationId",
             type: 'select',
             des: "组织名称",
             aliasName: "organizationName"
-
         },
         {
             name: "phone",

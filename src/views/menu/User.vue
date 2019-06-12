@@ -25,11 +25,11 @@
                         visible: true,
                     },
                     {
-                        des: '登录名',
-                        name: 'userName',
-                        type: 'string',
-                        value: '',
+                        des: '所属组织',
+                        name: 'organizationId',
+                        type: 'select',
                         visible: true,
+                        aliasName: "organizationName"
                     },
                     {
                         des: '组织',
@@ -59,6 +59,8 @@
                 })
                 this.$http('Post','identity/sysDistrict/list',false).then((data)=>{
                     this.formColumns.filter(item=>item.name === 'organizationId')[0].options =data.map(item=>{return {label:item.districtName,value:item.id}})
+                    //查询下拉框（organizationId）
+                    this.queryColumns[1].options =data.map(item=>{return {label:item.districtName,value:item.id}})
                 })
                 //权限控制(districtId)
                 this.queryColumns[2].value = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;

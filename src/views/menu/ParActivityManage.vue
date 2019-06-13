@@ -422,197 +422,100 @@
                                                 <span v-else>ERROR</span>
                                             </template>
                                         </el-table-column>
-                                        <!--<el-table-column-->
-                                        <!--label="工作进度"-->
-                                        <!--align="center"-->
-                                        <!--width="100px"-->
-                                        <!--:show-overflow-tooltip="true"-->
-                                        <!--&gt;-->
-                                        <!--<template slot-scope="scope">-->
-                                        <!--<a style="color:blue;" v-if="scope.row.status === '1'">待审核</a>-->
-                                        <!--<a style="color:greenyellow;" v-if="scope.row.status === '2'">已完成</a>-->
-                                        <!--<a style="color:red;" v-if="scope.row.status === '3'">审核未通过</a>-->
-                                        <!--</template>-->
-                                        <!--</el-table-column>-->
                                     </el-table>
                                 </el-col>
                             </el-row>
-
-
-
-
-
                         </div>
                     </transition>
+                </el-col>
+            </el-row>
+        </div>
+        <template lang="html">
+            <vs-prompt
+                :title="townTitle + '完成详情'"
+                :vs-active.sync="townDetailVis">
+                <div style="width: 880px">
+                    <el-row :gutter="10">
+                        <el-col :span="12">
+                            <el-table
+                                :data="townDetailTable"
+                                stripe
+                                style="width:450px"
+                                v-loading="loading" border
+                                :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
+                                :default-sort="{}">
+                                <el-table-column
+                                    prop="cn"
+                                    label="下属组织"
+                                    align="center"
+                                    width="125px"
+                                    :show-overflow-tooltip="true"
+                                >
+                                </el-table-column>
+                                <el-table-column
+                                    label="状态"
+                                    align="center"
+                                    width="120px"
+                                    :show-overflow-tooltip="true"
+                                >
+                                    <template slot-scope="scope">
+                                        <a style="color:blue;" v-if="scope.row.sa === '1'">待审核</a>
+                                        <a style="color:greenyellow;" v-else-if="scope.row.sa === '2'">已完成</a>
+                                        <a style="color:red;" v-else>未完成</a>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                    label="记录查看"
+                                    align="center"
+                                    width="205px"
+                                    :show-overflow-tooltip="true"
+                                >
+                                    <template slot-scope="scope">
+                                        <el-button type="text" icon="el-icon-picture-outline" @click="">电视截图</el-button>
+                                        <el-button type="text" icon="el-icon-mobile-phone" @click="">手机截图</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </el-col>
+                        <el-col :span="10">
+                            <div style="border:1px solid #F00;">
 
-</el-col>
-</el-row>
-</div>
-<template lang="html">
-<div class="centerx">
-<el-dialog
-v-if="dialogVisible"
-:title="title"
-:visible.sync="dialogVisible"
-width="880px"
-align="left"
-:modal-append-to-body='false'
-:append-to-body="true"
-:before-close="handleClose">
-<el-form :inline="true" :model="form" ref="form" class="demo-form-inline" label-width="170px">
-  <template v-if="fileType">
-	  <el-form-item label="任务分类" prop="taskType">
-		  <el-radio-group size="medium" v-model="form.taskType" style="margin-left: 10px;"
-						  @change="radioChoose">
-			  <el-radio label="Party">党建任务</el-radio>
-			  <el-radio label="DistLearning">远教任务</el-radio>
-		  </el-radio-group>
-	  </el-form-item>
-	  <el-form-item label="计划名称" prop="title">
-		  <el-input v-model="form.title" :disabled=disabled></el-input>
-	  </el-form-item>
-	  <el-form-item label="任务类型" prop="type">
-		  <el-input v-model="form.type" :disabled=disabled></el-input>
-	  </el-form-item>
-	  <el-form-item label="工作要求" prop="context">
-		  <el-input v-model="form.context" :disabled=disabled></el-input>
-	  </el-form-item>
-	  <el-form-item label="分值" prop="score">
-		  <el-input-number v-model="form.score" label="分值" style="width: 200px"></el-input-number>
-	  </el-form-item>
-	  <el-form-item label="截止时间" prop="monVal">
-		  <el-date-picker
-			  v-model="monVal"
-			  type="date"
-			  placeholder="选择日期">
-		  </el-date-picker>
-	  </el-form-item>
-  </template>
-  <el-form-item label="上传文件" prop="fileUrls">
-	  <CommonFileUpload :value="form.fileUrls"
-						@getValue="form.fileUrls = $event"></CommonFileUpload>
-  </el-form-item>
-  <el-form-item label="上传视频" prop="video" v-if="addVideo">
-	  <template>
-		  <el-transfer
-			  filterable
-			  v-model="form.video"
-			  :titles="['可选视频', '已选视频']"
-			  :props="{
-				key: 'value',
-				label: 'desc'
-			  }"
-			  :data="addVideoList">
-		  </el-transfer>
-	  </template>
-  </el-form-item>
-</el-form>
-<div slot="footer" class="dialog-footer  footer-position">
-  <el-button type="primary" :loading="submitLoading" @click="submit('form')">确 定</el-button>
-  <el-button @click="handleClose">取 消</el-button>
-</div>
-</el-dialog>
-</div>
-</template>
-<el-dialog
-v-if="townDetailVis"
-:title="townTitle + '完成情况详情'"
-:visible.sync="townDetailVis"
-width="920px"
-align="left"
-:modal-append-to-body='false'
-:append-to-body="true"
-:before-close="townDetailClose">
-<el-row :gutter="10">
-<el-col :span="12">
-<el-table
-  :data="townDetailTable"
-  stripe
-  style="width:450px"
-  v-loading="loading" border
-  :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
-  :default-sort="{}">
-  <el-table-column
-	  prop="cn"
-	  label="下属组织"
-	  align="center"
-	  width="125px"
-	  :show-overflow-tooltip="true"
-  >
-  </el-table-column>
-  <el-table-column
-	  label="状态"
-	  align="center"
-	  width="120px"
-	  :show-overflow-tooltip="true"
-  >
-	  <template slot-scope="scope">
-		  <a style="color:blue;" v-if="scope.row.sa === '1'">待审核</a>
-		  <a style="color:greenyellow;" v-else-if="scope.row.sa === '2'">已完成</a>
-		  <a style="color:red;" v-else>未完成</a>
-	  </template>
-  </el-table-column>
-  <el-table-column
-	  label="记录查看"
-	  align="center"
-	  width="205px"
-	  :show-overflow-tooltip="true"
-  >
-	  <template slot-scope="scope">
-		  <el-button type="text" icon="el-icon-picture-outline" @click="">电视截图</el-button>
-		  <el-button type="text" icon="el-icon-mobile-phone" @click="">手机截图</el-button>
-	  </template>
-  </el-table-column>
-</el-table>
-</el-col>
-<el-col :span="10">
-<div style="border:1px solid #F00;">
+                                <el-timeline>
+                                    <el-timeline-item
+                                        v-for="(activity, index) in activities"
+                                        :key="index"
+                                        :timestamp="activity.timestamp"
+                                        :placement="activity.placement">
+                                        <template>
+                                            <vs-images hover="scale">
+                                                <vs-image :key="index" :src="`https://picsum.photos/400/400?image=1${index}`"
+                                                          v-for="(image, index) in 7"/>
+                                            </vs-images>
+                                        </template>
+                                    </el-timeline-item>
+                                </el-timeline>
+                            </div>
+                        </el-col>
+                    </el-row>
+                </div>
+            </vs-prompt>
+        </template>
 
-  <el-timeline>
-	  <el-timeline-item
-		  v-for="(activity, index) in activities"
-		  :key="index"
-		  :timestamp="activity.timestamp"
-		  :placement="activity.placement">
-		  <template>
-			  <vs-images hover="scale">
-				  <vs-image :key="index" :src="`https://picsum.photos/400/400?image=1${index}`"
-							v-for="(image, index) in 7"/>
-			  </vs-images>
-		  </template>
-	  </el-timeline-item>
-  </el-timeline>
-</div>
-</el-col>
-</el-row>
-<div slot="footer" class="dialog-footer  footer-position">
-<el-button @click="townDetailClose">关 闭</el-button>
-</div>
-</el-dialog>
-<!--<el-dialog v-if="remindVis"-->
-        <!--title="提醒"-->
-        <!--:visible.sync="remindVis"-->
-        <!--width="880px"-->
-        <!--align="left"-->
-        <!--:modal-append-to-body='false'-->
-        <!--:append-to-body="true"-->
-        <!--:before-close="remindHandleClose">-->
-        <!--<el-form :inline="true" :model="remindForm" ref="remindForm" class="demo-form-inline" label-width="170px">-->
-        <!--<el-form-item label="提醒时间" prop="alarmTime">-->
-        <!--<el-date-picker v-model="remindForm.alarmTime"-->
-        <!--type="date"-->
-        <!--value-format="yyyy-MM-ddT00:00:00"-->
-        <!--placeholder="选择日期">-->
-        <!--</el-date-picker>-->
-        <!--</el-form-item>-->
-        <!--</el-form>-->
-        <!--<div slot="footer" class="dialog-footer  footer-position">-->
-        <!--<el-button type="primary" :loading="submitLoading" @click="submitAlarm('remindForm')">确 定</el-button>-->
-        <!--<el-button @click="remindHandleClose">取 消</el-button>-->
-        <!--</div>-->
-        <!--</el-dialog>-->
+        <el-dialog
+        v-if="townDetailVis"
+        :title="townTitle + '完成情况详情'"
+        :visible.sync="townDetailVis"
+        width="920px"
+        align="left"
+        :modal-append-to-body='false'
+        :append-to-body="true"
+        :before-close="townDetailClose">
+
+        <div slot="footer" class="dialog-footer  footer-position">
+        <el-button @click="townDetailClose">关 闭</el-button>
+        </div>
+        </el-dialog>
     </section>
-
 </template>
 
 <script>

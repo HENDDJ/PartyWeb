@@ -19,7 +19,7 @@
                 <a href="#">消息中心</a>
             </vs-navbar-item>
             <vs-navbar-item index="2">
-                <a href="#">退出</a>
+                <a href="/#/login">退出</a>
             </vs-navbar-item>
 
             <vs-spacer></vs-spacer>

@@ -580,7 +580,7 @@ align="left"
                 ],
                 addVideo: false,
                 queryForm: {taskType: ''},
-                queryFormTrack: {ActivityID: ''},
+                queryFormTrack: {activityID: ''},
                 //视频添加
                 addVideoList: [],
                 //视频修改

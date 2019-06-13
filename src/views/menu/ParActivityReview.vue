@@ -59,7 +59,7 @@
             <el-row class="detail-row">
                 <el-col :span="5" :xl="{span: 4, offset: 2}">任务名称：</el-col>
                 <el-col :span="5">&nbsp;{{activityDetail.title}}</el-col>
-                <el-col :span="4" :xl="{span: 4, offset: 2}">任务类型:</el-col>
+                <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">任务类型:</el-col>
                 <el-col :span="5">&nbsp;{{activityDetail.type}}</el-col>
             </el-row>
             <el-row class="detail-row">
@@ -127,9 +127,22 @@
                     <el-button type="text" @click="PhonePicShow">更多</el-button>
                 </el-col>
             </el-row>
+
+            <el-row class="detail-row">
+                <el-col :span="5" :xl="{span: 4, offset: 2}">审核意见：</el-col>
+                <el-col :span="18">
+                    <el-input
+                        type="textarea"
+                        :autosize="{ minRows: 2, maxRows: 4}"
+                        placeholder="请输入内容"
+                        v-model="checkForm.remark">
+                    </el-input>
+                </el-col>
+            </el-row>
             <el-row>
                 <el-col>
-                    <el-button type="primary" @click="exam">审核</el-button>
+                    <el-button type="primary" @click="pass">通过</el-button>
+                    <el-button type="primary" @click="unPass">不通过</el-button>
                 </el-col>
             </el-row>
 
@@ -208,6 +221,7 @@
         </el-row>
 
     </el-dialog>
+
 </div>
 </template>
 
@@ -232,7 +246,11 @@
                 picDetail:false,
                 PhonePic:[],
                 PhonePicFull:[],
-                picPhoneDetail:false
+                picPhoneDetail:false,
+                //审核页面
+                checkShow:false,
+                //审核数据
+                checkForm:{}
             }
         },
         methods:{
@@ -276,7 +294,6 @@
             details(item){
                 this.activityDetailLoading = true;
                 this.activityDetail = item
-                console.log(item)
                 this.TvPic = []
                 this.PhonePic = []
                 this.PhonePicFull = []
@@ -309,6 +326,13 @@
                         this.PhonePicFull.push(this.imgTFPhone(item))
                     })
                 })
+                //审核内容赋值
+                this.checkForm.activityID = item.activityId
+                //长ID
+                this.checkForm.organizationId = item.districtId
+                //短ID
+                this.checkForm.districtId = item.organizationId
+
 
             },
             imgTF(val){
@@ -361,14 +385,65 @@
                     .catch(_ => {
                     });
             },
+            //关闭详情
+            checkShowClose() {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        this.checkShow = false;
+                        done();
+                    })
+                    .catch(_ => {
+
+                    });
+            },
             //审核
             exam(){
+                this.textarea = ''
+                this.checkShow = true
 
+            },
+            pass(){
+                this.checkForm.status = "2"
+                let path = `/identity/parActivityPerform/check`;
+                this.$http("Post",path,this.checkForm,false).then((data)=>{
+                    this.$message({
+                        type: 'success',
+                        message: '审核通过成功'
+                    })
+                    let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+                    this.loadTableData(path);
+                }).catch(_=>{
+                    this.$message({
+                        type: 'warning',
+                        message: '审核通过失败，请检查网络'
+                    })
+                })
+            },
+            unPass(){
+                this.checkForm.status = "3"
+                let path = `/identity/parActivityPerform/check`;
+                this.$http("Post",path,this.checkForm,false).then((data)=>{
+                    this.$message({
+                        type: 'success',
+                        message: '审核未通过成功'
+                    })
+                    let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+                    this.loadTableData(path);
+                }).catch(_=>{
+                    this.$message({
+                        type: 'warning',
+                        message: '审核未通过失败，请检查网络'
+                    })
+                })
+            },
+            passClose(){
+                this.textarea = ''
+                this.checkShow = false
             }
         },
         created() {
                  let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
-                    this.loadTableData(path);
+                 this.loadTableData(path);
 
         }
     }
@@ -517,8 +592,12 @@
     .detail-row .el-col:nth-child(2n) {
         text-align: left;
     }
+
 </style>
 <style>
+    .el-textarea__inner{
+        width:400px !important;
+    }
     .translate-enter,.translate-leave-to{
         opacity: 0;
         transform: translateY(80px);

@@ -16,7 +16,7 @@
                 <span class="svg-container">
                   <icon name="password" scale="2"/>
                 </span>
-                <el-input name="password" size="small" :type="passwordType" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="password"></el-input>
+                <el-input name="password" size="small" :type="passwordType" @keyup.enter.prevent="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="password"></el-input>
                 <span class="show-pwd" @click="showPwd">
                     <icon name="eye" scale="2"/>
                 </span>

@@ -43,7 +43,7 @@
                                             <template v-else>&nbsp;</template>
                                         </div>
                                         <div class="processing">
-                                            <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="50"></el-progress>
+                                            <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="(item[TownCodeKey[districtCode]] || 0) * 100"></el-progress>
                                         </div>
                                         <div class="detail">
                                             <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
@@ -719,7 +719,22 @@ align="left"
                     placement: "top"
                 }],
                 activityLoading: false,
-                detailLoading: false
+                detailLoading: false,
+                districtCode: JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId,
+                TownCodeKey: {
+                    '0101': 'xiaShuPercent',
+                    '0102': 'houBaiPercent',
+                    '0103': 'guoZhuangPercent',
+                    '0104': 'baiTuPercent',
+                    '0105': 'maoShanPercent',
+                    '0106': 'bianChengPercent',
+                    '0107': 'baoHuaPercent',
+                    '0108': 'tianWangPercent',
+                    '0109': 'huaYangPercent',
+                    '0111': 'kaiFaPercent',
+                    '0112': 'maoShanFengJingPercent'
+                }
+
             }
         },
         watch: {

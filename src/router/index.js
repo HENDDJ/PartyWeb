@@ -34,6 +34,26 @@ const router = new Router({
             name: 'MainView',
             component: MainView
         },
+        {
+            path: '/dashboard',
+            name: 'Dashboard',
+            component: () => import('@/layout/Layout'),
+            children: [{
+                path: '/',
+                name: 'DashboardRoot',
+                component: () => import('@/views/menu/CentralConsole')
+            }]
+        },
+        {
+            path: '/gis',
+            name: 'Gis',
+            component: () => import('@/layout/Layout'),
+            children: [{
+                path: '/',
+                name: 'GISmap',
+                component: () => import('@/views/menu/GISmap')
+            }]
+        }
     ]
 });
 

@@ -7,9 +7,9 @@
                     任务列表
                     <transition name="translate" mode="out-in">
                         <div v-show="activityLoading">
-                            <div class="list-item" v-for="(item, index) in tableData" :key="item.id">
+                            <div class="list-item" v-for="(item, index) in tableData" :key="item.id" @click="details(item)">
                                 <div class="status">
-                                    <icon name="finished" scale="4.5"></icon>
+                                    <icon name="check" scale="4"></icon>
                                 </div>
                                 <div class="left-date">
                                     <p class="label">组织名称：<span class="value">{{item.districtName}}</span></p>
@@ -117,7 +117,7 @@
                                 <img
                                     :src="PhonePicFull[index]"
                                     :key="index"
-                                    style="width: 200px"
+                                    style="width: 200px;height: 150px"
                                 >
                             </el-timeline-item>
                         </el-timeline>
@@ -146,6 +146,7 @@
                 </el-col>
             </el-row>
 
+            <!--<PictureShot :picData="this.activityDetail"></PictureShot>-->
         </div>
     </transition>
 
@@ -211,7 +212,7 @@
                             <img
                                 :src="PhonePicFull[index]"
                                 :key="index"
-                                style="width: 100%"
+                                style="width: 100%;"
                             >
 
                         </el-timeline-item>
@@ -226,8 +227,10 @@
 </template>
 
 <script>
+    import PictureShot from '@/components/PictureShot.vue'
     export default {
         name: "ParActivityReview",
+        components: {PictureShot},
         data(){
             return {
                 tableData: [],
@@ -250,7 +253,8 @@
                 //审核页面
                 checkShow:false,
                 //审核数据
-                checkForm:{}
+                checkForm:{},
+                test:{}
             }
         },
         methods:{
@@ -276,8 +280,9 @@
             },
             // 获取表格数据
             loadTableData(path) {
-                let attchId = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.attachTo
+                let attchId = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
                 this.queryForm.attachTo = attchId
+                this.queryForm.status = '1'
                 path += `&sort=createdAt,desc`;
                 this.activityLoading = false;
                 this.$http('POST', path, this.queryForm, false).then(
@@ -286,6 +291,8 @@
                         this.pageable.total = data.totalElements;
                         this.loading = false;
                         this.activityLoading = true;
+                        this.details(this.tableData[0])
+
                     }
                 ).catch(res => {
                     this.loading = false;
@@ -317,12 +324,13 @@
                 })
                 let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=6&sort=time,desc`;
                 let phoneForm = {userId:item.districtId,snId:item.activityId}
-                this.$http("Post",phonePath,phoneForm,false).then(data=>{
-                    data.content.forEach(item=>{
-                        let formItem = {}
-                        formItem.timestamp =item.time
-                        formItem.imgurl = item.imageUrl
-                        this.PhonePic.push(formItem)
+                this.$http("Post",phonePath,phoneForm,false).then((data)=>{
+                        data.content[0].imageUrl.forEach((item)=>{
+                            item.time = data.content[0].time
+                            let formItem = {}
+                            formItem.timestamp =data.content[0].time
+                            formItem.imgurl = data.content[0].imageUrl
+                            this.PhonePic.push(formItem)
                         this.PhonePicFull.push(this.imgTFPhone(item))
                     })
                 })
@@ -344,17 +352,18 @@
                 }
             },
             imgTFPhone(item){
-                console.log(item)
-                let imgUrl = item.imageUrl.toString()
-                console.log(item.time.toString())
+                let imgUrl = item.imageUrl
                 if (!imgUrl.split("&")[1]) {
-                    let time1 = item.time.toString().split("T")[0]
-                    let time2 =  Number(time1.split("-")[0])
-                    let time3 = Number(time1.split("-")[1])
-                    let time4 = Number(time1.split("-")[2])
-                    console.log(time1,111)
-                    let time5 = time3.toString()+time4.toString()
-                    return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${item.imageUrl}`
+                    if(imgUrl[0] == '.'){
+                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
+                    }else {
+                        let time1 = item.time.toString().split("T")[0]
+                        let time2 =  Number(time1.split("-")[0])
+                        let time3 = Number(time1.split("-")[1])
+                        let time4 = Number(time1.split("-")[2])
+                        let time5 = time3.toString()+time4.toString()
+                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${item.imageUrl}`
+                    }
                 }else {
                     return item.imageUrl
                 }
@@ -443,8 +452,7 @@
         },
         created() {
                  let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
-                 this.loadTableData(path);
-
+                this.loadTableData(path)
         }
     }
 </script>

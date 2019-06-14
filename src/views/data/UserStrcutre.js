@@ -45,7 +45,7 @@ export default {
             formShow: 'false'
         },
         {
-            name: "organizationId",
+            name: "districtId",
             type: 'select',
             des: "组织名称",
             aliasName: "organizationName"

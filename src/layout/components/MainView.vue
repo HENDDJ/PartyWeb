@@ -21,7 +21,7 @@
                     {alt:"基本阵地",path:"/enterpriseSafety/safetyRegulations", className: 'position'},
                     {alt:"基本组织",path:"/emergencyManagement/emergencyPrevention", className: 'org'},
                     {alt:"GIS平台", path:"/gis/gisMap", className: 'gis'},
-                    {alt:"综合考评",path:"", className: 'review'},
+                    {alt:"综合考评",path:"/comprehensiveAccess/examinationScore", className: 'review'},
                     {alt:"党建品牌",path:"/siteSupervision/actualMonitor", className: 'brand'},
                     {alt:"系统运维",path:"", className: 'sys'},
                 ]

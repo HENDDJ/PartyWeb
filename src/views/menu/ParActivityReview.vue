@@ -227,10 +227,8 @@
 </template>
 
 <script>
-    import PictureShot from '@/components/PictureShot.vue'
     export default {
         name: "ParActivityReview",
-        components: {PictureShot},
         data(){
             return {
                 tableData: [],
@@ -243,7 +241,7 @@
                 activityLoading: false,
                 activityDetailLoading:false,
                 queryForm:{attachTo: ""},
-                activityDetail: {},
+                activityDetail: {title:''},
                 TvPic: [],
                 TvPicFull:[],
                 picDetail:false,
@@ -291,7 +289,9 @@
                         this.pageable.total = data.totalElements;
                         this.loading = false;
                         this.activityLoading = true;
-                        this.details(this.tableData[0])
+                        if(this.tableData[0]){
+                            this.details(this.tableData[0])
+                        }
 
                     }
                 ).catch(res => {

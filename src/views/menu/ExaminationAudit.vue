@@ -9,9 +9,9 @@
                             积分排名
                         </h3>
                     </div>
-                    <div style="float:left;margin:auto  50px;">
+                    <div style="float:left;margin-left: 50px;">
                         <div class="inner-container">
-                            <p class="text" v-for="(text, index) in arr" :key="index">{{text}}</p>
+                            <p class="text" v-for="(text, index) in arr" :key="index">{{text}}<br></p>
                         </div>
                     </div>
                 </div>
@@ -75,6 +75,32 @@
         </el-pagination>
     </el-row>
 
+    <el-dialog
+        v-if="dialogVisible"
+        :title="title"
+        :visible.sync="dialogVisible"
+        width="780px"
+        align="left"
+        :modal-append-to-body='false'
+        :append-to-body="true"
+        :before-close="handleClose">
+        <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="150px" >
+            <el-form-item  key="organizationName" label="组织名称" prop="organizationName">
+                <el-input v-model="form.organizationName" :disabled=disable></el-input>
+            </el-form-item>
+            <el-form-item  key="score" label="分数" prop="score">
+                <vs-input-number size="medium" min="-10" v-model="score"></vs-input-number>
+            </el-form-item>
+            <el-form-item  key="remark" label="备注" prop="remark" >
+                <el-input v-model="form.remark" type="textarea"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer  footer-position">
+            <el-button type="primary" :loading="submitLoading" @click="submit('form')">确 定</el-button>
+            <el-button @click="handleClose">取 消</el-button>
+        </div>
+    </el-dialog>
+
 </div>
 </template>
 
@@ -84,12 +110,6 @@
         data() {
             return {
                 arr: [
-                    '1 不是被郭德纲发现的，也不是一开始就收为徒弟。',
-                    '2 现在雅阁这个状态像极了新A4L上市那段日子。',
-                    '3 低配太寒碜，各种需要加装，中配定价过高，又没啥特色',
-                    '4 然后各种机油门、经销商造反什么的幺蛾子。',
-                    '5 看五月销量，建议参考A4，打8折吧。',
-
                 ],
                 pageable: {
                     total: 0,
@@ -99,7 +119,15 @@
                 tableData:[],
                 apiRoot:"identity/exaExamine/",
                 loading:false,
-                order:"des"
+                order:"des",
+                dialogVisible:false,
+                submitLoading:false,
+                title:'审核',
+                form:{},
+                score:10,
+                //原始分数
+                scoreFirst:0,
+                disable:true
             }
         },
         methods:{
@@ -157,13 +185,53 @@
                 }
 
             },
+            submit(form){
+                this.$refs[form].validate((valid) => {
+                    this.form.score = this.scoreFirst + this.score
+                    this.$http('Post','identity/exaExamine/',this.form,false).then((data)=>{
+                        this.$message({
+                            type: 'success',
+                            message: '修改成功'
+                        })
+                        this.showMesg();
+                        this.dialogVisible = false
+                    }).catch(()=>{
+                        this.$message({
+                            type: 'warning',
+                            message: '修改失败，请检查网络'
+                        })
+                    })
+                })
+            },
             check(value){
-
+                this.form = value
+                this.scoreFirst= value.score
+                this.dialogVisible = true
+            },
+            handleClose(){
+                this.dialogVisible = false
+            },
+            showMesg(){
+                this.$http('Post','identity/exaExamine/page?page=0&size=5&sort=modifiedAt,desc',this.form,false).then((data)=>{
+                    data.content.forEach((item,index)=>{
+                        let remark=''
+                        if(item.remark){
+                            remark = item.remark
+                        }else {
+                            remark = '无'
+                        }
+                        let time1 = item.modifiedAt.toString()
+                        let time2 = time1.split('T')[0]
+                        let time3 = time1.split('T')[1]
+                        this.arr.push(index+1+'、'+item.organizationName+'于'+time2+" "+time3+'被修改了积分，备注：'+remark)
+                    })
+                })
             }
         },
         created() {
             let path = `${this.apiRoot}page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}&sort=score,asc`
             this.loadTable(path)
+            this.showMesg();
         }
     }
 </script>
@@ -187,7 +255,18 @@
         }
     }
     .text{
+        position: relative;
+        text-align:left;
         color: black;
         height: 50px
+    }
+    .footer-position {
+        margin-right: 86px;
+    }
+
+</style>
+<style>
+    .el-textarea__inner{
+        width:470px !important;
     }
 </style>

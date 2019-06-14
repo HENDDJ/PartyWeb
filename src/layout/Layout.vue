@@ -83,7 +83,7 @@
         flex: 1;
         height: 100%;
         background-color: #f2f2f2;
-        padding: 7px 20px 30px 20px;
+        padding: 7px 28px 30px 20px;
         transition: margin-left .28s;
         overflow: hidden;
     }

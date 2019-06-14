@@ -1,8 +1,9 @@
 <template>
     <section class="activity-management">
-        <div style="width: 100%;margin: 0 auto">
-            <el-row :gutter="60" type="flex" justify="center">
-                <el-col :span="12" :xl="{span: 12}">
+        <div style="width: calc(100% - 10px);margin: 5px auto">
+            <el-row type="flex">
+                <div style="width: 2%"></div>
+                <div style="width: 44.5%">
                     <div class="list-header">
                         <h1>{{ taskTitle }}</h1>
                         <!--<el-select v-model="chooseType" placeholder="请选择" size="small" @change="select" style="margin-left: 10px">-->
@@ -61,8 +62,9 @@
                                    @current-change="currentChange" @size-change="sizeChange"
                                    layout="total, sizes, prev, pager, next">
                     </el-pagination>
-                </el-col>
-                <el-col :span="12" :xl="{span: 12}">
+                </div>
+                <div style="width: 7%"></div>
+                <div style="width: 44.5%">
                     <div class="detail-header">
                         <h1>任务详情</h1>
                     </div>
@@ -427,15 +429,22 @@
                             </el-row>
                         </div>
                     </transition>
-                </el-col>
+                </div>
+                <div style="width: 2%"></div>
             </el-row>
         </div>
         <template lang="html">
-            <vs-prompt
+            <el-dialog
+                v-if="townDetailVis"
                 :title="townTitle + '完成详情'"
-                :vs-active.sync="townDetailVis">
-                <div style="width: 880px">
-                    <el-row :gutter="10">
+                :visible.sync="townDetailVis"
+                width="920px"
+                align="left"
+                class="con-vs-dialog"
+                :modal-append-to-body='false'
+                :append-to-body="true"
+                :before-close="townDetailClose">
+                <el-row :gutter="10">
                         <el-col :span="12">
                             <el-table
                                 :data="townDetailTable"
@@ -449,15 +458,13 @@
                                     label="下属组织"
                                     align="center"
                                     width="125px"
-                                    :show-overflow-tooltip="true"
-                                >
+                                    :show-overflow-tooltip="true">
                                 </el-table-column>
                                 <el-table-column
                                     label="状态"
                                     align="center"
                                     width="120px"
-                                    :show-overflow-tooltip="true"
-                                >
+                                    :show-overflow-tooltip="true">
                                     <template slot-scope="scope">
                                         <a style="color:blue;" v-if="scope.row.sa === '1'">待审核</a>
                                         <a style="color:greenyellow;" v-else-if="scope.row.sa === '2'">已完成</a>
@@ -468,8 +475,7 @@
                                     label="记录查看"
                                     align="center"
                                     width="205px"
-                                    :show-overflow-tooltip="true"
-                                >
+                                    :show-overflow-tooltip="true">
                                     <template slot-scope="scope">
                                         <el-button type="text" icon="el-icon-picture-outline" @click="">电视截图</el-button>
                                         <el-button type="text" icon="el-icon-mobile-phone" @click="">手机截图</el-button>
@@ -479,7 +485,6 @@
                         </el-col>
                         <el-col :span="10">
                             <div style="border:1px solid #F00;">
-
                                 <el-timeline>
                                     <el-timeline-item
                                         v-for="(activity, index) in activities"
@@ -497,24 +502,8 @@
                             </div>
                         </el-col>
                     </el-row>
-                </div>
-            </vs-prompt>
+            </el-dialog>
         </template>
-
-        <el-dialog
-        v-if="townDetailVis"
-        :title="townTitle + '完成情况详情'"
-        :visible.sync="townDetailVis"
-        width="920px"
-        align="left"
-        :modal-append-to-body='false'
-        :append-to-body="true"
-        :before-close="townDetailClose">
-
-        <div slot="footer" class="dialog-footer  footer-position">
-        <el-button @click="townDetailClose">关 闭</el-button>
-        </div>
-        </el-dialog>
     </section>
 </template>
 
@@ -1093,17 +1082,15 @@
 <style type="scss">
     .left-act-list {
         width: 100%;
-        /*background-color: rgb(250, 250, 250);*/
-        padding: 5px 20px;
         line-height: 24px;
         min-height: 668px;
     }
     .list-item {
         background-color: white;
         text-align: left;
-        margin: 15px 0;
+        margin-bottom: 25px;
         display: flex;
-        padding: 14px 20px;
+        padding: 12px 20px;
         transition: all .4s;
         box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
         /*box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);*/
@@ -1185,8 +1172,8 @@
         height: 710px;
         padding: 5px 20px;
         box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
-        margin: 25px 0;
         overflow-y: scroll;
+        background: white;
     }
     .right-detail::-webkit-scrollbar {
         width: 0;
@@ -1199,11 +1186,11 @@
     }
     .list-header {
         display: flex;
-        padding: 0 20px;
+        height: 45px;
     }
     .detail-header {
+        height: 45px;
         display: flex;
-        padding: 0;
     }
 </style>
 <style>

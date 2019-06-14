@@ -50,14 +50,14 @@ Vue.prototype.$validate = (selected) => {
 };
 
 function initTouristScreen() {
-    Vue.prototype.$touristScreenWid = () => {
+    Vue.prototype.$touristScreenWid = (() => {
         let screenWidth = document.documentElement.clientWidth ;
         return screenWidth/1920;
-    };
-    Vue.prototype.$touristScreenHei = () => {
+    })();
+    Vue.prototype.$touristScreenHei = (() => {
         let screenHeight = document.documentElement.clientHeight ;
         return screenHeight/1080;
-    };
+    })();
 }
 initTouristScreen();
 

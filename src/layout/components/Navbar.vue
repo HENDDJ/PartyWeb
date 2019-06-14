@@ -74,12 +74,13 @@ export default {
 
 <style lang="scss" scoped>
 .menu-bar {
-    svg {
-        margin: 0 6px 0 0 !important;
-    }
     overflow: hidden;
     padding-bottom: 4px;
     text-align: left;
+    border-bottom: 1px solid #0000ff38;
+    svg {
+        margin: 0 6px 0 0 !important;
+    }
     .fl {
         float: left;
         vertical-align: center;

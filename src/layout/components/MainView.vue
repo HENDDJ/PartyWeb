@@ -35,8 +35,8 @@
         methods: {
             resize(){
                 this.picSty = {
-                    width:  `${275 * this.$touristScreenWid()}px`,
-                    height :`${250 * this.$touristScreenHei()}px`,
+                    width:  `${275 * this.$touristScreenWid}px`,
+                    height :`${250 * this.$touristScreenHei}px`,
                     margin : '30px 10px',
                 }
             },

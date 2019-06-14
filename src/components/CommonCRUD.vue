@@ -47,6 +47,7 @@
         </div>
         <p class="clear-float">&nbsp;</p>
         <el-table :data="tableData" v-loading="loading" border
+                  :max-height="tableMaxHeight"
                   ref="table"
                   @row-click="rowClick"
                   :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
@@ -194,6 +195,9 @@
         computed: {
             path() {
                 return `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+            },
+            tableMaxHeight() {
+                return document.documentElement.clientHeight - (this.$touristScreenWid == 1 ? 260 : 240);
             }
         },
         components: {
@@ -383,6 +387,7 @@
 
 <style scoped>
     .common-crud {
+        width: calc(100% - 10px);
     }
     .btn-right {
         float: right;

@@ -23,14 +23,14 @@ export default {
 </script>
 <style>
     .app-main {
-        background-color: white;
-        padding: 20px 30px;
+        padding: 15px 0;
+        width: calc(100% + 10px);
         height: calc(100% - 35px);
         overflow-x: hidden;
-        overflow-y: scroll;
+        overflow-y: auto;
     }
 
-    .app-main::-webkit-scrollbar-track {
+    *::-webkit-scrollbar-track {
         -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
         -moz-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
         -o-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
@@ -39,13 +39,13 @@ export default {
         border-radius: 10px;
     }
 
-    .app-main::-webkit-scrollbar {
+    *::-webkit-scrollbar {
         width: 8px;
         height: 10px;
         border-radius: 10px;
     }
 
-    .app-main::-webkit-scrollbar-thumb {
+    *::-webkit-scrollbar-thumb {
         background-color: #005affad;
         border-radius: 10px;
         background-image: -webkit-linear-gradient(150deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent);

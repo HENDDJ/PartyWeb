@@ -98,10 +98,14 @@
                             let userForm = data;
                             userForm.password = form.password;
                             this.$http('PUT',`identity/sysUser/${this.user.id}id`,userForm).then( () => {
+                                this.logOut();
+                                this.$message({
+                                    message: '密码修改成功，请重新登录',
+                                    type: 'success'
+                                });
                                 this.pswDia = false;
                                 this.initForm();
                                 this.submitLoad = false;
-                                this.logOut();
                             })
                         })
                     }else{

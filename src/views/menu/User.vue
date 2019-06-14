@@ -26,17 +26,10 @@
                     },
                     {
                         des: '所属组织',
-                        name: 'organizationId',
-                        type: 'select',
-                        visible: true,
-                        aliasName: "organizationName"
-                    },
-                    {
-                        des: '组织',
                         name: 'districtId',
-                        type: 'string',
-                        value: '',
-                        visible: false
+                        type: 'select',
+                        visible: false,
+                        options: '',
                     },
                 ]
             }
@@ -58,12 +51,18 @@
                     this.formColumns.filter(item=>item.name === 'roleID')[0].options =data.map(item=>{return {label:item.name,value:item.id}})
                 })
                 this.$http('Post','identity/sysDistrict/list',false).then((data)=>{
-                    this.formColumns.filter(item=>item.name === 'organizationId')[0].options =data.map(item=>{return {label:item.districtName,value:item.id}})
-                    //查询下拉框（organizationId）
-                    this.queryColumns[1].options =data.map(item=>{return {label:item.districtName,value:item.id}})
+                    this.formColumns.filter(item=>item.name === 'districtId')[0].options =data.map(item=>{return {label:item.districtName,value:item.districtId}})
+                    //查询下拉框（districtId）
+                    this.queryColumns[1].options =data.map(item=>{return {label:item.districtName,value:item.districtId}})
                 })
-                //权限控制(districtId)
-                this.queryColumns[2].value = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
+                //权限控制(districtId),句容市委显示组织查询条件
+                if(JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId=="01"){
+                    this.queryColumns[1].value="";
+                    this.queryColumns[1].visible = true;
+                }else{
+                    this.queryColumns[1].value = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
+                }
+
             },
             resetPassword(data){
                 if (data.length !== 1) {
@@ -77,7 +76,8 @@
                     this.$message({
                         type: 'warning',
                         message: '不能重置当前用户密码'
-                    })
+                    });
+                    return;
                 }
                 data[0].password = "123456";
                 this.$http('PUT',`identity/sysUser/${data[0].id}id`,data[0]).then( () => {

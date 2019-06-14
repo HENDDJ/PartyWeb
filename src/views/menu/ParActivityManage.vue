@@ -664,6 +664,7 @@ align="left"
                 },
                 apiRoot: '/identity/parActivity',
                 apiRootTrack: 'identity/parActivityPerform',
+                apiRootObject: '/identity/parActivityObject',
                 checkboxGroup: 'Party',
                 options: [],
                 chooseType: '',

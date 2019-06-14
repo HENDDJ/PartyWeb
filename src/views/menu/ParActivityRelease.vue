@@ -1,10 +1,7 @@
 <template>
 <div> <div>
     <template lang="html">
-
-
-
-        <div class="centerx">
+        <div>
             <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" align="left"
                      label-width="170px" id="labelOne">
 
@@ -292,20 +289,17 @@
                                 videoList.push(JSON.parse(item))
                             })
                             this.form.video = videoList
-                        }else{
-                            return null
                         }
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {
-                                this.isVisible = false
+                                this.isVisible = false;
                                 this.$message({
                                     type: 'success',
                                     message: '上传成功'
-                                })
+                                });
                                 this.$refs[form].resetFields();
-                                this.form = {taskType: 'Party'}
-                                this.dialogVisible = false
-
+                                this.form = {taskType: 'Party'};
+                                this.dialogVisible = false;
                             }).catch(res => {
                             this.dialogVisible = true;
                             this.isVisible = false

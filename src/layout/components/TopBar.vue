@@ -13,7 +13,7 @@
             </div>
 
             <vs-navbar-item index="0" >
-                <a href="#" @click="active=true">个人中心</a>
+                <a href="#" @click="active=true">{{user.name}}</a>
                 <vs-sidebar position-right  parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
                     <div class="header-sidebar" slot="header">
                         <vs-avatar  size="70px" :src="user.image"/>

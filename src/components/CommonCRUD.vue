@@ -65,7 +65,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination style="text-align: right;margin-top: 20px;"
+        <el-pagination style="text-align: right;margin-top: 20px;" ref="pagination"
                        background
                        :total="pageable.total" :current-page.sync="pageable.currentPage" :page-size.sync="pageable.pageSize"
                        @current-change="currentChange" @size-change="sizeChange" layout="total, sizes, prev, pager, next">

@@ -22,7 +22,7 @@
                     </CommonCRUD>
                 </div>
             </vs-tab>
-            <vs-tab @click="handleSelect()" label="服务队伍信息">
+            <vs-tab @click="colorx = 'danger'" label="服务队伍信息">
                 <div class="con-tab-ejemplo">
                     <CommonCRUD :columns="teamColumns" api-root="identity/volunteerGroup" :formColumns="teamFormColumns" :queryFormColumns="teamQuery"></CommonCRUD>
                 </div>

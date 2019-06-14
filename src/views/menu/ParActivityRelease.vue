@@ -292,15 +292,14 @@
                         }
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {
-                                this.isVisible = false
+                                this.isVisible = false;
                                 this.$message({
                                     type: 'success',
                                     message: '上传成功'
-                                })
+                                });
                                 this.$refs[form].resetFields();
-                                this.form = {taskType: 'Party'}
-                                this.dialogVisible = false
-
+                                this.form = {taskType: 'Party'};
+                                this.dialogVisible = false;
                             }).catch(res => {
                             this.dialogVisible = true;
                             this.isVisible = false

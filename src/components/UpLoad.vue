@@ -3,17 +3,19 @@
         <el-upload
             class="avatar-uploader"
             action=""
+            :limit="limit"
             :show-file-list="false"
             :auto-upload="true"
+            :aria-disabled="disabled"
             :http-request="uploadFile">
             <div v-for="(item,index) in images" class="img-container" @click.stop="stopEvent" @mouseover="moveIn(item)" @mouseout="moveOut(item)">
                 <img class="img-pre" :src="item.path">
                 <div v-show="item.active" style="background-color: rgba(255,255,255,.6);position: relative;top: -77px;width: 70px;height: 70px">
-                    <i class="el-icon-delete ico-po-del" @click.stop="deleteImg(index)"></i>
+                    <i class="el-icon-delete ico-po-del" v-if="!disabled" @click.stop="deleteImg(index)"></i>
                     <i class="el-icon-zoom-in ico-po-zoom" @click.stop="zoomIn(item.path)"></i>
                 </div>
             </div>
-            <i class="el-icon-plus avatar-uploader-icon"></i>
+            <i class="el-icon-plus avatar-uploader-icon" v-if="images.length < limit && !disabled" ></i>
         </el-upload>
         <el-dialog
             title="预览"
@@ -39,6 +41,10 @@
                 type: Boolean,
                 default: false
             },
+            limit:{
+                type:Number,
+                default: 10,
+            }
         },
         created() {
             if (!this.value) {
@@ -46,14 +52,15 @@
                 return;
             }
             this.value.split(',').forEach(item => {
-                this.images.push({path: item, active: false})
+                this.images.push({path: item, active: false});
             })
+
         },
         data() {
             return {
                 images: [],
                 dialogUrl: '',
-                dialogVisible: false
+                dialogVisible: false,
             };
         },
         methods: {

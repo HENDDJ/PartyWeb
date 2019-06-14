@@ -13,7 +13,41 @@
             </div>
 
             <vs-navbar-item index="0" >
-                <a href="#">个人中心</a>
+                <a href="#" @click="active=true">个人中心</a>
+                <vs-sidebar position-right  parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
+                    <div class="header-sidebar" slot="header">
+                        <vs-avatar  size="70px" :src="user.image"/>
+                        <h4>{{user.name}}</h4>
+                    </div>
+                    <vs-sidebar-item  icon="question_answer"><b>组织介绍</b></vs-sidebar-item>
+                        <p>{{user.introduction}}</p>
+                    <vs-divider icon="person" position="left"></vs-divider>
+                        <div>
+                            <p class="">登录名：{{user.userName}}</p>
+                            <p>所在组织：{{user.organizationName}}</p>
+                            <p>当前角色：{{user.roleName}}</p>
+                            <p>联系方式：{{user.phone}}</p>
+                            <p>最近登录时间：{{user.lastTime}}</p>
+                        </div>
+                    <div class="footer-sidebar" slot="footer">
+                        <vs-button icon="edit" color="warning" type="flat" @click="pswDia=true;active=false">修改密码</vs-button>
+                        <vs-button icon="reply" color="danger" type="flat" @click="logOut">切换账号</vs-button>
+                    </div>
+                </vs-sidebar>
+                <el-dialog title="修改密码" :visible.sync="pswDia" width="30%" append-to-body :before-close="closeDia">
+                    <el-form ref="form" :model="form" label-width="100px">
+                        <el-form-item label="新密码" >
+                            <el-input v-model="form.password" type="password"></el-input>
+                        </el-form-item>
+                        <el-form-item label="确认密码" type="password">
+                            <el-input v-model="form.checkPsw" type="password"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="closeDia">取 消</el-button>
+                        <el-button type="primary" :loading="submitLoad" @click="editPsw(form)">确 定</el-button>
+                    </span>
+                </el-dialog>
             </vs-navbar-item>
             <vs-navbar-item index="1">
                 <a href="#">消息中心</a>
@@ -33,8 +67,85 @@
         name: "TopBar",
         data() {
             return {
-                indexActive: ''
+                colorx:'',
+                indexActive: '',
+                active: false,
+                user: {
+                    id:  JSON.parse(sessionStorage.getItem("userInfo")).id,
+                    image: JSON.parse(sessionStorage.getItem("userInfo")).image,//头像
+                    name: JSON.parse(sessionStorage.getItem("userInfo")).name,//姓名
+                    introduction: JSON.parse(sessionStorage.getItem("userInfo")).introduction,//组织简介
+                    userName:JSON.parse(sessionStorage.getItem("userInfo")).userName,
+                    roleName: JSON.parse(sessionStorage.getItem("userInfo")).role.name,
+                    organizationName:JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtName,
+                    phone:JSON.parse(sessionStorage.getItem("userInfo")).phone,
+                    lastTime:JSON.parse(sessionStorage.getItem("userInfo")).lastTime,
+                },
+                form:{
+                    password:'',
+                    checkPsw:'',
+                },
+                pswDia:false,//修改密码弹框
+                submitLoad:false,
             }
+        },
+        methods: {
+            editPsw(form){
+                if(form.password&&(form.checkPsw)){
+                    if(form.checkPsw===form.password){
+                        this.$http('GET',`identity/sysUser/${this.user.id}id`,false).then( data => {
+                            this.submitLoad = true;
+                            let userForm = data;
+                            userForm.password = form.password;
+                            this.$http('PUT',`identity/sysUser/${this.user.id}id`,userForm).then( () => {
+                                this.pswDia = false;
+                                this.initForm();
+                                this.submitLoad = false;
+                                this.logOut();
+                            })
+                        })
+                    }else{
+                        this.$message({
+                            message: '密码不一致，请重新输入',
+                            type: 'warning'
+                        });
+                        this.initForm();
+                        this.submitLoad = false;
+                    }
+                }else{
+                    this.$message({
+                        message: '请补全信息',
+                        type: 'warning'
+                    });
+                }
+            },
+            closeDia(done) {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        this.pswDia = false;
+                        this.active = true;
+                        this.initForm();
+                        done();
+                    })
+                    .catch(_ => {});
+            },
+            initForm(){
+                this.form={
+                    password:'',
+                    checkPsw:'',
+                }
+            },
+            // 退出登录
+            logOut() {
+                sessionStorage.removeItem('menu');
+                sessionStorage.removeItem('token');
+                sessionStorage.removeItem("userInfo");
+                sessionStorage.removeItem("user");
+                location.reload();
+            }
+        },
+        created(){
+            this.initForm();
         }
     }
 </script>
@@ -53,4 +164,31 @@
     .vs-navbar{
         z-index: 99 !important;
     }
+
+    .header-sidebar{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+    }
+    h4{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+    p{
+        font-size: 14px;
+        text-indent: 2em;
+        line-height: 20px;
+    }
+    .footer-sidebar{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%
+    }
+
+
 </style>

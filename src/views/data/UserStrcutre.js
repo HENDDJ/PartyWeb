@@ -4,7 +4,8 @@ export default {
             name: "image",
             type: 'image',
             des: "头像",
-            notShow:'true'
+            notShow:'true',
+            limit:1
         },
         {
             name: "name",

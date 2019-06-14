@@ -11,14 +11,14 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'element-ui/lib/theme-chalk/base.css';
 import './style/index.scss';
+import 'material-icons/iconfont/material-icons.css';
+import 'vuesax/dist/vuesax.css' //Vuesax styles
 import Icon from 'vue-svg-icon/Icon.vue';
 import { generate, common, getRouter ,ht } from '@/api';
 import store from '@/store';
 import '@/utils/DateFormatter.js'
 import DynamicRoutes from '@/utils/dynamic-routes';
-import Vuesax from 'vuesax'
-import 'material-icons/iconfont/material-icons.css';
-import 'vuesax/dist/vuesax.css' //Vuesax styles
+import Vuesax from 'vuesax';
 import Spinner from 'vue-spinkit';
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
@@ -26,8 +26,8 @@ Vue.use(Viewer)
 Viewer.setDefaults({
     Options: { zIndex:99999,'inline': true, 'button': true, 'navbar': true, 'title': true, 'toolbar': true, 'tooltip': true, 'movable': true, 'zoomable': true, 'rotatable': true, 'scalable': true, 'transition': true, 'fullscreen': true, 'keyboard': true, 'url': 'data-source' }
 })
-Vue.use(Vuesax)
-Vue.component('Spinner', Spinner)
+Vue.use(Vuesax);
+Vue.component('Spinner', Spinner);
 
 Vue.config.productionTip = false;
 

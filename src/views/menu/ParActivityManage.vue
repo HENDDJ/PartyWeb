@@ -289,10 +289,10 @@
                                 align="center"
                                 :show-overflow-tooltip="true">
                                 <template slot-scope="scope">
-                                    <el-tooltip class="item" effect="dark" content="电视截图" placement="top">
+                                    <el-tooltip class="item" effect="dark" content="电视截图" placement="top" :hide-after="1000" :enterable="false">
                                         <el-button type="text" icon="el-icon-monitor" @click="getTV(scope.row)"></el-button>
                                     </el-tooltip>
-                                    <el-tooltip class="item" effect="dark" content="手机截图" placement="top">
+                                    <el-tooltip class="item" effect="dark" content="手机截图" placement="top" :hide-after="1000" :enterable="false">
                                         <el-button type="text" icon="el-icon-mobile" @click="getPhone(scope.row)"></el-button>
                                     </el-tooltip>
                                 </template>

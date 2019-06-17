@@ -90,7 +90,8 @@
     }
     .el-dialog {
         border-radius: 8px;
-        animation: an-dialog .5s
+        animation: an-dialog .5s;
+        min-height: 450px;
     }
     .el-dialog__headerbtn .el-dialog__close:hover {
         transform: translate(20px,-20px);
@@ -114,6 +115,21 @@
     .el-dialog__title {
         padding-left: 7px!important
         color: rgba(31,116,255,1) !important;
+    }
+    .el-dialog__body {
+        padding: 15px 20px!important;
+    }
+    .el-dialog__wrapper {
+        z-index: 998 !important;
+    }
+    .v-modal {
+        z-index: 997 !important;
+    }
+    .viewer-backdrop {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+    }
+    .mce-tinymce {
+        box-shadow: none!important;
     }
 </style>
 <style>

@@ -265,8 +265,3 @@
     }
 
 </style>
-<style>
-    .el-textarea__inner{
-        width:470px !important;
-    }
-</style>

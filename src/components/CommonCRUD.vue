@@ -65,7 +65,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination style="text-align: right;margin-top: 20px;"
+        <el-pagination style="text-align: right;margin-top: 20px;" ref="pagination"
                        background
                        :total="pageable.total" :current-page.sync="pageable.currentPage" :page-size.sync="pageable.pageSize"
                        @current-change="currentChange" @size-change="sizeChange" layout="total, sizes, prev, pager, next">
@@ -105,7 +105,7 @@
                                 placeholder="选择日期"
                 >
                 </el-date-picker>
-                <el-input v-model="form[item.name]" type="textarea" :rows="2" v-if="item.type === 'textarea'" :disabled="item.disabled || disabled"></el-input>
+                <el-input v-model="form[item.name]" class="common-textarea" type="textarea" :rows="2" v-if="item.type === 'textarea'" :disabled="item.disabled || disabled"></el-input>
                 <!--预留富文本编辑-->
                 <Tinymce v-if="item.type === 'rich-editor'" v-model="form[item.name]"></Tinymce>
                 <CommonFileUpload v-if="item.type === 'file'" :value="form[item.name]" :disabled="item.disabled || disabled" @getValue="form[item.name] = $event"></CommonFileUpload>
@@ -299,17 +299,12 @@
                     }
                 });
             },
-            handleClose (done) {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        this.from = {};
-                        this.$refs['form'].resetFields();
-                        this.disabled = false;
-                        this.dialogVisible = false;
-                        this.submitLoading = false;
-                        done();
-                    })
-                    .catch(_ => {});
+            handleClose () {
+                this.from = {};
+                this.$refs['form'].resetFields();
+                this.disabled = false;
+                this.dialogVisible = false;
+                this.submitLoading = false;
             },
             handleAvatarSuccess (res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
@@ -447,5 +442,8 @@
     }
     .footer-position {
         margin-right: 86px;
+    }
+    .common-textarea .el-textarea__inner {
+        width: 585px !important;
     }
 </style>

@@ -131,6 +131,10 @@
     .mce-tinymce {
         box-shadow: none!important;
     }
+    .el-badge__content.is-fixed {
+        top: 9px!important;
+        right: 24px!important;
+    }
 </style>
 <style>
     @keyframes an-dialog{

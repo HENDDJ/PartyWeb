@@ -10,11 +10,11 @@
                 <li class="books" @click="showLeader()"><span class="books-icon"></span><a href="#">村干部分布图</a></li>
             </ul>
         </nav>
-        <div id="census" onclick="toggleDiv()">
+       <!-- <div id="census" onclick="toggleDiv()">
             <img src="某村各阵地使用次数.png" height="369" width="551"/>
             <img src="某村实时人流图.png" height="472" width="670"/>
             <img src="某村时间内人流峰值统计.png" height="369" width="539"/>
-        </div>
+        </div>-->
     </section>
 </template>
 
@@ -24,6 +24,7 @@
         data () {
             return {
                 map: {},
+                posinitionList:[],
                 pointList:[
                     {label: '茅山村党员教育室', x: 119.302738, y: 31.797112},
                     {label: '宝华村党员教育室', x: 119.083573, y: 32.155268},
@@ -134,7 +135,7 @@
             },
             //展示基本阵地点位
             showBattleField() {
-                if (this.mapvLayer) {
+               /* if (this.mapvLayer) {
                     this.mapvLayer.hide();
                 }
                 this.clearBattleField();
@@ -146,7 +147,19 @@
                         this.toggleDiv("show");
                     });
                     this.map.addOverlay(marker);
-                 });
+                 });*/
+               this.$http("POST",`identity/positionInformation/list`,false).then( data =>{
+                   data.forEach(item => {
+                       if(item.lonLat){
+                           let marker = new BMap.Marker(new BMap.Point(item.lonLat.split(",")[0],item.lonLat.split(",")[1]));
+                           marker.addEventListener('click', e => {
+                               this.openInfo(item.name,e);
+                           });
+                           this.map.addOverlay(marker);
+                       }
+                   })
+               });
+
             },
             clearBattleField() {
                 this.markerList.forEach( item => {
@@ -187,7 +200,7 @@
                 this.orgList.forEach( item => {
                     var marker = new BMap.Marker(new BMap.Point(item.x, item.y),{icon: icon});
                     marker.addEventListener('click', function (e) {
-                        this.openInfo(item.label,e);
+                        this.openInfo(item,e);
                      });
                     this.markerList.push(marker);
                     this.map.addOverlay(marker);
@@ -206,9 +219,9 @@
                 });
             },
             openInfo(content,e){
-                var p = e.target;
-                var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-                var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
+                let p = e.target;
+                let point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+                let infoWindow = new BMap.InfoWindow(content,this.opts);  // 创建信息窗口对象
                 this.map.openInfoWindow(infoWindow,point); //开启信息窗口
             },
             toggleDiv(action) {
@@ -376,7 +389,7 @@
     }
 
 </style>
-<style>
+<style scoped>
     #allmap{
         width: 100%;
         height: 610px;

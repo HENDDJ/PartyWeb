@@ -119,6 +119,18 @@
     .el-dialog__body {
         padding: 15px 20px!important;
     }
+    .el-dialog__wrapper {
+        z-index: 998 !important;
+    }
+    .v-modal {
+        z-index: 997 !important;
+    }
+    .viewer-backdrop {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+    }
+    .mce-tinymce {
+        box-shadow: none!important;
+    }
 </style>
 <style>
     @keyframes an-dialog{

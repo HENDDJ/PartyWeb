@@ -55,7 +55,7 @@
                                 </div>
                             </transition>
                         </div>
-                    <el-pagination style="text-align: right;margin-top: 10px;" background
+                    <el-pagination style="text-align: right;" background
                                    :page-sizes="[5, 7, 10]"
                                    :total="pageable.total" :current-page.sync="pageable.currentPage"
                                    :page-size.sync="pageable.pageSize"
@@ -174,7 +174,7 @@
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="4" >进度跟踪：</el-col>
-                                <el-col :span="18">
+                                <el-col v-if="roleCode === 'CITY_LEADER'" :span="18">
                                     <el-table
                                         :data="trackTable"
                                         stripe
@@ -238,6 +238,55 @@
                                         </el-table-column>
                                     </el-table>
                                 </el-col>
+                                <el-col v-else-if="roleCode === 'TOWN_REVIEWER'" :span="18">
+                                    <el-table
+                                        :data="townDetailTable"
+                                        stripe border
+                                        v-loading="townDetailLoading"
+                                        :header-cell-style="{'font-size': '14px', 'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6', 'padding': '1px 0'}">
+                                        <el-table-column
+                                            prop="districtName"
+                                            label="组织名称"
+                                            align="center">
+                                        </el-table-column>
+                                        <el-table-column
+                                            prop="modifiedAt"
+                                            label="更新时间"
+                                            align="center"
+                                            :formatter="dateFormatter">
+                                        </el-table-column>
+                                        <el-table-column
+                                            label="状态"
+                                            align="center">
+                                            <template slot-scope="scope">
+                                                <p v-if="scope.row.status === '1'" style="color: #e6a23c">
+                                                    待审核
+                                                </p>
+                                                <p v-else-if="scope.row.status === '2'" style="color: #67c23a">
+                                                    已完成
+                                                </p>
+                                                <p v-else style="color: red">
+                                                    未完成
+                                                </p>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column
+                                            label="截图"
+                                            align="center"
+                                            :show-overflow-tooltip="true">
+                                            <template slot-scope="scope">
+                                                <el-tooltip class="item" effect="dark" content="电视截图" placement="top" :hide-after="1000" :enterable="false">
+                                                    <el-button type="text" icon="el-icon-monitor" @click="getTV(scope.row)"></el-button>
+                                                </el-tooltip>
+                                                <el-tooltip class="item" effect="dark" content="手机截图" placement="top" :hide-after="1000" :enterable="false">
+                                                    <el-button type="text" icon="el-icon-mobile" @click="getPhone(scope.row)"></el-button>
+                                                </el-tooltip>
+                                            </template>
+                                        </el-table-column>
+                                    </el-table>
+                                </el-col>
+                                <el-col v-else-if="roleCode === 'COUNTRY_SIDE_ACTOR'" :span="18"></el-col>
+                                <p v-else>暂无权限！</p>
                             </el-row>
                         </div>
                     </transition>
@@ -255,8 +304,8 @@
                 :modal-append-to-body='false'
                 :append-to-body="true"
                 :before-close="townDetailClose">
-                <el-row :gutter="10">
-                    <el-col :span="8">
+                <el-row :gutter="10" type="flex" justify="center">
+                    <el-col :span="8" v-if="roleCode === 'CITY_LEADER'">
                         <el-table
                             :data="townDetailTable"
                             stripe
@@ -300,7 +349,7 @@
                         </el-table>
                     </el-col>
                     <el-col :span="16">
-                        <h4 style="text-align: center;line-height: 1.1">{{picTitle}}</h4>
+                        <h3 style="text-align: center;line-height: 1.1">{{picTitle}}</h3>
                         <viewer :images="PicFull">
                             <el-timeline
                                 v-loading="picLoading"
@@ -438,6 +487,7 @@
                 activityLoading: false,
                 detailLoading: false,
                 districtCode: JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId,
+                roleCode: JSON.parse(sessionStorage.getItem('userInfo')).role.code,
                 TownCodeKey: {
                     '0101': 'xiaShuPercent',
                     '0102': 'houBaiPercent',
@@ -553,6 +603,25 @@
                 let path = `${this.apiRoot}/page?page=0&size=${value}`;
                 this.loadTableData(path)
             },
+            //处理不同角色的进度跟踪内容
+            handleDifferentRole() {
+                if (this.roleCode === 'CITY_LEADER') {
+                    let path = `${this.apiRootTrack}/${this.detailForm.id}perList`;
+                    this.loadTrackTable(path, {});
+                } else if (this.roleCode === 'TOWN_REVIEWER') {
+                    let path = `${this.apiRootObject}/list`;
+                    let query = {
+                        attachTo: this.districtCode,
+                        activityId: this.detailForm.id
+                    };
+                    this.loadTownTable(path, query).then(() => {
+                        setTimeout(() => {
+                            this.detailLoading = true;
+                        }, 200);
+                    })
+                }
+
+            },
             // 获取表格数据
             loadTableData(path, statusChange) {
                 this.activityLoading = false;
@@ -565,8 +634,7 @@
                         if(!this.detailLoading || statusChange) {
                             this.detailForm = this.tableData[0];
                             this.handleFile(this.detailForm);
-                            let path = `${this.apiRootTrack}/${this.detailForm.id}perList`;
-                            this.loadTrackTable(path, {});
+                            this.handleDifferentRole();
                         }
                     }
                 ).catch(res => {
@@ -654,8 +722,7 @@
                 this.detailFormNext = JSON.parse(JSON.stringify(val));
                 this.lookType = true;
                 this.editType = false;
-                let path = `${this.apiRootTrack}/${val.id}perList`;
-                this.loadTrackTable(path, {});
+                this.handleDifferentRole();
                 this.townAcId = val.id
 
             },
@@ -843,6 +910,9 @@
                 return Math.floor(distance/(24*3600*1000))
             },
             getTV(item){
+                if (!this.townDetailVis) {
+                    this.townDetailVis = true;
+                }
                 this.picTitle = `${item.districtName}电视端截图`;
                 this.picLoading = true;
                 this.Pic = [];
@@ -867,6 +937,9 @@
                 });
             },
             getPhone(item) {
+                if (!this.townDetailVis) {
+                    this.townDetailVis = true;
+                }
                 this.picTitle = `${item.districtName}手机端截图`;
                 this.picLoading = true;
                 this.Pic = [];
@@ -920,6 +993,9 @@
                     return item.imageUrl
                 }
             },
+            dateFormatter(row, cell, value) {
+                return new Date(value).toLocaleDateString() || '暂无';
+            }
         },
         created() {
             this.handleSelectOptions();
@@ -972,14 +1048,14 @@
     .left-act-list {
         width: 100%;
         line-height: 24px;
-        min-height: 668px;
+        min-height: 655px !important;
     }
     .list-item {
         background-color: white;
         text-align: left;
         margin-bottom: 25px;
         display: flex;
-        padding: 12px 20px;
+        padding: 10px 20px;
         transition: all .4s;
         box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
         /*box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);*/
@@ -1104,5 +1180,9 @@
     .el-timeline .el-loading-mask {
         height: 300px;
     }
+
+    /*.activity-management .el-textarea__inner {*/
+        /*width: auto !important;*/
+    /*}*/
 </style>
 

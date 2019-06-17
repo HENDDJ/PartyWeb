@@ -603,9 +603,6 @@
 
 </style>
 <style>
-    .el-textarea__inner{
-        width:400px !important;
-    }
     .translate-enter,.translate-leave-to{
         opacity: 0;
         transform: translateY(80px);

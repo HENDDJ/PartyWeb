@@ -110,6 +110,7 @@
                 <Tinymce v-if="item.type === 'rich-editor'" v-model="form[item.name]"></Tinymce>
                 <CommonFileUpload v-if="item.type === 'file'" :value="form[item.name]" :disabled="item.disabled || disabled" @getValue="form[item.name] = $event"></CommonFileUpload>
                 <CommonUpload v-if="item.type === 'image'" :value="form[item.name]" :disabled="item.disabled || disabled"  :limit="item.limit" @getValue="form[item.name] = $event"></CommonUpload>
+                <MapLocation v-if="item.type === 'location'" :value="form[item.name]" :disabled="item.disabled || disabled" @getValue="form[item.name] = $event"></MapLocation>
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer  footer-position">
@@ -125,6 +126,7 @@
     import CommonUpload from '@/components/UpLoad';
     import Tinymce from '@/components/Tinymce';
     import CommonFileUpload from '@/components/FileUpLoad';
+    import MapLocation from '@/components/MapLocation';
     export default {
         name: 'CommonCRUD',
         props: {
@@ -203,7 +205,8 @@
         components: {
             CommonFileUpload,
             CommonUpload,
-            Tinymce
+            Tinymce,
+            MapLocation
         },
         methods: {
             rowClick(row) {

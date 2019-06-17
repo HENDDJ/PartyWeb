@@ -39,6 +39,8 @@
 <style scoped>
     .search-container {
         width: 300px;
+        position: absolute;
+        z-index: 10;
     }
     .input-with-select {
         height: 40px;

@@ -44,7 +44,7 @@
                                             <template v-else>&nbsp;</template>
                                         </div>
                                         <div class="processing">
-                                            <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="(item[TownCodeKey[districtCode]] || 0) * 100"></el-progress>
+                                            <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="(item[TownCodeKey[sysDistrict.districtId]] || 0) * 100"></el-progress>
                                         </div>
                                         <div class="detail">
                                             <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
@@ -69,8 +69,8 @@
                         <h1>任务详情</h1>
                     </div>
                     <transition name="el-zoom-in-center" mode="out-in">
-                        <div class="right-detail" v-show="detailLoading">
-                            <el-row style="margin: 10px 0 -20px 0" v-show="queryForm.currentStatus === 'PLAN'">
+                        <div class="right-detail" v-if="detailLoading">
+                            <el-row style="margin: 10px 0 -20px 0" v-show="queryForm.currentStatus === 'PLAN' && roleCode === 'CITY_LEADER'">
                                 <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
                                     <el-button style="float: right;" size="mini" type="danger" icon="el-icon-delete" circle @click="del(row)"></el-button>
                                 </el-tooltip>
@@ -129,11 +129,22 @@
                                     当前进度：
                                 </el-col>
                                 <el-col :span="6">
-                                    <div style="margin-top: 3px">
-                                        <el-progress v-if="detailForm.percent < 0.3" :percentage="Math.round(detailForm.percent * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
-                                        <el-progress v-else-if="detailForm.percent < 0.7" :percentage="Math.round(detailForm.percent * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
-                                        <el-progress v-else-if="detailForm.percent < 1" :percentage="Math.round(detailForm.percent * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
-                                        <el-progress v-else-if="detailForm.percent = 1" :percentage="Math.round(detailForm.percent * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                    <template v-if="roleCode === 'COUNTRY_SIDE_ACTOR'">
+                                        <p v-if="detailForm.status === '1'" style="color: #e6a23c">
+                                            待审核
+                                        </p>
+                                        <p v-else-if="detailForm.status === '2'" style="color: #67c23a">
+                                            已完成
+                                        </p>
+                                        <p v-else style="color: red">
+                                            未完成
+                                        </p>
+                                    </template>
+                                    <div v-else style="margin-top: 3px">
+                                        <el-progress v-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                        <el-progress v-else-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) < 0.7" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                        <el-progress v-else-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) < 1" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                        <el-progress v-else-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) === 1" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
                                         <span v-else>ERROR</span>
                                     </div>
                                 </el-col>
@@ -173,7 +184,8 @@
                                 </el-col>
                             </el-row>
                             <el-row class="detail-row">
-                                <el-col :span="4" >进度跟踪：</el-col>
+                                <PictureShot v-if="roleCode === 'COUNTRY_SIDE_ACTOR'"  :picData="picQuery"></PictureShot>
+                                <el-col v-if="roleCode !== 'COUNTRY_SIDE_ACTOR'" :span="4" >进度跟踪：</el-col>
                                 <el-col v-if="roleCode === 'CITY_LEADER'" :span="18">
                                     <el-table
                                         :data="trackTable"
@@ -285,8 +297,7 @@
                                         </el-table-column>
                                     </el-table>
                                 </el-col>
-                                <el-col v-else-if="roleCode === 'COUNTRY_SIDE_ACTOR'" :span="18"></el-col>
-                                <p v-else>暂无权限！</p>
+                                <!--<p v-else>暂无权限！</p>-->
                             </el-row>
                         </div>
                     </transition>
@@ -369,7 +380,7 @@
                         </viewer>
                         <div v-if="PicFull.length === 0 && !picLoading" style="text-align: center">
                             <img style="margin: 0 auto" src="/static/img/nodata.png" width="300" height="300" />
-                            <p style="text-align: center">&emsp;&emsp;&emsp;&emsp;暂无图片</p>
+                            <p style="text-align: center">&emsp;&emsp;&emsp;暂无图片</p>
                         </div>
                     </el-col>
                 </el-row>
@@ -382,7 +393,7 @@
 
     import LookUp from '@/lookup';
     import CommonFileUpload from '@/components/FileUpLoad';
-    import {tansfer} from "../../lookup/transfer";
+    import PictureShot from '@/components/PictureShot';
 
     export default {
         name: "ParActivityManage",
@@ -486,7 +497,7 @@
                 }],
                 activityLoading: false,
                 detailLoading: false,
-                districtCode: JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId,
+                sysDistrict: JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict,
                 roleCode: JSON.parse(sessionStorage.getItem('userInfo')).role.code,
                 TownCodeKey: {
                     '0101': 'xiaShuPercent',
@@ -518,12 +529,18 @@
         },
         computed: {
             taskTitle() {
-                console.log( this.queryForm.currentStatus, "ss")
                 return this.queryForm.currentStatus == 'ACTIVE' ? '正在进行' : '计划进行'
+            },
+            picQuery() {
+                return {
+                    districtId: this.sysDistrict.id,
+                    activityId: this.detailForm.id
+                }
             }
         },
         components: {
-            CommonFileUpload
+            CommonFileUpload,
+            PictureShot
         },
         methods: {
             showVideo(data) {
@@ -534,7 +551,7 @@
                 if (val == 'Party') {
                     this.addVideo = false
                 } else {
-                    this.addVideo = true
+                    this.addVideo = true;
                     this.loadVideo();
                 }
 
@@ -611,10 +628,23 @@
                 } else if (this.roleCode === 'TOWN_REVIEWER') {
                     let path = `${this.apiRootObject}/list`;
                     let query = {
-                        attachTo: this.districtCode,
+                        attachTo: this.sysDistrict.districtId,
                         activityId: this.detailForm.id
                     };
                     this.loadTownTable(path, query).then(() => {
+                        setTimeout(() => {
+                            this.detailLoading = true;
+                        }, 200);
+                    })
+                } else if (this.roleCode === 'COUNTRY_SIDE_ACTOR') {
+                    let path = `${this.apiRootObject}/findByOrganizationIdAndActivityId`;
+                    let query = {
+                        organizationId: this.sysDistrict.districtId,
+                        activityId: this.detailForm.id
+                    };
+                    this.$http("POST", path, query, false).then(data => {
+                        console.log(data,"ss");
+                        this.detailForm.status = data.status;
                         setTimeout(() => {
                             this.detailLoading = true;
                         }, 200);
@@ -798,7 +828,6 @@
             del(val) {
                 this.$confirm('确认删除？')
                     .then(_ => {
-                        console.log(val)
                         this.$http('Delete', `${this.apiRoot}/${val.id}ids`).then(_ => {
                             let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                             this.queryForm.taskType = val.taskType
@@ -881,13 +910,13 @@
                         this.$message({
                             type: 'success',
                             message: '修改成功'
-                        })
+                        });
                         let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                         this.loadTableData(path);
 
-                        this.detailForm.fileUrls = beforeUrl
-                        this.lookType = true
-                        this.editType = false
+                        this.detailForm.fileUrls = beforeUrl;
+                        this.lookType = true;
+                        this.editType = false;
                     }).catch(res => {
                     this.$message({
                         type: 'error',

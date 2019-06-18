@@ -67,7 +67,7 @@
                                     </div>
                                     <div style="flex: 2;text-align: right">
                                         <p style="line-height: 28px;color: #afafaf">下属组织数</p>
-                                        <p style="font-size: 36px;">230</p>
+                                        <p style="font-size: 36px;">15</p>
                                     </div>
                                 </div>
                                 <div slot="footer" style="border-top: 1px grey solid">
@@ -81,7 +81,7 @@
                                     </div>
                                     <div style="flex: 2;text-align: right">
                                         <p style="line-height: 28px;color: #afafaf">活动完成率</p>
-                                        <p style="font-size: 36px;color: green;">95%</p>
+                                        <p style="font-size: 36px;color: green;">{{activityCompleteRate}}</p>
                                     </div>
                                 </div>
                                 <div slot="footer" style="border-top: 1px grey solid">
@@ -99,7 +99,7 @@
                                     </div>
                                     <div style="flex: 2;text-align: right">
                                         <p style="line-height: 28px;color: #afafaf">下属阵地数</p>
-                                        <p style="font-size: 36px;">458</p>
+                                        <p style="font-size: 36px;">{{positionNumber}}</p>
                                     </div>
                                 </div>
                                 <div slot="footer" style="border-top: 1px grey solid">
@@ -113,7 +113,7 @@
                                     </div>
                                     <div style="flex: 2;text-align: right">
                                         <p style="line-height: 28px;color: #afafaf">村干部总数</p>
-                                        <p style="font-size: 36px;">{{villageCadreNumber}}</p>
+                                        <p style="font-size: 36px;">{{villageCadresNumber}}</p>
                                     </div>
                                 </div>
                                 <div slot="footer" style="border-top: 1px grey solid">
@@ -166,8 +166,9 @@
         data(){
             return {
                 activityPerformNumber:0, //活动执行次数
-                ActivityCompletionRate:0,//活动完成率
-                villageCadreNumber:0, //村干部数量
+                activityCompleteRate:0,//活动完成率
+                villageCadresNumber:0, //村干部数量
+                positionNumber:0,//阵地数量
                 rank: {
                     tooltip : {
                         trigger: 'axis'
@@ -257,16 +258,12 @@
         methods:{
             //统计总数
             totalStatistics(){
-                //当前用户
-                let currentUser = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
-                //统计活动执行次数
-                this.$http("POST",`identity/parActivityPerform/countall`,false).then( data => {
-                    this.activityPerformNumber = data;
-                });
-                //村干部数量
-                this.$http("POST",`identity/villageCadres/countall`,{districtId:currentUser}).then( data => {
-                    this.villageCadreNumber = data;
-                });
+                this.$http("POST",`identity/centralConsole/statistics`,false).then( data => {
+                    this.activityPerformNumber = data.activityPerformNumber;
+                    this.villageCadresNumber = data.villageCadresNumber;
+                    this.positionNumber =data.positionNumber;
+                    this.activityCompleteRate = data.activityCompleteRate*100+"%";
+                })
             },
             hot(){
                 let hours = ['XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村'];

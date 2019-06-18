@@ -1,229 +1,228 @@
 <template>
-<div>
-    <el-row :gutter="30">
-        <el-col :span="12">
-            <div style="border:1px solid black;width: 100%;height: 100%">
-                <div class="left-act-list" >
-                    任务列表
-                    <transition name="translate" mode="out-in">
-                        <div v-show="activityLoading">
-                            <div class="list-item" v-for="(item, index) in tableData" :key="item.id" @click="details(item)">
-                                <div class="status">
-                                    <icon name="check" scale="4"></icon>
-                                </div>
-                                <div class="left-date">
-                                    <p class="label">组织名称：<span class="value">{{item.districtName}}</span></p>
-                                </div>
-                                <div class="title-type">
-                                    <p class="title">{{item.title}}</p>
-                                    <p class="type">{{item.type}}</p>
-                                </div>
-                                <div class="left-date">
-                                    <p class="label">截止日期：<span class="value">{{item.month}}</span></p>
-                                </div>
-                                <div class="sepertor">
-                                    <p style="border-right: 1px solid #888">&nbsp;</p>
-                                </div>
-                                <div class="left-time">
-                                    <template v-if="item.month">
-                                        <icon name="miaobiao" scale="3.5"></icon>
-                                        <p><span>{{calcLeftDays(item.month)}}</span>天</p>
-                                    </template>
-                                    <template v-else>&nbsp;</template>
-                                </div>
-
-                                <div class="detail" @click="details(item)">
-                                    <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
-                                        <icon name="more" scale="2" ></icon>
+    <section class="activity-management">
+        <div style="width: calc(100% - 10px);margin: 5px auto">
+            <el-row type="flex">
+                <div style="width: 2%"></div>
+                <div style="width: 44.5%">
+                    <div class="list-header">
+                        <h1>审核列表</h1>
+                    </div>
+                    <div class="left-act-list" >
+                        <transition name="translate" mode="out-in">
+                            <div v-show="activityLoading">
+                                <div class="list-item" v-for="(item, index) in tableData" :key="item.id" @click="details(item)">
+                                    <div class="status">
+                                        <icon name="check" scale="4"></icon>
+                                    </div>
+                                    <div class="left-date">
+                                        <p class="label">组织名称：<span class="value">{{item.districtName}}</span></p>
+                                    </div>
+                                    <div class="title-type">
+                                        <p class="title">{{item.title}}</p>
+                                        <p class="type">{{item.type}}</p>
+                                    </div>
+                                    <div class="left-date">
+                                        <p class="label">截止日期：<span class="value">{{item.month}}</span></p>
+                                    </div>
+                                    <div class="sepertor">
+                                        <p style="border-right: 1px solid #888">&nbsp;</p>
+                                    </div>
+                                    <div class="left-time">
+                                        <template v-if="item.month">
+                                            <icon name="miaobiao" scale="3.5"></icon>
+                                            <p><span>{{calcLeftDays(item.month)}}</span>天</p>
+                                        </template>
+                                        <template v-else>&nbsp;</template>
                                     </div>
                                 </div>
                             </div>
+                        </transition>
+                    </div>
+                    <el-pagination style="text-align: right;margin-top: 10px;" background
+                                   :page-sizes="[5, 7, 10]"
+                                   :total="pageable.total" :current-page.sync="pageable.currentPage"
+                                   :page-size.sync="pageable.pageSize"
+                                   @current-change="currentChange" @size-change="sizeChange"
+                                   layout="total, sizes, prev, pager, next">
+                    </el-pagination>
+                </div>
+                <div style="width: 7%"></div>
+                <div style="width: 44.5%">
+                    <div class="detail-header">
+                        <h1>任务详情</h1>
+                    </div>
+                    <transition name="el-zoom-in-center" mode="out-in">
+                        <div v-show="activityDetailLoading" class="right-detail">
+                            <el-row class="detail-row">
+                                <el-col :span="4">任务名称：</el-col>
+                                <el-col :span="6" style="color: #25252582">{{activityDetail.title}}&nbsp;</el-col>
+                                <el-col :span="4">任务类型:</el-col>
+                                <el-col :span="6" style="color: #25252582">{{activityDetail.type}}&nbsp;</el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="4">截止日期：</el-col>
+                                <el-col :span="6" style="color: #25252582">{{activityDetail.month}}&nbsp;</el-col>
+                                <el-col :span="4">提醒时间:</el-col>
+                                <el-col :span="6" style="color: #25252582">{{activityDetail.alarmTime || '暂无'}}&nbsp;</el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="4">任务分值：</el-col>
+                                <el-col :span="6" style="color: red;font-weight: bold">{{activityDetail.score || 0}}分&nbsp;</el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="4">工作要求：</el-col>
+                                <el-col :span="16" style="color: #25252582">{{activityDetail.context}}&nbsp;</el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="4">电视截图：</el-col>
+                                <el-col :span="8" v-if="TvPic.length === 0" style="color: rgba(37, 37, 37, 0.51)">
+                                    暂无截图记录！
+                                </el-col>
+                                <el-col :span="8" v-else style="padding-top: 8px;">
+                                    <viewer :images="TvPicFull">
+                                        <el-timeline>
+                                            <el-timeline-item
+                                                v-for="(activity, index) in TvPic"
+                                                :key="index"
+                                                :timestamp="activity.timestamp"
+                                                placement="top"
+                                                v-if="index<2">
+                                                <img
+                                                    :src="TvPicFull[index]"
+                                                    :key="index"
+                                                    style="width: 200px"
+                                                >
+                                            </el-timeline-item>
+                                        </el-timeline>
+                                    </viewer>
+
+                                </el-col>
+                                <el-col :span="6" >
+                                    <el-button  v-if="TvPic.length !== 0" type="text" @click="TvMore">更多</el-button>
+                                </el-col>
+
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="4">手机截图：</el-col>
+                                <el-col :span="8" v-if="PhonePic.length === 0" style="color: rgba(37, 37, 37, 0.51)">
+                                    暂无截图记录！
+                                </el-col>
+                                <el-col :span="8" v-else style="padding-top: 8px;">
+                                    <viewer :images="PhonePicFull">
+                                        <el-timeline>
+                                            <el-timeline-item
+                                                v-for="(activity, index) in PhonePic"
+                                                :key="index"
+                                                :timestamp="activity.timestamp"
+                                                placement="top"
+                                                v-if="index<2">
+                                                <img
+                                                    :src="PhonePicFull[index]"
+                                                    :key="index"
+                                                    style="width: 200px;height: 150px"
+                                                >
+                                            </el-timeline-item>
+                                        </el-timeline>
+                                    </viewer>
+                                </el-col>
+                                <el-col :span="6" >
+                                    <el-button  v-if="PhonePic.length !== 0" type="text" @click="PhonePicShow">更多</el-button>
+                                </el-col>
+                            </el-row>
+
+                            <el-row class="detail-row">
+                                <el-col :span="4">审核意见：</el-col>
+                                <el-col :span="18">
+                                    <el-input
+                                        type="textarea"
+                                        :autosize="{ minRows: 3, maxRows: 4}"
+                                        placeholder="请输入内容"
+                                        v-model="checkForm.remark">
+                                    </el-input>
+                                </el-col>
+                            </el-row>
+                            <el-row>
+                                <el-col :span="22" style="text-align: right">
+                                    <el-button type="primary" @click="pass">通过</el-button>
+                                    <el-button type="danger" @click="unPass">驳回</el-button>
+                                </el-col>
+                            </el-row>
+
+                            <!--<PictureShot :picData="this.activityDetail"></PictureShot>-->
                         </div>
                     </transition>
                 </div>
-                <el-pagination style="text-align: right;margin-top: 10px;" background
-                               :page-sizes="[5, 7, 10]"
-                               :total="pageable.total" :current-page.sync="pageable.currentPage"
-                               :page-size.sync="pageable.pageSize"
-                               @current-change="currentChange" @size-change="sizeChange"
-                               layout="total, sizes, prev, pager, next">
-                </el-pagination>
-            </div>
-        </el-col>
-        <el-col :span="12">
-<div style="border:1px solid black;width: 100%;height: 100%">
-    任务列表
-    <transition name="el-zoom-in-center" mode="out-in">
-        <div v-show="activityDetailLoading" class="right-detail">
+                <div style="width: 2%"></div>
+            </el-row>
+        </div>
 
-            <el-row class="detail-row">
-                <el-col :span="5" :xl="{span: 4, offset: 2}">任务名称：</el-col>
-                <el-col :span="5">&nbsp;{{activityDetail.title}}</el-col>
-                <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">任务类型:</el-col>
-                <el-col :span="5">&nbsp;{{activityDetail.type}}</el-col>
-            </el-row>
-            <el-row class="detail-row">
-                <el-col :span="5" :xl="{span: 4, offset: 2}">截止日期：</el-col>
-                <el-col :span="5">&nbsp;{{activityDetail.month}}</el-col>
-                <el-col :span="4" :offset="1" :xl="{span: 4, offset: 2}">提醒时间:</el-col>
-                <el-col :span="5">&nbsp;{{activityDetail.alarmTime || '暂无'}}</el-col>
-            </el-row>
-            <el-row class="detail-row">
-                <el-col :span="5" :xl="{span: 4, offset: 2}">任务分值：</el-col>
-                <el-col :span="4" style="color: red;font-weight: bold">&nbsp;{{activityDetail.score || 0}}分</el-col>
-            </el-row>
-            <el-row class="detail-row">
-                <el-col :span="5"  :xl="{span: 4, offset: 2}">工作要求：</el-col>
-                <el-col :span="15">&nbsp;{{activityDetail.context}}</el-col>
-            </el-row>
-            <el-row class="detail-row">
-                <el-col :span="5"  :xl="{span: 4, offset: 2}">电视截图：</el-col>
-                <el-col :span="12">
+        <el-dialog
+            v-if="picDetail"
+            title="更多图片"
+            :visible.sync="picDetail"
+            width="820px"
+            align="left"
+            :modal-append-to-body='false'
+            :append-to-body="true"
+            :before-close="picDetailClose">
+            <el-row>
+                <el-col :span="3">
+                    &nbsp;
+                </el-col>
+                <el-col :span="18">
                     <viewer :images="TvPicFull">
                     <el-timeline>
                         <el-timeline-item
                             v-for="(activity, index) in TvPic"
                             :key="index"
                             :timestamp="activity.timestamp"
-                            placement="top"
-                            v-if="index<2">
-                                <img
-                                    :src="TvPicFull[index]"
-                                    :key="index"
-                                    style="width: 200px"
-                                >
+                            placement="top">
+                            <img
+                                :src="TvPicFull[index]"
+                                :key="index"
+                                style="width: 100%"
+                            >
+
                         </el-timeline-item>
                     </el-timeline>
                     </viewer>
-
                 </el-col>
-
-                    <el-col :span="4" >
-                        <el-button type="text" @click="TvMore">更多</el-button>
-                    </el-col>
-
             </el-row>
-            <el-row class="detail-row">
-                <el-col :span="5"  :xl="{span: 4, offset: 2}">手机截图：</el-col>
-                <el-col :span="12">
+
+        </el-dialog>
+        <el-dialog
+            v-if="picPhoneDetail"
+            title="更多图片"
+            :visible.sync="picPhoneDetail"
+            width="820px"
+            align="left"
+            :modal-append-to-body='false'
+            :append-to-body="true"
+            :before-close="picPhoneDetailClose">
+            <el-row>
+                <el-col :span="3">
+                    &nbsp;
+                </el-col>
+                <el-col :span="18">
                     <viewer :images="PhonePicFull">
                         <el-timeline>
                             <el-timeline-item
                                 v-for="(activity, index) in PhonePic"
                                 :key="index"
                                 :timestamp="activity.timestamp"
-                                placement="top"
-                                v-if="index<2">
-                                <img
-                                    :src="PhonePicFull[index]"
+                                placement="top">
+                                <img :src="PhonePicFull[index]"
                                     :key="index"
-                                    style="width: 200px;height: 150px"
-                                >
+                                    style="width: 100%;">
                             </el-timeline-item>
                         </el-timeline>
                     </viewer>
                 </el-col>
-                <el-col :span="4" >
-                    <el-button type="text" @click="PhonePicShow">更多</el-button>
-                </el-col>
             </el-row>
 
-            <el-row class="detail-row">
-                <el-col :span="5" :xl="{span: 4, offset: 2}">审核意见：</el-col>
-                <el-col :span="18">
-                    <el-input
-                        type="textarea"
-                        :autosize="{ minRows: 2, maxRows: 4}"
-                        placeholder="请输入内容"
-                        v-model="checkForm.remark">
-                    </el-input>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col>
-                    <el-button type="primary" @click="pass">通过</el-button>
-                    <el-button type="primary" @click="unPass">不通过</el-button>
-                </el-col>
-            </el-row>
+        </el-dialog>
 
-            <!--<PictureShot :picData="this.activityDetail"></PictureShot>-->
-        </div>
-    </transition>
-
-</div>
-        </el-col>
-    </el-row>
-
-    <el-dialog
-        v-if="picDetail"
-        title="更多图片"
-        :visible.sync="picDetail"
-        width="820px"
-        align="left"
-        :modal-append-to-body='false'
-        :append-to-body="true"
-        :before-close="picDetailClose">
-        <el-row>
-            <el-col :span="3">
-                &nbsp;
-            </el-col>
-            <el-col :span="18">
-                <viewer :images="TvPicFull">
-                <el-timeline>
-                    <el-timeline-item
-                        v-for="(activity, index) in TvPic"
-                        :key="index"
-                        :timestamp="activity.timestamp"
-                        placement="top">
-                        <img
-                            :src="TvPicFull[index]"
-                            :key="index"
-                            style="width: 100%"
-                        >
-
-                    </el-timeline-item>
-                </el-timeline>
-                </viewer>
-            </el-col>
-        </el-row>
-
-    </el-dialog>
-    <el-dialog
-        v-if="picPhoneDetail"
-        title="更多图片"
-        :visible.sync="picPhoneDetail"
-        width="820px"
-        align="left"
-        :modal-append-to-body='false'
-        :append-to-body="true"
-        :before-close="picPhoneDetailClose">
-        <el-row>
-            <el-col :span="3">
-                &nbsp;
-            </el-col>
-            <el-col :span="18">
-                <viewer :images="PhonePicFull">
-                    <el-timeline>
-                        <el-timeline-item
-                            v-for="(activity, index) in PhonePic"
-                            :key="index"
-                            :timestamp="activity.timestamp"
-                            placement="top">
-                            <img
-                                :src="PhonePicFull[index]"
-                                :key="index"
-                                style="width: 100%;"
-                            >
-
-                        </el-timeline-item>
-                    </el-timeline>
-                </viewer>
-            </el-col>
-        </el-row>
-
-    </el-dialog>
-
-</div>
+    </section>
 </template>
 
 <script>
@@ -299,41 +298,46 @@
                 });
             },
             details(item){
-                this.activityDetailLoading = true;
-                this.activityDetail = item
-                this.TvPic = []
-                this.PhonePic = []
-                this.PhonePicFull = []
-                this.TvPicFull = []
+                this.activityDetailLoading = false;
+                this.activityDetail = item;
+                this.TvPic = [];
+                this.PhonePic = [];
+                this.PhonePicFull = [];
+                this.TvPicFull = [];
                 let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
-                let form = {organizationId:item.districtId,studyContent:item.activityId}
+                let form = {organizationId:item.districtId,studyContent:item.activityId};
+                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=6&sort=time,desc`;
+                let phoneForm = {userId:item.districtId,snId:item.activityId};
                 this.$http("Post",path,form,false).then(data=>{
                     data.content.forEach(item=>{
-                        let formItem = {}
-                        formItem.timestamp =item.createTime
-                        formItem.imgurl = item.imageURL
-                        this.TvPic.push(formItem)
-                        this.TvPicFull.push(this.imgTF(item.imageURL))
+                        let formItem = {};
+                        formItem.timestamp =item.createTime;
+                        formItem.imgurl = item.imageURL;
+                        this.TvPic.push(formItem);
+                        this.TvPicFull.push(this.imgTF(item.imageURL));
                     })
-
+                    //拉取手机端截图
+                    this.$http("Post",phonePath,phoneForm,false).then((data)=>{
+                        if (data.content.length && data.content.length > 0) {
+                            data.content[0].imageUrl.forEach((item)=>{
+                                item.time = data.content[0].time;
+                                let formItem = {};
+                                formItem.timestamp =data.content[0].time;
+                                formItem.imgurl = data.content[0].imageUrl;
+                                this.PhonePic.push(formItem);
+                                this.PhonePicFull.push(this.imgTFPhone(item));
+                            });
+                        }
+                        this.activityDetailLoading = true;
+                    });
                 }).catch(()=>{
                     this.$message({
                         type: 'warning',
                         message: '电视截图拉取失败'
                     })
-                })
-                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=6&sort=time,desc`;
-                let phoneForm = {userId:item.districtId,snId:item.activityId}
-                this.$http("Post",phonePath,phoneForm,false).then((data)=>{
-                        data.content[0].imageUrl.forEach((item)=>{
-                            item.time = data.content[0].time
-                            let formItem = {}
-                            formItem.timestamp =data.content[0].time
-                            formItem.imgurl = data.content[0].imageUrl
-                            this.PhonePic.push(formItem)
-                        this.PhonePicFull.push(this.imgTFPhone(item))
-                    })
-                })
+                });
+
+
                 //审核内容赋值
                 this.checkForm.activityID = item.activityId
                 //长ID
@@ -347,14 +351,13 @@
                 if (!val.split("&")[1]) {
                     return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${val}`
                 }else {
-                    console.log(val)
-                    return val
+                    return val;
                 }
             },
             imgTFPhone(item){
-                let imgUrl = item.imageUrl
+                let imgUrl = item.imageUrl;
                 if (!imgUrl.split("&")[1]) {
-                    if(imgUrl[0] == '.'){
+                    if(imgUrl[0] === '.'){
                         return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
                     }else {
                         let time1 = item.time.toString().split("T")[0]
@@ -429,7 +432,7 @@
                 })
             },
             unPass(){
-                this.checkForm.status = "3"
+                this.checkForm.status = "3";
                 let path = `/identity/parActivityPerform/check`;
                 this.$http("Post",path,this.checkForm,false).then((data)=>{
                     this.$message({
@@ -456,7 +459,6 @@
         }
     }
 </script>
-
 
 <style>
     .footer-position {
@@ -500,17 +502,15 @@
 <style type="scss">
     .left-act-list {
         width: 100%;
-        /*background-color: rgb(250, 250, 250);*/
-        padding: 5px 20px;
         line-height: 24px;
-        min-height: 668px;
+        min-height: 655px !important;
     }
     .list-item {
         background-color: white;
         text-align: left;
-        margin: 10px 0;
+        margin-bottom: 25px;
         display: flex;
-        padding: 14px 20px;
+        padding: 10px 20px;
         transition: all .4s;
         box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
         /*box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);*/
@@ -589,10 +589,14 @@
     .right-detail {
         font-size: 16px;
         width: 100%;
-        height: 100%;
+        height: 710px;
         padding: 5px 20px;
         box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
-        margin: 15px 0;
+        overflow-y: scroll;
+        background: white;
+    }
+    .right-detail::-webkit-scrollbar {
+        width: 0;
     }
     .detail-row {
         margin: 20px 0;
@@ -600,7 +604,14 @@
     .detail-row .el-col:nth-child(2n) {
         text-align: left;
     }
-
+    .list-header {
+        display: flex;
+        height: 45px;
+    }
+    .detail-header {
+        height: 45px;
+        display: flex;
+    }
 </style>
 <style>
     .translate-enter,.translate-leave-to{
@@ -610,5 +621,22 @@
     .translate-enter-active, .translate-leave-active{
         transition: all 0.5s ease;
     }
-</style>
+    .right-detail .el-button.is-circle {
+        padding: 2px;
+    }
+    .detail-row .el-input--mini .el-input__inner {
+        width: 185px !important;
+    }
+    @media screen and (max-width: 1400px) {
+        .right-detail {
+            font-size: 14px;
+        }
+    }
+    .el-timeline .el-loading-mask {
+        height: 300px;
+    }
 
+    /*.activity-management .el-textarea__inner {*/
+    /*width: auto !important;*/
+    /*}*/
+</style>

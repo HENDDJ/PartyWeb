@@ -13,7 +13,7 @@
             </div>
 
             <vs-navbar-item index="0" >
-                <a href="#" @click="active=true">{{user.name}}</a>
+                <a href="#" @click="active=true"><i class="el-icon-user-solid"></i>&nbsp;&nbsp;{{user.name}}</a>
                 <vs-sidebar position-right  parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
                     <div class="header-sidebar" slot="header">
                         <vs-avatar  size="70px" :src="user.image"/>
@@ -50,10 +50,12 @@
                 </el-dialog>
             </vs-navbar-item>
             <vs-navbar-item index="1">
-                <a href="#">消息中心</a>
+                <el-badge :value="2" class="item">
+                    <a href="#"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
+                </el-badge>
             </vs-navbar-item>
             <vs-navbar-item index="2">
-                <a href="/#/login">退出</a>
+                <a href="/#/login"><icon name="exit" scale="1.75" style="vertical-align: sub"></icon>&nbsp;&nbsp;退出</a>
             </vs-navbar-item>
 
             <vs-spacer></vs-spacer>
@@ -193,6 +195,8 @@
         justify-content: space-between;
         width: 100%
     }
-
+    a svg {
+        margin: 0 !important;
+    }
 
 </style>

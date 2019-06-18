@@ -1,8 +1,11 @@
 <template>
     <div>
     <el-row class="detail-row">
-        <el-col :span="5"  :xl="{span: 4, offset: 2}">电视截图：</el-col>
-        <el-col :span="12">
+        <el-col :span="4">电视截图：</el-col>
+        <el-col :span="8" v-if="TvPic.length === 0" style="color: rgba(37, 37, 37, 0.51)">
+            暂无截图记录！
+        </el-col>
+        <el-col :span="8" v-else style="padding-top: 8px;">
             <viewer :images="TvPicFull">
                 <el-timeline>
                     <el-timeline-item
@@ -14,22 +17,24 @@
                         <img
                             :src="TvPicFull[index]"
                             :key="index"
-                            style="width: 200px"
+                            style="width: 225px"
                         >
                     </el-timeline-item>
                 </el-timeline>
             </viewer>
-
         </el-col>
 
-        <el-col :span="4" >
-            <el-button type="text" @click="TvMore">更多</el-button>
+        <el-col :span="6" >
+            <el-button  v-if="TvPic.length !== 0" type="text" @click="TvMore">更多</el-button>
         </el-col>
 
     </el-row>
     <el-row class="detail-row">
-        <el-col :span="5"  :xl="{span: 4, offset: 2}">手机截图：</el-col>
-        <el-col :span="12">
+        <el-col :span="4">手机截图：</el-col>
+        <el-col :span="8" v-if="PhonePic.length === 0" style="color: rgba(37, 37, 37, 0.51)">
+            暂无截图记录！
+        </el-col>
+        <el-col v-else :span="8" style="padding-top: 8px;">
             <viewer :images="PhonePicFull">
                 <el-timeline>
                     <el-timeline-item
@@ -41,18 +46,16 @@
                         <img
                             :src="PhonePicFull[index]"
                             :key="index"
-                            style="width: 200px"
+                            style="width: 225px"
                         >
                     </el-timeline-item>
                 </el-timeline>
             </viewer>
         </el-col>
-        <el-col :span="4" >
-            <el-button type="text" @click="PhonePicShow">更多</el-button>
+        <el-col :span="6" >
+            <el-button v-if="PhonePic.length !== 0" type="text" @click="PhonePicShow">更多</el-button>
         </el-col>
     </el-row>
-
-
         <el-dialog
             v-if="picDetail"
             title="更多图片"
@@ -121,7 +124,6 @@
             </el-row>
 
         </el-dialog>
-
     </div>
 </template>
 
@@ -204,13 +206,7 @@
             },
             //关闭详情
             picDetailClose() {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        this.picDetail = false;
-                        done();
-                    })
-                    .catch(_ => {
-                    });
+                this.picDetail = false;
             },
             //关闭详情
             picPhoneDetailClose() {

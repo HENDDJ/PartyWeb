@@ -120,16 +120,20 @@
         padding: 15px 20px!important;
     }
     .el-dialog__wrapper {
-        z-index: 998 !important;
+        z-index: 1021 !important;
     }
     .v-modal {
-        z-index: 997 !important;
+        z-index: 1020 !important;
     }
     .viewer-backdrop {
         background-color: rgba(0, 0, 0, 0.8) !important;
     }
     .mce-tinymce {
         box-shadow: none!important;
+    }
+    .el-badge__content.is-fixed {
+        top: 9px!important;
+        right: 24px!important;
     }
 </style>
 <style>

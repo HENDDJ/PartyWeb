@@ -46,11 +46,11 @@
                                         <div class="processing">
                                             <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="(item[TownCodeKey[sysDistrict.districtId]] || 0) * 100"></el-progress>
                                         </div>
-                                        <div class="detail">
-                                            <div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">
-                                                <icon name="more" scale="2" ></icon>
-                                            </div>
-                                        </div>
+                                        <!--<div class="detail">-->
+                                            <!--<div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">-->
+                                                <!--<icon name="more" scale="2" ></icon>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
                                     </div>
                                 </div>
                             </transition>

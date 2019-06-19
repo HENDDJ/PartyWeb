@@ -72,17 +72,7 @@
                 colorx:'',
                 indexActive: '',
                 active: false,
-                user: {
-                    id:  JSON.parse(sessionStorage.getItem("userInfo")).id,
-                    image: JSON.parse(sessionStorage.getItem("userInfo")).image,//头像
-                    name: JSON.parse(sessionStorage.getItem("userInfo")).name,//姓名
-                    introduction: JSON.parse(sessionStorage.getItem("userInfo")).introduction,//组织简介
-                    userName:JSON.parse(sessionStorage.getItem("userInfo")).userName,
-                    roleName: JSON.parse(sessionStorage.getItem("userInfo")).role.name,
-                    organizationName:JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtName,
-                    phone:JSON.parse(sessionStorage.getItem("userInfo")).phone,
-                    lastTime:JSON.parse(sessionStorage.getItem("userInfo")).lastTime,
-                },
+                user: {},
                 form:{
                     password:'',
                     checkPsw:'',
@@ -152,6 +142,9 @@
         },
         created(){
             this.initForm();
+            let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+            this.user = userInfo;
+            this.user.organizationName = userInfo.districtName;
         }
     }
 </script>

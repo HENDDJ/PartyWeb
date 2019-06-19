@@ -498,7 +498,7 @@
                 activityLoading: false,
                 detailLoading: false,
                 sysDistrict: JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict,
-                roleCode: JSON.parse(sessionStorage.getItem('userInfo')).role.code,
+                roleCode: JSON.parse(sessionStorage.getItem('userInfo')).roleCode,
                 TownCodeKey: {
                     '0101': 'xiaShuPercent',
                     '0102': 'houBaiPercent',

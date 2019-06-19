@@ -49,7 +49,7 @@
                                     </div>
                                     <div style="flex: 2;text-align: right">
                                         <p style="line-height: 28px;color: #afafaf">活动执行次数</p>
-                                        <p style="font-size: 36px;">56</p>
+                                        <p style="font-size: 36px;">{{activityPerformNumber}}</p>
                                     </div>
                                 </div>
                                 <div slot="footer" style="border-top: 1px grey solid">
@@ -67,7 +67,7 @@
                                     </div>
                                     <div style="flex: 2;text-align: right">
                                         <p style="line-height: 28px;color: #afafaf">下属组织数</p>
-                                        <p style="font-size: 36px;">230</p>
+                                        <p style="font-size: 36px;">15</p>
                                     </div>
                                 </div>
                                 <div slot="footer" style="border-top: 1px grey solid">
@@ -81,7 +81,7 @@
                                     </div>
                                     <div style="flex: 2;text-align: right">
                                         <p style="line-height: 28px;color: #afafaf">活动完成率</p>
-                                        <p style="font-size: 36px;color: green;">95%</p>
+                                        <p style="font-size: 36px;color: green;">{{activityCompleteRate}}</p>
                                     </div>
                                 </div>
                                 <div slot="footer" style="border-top: 1px grey solid">
@@ -99,7 +99,7 @@
                                     </div>
                                     <div style="flex: 2;text-align: right">
                                         <p style="line-height: 28px;color: #afafaf">下属阵地数</p>
-                                        <p style="font-size: 36px;">458</p>
+                                        <p style="font-size: 36px;">{{positionNumber}}</p>
                                     </div>
                                 </div>
                                 <div slot="footer" style="border-top: 1px grey solid">
@@ -113,7 +113,7 @@
                                     </div>
                                     <div style="flex: 2;text-align: right">
                                         <p style="line-height: 28px;color: #afafaf">村干部总数</p>
-                                        <p style="font-size: 36px;">2,520</p>
+                                        <p style="font-size: 36px;">{{villageCadresNumber}}</p>
                                     </div>
                                 </div>
                                 <div slot="footer" style="border-top: 1px grey solid">
@@ -165,6 +165,10 @@
         name: "CentralConsole",
         data(){
             return {
+                activityPerformNumber:0, //活动执行次数
+                activityCompleteRate:0,//活动完成率
+                villageCadresNumber:0, //村干部数量
+                positionNumber:0,//阵地数量
                 rank: {
                     tooltip : {
                         trigger: 'axis'
@@ -252,6 +256,15 @@
             }
         },
         methods:{
+            //统计总数
+            totalStatistics(){
+                this.$http("POST",`identity/centralConsole/statistics`,false).then( data => {
+                    this.activityPerformNumber = data.activityPerformNumber;
+                    this.villageCadresNumber = data.villageCadresNumber;
+                    this.positionNumber =data.positionNumber;
+                    this.activityCompleteRate = data.activityCompleteRate*100+"%";
+                })
+            },
             hot(){
                 let hours = ['XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村','XXX村'];
                 let days = ['党员教育室', '党群工作室', '组织议事室', '党内关爱室'];
@@ -313,7 +326,10 @@
             'charts': VueECharts
         },*/
         mounted() {
-            this.hot()
+            this.hot();
+        },
+        created(){
+            this.totalStatistics();
         }
     }
 </script>

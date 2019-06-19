@@ -68,7 +68,8 @@
                     },
                     {
                         name: 'districtName',
-                        des: '所属组织'
+                        des: '所属组织',
+
                     },
                     {
                         name: 'workPlace',
@@ -99,7 +100,9 @@
                         name: 'districtId',
                         des: '所属组织',
                         type: 'cascader',
-                        options: 'districtList',
+                        required:'true',
+                        typeCheck:'blur',
+                        options: '',
                     },
                     {
                         name: 'workPlace',
@@ -123,14 +126,17 @@
             }
         },
         methods:{
-            handleSelect(){
-                this.colorx = 'danger';
+            handelOrg(){
                 //层级组织请求
                 this.$http('GET',`identity/sysDistrict/${'01'}alltree`,false).then( data => {
                     this.districtList = data[0].children;
-                    this.handleOrgLeaf(this.districtList)
+                    this.handleOrgLeaf(this.districtList);
                     this.positionFormColumns.filter(item => item.name === 'districtId')[0].options= this.districtList;
+                    this.cadreFormColumns.filter(item => item.name === 'districtId')[0].options = this.districtList;
                 });
+            },
+            handleSelect(){
+                this.colorx = 'danger';
                 //镇级组织
                 this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
                     data.forEach( item => {
@@ -139,7 +145,7 @@
                     this.positionQuery[1].options = this.zhenList;
                 });
                 //任职人员
-                this.$http('POST',`identity/villageCadres/list` ,false).then(data => {
+                this.$http('POST',`identity/villageCadres/list` ,{districtId:this.positionFormColumns[3].value}).then(data => {
                     this.villageCadreList = data;
                     this.positionFormColumns.filter( item => item.name === 'cadreId')[0].options = data.map(item => { return {value: item.id, label: item.name}});
                 });
@@ -162,7 +168,9 @@
         created(){
             this.cadreColumns = this.$store.state.classInfo.properties;
             this.cadreFormColumns =this.$store.state.classInfo.properties;
-            tansfer(this.positionColumns)
+            this.handelOrg();
+            tansfer(this.positionColumns);
+            tansfer(this.cadreFormColumns);
         }
     }
 </script>

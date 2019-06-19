@@ -106,7 +106,12 @@
     .el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li {
         background: white
     }
-
+    .con-vs-checkbox {
+        display: inline-flex !important;
+    }
+    .con-vs-radio {
+        display: inline-flex!important;
+    }
 </style>
 <style lang="stylus">
     :root {
@@ -120,16 +125,26 @@
         padding: 15px 20px!important;
     }
     .el-dialog__wrapper {
-        z-index: 998 !important;
+        z-index: 1021 !important;
     }
     .v-modal {
-        z-index: 997 !important;
+        z-index: 1020 !important;
     }
     .viewer-backdrop {
         background-color: rgba(0, 0, 0, 0.8) !important;
     }
     .mce-tinymce {
         box-shadow: none!important;
+    }
+    .el-badge__content.is-fixed {
+        top: 9px!important;
+        right: 24px!important;
+    }
+    .el-tree {
+        padding-top: 5px;
+        width: 200px!important;
+        border: 1px solid #DCDFE6 !important;
+        border-radius: 3px;
     }
 </style>
 <style>

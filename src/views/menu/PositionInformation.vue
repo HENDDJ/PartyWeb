@@ -53,9 +53,9 @@
                 //层级组织请求
                 this.$http('GET',`identity/sysDistrict/${'01'}alltree`,false).then( data => {
                     this.districtList = data[0].children;
-                    this.handleOrgLeaf(this.districtList)
+                    this.handleOrgLeaf(this.districtList);
                     this.formColumns.filter(sub => sub.name === 'districtId')[0].options= this.districtList;
-                })
+                });
                 //镇级组织
                 this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
                     data.forEach( item => {
@@ -79,6 +79,7 @@
         created(){
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns =this.$store.state.classInfo.properties;
+            console.log(this.formColumns);
             this.showAllOrg();
             this.handleSelectOptions();
             tansfer(this.columns);

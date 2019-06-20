@@ -69,7 +69,6 @@
                     {
                         name: 'districtName',
                         des: '所属组织',
-
                     },
                     {
                         name: 'workPlace',
@@ -145,7 +144,7 @@
                     this.positionQuery[1].options = this.zhenList;
                 });
                 //任职人员
-                this.$http('POST',`identity/villageCadres/list` ,{districtId:this.positionFormColumns[3].value}).then(data => {
+                this.$http('POST',`identity/villageCadres/list`,false).then(data => {
                     this.villageCadreList = data;
                     this.positionFormColumns.filter( item => item.name === 'cadreId')[0].options = data.map(item => { return {value: item.id, label: item.name}});
                 });

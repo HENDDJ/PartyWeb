@@ -19,9 +19,12 @@
                         <vs-avatar  size="70px" :src="user.image"/>
                         <h4>{{user.name}}</h4>
                     </div>
-                    <vs-sidebar-item  icon="question_answer"><b>组织介绍</b></vs-sidebar-item>
-                        <p>{{user.introduction}}</p>
-                    <vs-divider icon="person" position="left"></vs-divider>
+                    <span style="font-size: 16px;color: #91bbe9">&nbsp; &nbsp;<vs-icon icon="question_answer" color="#91bbe9"></vs-icon><b>&nbsp;&nbsp;组织介绍</b></span>
+                 <!--   <vs-sidebar-item  icon="question_answer"><b>组织介绍</b></vs-sidebar-item>-->
+                    <p>{{user.introduction}}</p><br/>
+                    <span style="font-size: 16px;color: #91bbe9">&nbsp; &nbsp;<vs-icon icon="person" color="#91bbe9"></vs-icon><b>&nbsp;&nbsp;账号信息</b></span>
+
+                <!--    <vs-divider icon="person" position="left"></vs-divider>-->
                         <div>
                             <p class="">登录名：{{user.userName}}</p>
                             <p>所在组织：{{user.organizationName}}</p>
@@ -57,7 +60,6 @@
             <vs-navbar-item index="2">
                 <a href="/#/login"><icon name="exit" scale="1.75" style="vertical-align: sub"></icon>&nbsp;&nbsp;退出</a>
             </vs-navbar-item>
-
             <vs-spacer></vs-spacer>
             <vs-button color-text="rgb(255, 255, 255)" color="rgba(255, 255, 255, 0.3)" type="flat" icon="more_horiz"></vs-button>
         </vs-navbar>
@@ -178,9 +180,9 @@
         width: 100%;
     }
     p{
-        font-size: 14px;
+        font-size: 12px;
         text-indent: 2em;
-        line-height: 20px;
+        line-height: 30px;
     }
     .footer-sidebar{
         display: flex;

@@ -39,7 +39,7 @@
                 sortColumns:[
                     {
                         name:'hotDegree',
-                        type:'asc'
+                        type:'desc'
                     }
                 ],
                 colorx:'success'

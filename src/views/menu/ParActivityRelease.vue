@@ -9,7 +9,7 @@
                 <el-row>
                     <el-col :span="10">
                         <el-form-item label="任务分类" prop="taskType">
-                            <vs-radio color="success" v-model="form.taskType" style="margin-top: 5px;" vs-value="Party">党建任务</vs-radio>
+                            <vs-radio color="success" v-model="form.taskType" vs-value="Party">党建任务</vs-radio>
                             <vs-radio color="success" v-model="form.taskType" vs-value="DistLearning">远教任务</vs-radio>
                             <!--<vs-checkbox icon="flag" color="danger"   v-model="form.taskType" vs-value="Party">党建任务</vs-checkbox>-->
                             <!--<vs-checkbox icon="cast" color="success" v-model="form.taskType" vs-value="DistLearning">远教任务</vs-checkbox>-->
@@ -22,7 +22,7 @@
                 </el-col>
                 <el-row>
                     <el-col :span="10">
-                        <el-form-item label="计划名称" prop="title">
+                        <el-form-item label="任务名称" prop="title">
                             <el-input v-model="form.title" :disabled=disabled></el-input>
                         </el-form-item>
                     </el-col>
@@ -63,7 +63,7 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="8">
+                    <el-col :span="10">
                         <el-form-item label="任务对象" prop="taskObject">
                             <el-tree
                                 :props="props"
@@ -95,8 +95,8 @@
                     <el-col :span="10">
                         <br>
                         <el-form-item label=" ">
-                            <el-button type="primary" @click="submit('form')">确 定</el-button>
-                            <el-button @click="reWrite()">重 置</el-button>
+                            <el-button type="primary" @click="submit('form')">发 布</el-button>
+                            <el-button type="warning" @click="reWrite()">重 置</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>

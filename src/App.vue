@@ -20,7 +20,7 @@
 
 <style lang="stylus">
     #app {
-        font-family: 'webfont', 'Avenir', Helvetica, Arial, sans-serif;
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
@@ -63,17 +63,6 @@
     .vs-tabs--btn {
         font-size: 16px !important
     }
-    @font-face {
-        font-family: 'webfont';
-        font-display: swap;
-        src: url('//at.alicdn.com/t/webfont_xae7g4lgcki.eot'); /* IE9*/
-        src: url('//at.alicdn.com/t/webfont_xae7g4lgcki.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-        url('//at.alicdn.com/t/webfont_xae7g4lgcki.woff2') format('woff2'),
-        url('//at.alicdn.com/t/webfont_xae7g4lgcki.woff') format('woff'), /* chrome、firefox */
-        url('//at.alicdn.com/t/webfont_xae7g4lgcki.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
-        url('//at.alicdn.com/t/webfont_xae7g4lgcki.svg#AlibabaPuHuiTiL') format('svg'); /* iOS 4.1- */
-    }
-
     .el-dialog__headerbtn .el-dialog__close {
         -webkit-transition: all .23s ease .1s;
         transition: all .23s ease .1s;

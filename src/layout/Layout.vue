@@ -86,6 +86,8 @@
         padding: 7px 28px 30px 20px;
         transition: margin-left .28s;
         overflow: hidden;
+        background-image: url("/static/img/bg.png");
+        background-size: cover;
     }
     .copyright {
         padding-right: 20px;

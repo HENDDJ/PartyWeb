@@ -159,7 +159,7 @@
                                 </el-col>
                             </el-row>
                             <el-row class="detail-row">
-                                <el-col :span="5"  :xl="{span: 4}">附件清单：</el-col>
+                                <el-col :span="4">附件清单：</el-col>
                                 <el-col :span="15">
                                     <CommonFileUpload :value="detailForm.fileUrls" @getValue="detailForm.fileUrls = $event" :disabled="lookType"></CommonFileUpload>
                                 </el-col>

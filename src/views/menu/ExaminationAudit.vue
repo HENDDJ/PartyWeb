@@ -25,13 +25,29 @@
         &nbsp;
     </el-row>
     <el-row>
+        <p style="float:left;margin-left: 10px">年份：</p>
+        <vs-select
+            class="selectExample"
+            style="position: absolute;margin-left: 60px"
+            label=""
+            v-model="year"
+            width="120px"
+            @change="con"
+        >
+            <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in options"/>
+        </vs-select>
+    </el-row>
+    <el-row>
+        &nbsp;
+    </el-row>
+    <el-row>
         <el-table :data="tableData" v-loading="loading" border
                   ref="tableData"
                   style="width: 100%"
                   @sort-change="sortChange"
                   :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
                   stripe
-                  :default-sort = "{prop: 'score', order: 'descending'}"
+                  :default-sort = "{prop: 'exam', order: 'descending'}"
                   >
             <el-table-column
                 label="序号"
@@ -40,13 +56,13 @@
                 :index="indexMethod">
             </el-table-column>
             <el-table-column
-                prop="organizationName"
+                prop="cun"
                 label="村名"
                 align="center"
               >
             </el-table-column>
             <el-table-column
-                prop="score"
+                prop="exam"
                 label="积分"
                 sortable="custom"
                 align="center">
@@ -86,10 +102,10 @@
         :before-close="handleClose">
         <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="150px" >
             <el-form-item  key="organizationName" label="组织名称" prop="organizationName">
-                <el-input v-model="form.organizationName" :disabled=disable></el-input>
+                <el-input v-model="organizationName" :disabled=disable></el-input>
             </el-form-item>
             <el-form-item  key="score" label="分数" prop="score">
-                <vs-input-number size="medium" min="-10" v-model="score"></vs-input-number>
+                <vs-input-number size="medium" min="-10" v-model="form.score"></vs-input-number>
             </el-form-item>
             <el-form-item  key="remark" label="备注" prop="remark" >
                 <el-input v-model="form.remark" type="textarea"></el-input>
@@ -119,15 +135,19 @@
                 tableData:[],
                 apiRoot:"identity/exaExamine/",
                 loading:false,
-                order:"des",
+                order:"desc",
                 dialogVisible:false,
                 submitLoading:false,
                 title:'审核',
-                form:{},
+                form:{score:10},
                 score:10,
                 //原始分数
                 scoreFirst:0,
-                disable:true
+                disable:true,
+                year:'2019',
+                //年份选择
+                options:[],
+                organizationName: ''
             }
         },
         methods:{
@@ -135,8 +155,8 @@
                 this.loading = true
                 this.$http("Post",path,{},false).then((data)=>{
                     this.loading = false
-                    this.tableData = data.content;
-                    this.pageable.total = data.totalElements;
+                    this.tableData = data;
+                    this.pageable.total = data[0].total;
                 }).catch(_=>{
                     this.$message({
                         type: 'warning',
@@ -145,12 +165,12 @@
                 })
             },
             currentChange(value) {
-                let path = `${this.apiRoot}/page?page=${value - 1}&size=${this.pageable.pageSize}&sort=score,${this.order}`;
+                let path=`identity/exaScore/scoreCunPercentAll?page=${value - 1}&size=${this.pageable.pageSize}&sort=${this.order}&year=${this.year}`
                 this.pageable.currentPage = value
                 this.loadTable(path)
             },
             sizeChange(value) {
-                let path = `${this.apiRoot}/page?page=0&size=${value}&sort=score,${this.order}`;
+                let path=`identity/exaScore/scoreCunPercentAll?page=0&size=${value}&sort=${this.order}&year=${this.year}`
                 this.pageable.currentPage = 1
                 this.pageable.pageSize = value
                 this.loadTable(path)
@@ -158,10 +178,10 @@
             sortChange(value){
                 let path=''
                 if(value.order == 'descending'){
-                    path = `${this.apiRoot}page?page=0&size=${this.pageable.pageSize}&sort=score,desc`
+                    path = `identity/exaScore/scoreCunPercentAll?page=0&size=${this.pageable.pageSize}&sort=desc&year=${this.year}`
                     this.order = 'desc'
                 }else{
-                    path = `${this.apiRoot}page?page=0&size=${this.pageable.pageSize}&sort=score,asc`
+                    path = `identity/exaScore/scoreCunPercentAll?page=0&size=${this.pageable.pageSize}&sort=asc&year=${this.year}`
                     this.order = 'asc'
                 }
                 this.loadTable(path)
@@ -174,12 +194,12 @@
                 }else{
                     let list2 = (this.pageable.total-this.pageable.currentPage) * (this.pageable.pageSize) - 1 - index
                     if(this.pageable.pageSize == 10){
-                        return list2-1447;
+                        return list2-1456;
                     }else if(this.pageable.pageSize == 15){
-                        return list2-1447-805;
+                        return list2-1456-810;
                     }
                     else{
-                        return list2-1447-805-805;
+                        return list2-1456-815-805;
                     }
 
                 }
@@ -187,13 +207,15 @@
             },
             submit(form){
                 this.$refs[form].validate((valid) => {
-                    this.form.score = this.scoreFirst + this.score
+                    this.form.createTime = new Date().Format('yyyy-MM-dd')
                     this.$http('Post','identity/exaExamine/',this.form,false).then((data)=>{
                         this.$message({
                             type: 'success',
                             message: '修改成功'
                         })
                         this.showMesg();
+                        let  path = `identity/exaScore/scoreCunPercentAll?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}&sort=desc&year=${this.year}`
+                        this.loadTable(path);
                         this.dialogVisible = false
                     }).catch(()=>{
                         this.$message({
@@ -204,7 +226,9 @@
                 })
             },
             check(value){
-                this.form = value
+                this.organizationName = value.cun
+                this.form.organizationId = value.districtId
+                this.form.authorId = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
                 this.scoreFirst= value.score
                 this.dialogVisible = true
             },
@@ -212,7 +236,7 @@
                 this.dialogVisible = false
             },
             showMesg(){
-                this.$http('Post','identity/exaExamine/page?page=0&size=5&sort=modifiedAt,desc',this.form,false).then((data)=>{
+                this.$http('Post','identity/exaExamine/page?page=0&size=5&sort=createTime,desc',{},false).then((data)=>{
                     data.content.forEach((item,index)=>{
                         let remark=''
                         if(item.remark){
@@ -220,18 +244,30 @@
                         }else {
                             remark = '无'
                         }
-                        let time1 = item.modifiedAt.toString()
-                        let time2 = time1.split('T')[0]
-                        let time3 = time1.split('T')[1]
-                        this.arr.push(index+1+'、'+item.organizationName+'于'+time2+" "+time3+'被修改了积分，备注：'+remark)
+                        let time = item.createTime.substring(0,10)
+                        this.arr.push(index+1+'、'+item.organizationName+'于 '+time+' 被句容市委修改了积分，备注：'+remark)
                     })
                 })
+            },
+            yearOptions(){
+                let nowYear = new Date().Format('yyyy')
+                this.year = nowYear
+                let interval = Number(nowYear) - 2017
+                for (let i = 0; i <= interval; i++) {
+                    this.options.push({text: i + 2017, value: i + 2017})
+                }
+            },
+            con(val){
+                this.year = val
+                let  path = `identity/exaScore/scoreCunPercentAll?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}&sort=desc&year=${this.year}`
+                this.loadTable(path)
             }
         },
         created() {
-            let path = `${this.apiRoot}page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}&sort=score,asc`
+           let  path = `identity/exaScore/scoreCunPercentAll?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}&sort=desc&year=${this.year}`
             this.loadTable(path)
             this.showMesg();
+           this.yearOptions();
         }
     }
 </script>

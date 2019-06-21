@@ -1,6 +1,162 @@
 <template>
     <section>
-        <div id="app">
+        <div id="dashboard">
+            <br>
+            <el-row gutter="30" type="flex" justify="space-between">
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #1ca5ff, #28c9fa);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">党员总人数</p>
+                                <p style="font-size: 32px;">
+                                    <template>
+                                        <CountTo :startVal="0" :endVal="18856" :duration="1800"></CountTo>
+                                    </template>
+                                </p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                        <div slot="footer" style="border-top: 1px #fff solid">
+                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
+                        </div>
+                    </vs-card>
+                </el-col>
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #ffa10e, #fdb513);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">下属组织数</p>
+                                <p style="font-size: 32px;">
+                                    <template>
+                                        <CountTo :startVal="0" :endVal="200" :duration="1800"></CountTo>
+                                    </template>
+                                </p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                        <div slot="footer" style="border-top: 1px #fff solid">
+                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
+                        </div>
+                    </vs-card>
+                </el-col>
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #fe8e8b, #ff7288);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">下属阵地数</p>
+                                <p style="font-size: 32px;">
+                                    <template>
+                                        <CountTo :startVal="0" :endVal="456" :duration="1800"></CountTo>
+                                    </template>
+                                </p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                        <div slot="footer" style="border-top: 1px #fff solid">
+                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
+                        </div>
+                    </vs-card>
+                </el-col>
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #0dc9ce, #22e3ac);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">下属村干部总数</p>
+                                <p style="font-size: 36px;">562</p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                        <div slot="footer" style="border-top: 1px #fff solid">
+                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
+                        </div>
+                    </vs-card>
+                </el-col>
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #cf8bf3, #fdb99b);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">下属村书记总数</p>
+                                <p style="font-size: 36px;">163</p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                        <div slot="footer" style="border-top: 1px #fff solid">
+                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
+                        </div>
+                    </vs-card>
+                </el-col>
+            </el-row>
+            <div style="display: flex">
+                <div class="content-left">
+                    <vs-card class="card-sat">
+                        <div slot="header">
+                            <h3>
+                                指标信息
+                            </h3>
+                        </div>
+                        <div style="display: flex;" slot="media">
+                            <div style="flex: 1">
+                                <div class="content-unit">
+                                    <div class="outer">
+                                        <div class="inner"></div>
+                                    </div>
+                                    <div style="display: inline-block;font-size: 36px;">
+                                        <template>
+                                            <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1800"></CountTo>
+                                        </template>
+                                        <p style="font-size: 18px;color: #6d6d6d">
+                                            活动执行次数
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="content-unit">
+                                    <div class="outer">
+                                        <div class="inner"></div>
+                                    </div>
+                                    <div style="display: inline-block;font-size: 36px;">
+                                        <template>
+                                            <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1800"></CountTo>
+                                        </template>
+                                        <p style="font-size: 18px;color: #6d6d6d">
+                                            活动完成率
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div style="flex: 1"></div>
+                            <div style="flex: 1"></div>
+
+                        </div>
+                    </vs-card>
+                    <vs-card class="card-sat">
+                    </vs-card>
+                </div>
+                <div class="content-right">
+                    <vs-card :fixed-height="true" class="card-sat">
+                    </vs-card>
+                </div>
+            </div>
             <vs-row>
                 <vs-col style="padding: 0 20px;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="3">
                     <vs-card>
@@ -161,6 +317,7 @@
 </template>
 
 <script>
+    import CountTo from 'vue-count-to';
     export default {
         name: "CentralConsole",
         data(){
@@ -322,9 +479,9 @@
                 return option;
             }
         },
-      /*  components: {
-            'charts': VueECharts
-        },*/
+        components: {
+            CountTo
+        },
         mounted() {
             this.hot();
         },
@@ -345,7 +502,8 @@
         transition: all .5s;
     }
     .con-vs-card:hover {
-        transform: scale(1.1);
+        transform: translateY(-15px);
+        cursor: pointer;
     }
     .con-vs-card:hover .icon-tran {
         transform: rotateY(180deg);
@@ -368,5 +526,48 @@
     .echarts {
         width: calc(100vw/1920 * 600) !important;
         height: calc(100vw/1920 * 400) !important;
+    }
+</style>
+<style>
+    #dashboard .vs-card--content {
+        margin-bottom: 0!important;
+        padding: 0 10px;
+    }
+    #dashboard svg {
+        margin: 0!important;
+    }
+    #dashboard .vs-card--footer {
+        margin-top: -20px !important;
+    }
+    .content-left {
+        flex: 2;
+        margin-right: 30px;
+        text-align: left;
+    }
+    .content-right {
+        flex: 1;
+    }
+    .outer {
+        width: 26px;
+        height: 26px;
+        background-image: linear-gradient(to right, #f54744, #c05fbf);
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 10px;
+        margin-right: 15px;
+    }
+    .inner {
+        width: 16px;
+        height: 16px;
+        left: 5px;
+        top: 5px;
+        position: relative;
+        border-radius: 50%;
+        background: white;
+    }
+    .content-unit {
+        width: 180px;
+        margin: 50px auto;
     }
 </style>

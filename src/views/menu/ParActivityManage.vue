@@ -216,8 +216,11 @@
                                             align="center"
                                             sortable
                                             width="90px"
-                                            :show-overflow-tooltip="true"
-                                        >
+                                            :show-overflow-tooltip="true">
+                                            <template slot-scope="scope">
+                                                <el-badge :value="scope.row.passed" class="item" type="success">
+                                                </el-badge>
+                                            </template>
                                         </el-table-column>
                                         <el-table-column
                                             prop="waitCheck"
@@ -225,8 +228,11 @@
                                             align="center"
                                             sortable
                                             width="90px"
-                                            :show-overflow-tooltip="true"
-                                        >
+                                            :show-overflow-tooltip="true">
+                                            <template slot-scope="scope">
+                                                <el-badge :value="scope.row.waitCheck" class="item" type="warning">
+                                                </el-badge>
+                                            </template>
                                         </el-table-column>
                                         <el-table-column
                                             prop="fail"
@@ -234,8 +240,11 @@
                                             align="center"
                                             sortable
                                             width="90px"
-                                            :show-overflow-tooltip="true"
-                                        >
+                                            :show-overflow-tooltip="true">
+                                            <template slot-scope="scope">
+                                                <el-badge :value="scope.row.fail" class="item" type="danger">
+                                                </el-badge>
+                                            </template>
                                         </el-table-column>
                                         <el-table-column
                                             label="完成进度"

@@ -54,7 +54,7 @@
                 )
             },
             loadAllMenu() {
-                this.$http('POST', `/identity/sysRoutes/list`, false).then(data => {
+                this.$http('POST', `/identity/sysRoutes/list`, {level: 1}, false).then(data => {
                     this.menu = data;
                 });
             },

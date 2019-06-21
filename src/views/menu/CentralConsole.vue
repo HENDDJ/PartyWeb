@@ -262,7 +262,7 @@
                     this.activityPerformNumber = data.activityPerformNumber;
                     this.villageCadresNumber = data.villageCadresNumber;
                     this.positionNumber =data.positionNumber;
-                    this.activityCompleteRate = data.activityCompleteRate*100+"%";
+                    this.activityCompleteRate = (data.activityCompleteRate*100).toFixed(1)+"%";
                 })
             },
             hot(){

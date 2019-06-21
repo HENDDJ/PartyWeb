@@ -60,8 +60,6 @@
             <vs-navbar-item index="2">
                 <a href="/#/login"><icon name="exit" scale="1.75" style="vertical-align: sub"></icon>&nbsp;&nbsp;退出</a>
             </vs-navbar-item>
-            <vs-spacer></vs-spacer>
-            <vs-button color-text="rgb(255, 255, 255)" color="rgba(255, 255, 255, 0.3)" type="flat" icon="more_horiz"></vs-button>
         </vs-navbar>
     </div>
 </template>

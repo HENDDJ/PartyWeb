@@ -44,7 +44,11 @@
                                             <template v-else>&nbsp;</template>
                                         </div>
                                         <div class="processing">
-                                            <el-progress style="width: 80%;text-align: center" :stroke-width="6" :percentage="(item[TownCodeKey[sysDistrict.districtId]] || 0) * 100"></el-progress>
+                                            <el-progress style="width: 80%;text-align: center" v-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                            <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.7" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                            <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                            <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) === 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                            <span v-else>ERROR</span>
                                         </div>
                                         <!--<div class="detail">-->
                                             <!--<div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">-->
@@ -500,6 +504,7 @@
                 sysDistrict: JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict,
                 roleCode: JSON.parse(sessionStorage.getItem('userInfo')).roleCode,
                 TownCodeKey: {
+                    '01' : 'totalPercent',
                     '0101': 'xiaShuPercent',
                     '0102': 'houBaiPercent',
                     '0103': 'guoZhuangPercent',

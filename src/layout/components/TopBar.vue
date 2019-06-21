@@ -54,9 +54,24 @@
             </vs-navbar-item>
             <vs-navbar-item index="1">
                 <el-badge :value="waitCheckNumber" class="item">
-                    <a href="#"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
+                    <a href="#" @click="showTips()"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
                 </el-badge>
             </vs-navbar-item>
+            <el-dialog v-if="waitCheckTips" title="未查看消息" :visible.sync="waitCheckTips" width="60%" align="left" :modal-append-to-body='false' :append-to-body="true" :before-close="handleClose" >
+                <vs-list v-for="item in waitCheckList">
+                    <vs-list-item :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===0">
+                        <vs-item style="float: right; font-size: 12px;color:rgb(96, 98, 102);font-weight: bold">{{item.createdAt}}</vs-item>
+                    </vs-list-item>
+                    <vs-list-item :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===1" style="color: #9b9b9b">
+                        <vs-item style="float: right; font-size: 12px;color:#9b9b9b;font-weight: bold">{{item.createdAt}}</vs-item>
+                    </vs-list-item>
+                </vs-list>
+                <el-pagination style="text-align: right;margin-top: 20px;"
+                               background
+                               :total="pageable.total" :current-page.sync="pageable.currentPage" :page-size.sync="pageable.pageSize"
+                               @current-change="currentChange" @size-change="sizeChange" layout="total, sizes, prev, pager, next">
+                </el-pagination>
+            </el-dialog>
             <vs-navbar-item index="2">
                 <a href="/#/login"><icon name="exit" scale="1.75" style="vertical-align: sub"></icon>&nbsp;&nbsp;退出</a>
             </vs-navbar-item>
@@ -82,8 +97,12 @@
                 waitCheckNumber:0,//待审核数量
                 pageable:{
                     currentPage:1,
-                    pageSize:10
-                }
+                    pageSize:10,
+                    total:1
+                },
+                waitCheckTips:false,//消息中心弹框
+                loading:false,
+                waitCheckList:[],
             }
         },
         methods: {
@@ -144,9 +163,44 @@
                 sessionStorage.removeItem("user");
                 location.reload();
             },
+            currentChange(currentPage){
+                this.pageable.currentPage = currentPage;
+                this.handleMessageCenter();
+            },
+            sizeChange(size){
+                this.pageable.pageSize = size;
+                this.handleMessageCenter();
+            },
             handleMessageCenter(){
-                this.$http("POST",`identity/messageCenter/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`,false).then( data=>{
-                   this.waitCheckNumber = data.content.totalElements;
+                this.$http("POST",`identity/messageCenter/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`,{isRead:0},false).then( data=>{
+                    this.waitCheckNumber = data.totalElements;
+                    this.pageable.total= data.totalElements;
+                    this.waitCheckList = data.content;
+                    this.loading = false;
+                })
+            },
+            showTips(){
+                this.waitCheckTips = true;
+                this.loading = true;
+                this.handleMessageCenter();
+            },
+            //关闭确认dialog
+            handleClose (done) {
+                this.$confirm('确认关闭？')
+                    .then(_ => {
+                        this.waitCheckTips = false;
+                        done();
+                    })
+                    .catch(_ => {});
+            },
+            handleCheck(item){
+                item.isRead = 1;
+                this.$http("PUT",`identity/messageCenter/${item.id}id`,item).then( () => {
+                    if(item.type==='party'||'distLearning'){
+                        let path = "/activity/parActivityReview"
+                        this.$router.push({path: path});
+                    }
+
                 })
             }
         },
@@ -201,6 +255,9 @@
     }
     a svg {
         margin: 0 !important;
+    }
+    .vs-list--item{
+        cursor:pointer;
     }
 
 </style>

@@ -172,7 +172,7 @@
                 this.handleMessageCenter();
             },
             handleMessageCenter(){
-                this.$http("POST",`identity/messageCenter/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`,{isRead:0},false).then( data=>{
+                this.$http("POST",`identity/messageCenter/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`,{isRead:0,districtId:this.user.districtId},false).then( data=>{
                     this.waitCheckNumber = data.totalElements;
                     this.pageable.total= data.totalElements;
                     this.waitCheckList = data.content;

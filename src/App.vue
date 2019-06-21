@@ -135,6 +135,9 @@
         border: 1px solid #DCDFE6 !important;
         border-radius: 3px;
     }
+    .el-table .el-badge__content {
+        vertical-align: baseline!important;
+    }
 </style>
 <style>
     @keyframes an-dialog{

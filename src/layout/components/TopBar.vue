@@ -22,9 +22,9 @@
                     <span style="font-size: 16px;color: #91bbe9">&nbsp; &nbsp;<vs-icon icon="question_answer" color="#91bbe9"></vs-icon><b>&nbsp;&nbsp;组织介绍</b></span>
                  <!--   <vs-sidebar-item  icon="question_answer"><b>组织介绍</b></vs-sidebar-item>-->
                     <p>{{user.introduction}}</p><br/>
-                    <span style="font-size: 16px;color: #91bbe9">&nbsp; &nbsp;<vs-icon icon="person" color="#91bbe9"></vs-icon><b>&nbsp;&nbsp;账号信息</b></span>
-
-                <!--    <vs-divider icon="person" position="left"></vs-divider>-->
+                   <!-- <span style="font-size: 16px;color: #91bbe9">&nbsp; &nbsp;<vs-icon icon="person" color="#91bbe9"></vs-icon><b>&nbsp;&nbsp;账号信息</b></span>
+-->
+                    <vs-divider icon="person" position="left">11111</vs-divider>
                         <div>
                             <p class="">登录名：{{user.userName}}</p>
                             <p>所在组织：{{user.organizationName}}</p>
@@ -53,7 +53,7 @@
                 </el-dialog>
             </vs-navbar-item>
             <vs-navbar-item index="1">
-                <el-badge :value="2" class="item">
+                <el-badge :value="waitCheckNumber" class="item">
                     <a href="#"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
                 </el-badge>
             </vs-navbar-item>
@@ -81,6 +81,11 @@
                 },
                 pswDia:false,//修改密码弹框
                 submitLoad:false,
+                waitCheckNumber:0,//待审核数量
+                pageable:{
+                    currentPage:1,
+                    pageSize:10
+                }
             }
         },
         methods: {
@@ -140,13 +145,19 @@
                 sessionStorage.removeItem("userInfo");
                 sessionStorage.removeItem("user");
                 location.reload();
+            },
+            handleMessageCenter(){
+                this.$http("POST",`identity/messageCenter/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`,false).then( data=>{
+                   this.waitCheckNumber = data.content.totalElements;
+                })
             }
         },
         created(){
             this.initForm();
             let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
             this.user = userInfo;
-            this.user.organizationName = userInfo.districtName;
+            this.handleMessageCenter();
+         //   this.user.organizationName = userInfo.districtName;
         }
     }
 </script>

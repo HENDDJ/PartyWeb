@@ -364,6 +364,13 @@
     .activity-release .file-upload {
         width: 200px !important;
     }
+    .activity-release .el-tree {
+        padding-top: 5px;
+        width: 200px!important;
+        border: 1px solid #DCDFE6 !important;
+        background: #fff !important;
+        border-radius: 3px;
+    }
     @media screen and (max-width: 1400px){
         .activity-release {
             width: 100%;

@@ -130,10 +130,7 @@
         right: 24px!important;
     }
     .el-tree {
-        padding-top: 5px;
-        width: 200px!important;
-        border: 1px solid #DCDFE6 !important;
-        border-radius: 3px;
+        background: transparent!important;
     }
     .el-table .el-badge__content {
         vertical-align: baseline!important;

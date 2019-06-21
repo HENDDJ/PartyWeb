@@ -31,16 +31,12 @@ export default {
     }
 
     *::-webkit-scrollbar-track {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        -moz-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        -o-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        background-color: #F5F5F5;
         border-radius: 10px;
+        background-color: rgba(255, 255, 255, .5);
     }
 
     *::-webkit-scrollbar {
-        width: 8px;
+        width: 5px;
         height: 10px;
         border-radius: 10px;
     }

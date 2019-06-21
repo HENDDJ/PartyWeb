@@ -82,10 +82,13 @@
     .main-container {
         flex: 1;
         height: 100%;
-        background-color: #f2f2f2;
         padding: 7px 28px 30px 20px;
         transition: margin-left .28s;
         overflow: hidden;
+        background-image: url("/static/img/bg.png");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: 0 -6px;
     }
     .copyright {
         padding-right: 20px;

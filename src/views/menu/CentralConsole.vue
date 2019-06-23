@@ -2,15 +2,15 @@
     <section>
         <div id="dashboard">
             <br>
-            <el-row gutter="30" type="flex" justify="space-between">
+            <el-row :gutter="30" type="flex" justify="space-between">
                 <el-col :span="5">
                     <vs-card class="card-sat" style="background-image: linear-gradient(to right, #1ca5ff, #28c9fa);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">党员总人数</p>
-                                <p style="font-size: 32px;">
+                                <p style="font-size: 32px;font-weight: bold">
                                     <template>
-                                        <CountTo :startVal="0" :endVal="18856" :duration="1800"></CountTo>
+                                        <CountTo :startVal="0" :endVal="18856" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
@@ -30,9 +30,9 @@
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属组织数</p>
-                                <p style="font-size: 32px;">
+                                <p style="font-size: 32px;font-weight: bold">
                                     <template>
-                                        <CountTo :startVal="0" :endVal="200" :duration="1800"></CountTo>
+                                        <CountTo :startVal="0" :endVal="200" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
@@ -52,9 +52,9 @@
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属阵地数</p>
-                                <p style="font-size: 32px;">
+                                <p style="font-size: 32px;font-weight: bold">
                                     <template>
-                                        <CountTo :startVal="0" :endVal="456" :duration="1800"></CountTo>
+                                        <CountTo :startVal="0" :endVal="positionNumber" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
@@ -74,7 +74,11 @@
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属村干部总数</p>
-                                <p style="font-size: 36px;">562</p>
+                                <p style="font-size: 32px;font-weight: bold">
+                                    <template>
+                                        <CountTo :startVal="0" :endVal="villageCadresNumber" :duration="1300"></CountTo>
+                                    </template>
+                                </p>
                             </div>
                             <div style="flex: 1;text-align: center">
                                 <template>
@@ -92,7 +96,7 @@
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属村书记总数</p>
-                                <p style="font-size: 36px;">163</p>
+                                <p style="font-size: 36px;font-weight: bold">163</p>
                             </div>
                             <div style="flex: 1;text-align: center">
                                 <template>
@@ -114,7 +118,7 @@
                                 指标信息
                             </h3>
                         </div>
-                        <div style="display: flex;" slot="media">
+                        <div style="display: flex;align-items: center" slot="media">
                             <div style="flex: 1">
                                 <div class="content-unit">
                                     <div class="outer">
@@ -122,7 +126,7 @@
                                     </div>
                                     <div style="display: inline-block;font-size: 36px;">
                                         <template>
-                                            <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1800"></CountTo>
+                                            <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
                                             活动执行次数
@@ -130,12 +134,12 @@
                                     </div>
                                 </div>
                                 <div class="content-unit">
-                                    <div class="outer">
-                                        <div class="inner"></div>
+                                    <div class="outer1">
+                                        <div class="inner1"></div>
                                     </div>
                                     <div style="display: inline-block;font-size: 36px;">
                                         <template>
-                                            <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1800"></CountTo>
+                                            <CountTo :startVal="0" suffix="%" :decimals="1" :endVal="activityCompleteRate" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
                                             活动完成率
@@ -144,8 +148,37 @@
                                 </div>
 
                             </div>
-                            <div style="flex: 1"></div>
-                            <div style="flex: 1"></div>
+                            <div style="width: 30px;border-left: 2px solid #ebebeb;height: 200px;"></div>
+                            <div style="flex: 1">
+                                <div class="content-unit">
+                                    <div class="outer2">
+                                        <div class="inner2"></div>
+                                    </div>
+                                    <div style="display: inline-block;font-size: 36px;">
+                                        <template>
+                                            <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1300"></CountTo>
+                                        </template>
+                                        <p style="font-size: 18px;color: #6d6d6d">
+                                            当日阵地总人流量
+
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="content-unit">
+                                    <div class="outer3">
+                                        <div class="inner3"></div>
+                                    </div>
+                                    <div style="display: inline-block;font-size: 36px;">
+                                        <template>
+                                            <CountTo :startVal="0" suffix="%" :decimals="1" :endVal="activityCompleteRate" :duration="1300"></CountTo>
+                                        </template>
+                                        <p style="font-size: 18px;color: #6d6d6d">
+                                            阵地平均人流量
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="pieBar" style="flex: 1.25;height: 300px"></div>
 
                         </div>
                     </vs-card>
@@ -157,9 +190,7 @@
                     </vs-card>
                 </div>
             </div>
-            <vs-row>
-                <vs-col style="padding: 0 20px;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="3">
-                    <vs-card>
+                              <vs-card>
                         <div slot="header">
                             <h3>
                                 组织信息
@@ -180,143 +211,19 @@
                             </vs-row>
                         </div>
                     </vs-card>
-                </vs-col>
-                <vs-col style="padding: 0 0;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="9">
-                    <vs-row>
-                        <vs-col style="padding: 0 30px;" v-tooltip="'col - 4'" vs-justify="center" vs-align="center" vs-w="12">
-                            <vs-card class="card-sat">
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="person" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">党员总人数</p>
-                                        <p style="font-size: 36px;">18,855</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                            <vs-card class="card-sat" >
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="local_activity" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">活动执行次数</p>
-                                        <p style="font-size: 36px;">{{activityPerformNumber}}</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                        </vs-col>
-                    </vs-row>
-                    <vs-row>
-                        <vs-col style="padding: 0 30px;" v-tooltip="'col - 4'" vs-justify="center" vs-align="center" vs-w="12">
-                            <vs-card class="card-sat">
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="group_work" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">下属组织数</p>
-                                        <p style="font-size: 36px;">15</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                            <vs-card class="card-sat">
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="trending_up" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">活动完成率</p>
-                                        <p style="font-size: 36px;color: green;">{{activityCompleteRate}}</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                        </vs-col>
-                    </vs-row>
-                    <vs-row>
-                        <vs-col style="padding: 0 30px;" v-tooltip="'col - 4'" vs-justify="center" vs-align="center" vs-w="12">
-                            <vs-card class="card-sat" >
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="home" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">下属阵地数</p>
-                                        <p style="font-size: 36px;">{{positionNumber}}</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                            <vs-card class="card-sat" >
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="school" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">村干部总数</p>
-                                        <p style="font-size: 36px;">{{villageCadresNumber}}</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                        </vs-col>
-                    </vs-row>
-                </vs-col>
-            </vs-row>
-            <vs-row>
-                <vs-col style="padding: 0 20px;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
-                    <vs-card>
-                        <div slot="header">
-                            <h3>
-                                积分排名
-                            </h3>
-                        </div>
-                        <charts :options="rank"></charts>
-                    </vs-card>
-                </vs-col>
-                <vs-col style="padding: 0 20px;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
-                    <vs-card>
-                        <div slot="header">
-                            <h3>
-                                XX村阵地实时流量图
-                            </h3>
-                        </div>
-                        <charts :options="flow"></charts>
-                    </vs-card>
-                </vs-col>
-                <vs-col style="padding: 0 20px;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
-                    <vs-card>
-                        <div slot="header">
-                            <h3>
-                                各村阵地使用分布图
-                            </h3>
-                        </div>
-                        <charts :options="hot"></charts>
-                    </vs-card>
-                </vs-col>
-            </vs-row>
         </div>
     </section>
 </template>
 
 <script>
+    import Highcharts from 'highcharts/highstock';
+    import highchartsDrilldown from 'highcharts/modules/drilldown';
+    import highcharts3D from 'highcharts/highcharts-3d';
+    import variablePie from 'highcharts/modules/variable-pie';
+    variablePie(Highcharts)
+    highchartsDrilldown(Highcharts);
+    highcharts3D(Highcharts);
+
     import CountTo from 'vue-count-to';
     export default {
         name: "CentralConsole",
@@ -419,7 +326,7 @@
                     this.activityPerformNumber = data.activityPerformNumber;
                     this.villageCadresNumber = data.villageCadresNumber;
                     this.positionNumber =data.positionNumber;
-                    this.activityCompleteRate = (data.activityCompleteRate*100).toFixed(1)+"%";
+                    this.activityCompleteRate = ((data.activityCompleteRate*1000).toFixed())/10;
                 })
             },
             hot(){
@@ -477,6 +384,63 @@
                     }]
                 };
                 return option;
+            },
+            initBar() {
+
+                new Highcharts.Chart('pieBar', {
+                    chart: {
+                        type: 'variablepie'
+                    },
+                    title: {
+                        text: null
+                    },
+                    tooltip: {
+                        headerFormat: '',
+                        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}</b><br/>' +
+                            '面积 (平方千米): <b>{point.y}</b><br/>' +
+                            '人口密度 (每平方千米人数): <b>{point.z}</b><br/>'
+                    },
+                    plotOptions: {
+                        series: {
+                            showInLegend: false
+                        },
+                        variablepie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                distance: 10,//控制饼图外面的线的长短,为负数时文本内容在饼图内部
+                                formatter: function() {
+                                    //this 为当前的点（扇区）对象，可以通过  console.log(this) 来查看详细信息
+                                    return '<span style="color: ' + this.point.color + '">'
+                                        + this.point.name + '(' + Math.round(this.percentage) + '%)</span>';
+                                }
+                            }
+                        }
+                    },
+                    series: [{
+                        minPointSize: 10,
+                        innerSize: '20%',
+                        zMin: 0,
+                        name: 'countries',
+                        data: [{
+                            name: '党群工作室',
+                            y: 505370,
+                            z: 92.9
+                        }, {
+                            name: '党员教育室',
+                            y: 551500,
+                            z: 118.7
+                        }, {
+                            name: '党内关爱室',
+                            y: 312685,
+                            z: 124.6
+                        }, {
+                            name: '组织议事室',
+                            y: 78867,
+                            z: 137.5
+                        }]
+                    }]
+                });
             }
         },
         components: {
@@ -484,6 +448,7 @@
         },
         mounted() {
             this.hot();
+            this.initBar();
         },
         created(){
             this.totalStatistics();
@@ -529,6 +494,9 @@
     }
 </style>
 <style>
+    #dashboard {
+        margin-top: -20px;
+    }
     #dashboard .vs-card--content {
         margin-bottom: 0!important;
         padding: 0 10px;
@@ -538,6 +506,9 @@
     }
     #dashboard .vs-card--footer {
         margin-top: -20px !important;
+    }
+    #dashboard .vs-card--header {
+        box-shadow: none;
     }
     .content-left {
         flex: 2;
@@ -566,8 +537,65 @@
         border-radius: 50%;
         background: white;
     }
+    .outer1 {
+        width: 26px;
+        height: 26px;
+        background-image: linear-gradient(to top, #5c37e2, #c15bf0);
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 10px;
+        margin-right: 15px;
+    }
+    .inner1 {
+        width: 16px;
+        height: 16px;
+        left: 5px;
+        top: 5px;
+        position: relative;
+        border-radius: 50%;
+        background: white;
+    }
+    .outer2 {
+        width: 26px;
+        height: 26px;
+        background-image: linear-gradient(to top, #3656d9, #1bb8db);
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 10px;
+        margin-right: 15px;
+    }
+    .inner2 {
+        width: 16px;
+        height: 16px;
+        left: 5px;
+        top: 5px;
+        position: relative;
+        border-radius: 50%;
+        background: white;
+    }
+    .outer3 {
+        width: 26px;
+        height: 26px;
+        background-image: linear-gradient(to top, #10afca, #2bf7c8);
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 10px;
+        margin-right: 15px;
+    }
+    .inner3 {
+        width: 16px;
+        height: 16px;
+        left: 5px;
+        top: 5px;
+        position: relative;
+        border-radius: 50%;
+        background: white;
+    }
     .content-unit {
-        width: 180px;
+        width: 200px;
         margin: 50px auto;
     }
 </style>

@@ -123,7 +123,11 @@
         z-index: 0;
     }
     .dashboard-bg-top {
-        height: 300px;
-        background-image: linear-gradient(to top, #3dc4e2, #f2fcfe);
+        height: 350px;
+        background-image: linear-gradient(to bottom, #479bfe, #3e61fb);
+    }
+    .dashboard-bg-bottom {
+        background: #e7f3ff;
+        height: calc(100% - 300px);
     }
 </style>

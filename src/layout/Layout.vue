@@ -6,13 +6,19 @@
             <div class="side-position"></div>
             <sidebar class="sidebar-container "></sidebar>
             <div class="main-container">
-                <nav-bar></nav-bar>
-                <!--<tags-view></tags-view>-->
-                <app-main></app-main>
-                <div class="copyright">
-                    Copyright ©2017-2019
-                    <strong>中共句容市委组织部 句容广电网络有限公司 苏州佳图智绘信息技术有限公司</strong>
-                    版权所有</div>
+                <div v-if="$route.name === 'DashboardRoot'" class="dashboard-bg">
+                    <div class="dashboard-bg-top"></div>
+                    <div class="dashboard-bg-bottom"></div>
+                </div>
+                <div style="position: relative;z-index: 10">
+                    <nav-bar></nav-bar>
+                    <!--<tags-view></tags-view>-->
+                    <app-main></app-main>
+                    <div class="copyright">
+                        Copyright ©2017-2019
+                        <strong>中共句容市委组织部 句容广电网络有限公司 苏州佳图智绘信息技术有限公司</strong>
+                        版权所有</div>
+                </div>
             </div>
 
         </div>
@@ -32,6 +38,11 @@
             AppMain,
             NavBar,
             TopBar
+        },
+        data() {
+            return {
+                containerClassName: 'main'
+            }
         },
         computed: {
         },
@@ -89,6 +100,7 @@
         background-size: 100% 100%;
         background-repeat: no-repeat;
         background-position: 0 -6px;
+        position: relative;
     }
     .copyright {
         padding-right: 20px;
@@ -101,5 +113,21 @@
         position: fixed;
         bottom: 0;
         right: 0;
+    }
+    .dashboard-bg {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 0;
+    }
+    .dashboard-bg-top {
+        height: 300px;
+        background-image: linear-gradient(to bottom, #479bfe, #3e61fb);
+    }
+    .dashboard-bg-bottom {
+        background: #e7f3ff;
+        height: calc(100% - 300px);
     }
 </style>

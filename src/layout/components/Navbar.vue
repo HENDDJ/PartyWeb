@@ -1,6 +1,6 @@
 <template>
     <section class="nav-bar">
-        <div class="menu-bar">
+        <div :class="$route.name === 'DashboardRoot' ? 'menu-bar isDashboard' : 'menu-bar'">
             <icon name="home" scale="2" style="display: inline-block;"></icon>
             <el-breadcrumb separator="/"  style="display: inline-block;">
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
@@ -72,12 +72,22 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.isDashboard {
+    border-bottom: 1px solid #fff !important;
+    color: #fff;
+    span.el-breadcrumb__inner {
+        color: white !important;
+    }
+    .el-breadcrumb__separator {
+        color: #fff;
+    }
+}
 .menu-bar {
     overflow: hidden;
     padding-bottom: 4px;
     text-align: left;
-    border-bottom: 1px solid #0000ff38;
+    border-bottom: 1px solid #dcdfe6;
     svg {
         margin: 0 6px 0 0 !important;
     }

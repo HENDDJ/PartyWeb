@@ -1,5 +1,6 @@
 <template>
     <div class="login-container">
+        <div class="filter-display"></div>
         <div class="login-title"></div>
         <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
             <div class="title-container">
@@ -111,6 +112,8 @@ export default {
             width: calc(1318 * 100vw/1920);
             height: calc(84 * 100vw/1920);
             margin: 3% auto;
+            position: relative;
+            z-index: 11;
         }
         .el-input {
             display: inline-block;
@@ -152,8 +155,6 @@ export default {
         height: 100%;
         width: 100%;
         //<!--background-color: $bg;-->
-        background-image: url("/static/img/inactive/bg.jpg");
-        background-size: cover;
         .login-form {
             position: absolute;
             left: 0;
@@ -165,6 +166,7 @@ export default {
             background-color: rgba(255,255,255,.9);
             box-shadow: 1px 1px 1px gray;
             border-radius: 5px;
+            z-index: 22;
         }
         .tips {
             font-size: 14px;
@@ -219,5 +221,14 @@ export default {
     }
     svg {
         -webkit-margin-before: 4px;
+    }
+    .filter-display {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        filter: blur(4px);
+        background-image: url("/static/img/inactive/bg.jpg");
+        background-size: cover;
+        z-index: 1;
     }
 </style>

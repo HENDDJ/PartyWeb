@@ -1,9 +1,231 @@
 <template>
     <section>
-        <div id="app">
-            <vs-row>
-                <vs-col style="padding: 0 20px;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="3">
-                    <vs-card>
+        <div id="dashboard">
+            <br>
+            <el-row :gutter="30" type="flex" justify="space-between">
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #1ca5ff, #28c9fa);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">党员总人数</p>
+                                <p style="font-size: 32px;font-weight: bold">
+                                    <template>
+                                        <CountTo :startVal="0" :endVal="18856" :duration="1300"></CountTo>
+                                    </template>
+                                </p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                    </vs-card>
+                </el-col>
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #ffa10e, #fdb513);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">下属组织数</p>
+                                <p style="font-size: 32px;font-weight: bold">
+                                    <template>
+                                        <CountTo :startVal="0" :endVal="200" :duration="1300"></CountTo>
+                                    </template>
+                                </p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                    </vs-card>
+                </el-col>
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #fe8e8b, #ff7288);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">下属阵地数</p>
+                                <p style="font-size: 32px;font-weight: bold">
+                                    <template>
+                                        <CountTo :startVal="0" :endVal="positionNumber" :duration="1300"></CountTo>
+                                    </template>
+                                </p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                    </vs-card>
+                </el-col>
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #0dc9ce, #22e3ac);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">下属村干部总数</p>
+                                <p style="font-size: 32px;font-weight: bold">
+                                    <template>
+                                        <CountTo :startVal="0" :endVal="villageCadresNumber" :duration="1300"></CountTo>
+                                    </template>
+                                </p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                    </vs-card>
+                </el-col>
+                <el-col :span="5">
+                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #cf8bf3, #fdb99b);color: #f2f2f2">
+                        <div style="display: flex">
+                            <div style="flex: 2;text-align: left;">
+                                <p style="line-height: 34px;font-weight: bold">下属村书记总数</p>
+                                <p style="font-size: 36px;font-weight: bold">163</p>
+                            </div>
+                            <div style="flex: 1;text-align: center">
+                                <template>
+                                    <icon name="user" scale="9"></icon>
+                                </template>
+                            </div>
+                        </div>
+                    </vs-card>
+                </el-col>
+            </el-row>
+            <div style="display: flex">
+                <div class="content-left">
+                    <vs-card class="card-sat">
+                        <div slot="header" style="vertical-align: bottom">
+                            <h4 style="float: left">
+                                指标信息
+                            </h4>
+                            <span style="float: right;position: relative;top:6px;font-size: 14px;color: #c0c4cc">更新于{{currentDate.toLocaleDateString() + ' ' + currentDate.toLocaleTimeString()}}</span>
+                        </div>
+                        <div style="display: flex;align-items: center" slot="media">
+                            <div style="flex: 1">
+                                <div class="content-unit">
+                                    <div class="outer">
+                                        <div class="inner"></div>
+                                    </div>
+                                    <div style="display: inline-block;font-size: 36px;">
+                                        <template>
+                                            <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1300"></CountTo>
+                                        </template>
+                                        <p style="font-size: 18px;color: #6d6d6d">
+                                            活动执行次数
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="content-unit">
+                                    <div class="outer1">
+                                        <div class="inner1"></div>
+                                    </div>
+                                    <div style="display: inline-block;font-size: 36px;">
+                                        <template>
+                                            <CountTo :startVal="0" suffix="%" :decimals="1" :endVal="activityCompleteRate" :duration="1300"></CountTo>
+                                        </template>
+                                        <p style="font-size: 18px;color: #6d6d6d">
+                                            活动完成率
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div style="width: 30px;border-left: 2px solid #ebebeb;height: 200px;"></div>
+                            <div style="flex: 1">
+                                <div class="content-unit">
+                                    <div class="outer2">
+                                        <div class="inner2"></div>
+                                    </div>
+                                    <div style="display: inline-block;font-size: 36px;">
+                                        <template>
+                                            <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1300"></CountTo>
+                                        </template>
+                                        <p style="font-size: 18px;color: #6d6d6d">
+                                            当日阵地总人流量
+
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="content-unit">
+                                    <div class="outer3">
+                                        <div class="inner3"></div>
+                                    </div>
+                                    <div style="display: inline-block;font-size: 36px;">
+                                        <template>
+                                            <CountTo :startVal="0" suffix="%" :decimals="1" :endVal="activityCompleteRate" :duration="1300"></CountTo>
+                                        </template>
+                                        <p style="font-size: 18px;color: #6d6d6d">
+                                            阵地平均人流量
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="pieBar" style="flex: 1.25;height: 260px"></div>
+
+                        </div>
+                    </vs-card>
+                    <vs-card class="card-sat">
+                        <div slot="header" style="vertical-align: bottom">
+                            <h4 style="float: left">
+                                近24小时实时人流量统计图
+                            </h4>
+                            <span style="float: right;position: relative;top:6px;font-size: 14px;color: #c0c4cc">更新于{{currentDate.toLocaleDateString() + ' ' + currentDate.toLocaleTimeString()}}</span>
+                            <p style="clear: both">&nbsp;</p>
+                        </div>
+                        <div style="display: flex;align-items: center" slot="media">
+                            <div id="intime" style="flex: 1;height: 240px;">
+                            </div>
+                        </div>
+                    </vs-card>
+                </div>
+                <div class="content-right">
+                    <vs-card :fixed-height="true" class="card-sat">
+                        <h4 slot="header" style="vertical-align: bottom">
+                            执行中的活动
+                        </h4>
+                        <div slot="media">
+                            <el-row class="detail-row">
+                                <el-col :span="4">
+                                    <icon name="taskName" scale="3"></icon>
+                                </el-col>
+                                <el-col :span="20" style="color: #25252582">
+                                    关于扫黑除恶专项工作
+                                </el-col>
+
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="4">
+                                    <icon name="type" scale="3"></icon>
+                                </el-col>
+                                <el-col :span="20" style="color: #25252582">&nbsp;XXXXXX</el-col>
+
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="4">
+                                    <icon name="score" scale="3"></icon>
+                                </el-col>
+                                <el-col :span="20" style="color: red;font-weight: bold">
+                                    50分
+                                </el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+
+                                <el-col :span="4">
+                                    总进度：
+                                </el-col>
+                                <el-col :span="6">
+                                    80%
+                                </el-col>
+                            </el-row>
+                        </div>
+                    </vs-card>
+                </div>
+            </div>
+                              <vs-card>
                         <div slot="header">
                             <h3>
                                 组织信息
@@ -24,143 +246,21 @@
                             </vs-row>
                         </div>
                     </vs-card>
-                </vs-col>
-                <vs-col style="padding: 0 0;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="9">
-                    <vs-row>
-                        <vs-col style="padding: 0 30px;" v-tooltip="'col - 4'" vs-justify="center" vs-align="center" vs-w="12">
-                            <vs-card class="card-sat">
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="person" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">党员总人数</p>
-                                        <p style="font-size: 36px;">18,855</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                            <vs-card class="card-sat" >
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="local_activity" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">活动执行次数</p>
-                                        <p style="font-size: 36px;">{{activityPerformNumber}}</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                        </vs-col>
-                    </vs-row>
-                    <vs-row>
-                        <vs-col style="padding: 0 30px;" v-tooltip="'col - 4'" vs-justify="center" vs-align="center" vs-w="12">
-                            <vs-card class="card-sat">
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="group_work" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">下属组织数</p>
-                                        <p style="font-size: 36px;">15</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                            <vs-card class="card-sat">
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="trending_up" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">活动完成率</p>
-                                        <p style="font-size: 36px;color: green;">{{activityCompleteRate}}</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                        </vs-col>
-                    </vs-row>
-                    <vs-row>
-                        <vs-col style="padding: 0 30px;" v-tooltip="'col - 4'" vs-justify="center" vs-align="center" vs-w="12">
-                            <vs-card class="card-sat" >
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="home" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">下属阵地数</p>
-                                        <p style="font-size: 36px;">{{positionNumber}}</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                            <vs-card class="card-sat" >
-                                <div style="display: flex">
-                                    <div style="flex: 1;text-align: center">
-                                        <vs-icon class="icon-tran" icon="school" size="75px" color="white" bg="red"></vs-icon>
-                                    </div>
-                                    <div style="flex: 2;text-align: right">
-                                        <p style="line-height: 28px;color: #afafaf">村干部总数</p>
-                                        <p style="font-size: 36px;">{{villageCadresNumber}}</p>
-                                    </div>
-                                </div>
-                                <div slot="footer" style="border-top: 1px grey solid">
-                                    <p style="font-size: 14px;color: #cecece;text-align: right;line-height: 26px;">截止{{new Date().toLocaleDateString()}}</p>
-                                </div>
-                            </vs-card>
-                        </vs-col>
-                    </vs-row>
-                </vs-col>
-            </vs-row>
-            <vs-row>
-                <vs-col style="padding: 0 20px;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
-                    <vs-card>
-                        <div slot="header">
-                            <h3>
-                                积分排名
-                            </h3>
-                        </div>
-                        <charts :options="rank"></charts>
-                    </vs-card>
-                </vs-col>
-                <vs-col style="padding: 0 20px;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
-                    <vs-card>
-                        <div slot="header">
-                            <h3>
-                                XX村阵地实时流量图
-                            </h3>
-                        </div>
-                        <charts :options="flow"></charts>
-                    </vs-card>
-                </vs-col>
-                <vs-col style="padding: 0 20px;" v-tooltip="'col - 4'" vs-type="flex" vs-justify="center" vs-align="center" vs-w="4">
-                    <vs-card>
-                        <div slot="header">
-                            <h3>
-                                各村阵地使用分布图
-                            </h3>
-                        </div>
-                        <charts :options="hot"></charts>
-                    </vs-card>
-                </vs-col>
-            </vs-row>
         </div>
     </section>
 </template>
 
 <script>
+    import Highcharts from 'highcharts/highstock';
+    import highchartsDrilldown from 'highcharts/modules/drilldown';
+    import highcharts3D from 'highcharts/highcharts-3d';
+    import variablePie from 'highcharts/modules/variable-pie';
+
+    variablePie(Highcharts);
+    highchartsDrilldown(Highcharts);
+    highcharts3D(Highcharts);
+
+    import CountTo from 'vue-count-to';
     export default {
         name: "CentralConsole",
         data(){
@@ -253,6 +353,7 @@
                         }
                     ]
                 },
+                currentDate: new Date()
             }
         },
         methods:{
@@ -262,7 +363,7 @@
                     this.activityPerformNumber = data.activityPerformNumber;
                     this.villageCadresNumber = data.villageCadresNumber;
                     this.positionNumber =data.positionNumber;
-                    this.activityCompleteRate = (data.activityCompleteRate*100).toFixed(1)+"%";
+                    this.activityCompleteRate = ((data.activityCompleteRate*1000).toFixed())/10;
                 })
             },
             hot(){
@@ -320,13 +421,190 @@
                     }]
                 };
                 return option;
+            },
+            initBar() {
+                new Highcharts.Chart('pieBar', {
+                    chart: {
+                        type: 'variablepie'
+                    },
+                    colors: [
+                        {
+                            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                            stops: [
+                                [0, '#92fe9d'],
+                                [1, '#00c9ff'] // darken
+                            ]
+                        },
+                        {
+                            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                            stops: [
+                                [0, '#37ecba'],
+                                [1, '#72afd3'] // darken
+                            ]
+                        },
+                        {
+                            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                            stops: [
+                                [0, '#00c6fb'],
+                                [1, '#005bea'] // darken
+                            ]
+                        },
+                        {
+                            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                            stops: [
+                                [0, '#7028e4'],
+                                [1, '#e5b2ca'] // darken
+                            ]
+                        }
+                    ],
+                    title: {
+                        text: null
+                    },
+                    tooltip: {
+                        headerFormat: '',
+                        formatter: function(point){
+                            console.log(this.point, "ss");
+                            return '<span style="color:{this.point.color}">\u25CF</span> <b>'+ this.point.name + '</b><br/>' +
+                                '人流量: <b>' + this.point.y + '</b><br/>' +
+                                '所占百分比: <b>' + Math.round(this.percentage,2) + '%</b><br/>'
+                        }
+                    },
+                    plotOptions: {
+                        series: {
+                            showInLegend: false
+                        },
+                        variablepie: {
+                            allowPointSelect: true,
+                            cursor: 'pointer',
+                            dataLabels: {
+                                distance: 10,//控制饼图外面的线的长短,为负数时文本内容在饼图内部
+                                formatter: function() {
+                                    //this 为当前的点（扇区）对象，可以通过  console.log(this) 来查看详细信息
+                                    return '<span style="color: ' + this.point.color + '">'
+                                        + this.point.name + '(' + Math.round(this.percentage) + '%)</span>';
+                                }
+                            }
+                        }
+                    },
+                    series: [{
+                        minPointSize: 10,
+                        innerSize: '20%',
+                        zMin: 0,
+                        name: 'countries',
+                        data: [{
+                            name: '党群工作室',
+                            y: 505370,
+                            z: 92.9
+                        }, {
+                            name: '党员教育室',
+                            y: 551500,
+                            z: 118.7
+                        }, {
+                            name: '党内关爱室',
+                            y: 312685,
+                            z: 124.6
+                        }, {
+                            name: '组织议事室',
+                            y: 78867,
+                            z: 137.5
+                        }]
+                    }]
+                });
+            },
+            initOntime() {
+                let chart = null;
+                chart = Highcharts.chart('intime', {
+                        chart: {
+                            zoomType: 'x'
+                        },
+                        title: {
+                            text: null
+                        },
+                        xAxis: {
+                            type: 'datetime',
+                            dateTimeLabelFormats: {
+                                millisecond: '%H:%M:%S.%L',
+                                second: '%H:%M:%S',
+                                minute: '%H:%M',
+                                hour: '%H:%M',
+                                day: '%m-%d',
+                                week: '%m-%d',
+                                month: '%Y-%m',
+                                year: '%Y'
+                            }
+                        },
+                        tooltip: {
+                            dateTimeLabelFormats: {
+                                millisecond: '%H:%M:%S.%L',
+                                second: '%H:%M:%S',
+                                minute: '%H:%M',
+                                hour: '%H:%M',
+                                day: '%Y-%m-%d',
+                                week: '%m-%d',
+                                month: '%Y-%m',
+                                year: '%Y'
+                            }
+                        },
+                        yAxis: {
+                            title: {
+                                text: '人数'
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            area: {
+                                fillColor: {
+                                    linearGradient: {
+                                        x1: 0,
+                                        y1: 0,
+                                        x2: 0,
+                                        y2: 1
+                                    },
+                                    stops: [
+                                        [0, Highcharts.getOptions().colors[0]],
+                                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                    ]
+                                },
+                                marker: {
+                                    radius: 2
+                                },
+                                lineWidth: 1,
+                                states: {
+                                    hover: {
+                                        lineWidth: 1
+                                    }
+                                },
+                                threshold: null
+                            }
+                        },
+                        series:[{
+                            name: '安装，实施人员',
+                            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+                        }, {
+                            name: '工人',
+                            data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
+                        }, {
+                            name: '销售',
+                            data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
+                        }, {
+                            name: '项目开发',
+                            data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
+                        }, {
+                            name: '其他',
+                            data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
+                        }]
+                    });
             }
         },
-      /*  components: {
-            'charts': VueECharts
-        },*/
+        components: {
+            CountTo
+        },
         mounted() {
             this.hot();
+            this.initBar();
+            this.initOntime();
         },
         created(){
             this.totalStatistics();
@@ -345,7 +623,8 @@
         transition: all .5s;
     }
     .con-vs-card:hover {
-        transform: scale(1.1);
+        transform: translateY(-15px);
+        cursor: pointer;
     }
     .con-vs-card:hover .icon-tran {
         transform: rotateY(180deg);
@@ -355,7 +634,7 @@
         color: #fffa49;
     }
     .card-sat {
-        padding: 22px 30px;
+        padding: 20px 30px;
     }
     @media screen and (max-device-width: 1400px){
         .card-sat {
@@ -368,5 +647,111 @@
     .echarts {
         width: calc(100vw/1920 * 600) !important;
         height: calc(100vw/1920 * 400) !important;
+    }
+</style>
+<style>
+    #dashboard {
+        margin-top: -20px;
+    }
+    #dashboard .vs-card--content {
+        margin-bottom: 0!important;
+        padding: 0 10px;
+    }
+    #dashboard svg {
+        margin: 0!important;
+    }
+    #dashboard .vs-card--footer {
+        margin-top: -20px !important;
+    }
+    #dashboard .vs-card--header {
+        box-shadow: none;
+    }
+    .content-left {
+        flex: 2;
+        margin-right: 30px;
+        text-align: left;
+    }
+    .content-right {
+        flex: 1;
+    }
+    .outer {
+        width: 26px;
+        height: 26px;
+        background-image: linear-gradient(to right, #f54744, #c05fbf);
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 10px;
+        margin-right: 15px;
+    }
+    .inner {
+        width: 16px;
+        height: 16px;
+        left: 5px;
+        top: 5px;
+        position: relative;
+        border-radius: 50%;
+        background: white;
+    }
+    .outer1 {
+        width: 26px;
+        height: 26px;
+        background-image: linear-gradient(to top, #5c37e2, #c15bf0);
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 10px;
+        margin-right: 15px;
+    }
+    .inner1 {
+        width: 16px;
+        height: 16px;
+        left: 5px;
+        top: 5px;
+        position: relative;
+        border-radius: 50%;
+        background: white;
+    }
+    .outer2 {
+        width: 26px;
+        height: 26px;
+        background-image: linear-gradient(to top, #3656d9, #1bb8db);
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 10px;
+        margin-right: 15px;
+    }
+    .inner2 {
+        width: 16px;
+        height: 16px;
+        left: 5px;
+        top: 5px;
+        position: relative;
+        border-radius: 50%;
+        background: white;
+    }
+    .outer3 {
+        width: 26px;
+        height: 26px;
+        background-image: linear-gradient(to top, #10afca, #2bf7c8);
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 10px;
+        margin-right: 15px;
+    }
+    .inner3 {
+        width: 16px;
+        height: 16px;
+        left: 5px;
+        top: 5px;
+        position: relative;
+        border-radius: 50%;
+        background: white;
+    }
+    .content-unit {
+        width: 200px;
+        margin: 40px auto;
     }
 </style>

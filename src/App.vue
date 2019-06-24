@@ -135,6 +135,9 @@
     .el-table .el-badge__content {
         vertical-align: baseline!important;
     }
+    .vs-card--header {
+        padding: 0;
+    }
 </style>
 <style>
     @keyframes an-dialog{

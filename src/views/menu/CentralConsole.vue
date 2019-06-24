@@ -20,9 +20,6 @@
                                 </template>
                             </div>
                         </div>
-                        <div slot="footer" style="border-top: 1px #fff solid">
-                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
-                        </div>
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
@@ -41,9 +38,6 @@
                                     <icon name="user" scale="9"></icon>
                                 </template>
                             </div>
-                        </div>
-                        <div slot="footer" style="border-top: 1px #fff solid">
-                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
                         </div>
                     </vs-card>
                 </el-col>
@@ -64,9 +58,6 @@
                                 </template>
                             </div>
                         </div>
-                        <div slot="footer" style="border-top: 1px #fff solid">
-                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
-                        </div>
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
@@ -86,9 +77,6 @@
                                 </template>
                             </div>
                         </div>
-                        <div slot="footer" style="border-top: 1px #fff solid">
-                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
-                        </div>
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
@@ -104,19 +92,17 @@
                                 </template>
                             </div>
                         </div>
-                        <div slot="footer" style="border-top: 1px #fff solid">
-                            <p style="font-size: 14px;text-align: right;line-height: 34px;">截止{{new Date().toLocaleDateString()}}</p>
-                        </div>
                     </vs-card>
                 </el-col>
             </el-row>
             <div style="display: flex">
                 <div class="content-left">
                     <vs-card class="card-sat">
-                        <div slot="header">
-                            <h3>
+                        <div slot="header" style="vertical-align: bottom">
+                            <h4 style="float: left">
                                 指标信息
-                            </h3>
+                            </h4>
+                            <span style="float: right;position: relative;top:6px;font-size: 14px;color: #c0c4cc">更新于{{currentDate.toLocaleDateString() + ' ' + currentDate.toLocaleTimeString()}}</span>
                         </div>
                         <div style="display: flex;align-items: center" slot="media">
                             <div style="flex: 1">
@@ -178,15 +164,64 @@
                                     </div>
                                 </div>
                             </div>
-                            <div id="pieBar" style="flex: 1.25;height: 300px"></div>
+                            <div id="pieBar" style="flex: 1.25;height: 260px"></div>
 
                         </div>
                     </vs-card>
                     <vs-card class="card-sat">
+                        <div slot="header" style="vertical-align: bottom">
+                            <h4 style="float: left">
+                                近24小时实时人流量统计图
+                            </h4>
+                            <span style="float: right;position: relative;top:6px;font-size: 14px;color: #c0c4cc">更新于{{currentDate.toLocaleDateString() + ' ' + currentDate.toLocaleTimeString()}}</span>
+                            <p style="clear: both">&nbsp;</p>
+                        </div>
+                        <div style="display: flex;align-items: center" slot="media">
+                            <div id="intime" style="flex: 1;height: 240px;">
+                            </div>
+                        </div>
                     </vs-card>
                 </div>
                 <div class="content-right">
                     <vs-card :fixed-height="true" class="card-sat">
+                        <h4 slot="header" style="vertical-align: bottom">
+                            执行中的活动
+                        </h4>
+                        <div slot="media">
+                            <el-row class="detail-row">
+                                <el-col :span="4">
+                                    <icon name="taskName" scale="3"></icon>
+                                </el-col>
+                                <el-col :span="20" style="color: #25252582">
+                                    关于扫黑除恶专项工作
+                                </el-col>
+
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="4">
+                                    <icon name="type" scale="3"></icon>
+                                </el-col>
+                                <el-col :span="20" style="color: #25252582">&nbsp;XXXXXX</el-col>
+
+                            </el-row>
+                            <el-row class="detail-row">
+                                <el-col :span="4">
+                                    <icon name="score" scale="3"></icon>
+                                </el-col>
+                                <el-col :span="20" style="color: red;font-weight: bold">
+                                    50分
+                                </el-col>
+                            </el-row>
+                            <el-row class="detail-row">
+
+                                <el-col :span="4">
+                                    总进度：
+                                </el-col>
+                                <el-col :span="6">
+                                    80%
+                                </el-col>
+                            </el-row>
+                        </div>
                     </vs-card>
                 </div>
             </div>
@@ -220,7 +255,8 @@
     import highchartsDrilldown from 'highcharts/modules/drilldown';
     import highcharts3D from 'highcharts/highcharts-3d';
     import variablePie from 'highcharts/modules/variable-pie';
-    variablePie(Highcharts)
+
+    variablePie(Highcharts);
     highchartsDrilldown(Highcharts);
     highcharts3D(Highcharts);
 
@@ -317,6 +353,7 @@
                         }
                     ]
                 },
+                currentDate: new Date()
             }
         },
         methods:{
@@ -386,19 +423,51 @@
                 return option;
             },
             initBar() {
-
                 new Highcharts.Chart('pieBar', {
                     chart: {
                         type: 'variablepie'
                     },
+                    colors: [
+                        {
+                            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                            stops: [
+                                [0, '#92fe9d'],
+                                [1, '#00c9ff'] // darken
+                            ]
+                        },
+                        {
+                            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                            stops: [
+                                [0, '#37ecba'],
+                                [1, '#72afd3'] // darken
+                            ]
+                        },
+                        {
+                            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                            stops: [
+                                [0, '#00c6fb'],
+                                [1, '#005bea'] // darken
+                            ]
+                        },
+                        {
+                            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+                            stops: [
+                                [0, '#7028e4'],
+                                [1, '#e5b2ca'] // darken
+                            ]
+                        }
+                    ],
                     title: {
                         text: null
                     },
                     tooltip: {
                         headerFormat: '',
-                        pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {point.name}</b><br/>' +
-                            '面积 (平方千米): <b>{point.y}</b><br/>' +
-                            '人口密度 (每平方千米人数): <b>{point.z}</b><br/>'
+                        formatter: function(point){
+                            console.log(this.point, "ss");
+                            return '<span style="color:{this.point.color}">\u25CF</span> <b>'+ this.point.name + '</b><br/>' +
+                                '人流量: <b>' + this.point.y + '</b><br/>' +
+                                '所占百分比: <b>' + Math.round(this.percentage,2) + '%</b><br/>'
+                        }
                     },
                     plotOptions: {
                         series: {
@@ -441,6 +510,92 @@
                         }]
                     }]
                 });
+            },
+            initOntime() {
+                let chart = null;
+                chart = Highcharts.chart('intime', {
+                        chart: {
+                            zoomType: 'x'
+                        },
+                        title: {
+                            text: null
+                        },
+                        xAxis: {
+                            type: 'datetime',
+                            dateTimeLabelFormats: {
+                                millisecond: '%H:%M:%S.%L',
+                                second: '%H:%M:%S',
+                                minute: '%H:%M',
+                                hour: '%H:%M',
+                                day: '%m-%d',
+                                week: '%m-%d',
+                                month: '%Y-%m',
+                                year: '%Y'
+                            }
+                        },
+                        tooltip: {
+                            dateTimeLabelFormats: {
+                                millisecond: '%H:%M:%S.%L',
+                                second: '%H:%M:%S',
+                                minute: '%H:%M',
+                                hour: '%H:%M',
+                                day: '%Y-%m-%d',
+                                week: '%m-%d',
+                                month: '%Y-%m',
+                                year: '%Y'
+                            }
+                        },
+                        yAxis: {
+                            title: {
+                                text: '人数'
+                            }
+                        },
+                        legend: {
+                            enabled: false
+                        },
+                        plotOptions: {
+                            area: {
+                                fillColor: {
+                                    linearGradient: {
+                                        x1: 0,
+                                        y1: 0,
+                                        x2: 0,
+                                        y2: 1
+                                    },
+                                    stops: [
+                                        [0, Highcharts.getOptions().colors[0]],
+                                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                    ]
+                                },
+                                marker: {
+                                    radius: 2
+                                },
+                                lineWidth: 1,
+                                states: {
+                                    hover: {
+                                        lineWidth: 1
+                                    }
+                                },
+                                threshold: null
+                            }
+                        },
+                        series:[{
+                            name: '安装，实施人员',
+                            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+                        }, {
+                            name: '工人',
+                            data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
+                        }, {
+                            name: '销售',
+                            data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
+                        }, {
+                            name: '项目开发',
+                            data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
+                        }, {
+                            name: '其他',
+                            data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
+                        }]
+                    });
             }
         },
         components: {
@@ -449,6 +604,7 @@
         mounted() {
             this.hot();
             this.initBar();
+            this.initOntime();
         },
         created(){
             this.totalStatistics();
@@ -478,7 +634,7 @@
         color: #fffa49;
     }
     .card-sat {
-        padding: 22px 30px;
+        padding: 20px 30px;
     }
     @media screen and (max-device-width: 1400px){
         .card-sat {
@@ -596,6 +752,6 @@
     }
     .content-unit {
         width: 200px;
-        margin: 50px auto;
+        margin: 40px auto;
     }
 </style>

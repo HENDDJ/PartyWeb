@@ -22,8 +22,8 @@ import Vuesax from 'vuesax';
 import Spinner from 'vue-spinkit';
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
-
-
+import Vue2OrgTree from 'vue2-org-tree';
+Vue.use(Vue2OrgTree)
 Vue.use(Viewer)
 Viewer.setDefaults({
     Options: { zIndex:99999,'inline': true, 'button': true, 'navbar': true, 'title': true, 'toolbar': true, 'tooltip': true, 'movable': true, 'zoomable': true, 'rotatable': true, 'scalable': true, 'transition': true, 'fullscreen': true, 'keyboard': true, 'url': 'data-source' }

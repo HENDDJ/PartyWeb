@@ -6,7 +6,7 @@
             <div class="side-position"></div>
             <sidebar class="sidebar-container "></sidebar>
             <div class="main-container">
-                <div class="dashboard-bg">
+                <div v-if="$route.name === 'DashboardRoot'" class="dashboard-bg">
                     <div class="dashboard-bg-top"></div>
                     <div class="dashboard-bg-bottom"></div>
                 </div>
@@ -123,7 +123,7 @@
         z-index: 0;
     }
     .dashboard-bg-top {
-        height: 350px;
+        height: 300px;
         background-image: linear-gradient(to bottom, #479bfe, #3e61fb);
     }
     .dashboard-bg-bottom {

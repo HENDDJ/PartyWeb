@@ -14,7 +14,6 @@
             </vs-select>
 
             <vs-button type="gradient" style="float:left;margin-left: 160px" @click="changeType">可视化统计图</vs-button>
-            <vs-button color="success" style="float:left;margin-left: 20px" type="gradient">表格数据</vs-button>
         </div>
         <transition name="el-fade-in-linear">
             <div style="clear: both" v-show="pictureOrTable===true">
@@ -202,7 +201,10 @@
                 },
                 scoreOptions: [],
                 percentOptions: [],
-                scoreAll: [],
+                //组织结构
+                districtStruct: [],
+                //组织结构数据
+                scoreStruct:[],
                 theme1: {
                     colors: "#2b908f #90ee7e #f45b5b #7798BF #aaeeee #ff0066 #eeaaee #55BF3B #DF5353 #7798BF #aaeeee".split(" "),
                     chart: {
@@ -343,45 +345,58 @@
                         }
                     )
                 })
-                this.containerOrganization.update({
-                    series: [{
-                        type: 'organization',
-                        name: 'Highsoft',
-                        keys: ['from', 'to'],
-                        data: this.district(),
-                        levels: [{
-                            level: 0,
-                            color: 'silver',
-                            dataLabels: {
-                                color: 'black'
-                            },
-                            height: 25
-                        }, {
-                            level: 1,
-                            color: 'silver',
-                            dataLabels: {
-                                color: 'black'
-                            },
-                            height: 25
-                        }, {
-                            level: 2,
-                            color: '#980104'
-                        }, {
-                            level: 4,
-                            color: '#359154'
-                        }],
-                        nodes: this.scoreAll,
-                        colorByPoint: false,
-                        color: '#007ad0',
-                        dataLabels: {
-                            color: 'white'
-                        },
-                        borderColor: 'white',
-                        nodeWidth: 65
-                    }],
+
+                let op3 = this.getScoreLast();
+                op3.then(() => {
+                    this.$http('Post', 'identity/sysDistrict/list?sort=districtLevel,asc&districtName,desc', {isDelete:0}, false).then((data) => {
+                        let dis = []
+                        data.forEach((item1,index) => {
+                            if(item1.districtLevel !=1 ){
+                                dis.push([item1.parentName,item1.districtName])
+                            }
+                        })
+                        this.districtStruct = []
+                        this.districtStruct = dis
+                        this.containerOrganization.update({
+                            series: [{
+                                type: 'organization',
+                                name: 'Highsoft',
+                                keys: ['from', 'to'],
+                                data:  this.districtStruct,
+                                levels: [{
+                                    level: 0,
+                                    color: '#980104',
+                                    borderWidth:0,
+                                    borderColor:'#980104',
+                                    dataLabels: {
+                                        color: 'white',
+                                        fontSize: 40
+                                    },
+                                    height: 30
+                                }, {
+                                    level: 1,
+                                    color: '#359154',
+                                    dataLabels: {
+                                        color: 'white',
+                                        fontSize: 40
+                                    },
+                                    height: 25
+                                }],
+                                nodes: this.scoreStruct,
+                                colorByPoint: false,
+                                color: '#007ad0',
+                                dataLabels: {
+                                    color: 'black',
+                                },
+                                borderColor: 'white',
+                                nodeWidth: 75,
+                                shadow:true
+                            }],
+                        })
+                            this.$vs.loading.close()
+                    })
 
                 })
-
             },
             scoreData(Options) {
                 Highcharts.setOptions(this.theme1);
@@ -394,6 +409,9 @@
                         margin: 75,
                         marginTop: 80,
                         marginRight: 40
+                    },
+                    credits: {
+                        enabled: false     //不显示LOGO
                     },
                     title: {
                         text: '各镇得分'
@@ -534,6 +552,9 @@
                         marginTop: 80,
                         marginRight: 40
                     },
+                    credits: {
+                        enabled: false     //不显示LOGO
+                    },
                     title: {
                         text: '各镇完成比例'
                     },
@@ -602,14 +623,21 @@
             scoreOrganizationData(dataOptions,seriesOptions) {
                 console.log(dataOptions,1)
                 console.log(seriesOptions,2)
+                let options = { tooltip:{enabled:false}}
+                Highcharts.setOptions(options);
                 this.containerOrganization = new Highcharts.chart('containerOrganization', {
                     chart: {
-                        height: 600,
-                        inverted: true
+                        height: 2200,
+                        inverted: true,
+                        backgroundColor: 'rgba(0,0,0,0)'
+                    },
+                    credits: {
+                        enabled: false     //不显示LOGO
                     },
                     title: {
                         text: '各组织积分及完成情况'
                     },
+
                     series: [{
                         type: 'organization',
                         name: 'Highsoft',
@@ -617,33 +645,32 @@
                         data: dataOptions,
                         levels: [{
                             level: 0,
-                            color: 'silver',
+                            color: '#980104',
+                            borderWidth:0,
+                            borderColor:'#980104',
                             dataLabels: {
-                                color: 'black'
+                                color: 'white',
+                                fontSize: 40
                             },
-                            height: 25
+                            height: 30
                         }, {
                             level: 1,
-                            color: 'silver',
+                            color: '#359154',
                             dataLabels: {
-                                color: 'black'
+                                color: 'white',
+                                fontSize: 40
                             },
                             height: 25
-                        }, {
-                            level: 2,
-                            color: '#980104'
-                        }, {
-                            level: 4,
-                            color: '#359154'
                         }],
                         nodes: seriesOptions,
                         colorByPoint: false,
                         color: '#007ad0',
                         dataLabels: {
-                            color: 'white'
+                            color: 'black',
                         },
                         borderColor: 'white',
-                        nodeWidth: 65
+                        nodeWidth: 75,
+                        shadow:true
                     }],
                     tooltip: {
                         outside: true
@@ -716,36 +743,58 @@
             district() {
                 let dis = []
                 this.$http('Post', 'identity/sysDistrict/list?sort=districtLevel,asc&districtName,desc', {isDelete:0}, false).then((data) => {
-                    data.forEach(item1 => {
-                        if(item1.districtLevel !=2){
+                    data.forEach((item1,index) => {
+                        if(item1.districtLevel !=1 ){
                             dis.push([item1.parentName,item1.districtName])
                         }
-
                     })
                     let op3 = this.scoreDataOptions(dis)
+
+
                 })
 
                 return dis
             },
             scoreDataOptions(oo) {
                 let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=&year=${this.chooseYear}`
-                let scoreLast = [{id:'句容市委',name:'',column: 3}]
+                let scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
                 this.$http('Post', path, false).then((data) => {
-
                     let arr = []
                     let arrNext = []
                     data.forEach(item => {
-                        scoreLast.push({id: item.cun, name: item.exam,column: 3})
-                        arr.push({id: item.town, name: item.townExam,column: 3})
+                        scoreLast.push({id: item.cun, description:item.exam.toString()+'('+(item.score*100).toString().substring(0,4)+'%)',name:item.cun})
+                        arr.push({id: item.town, description: item.townExam.toString()+'('+(item.townScore*100).toString().substring(0,4)+"%)",name:item.town})
                     })
                     arrNext = this.unique(arr)
                     arrNext.forEach((items) => {
-                        scoreLast.push({id: items.id, name: items.name,column: 3,layout: 'hanging'})
+                        scoreLast.push({layout:'hanging',id: items.id, name: items.name,description:items.description})
                     })
+                    this.scoreOrganizationData(oo,scoreLast);
+                })
+            },
+            //scoreDataOptions计算scoreLast方法
+            getScoreLast(){
+                this.$vs.loading({
+                    type:'radius',
+                    text:"数据计算重新绘图中，请稍后..."
+                })
+                let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=&year=${this.chooseYear}`
+                let scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
+                return this.$http('Post', path, false).then((data) => {
+                    let arr = []
+                    let arrNext = []
+                    data.forEach(item => {
+                        scoreLast.push({id: item.cun, description:item.exam.toString()+'('+(item.score*100).toString().substring(0,4)+'%)',name:item.cun})
+                        arr.push({id: item.town, description: item.townExam.toString()+'('+(item.townScore*100).toString().substring(0,4)+"%)",name:item.town})
+                    })
+                    arrNext = this.unique(arr)
+                    arrNext.forEach((items) => {
+                        scoreLast.push({layout:'hanging',id: items.id, name: items.name,description:items.description})
+                    })
+                    this.scoreStruct = []
+                    this.scoreStruct = scoreLast
 
                 })
-
-                this.scoreOrganizationData(oo,scoreLast);
             }
         },
         mounted() {
@@ -806,9 +855,35 @@
     }
 
     .tableStyle {
-        border: solid;
+        overflow: scroll;
         margin-top: 20px;
-        margin: auto;
+        margin-left: -20px;
+        width: 100%;
         text-align: left;
+        height: 600px;
+    }
+
+</style>
+<style>
+    #containerOrganization h4 {
+        text-transform: none;
+        font-size: 13px !important;
+        font-weight:bold;
+        position: absolute;
+        left: 15px;
+        top:10px;
+    }
+    #containerOrganization p {
+        font-size: 11px !important;
+        position: absolute;
+        left: 12px;
+        line-height: 16px;
+    }
+    #containerOrganization img {
+        position: absolute;
+        left: 50px;
+        top:16px;
+        z-index: 999;
+        transform: scale(3.5);
     }
 </style>

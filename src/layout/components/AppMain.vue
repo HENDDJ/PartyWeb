@@ -1,5 +1,5 @@
 <template>
-    <section class="app-main">
+    <section :class="$route.name === 'DashboardRoot' ? 'app-main noScroll' : 'app-main'">
         <transition name="fade" mode="out-in">
             <keep-alive :include="cachedViews">
                 <router-view :key="key"></router-view>
@@ -18,13 +18,16 @@ export default {
         key() {
             return this.$route.fullPath;
         }
-    }
+    },
 }
 </script>
 <style>
+    .noScroll {
+        overflow-y: hidden!important;
+    }
     .app-main {
         padding: 15px 0;
-        width: 100%;
+        width: calc(100% + 5px);;
         height: calc(100% - 35px);
         overflow-x: hidden;
         overflow-y: auto;

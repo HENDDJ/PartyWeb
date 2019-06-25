@@ -4,7 +4,7 @@
             <br>
             <el-row :gutter="30" type="flex" justify="space-between">
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #1ca5ff, #28c9fa);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #1ca5ff, #28c9fa);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">党员总人数</p>
@@ -23,7 +23,7 @@
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #ffa10e, #fdb513);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #ffa10e, #fdb513);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属组织数</p>
@@ -35,14 +35,14 @@
                             </div>
                             <div style="flex: 1;text-align: center">
                                 <template>
-                                    <icon name="user" scale="9"></icon>
+                                    <icon name="org" scale="8.5"></icon>
                                 </template>
                             </div>
                         </div>
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #fe8e8b, #ff7288);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #fe8e8b, #ff7288);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属阵地数</p>
@@ -54,14 +54,14 @@
                             </div>
                             <div style="flex: 1;text-align: center">
                                 <template>
-                                    <icon name="user" scale="9"></icon>
+                                    <icon name="zhendi" scale="7.5"></icon>
                                 </template>
                             </div>
                         </div>
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #0dc9ce, #22e3ac);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #0dc9ce, #22e3ac);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属村干部总数</p>
@@ -73,14 +73,14 @@
                             </div>
                             <div style="flex: 1;text-align: center">
                                 <template>
-                                    <icon name="user" scale="9"></icon>
+                                    <icon name="ganbu" scale="8.1"></icon>
                                 </template>
                             </div>
                         </div>
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="background-image: linear-gradient(to right, #cf8bf3, #fdb99b);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #cf8bf3, #fdb99b);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属村书记总数</p>
@@ -88,7 +88,7 @@
                             </div>
                             <div style="flex: 1;text-align: center">
                                 <template>
-                                    <icon name="user" scale="9"></icon>
+                                    <icon name="leader" scale="7.6"></icon>
                                 </template>
                             </div>
                         </div>
@@ -97,6 +97,7 @@
             </el-row>
             <div style="display: flex">
                 <div class="content-left">
+
                     <vs-card class="card-sat">
                         <div slot="header" style="vertical-align: bottom">
                             <h4 style="float: left">
@@ -183,69 +184,139 @@
                     </vs-card>
                 </div>
                 <div class="content-right">
-                    <vs-card :fixed-height="true" class="card-sat">
-                        <h4 slot="header" style="vertical-align: bottom">
-                            执行中的活动
-                        </h4>
-                        <div slot="media">
-                            <el-row class="detail-row">
-                                <el-col :span="4">
-                                    <icon name="taskName" scale="3"></icon>
-                                </el-col>
-                                <el-col :span="20" style="color: #25252582">
-                                    关于扫黑除恶专项工作
-                                </el-col>
-
-                            </el-row>
-                            <el-row class="detail-row">
-                                <el-col :span="4">
-                                    <icon name="type" scale="3"></icon>
-                                </el-col>
-                                <el-col :span="20" style="color: #25252582">&nbsp;XXXXXX</el-col>
-
-                            </el-row>
-                            <el-row class="detail-row">
-                                <el-col :span="4">
-                                    <icon name="score" scale="3"></icon>
-                                </el-col>
-                                <el-col :span="20" style="color: red;font-weight: bold">
-                                    50分
-                                </el-col>
-                            </el-row>
-                            <el-row class="detail-row">
-
-                                <el-col :span="4">
-                                    总进度：
-                                </el-col>
-                                <el-col :span="6">
-                                    80%
-                                </el-col>
-                            </el-row>
-                        </div>
-                    </vs-card>
+                    <swiper :options="swiperOption" ref="mySwiper">
+                        <swiper-slide v-for="(item,index) in currentActivityList" >
+                            <vs-card class="card-sat my-swiper" style="height: 668px;">
+                                <h4 slot="header" style="vertical-align: bottom;text-align: left">
+                                    执行中的活动({{index + 1}})
+                                </h4>
+                                <div slot="media">
+                                    <el-row>
+                                        <el-col :span="14">
+                                            <el-row class="detail-row">
+                                                <el-col :span="2">
+                                                    <icon name="taskName" scale="2.5"></icon>
+                                                </el-col>
+                                                <el-col :span="20" style="color: #25252582">
+                                                    {{item.title}}
+                                                </el-col>
+                                            </el-row>
+                                            <el-row class="detail-row">
+                                                <el-col :span="2">
+                                                    <icon name="type" scale="2.5"></icon>
+                                                </el-col>
+                                                <el-col :span="20" style="color: #25252582">
+                                                    {{item.context}}
+                                                </el-col>
+                                            </el-row>
+                                            <el-row class="detail-row">
+                                                <el-col :span="2">
+                                                    <icon name="score" scale="2.5"></icon>
+                                                </el-col>
+                                                <el-col :span="20" style="color: red;font-weight: bold">
+                                                    {{item.score}}分
+                                                </el-col>
+                                            </el-row>
+                                        </el-col>
+                                        <el-col :span="10">
+                                            <br>
+                                            <radial-progress-bar
+                                                style="margin: 0 auto"
+                                                :diameter="130"
+                                                :completed-steps="handlePercent(item.totalPercent)"
+                                                :total-steps="100"
+                                                :strokeWidth="5"
+                                                innerStrokeColor="#e4e7ed">
+                                                <p style="font-size: 34px;line-height: 56px;position: relative;top:8px;">{{handlePercent(item.totalPercent)}}%</p>
+                                                <p style="font-size: 14px;color: #aeaeae">总进度</p>
+                                            </radial-progress-bar>
+                                        </el-col>
+                                    </el-row>
+                                    <div style="margin: 0 auto;width: 99%">
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">宝华镇</span>
+                                                <span style="float: right">{{handlePercent(item.baoHuaPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.baoHuaPercent)" :color="getColor(item.baoHuaPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">下蜀镇</span>
+                                                <span style="float: right">{{handlePercent(item.xiaShuPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.xiaShuPercent)" :color="getColor(item.xiaShuPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">边城镇</span>
+                                                <span style="float: right">{{handlePercent(item.bianChengPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.bianChengPercent)" :color="getColor(item.bianChengPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">郭庄镇</span>
+                                                <span style="float: right">{{handlePercent(item.guoZhuangPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.guoZhuangPercent)" :color="getColor(item.guoZhuangPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">茅山镇</span>
+                                                <span style="float: right">{{handlePercent(item.maoShanPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.maoShanPercent)" :color="getColor(item.maoShanPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">茅山风景区</span>
+                                                <span style="float: right">{{handlePercent(item.maoShanFengJingPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.maoShanFengJingPercent)" :color="getColor(item.maoShanFengJingPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">华阳街道</span>
+                                                <span style="float: right">{{handlePercent(item.huaYangPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.huaYangPercent)" :color="getColor(item.huaYangPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">开发区</span>
+                                                <span style="float: right">{{handlePercent(item.kaiFaPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.kaiFaPercent)" :color="getColor(item.kaiFaPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">天王镇</span>
+                                                <span style="float: right">{{handlePercent(item.tianWangPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.tianWangPercent)" :color="getColor(item.tianWangPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">后白镇</span>
+                                                <span style="float: right">{{handlePercent(item.houBaiPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.houBaiPercent)" :color="getColor(item.houBaiPercent)"></vs-progress>
+                                        </div>
+                                        <div class="progress-content">
+                                            <div class="progress-item">
+                                                <span style="float: left">白兔镇</span>
+                                                <span style="float: right">{{handlePercent(item.baiTuPercent)}}%</span>
+                                            </div>
+                                            <vs-progress :height="4" :percent="handlePercent(item.baiTuPercent)" :color="getColor(item.baiTuPercent)"></vs-progress>
+                                        </div>
+                                    </div>
+                                </div>
+                            </vs-card>
+                        </swiper-slide>
+                    </swiper>
                 </div>
             </div>
-                              <vs-card>
-                        <div slot="header">
-                            <h3>
-                                组织信息
-                            </h3>
-                        </div>
-                        <div>
-                           <!-- <img src="./dq.jpg" alt="党旗">-->
-                            <div style="display: inline-block;font-size: 16px;line-height: 32px;">
-                                <p>名&emsp;&emsp;称:&emsp;中共句容市XXX党委</p>
-                                <p>书&emsp;&emsp;记:&emsp;XXX</p>
-                                <p>委&emsp;&emsp;员:&emsp;XXX、XXX、XXX、XXX、 XXX、XXX</p>
-                                <p>成立日期:&emsp;1990年11月12日</p>
-                                <p>地&emsp;&emsp;址:&emsp;中共句容市XXX路XX号</p>
-                            </div>
-                        </div>
-                        <div slot="footer">
-                            <vs-row vs-justify="flex-end">
-                            </vs-row>
-                        </div>
-                    </vs-card>
         </div>
     </section>
 </template>
@@ -261,6 +332,11 @@
     highcharts3D(Highcharts);
 
     import CountTo from 'vue-count-to';
+    import RadialProgressBar from 'vue-radial-progress';
+
+    import 'swiper/dist/css/swiper.css';
+    import { swiper, swiperSlide } from 'vue-awesome-swiper';
+
     export default {
         name: "CentralConsole",
         data(){
@@ -353,7 +429,23 @@
                         }
                     ]
                 },
-                currentDate: new Date()
+                currentDate: new Date(),
+                currentActivityList: [],
+                swiperOption: {
+                    direction: 'horizontal',
+                    autoplay: {
+                        delay: 5000,
+                    },
+                    speed: 800,
+                    effect: 'cube',
+                    grabCursor: true,
+                    cubeEffect: {
+                        shadow: true,
+                        slideShadows: true,
+                        shadowOffset: 20,
+                        shadowScale: 0.94
+                    },
+                }
             }
         },
         methods:{
@@ -580,31 +672,56 @@
                             }
                         },
                         series:[{
-                            name: '安装，实施人员',
-                            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-                        }, {
-                            name: '工人',
-                            data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-                        }, {
-                            name: '销售',
-                            data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-                        }, {
-                            name: '项目开发',
-                            data: [null, null, 7988, 12169, 15112, 22452, 34400, 34227]
-                        }, {
-                            name: '其他',
-                            data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
+                            name: '人数',
+                            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175,43934, 52503, 57177,43934,
+                                52503, 57177, 69658, 97031, 119931, 137133, 154175,43934, 52503, 57177,43934, 52503,
+                                57177, 69658, 97031, 119931, 137133, 154175,43934, 52503, 57177,43934, 52503, 57177,
+                                69658, 97031, 119931, 137133, 154175,43934, 52503, 57177]
                         }]
                     });
+            },
+            getCurrentActivity() {
+                this.$http('POST',`/identity/parActivity/list`, {status: 'ACTING'},false).then(
+                    data => {
+                        this.currentActivityList = data;
+                    }
+                )
+            },
+            handlePercent(val) {
+                return Math.round(val * 1000)/10;
+            },
+            getColor(val) {
+                if(val <= 0.5) {
+                    return 'danger';
+                } else if (val <= 0.8) {
+                    return 'warning';
+                } else if (val < 1) {
+                    return 'primary';
+                } else {
+                    return 'success';
+                }
             }
         },
         components: {
-            CountTo
+            CountTo,
+            RadialProgressBar,
+            swiper,
+            swiperSlide
         },
         mounted() {
             this.hot();
             this.initBar();
             this.initOntime();
+            this.getCurrentActivity();
+            let temp = this.$refs.mySwiper;
+            console.log(temp," swipers")
+            temp.$el.onmouseover = function(){ //鼠标放上暂停轮播
+                temp.swiper.autoplay.stop();
+            };
+            temp.$el.onmouseleave = function(){
+                temp.swiper.autoplay.start();
+            };
+
         },
         created(){
             this.totalStatistics();
@@ -622,7 +739,7 @@
     .con-vs-card {
         transition: all .5s;
     }
-    .con-vs-card:hover {
+    .con-vs-card:not(.my-swiper):hover {
         transform: translateY(-15px);
         cursor: pointer;
     }
@@ -673,6 +790,7 @@
     }
     .content-right {
         flex: 1;
+        overflow: hidden;
     }
     .outer {
         width: 26px;
@@ -753,5 +871,22 @@
     .content-unit {
         width: 200px;
         margin: 40px auto;
+    }
+    .detail-row {
+        margin: 20px 0;
+    }
+    .detail-row .el-col:nth-child(2n) {
+        text-align: left;
+        font-size: 16px;
+        padding-left: 10px;
+    }
+    .progress-item {
+        position: relative;
+        top: 5px;
+    }
+    .progress-content {
+        font-size: 14px;
+        color: #aeaeae;
+        margin-bottom: 4px;
     }
 </style>

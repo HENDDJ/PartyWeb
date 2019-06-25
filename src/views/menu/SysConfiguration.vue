@@ -1,41 +1,77 @@
 <template>
     <section>
-        <CommonCRUD :columns="columns" api-root="identity/sysConfiguration" :formColumns="formColumns"></CommonCRUD>
+        <div><span style="float: left;font-size: 14px;">{{testUser.name}}</span>
+            <el-switch
+                v-model="testUser.codeValue"
+                active-text="可用"
+                inactive-text="不可用"
+                active-value="0"
+                inactive-value="1"
+                @change="handleTestUser()">
+            </el-switch>
+        </div>
+        <div><span style="float: left;font-size: 14px;">{{shotScreen.name}}</span>
+            <vs-input-number @click="updateShotTime()" color="success" v-model="shotScreen.codeValue"/>
+        </div>
     </section>
+
 </template>
 
 <script>
-    import CommonCRUD from '@/components/CommonCRUD';
     export default {
         name: "SysConfiguration",
         data(){
             return {
-                columns:[],
-                formColumns:{},
+                testUser:{},
+                shotScreen:{
+                    id:'',
+                    name:'',
+                    code:'',
+                    codeValue:''
+                }
             }
         },
-        components: {
-            CommonCRUD
-        },
         methods:{
-          handleTestAccount(){
-              this.$http("POST",`identity/sysConfiguration/list`,{code:'USE_TEST_ACCOUNT'},false).then( data=>{
-                  let isUse = Number(data[0].codeValue);
-                  console.log(isUse)
-                /*  this.$http("PUT",`identity/sysUser/${"6a97c2d9-ae44-402e-b117-2a1b55ded4d8"}id`,{isDelete:isUse});
-                  this.$http("PUT",`identity/sysUser/${"6bc3aad9-78cb-4a79-9154-fdf02dec1fe4"}id`,{isDelete:isUse});*/
-              })
-          }
+            showConfigList(){
+                this.$http("POST",`identity/sysConfiguration/list`,false).then( data => {
+                    data.forEach( item => {
+                        if(item.code==='USE_TEST_ACCOUNT'){
+                            this.testUser = item;
+                        }
+                        if(item.code==='SCREEN_CAPTURE_TIME'){
+                            this.shotScreen = item;
+                        }
+                    })
+                })
+            },
+
+            handleTestUser(){
+                this.$http("PUT", `identity/sysConfiguration/${this.testUser.id}isDelete`,this.testUser, false).then(() => {
+                    this.showConfigList();
+                })
+            },
+            updateShotTime(){
+                this.$http("PUT",`identity/sysConfiguration/${this.shotScreen.id}id`,this.shotScreen,false).then( ()=> {
+                    this.showConfigList();
+                })
+            }
 
         },
+        watch: {
+            'shotScreen.codeValue': {
+                handler(newNumber, oldNumber) {
+                    this.updateShotTime();
+                },
+            }
+        },
         created(){
-            this.columns = this.$store.state.classInfo.properties;
-            this.formColumns =this.$store.state.classInfo.properties;
-            this.handleTestAccount();
+            this.showConfigList();
         }
     }
 </script>
 
 <style scoped>
-
+    .vs-input-number{
+        background: transparent;
+    }
 </style>

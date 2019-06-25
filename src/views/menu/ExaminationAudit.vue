@@ -5,7 +5,7 @@
             <el-card class="box-card">
                 <div style="float:left;margin:auto  20px;">
                     <div style="float:left;">
-                        <h3 style="display: inline;">
+                        <h3 style="display: inline;top:10px">
                             积分排名
                         </h3>
                     </div>

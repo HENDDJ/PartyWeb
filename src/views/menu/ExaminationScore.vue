@@ -13,167 +13,179 @@
                 <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in options"/>
             </vs-select>
 
-            <vs-button type="gradient" style="float:left;margin-left: 160px"@click="changeType">可视化统计图</vs-button>
+            <vs-button type="gradient" style="float:left;margin-left: 160px" @click="changeType">可视化统计图</vs-button>
             <vs-button color="success" style="float:left;margin-left: 20px" type="gradient">表格数据</vs-button>
         </div>
         <transition name="el-fade-in-linear">
-        <div style="clear: both" v-if="pictureOrTable===true" v-show="pictureOrTableShow">
-            <div class="downLeft">
-                <div id="containerScore" style="height: 400px"></div>
-                <div id="containerPer" style="height: 400px"></div>
-            </div>
-            <div class="downRight">
-                <transition name="el-zoom-in-center" mode="out-in">
-                    <div v-show="activityLoading">
-                        <vs-card actionable class="cardx" v-if="scoreOrPercent">
-                            <div slot="header">
-                                <h3>
-                                    {{this.firstTown}}各村分数
-                                </h3>
-                            </div>
-                            <div slot="media">
-                                <img src="static/img/blue.png" style="height:30px">
-                            </div>
-                            <div>
-                                <div>
-                                    <vs-table :data="cunData">
-                                        <template slot="header">
-
-                                        </template>
-                                        <template slot="thead">
-                                            <vs-th style="width: 180px">
-                                                <a style="margin-left: 20px">排名</a>
-                                            </vs-th>
-                                            <vs-th>
-                                                村名
-                                            </vs-th>
-                                            <vs-th>
-                                                分数
-                                            </vs-th>
-
-                                        </template>
-
-                                        <template slot-scope="{data}">
-                                            <vs-tr
-                                                :state="indextr == 0 || indextr == 1|| indextr == 2?'success':null&indextr == 4?'success':null"
-                                                :key="indextr" v-for="(tr, indextr) in cunData">
-                                                <vs-td style="text-align: left">
-                                                    <icon v-if="indextr===0" name="RankFirstIcon" scale="2"></icon>
-                                                    <icon v-if="indextr===1" name="RankSecondIcon" scale="2"></icon>
-                                                    <icon v-if="indextr===2" name="RankThirdIcon" scale="2"></icon>
-                                                    <a v-if="indextr<3">{{indextr+1}}</a>
-                                                    <a v-else  style="margin-left: 45.28px" >{{indextr+1}}</a>
-                                                </vs-td>
-
-                                                <vs-td :data="tr.cun" style="text-align: left">
-                                                    {{tr.cun}}
-                                                </vs-td>
-
-                                                <vs-td :data="tr.exam" style="text-align: left">
-                                                    <countTo :startVal='0' :endVal='tr.exam' :duration='1500'></countTo>
-                                                </vs-td>
-
-                                            </vs-tr>
-                                        </template>
-                                    </vs-table>
+            <div style="clear: both" v-show="pictureOrTable===true">
+                <div class="downLeft">
+                    <div id="containerScore" style="height: 400px"></div>
+                    <div id="containerPer" style="height: 400px"></div>
+                </div>
+                <div class="downRight">
+                    <transition name="el-zoom-in-center" mode="out-in">
+                        <div v-show="activityLoading">
+                            <vs-card actionable class="cardx" v-if="scoreOrPercent">
+                                <div slot="header">
+                                    <h3>
+                                        {{this.firstTown}}各村分数
+                                    </h3>
                                 </div>
-                            </div>
-                            <div slot="footer">
-                                <vs-row vs-justify="flex-end">
-                                    <vs-button color="primary" type="gradient">表格数据</vs-button>
-                                </vs-row>
-                            </div>
-                        </vs-card>
-                        <vs-card actionable class="cardx" v-if="scoreOrPercent===false">
-                            <div slot="header">
-                                <h3>
-                                    {{this.secondTown}}各村完成比例
-                                </h3>
-                            </div>
-                            <div slot="media">
-                                <img src="static/img/blue.png" style="height:30px">
-                            </div>
-                            <div>
-                                <div>
-                                    <vs-table :data="cunPercent">
-                                        <template slot="header">
-
-                                        </template>
-                                        <template slot="thead">
-                                            <vs-th style="width: 180px">
-                                                <a style="margin-left: 20px">排名</a>
-                                            </vs-th>
-                                            <vs-th>
-                                                村名
-                                            </vs-th>
-                                            <vs-th>
-                                                完成情况
-                                            </vs-th>
-
-                                        </template>
-
-                                        <template slot-scope="{data}">
-                                            <vs-tr
-                                                :state="indextr == 0 || indextr == 1|| indextr == 2?'success':null"
-                                                :key="indextr" v-for="(tr, indextr) in cunPercent">
-                                                <vs-td style="text-align: left">
-                                                    <icon v-if="indextr===0" name="RankFirstIcon" scale="2"></icon>
-                                                    <icon v-if="indextr===1" name="RankSecondIcon" scale="2"></icon>
-                                                    <icon v-if="indextr===2" name="RankThirdIcon" scale="2"></icon>
-                                                    <a v-if="indextr<3">{{indextr+1}}</a>
-                                                    <a v-else  style="margin-left: 45.28px" >{{indextr+1}}</a>
-                                                </vs-td>
-
-                                                <vs-td :data="tr.cun" style="text-align: left">
-                                                    {{tr.cun}}
-                                                </vs-td>
-
-                                                <vs-td :data="tr.score" style="text-align: left">
-                                                    <el-progress v-if="(tr.score || 0) < 0.3" :percentage="Math.round((tr.score || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
-                                                    <el-progress v-else-if="(tr.score || 0) < 0.7" :percentage="Math.round((tr.score || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
-                                                    <el-progress v-else-if="(tr.score || 0) < 1" :percentage="Math.round((tr.score || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
-                                                    <el-progress v-else-if="(tr.score || 0) === 1" :percentage="Math.round((tr.score || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
-                                                    <!--<vs-progress :percent="tr.score*100" color="primary">primary</vs-progress>-->
-                                                    <!--{{tr.score*100}}-->
-
-                                                </vs-td>
-
-                                            </vs-tr>
-                                        </template>
-                                    </vs-table>
+                                <div slot="media">
+                                    <img src="static/img/blue.png" style="height:30px">
                                 </div>
-                            </div>
-                            <div slot="footer">
-                                <vs-row vs-justify="flex-end">
-                                    <vs-button color="primary" type="gradient">表格数据</vs-button>
+                                <div>
+                                    <div>
+                                        <vs-table :data="cunData">
+                                            <template slot="header">
 
-                                </vs-row>
-                            </div>
-                        </vs-card>
-                    </div>
-                </transition>
+                                            </template>
+                                            <template slot="thead">
+                                                <vs-th style="width: 180px">
+                                                    <a style="margin-left: 20px">排名</a>
+                                                </vs-th>
+                                                <vs-th>
+                                                    村名
+                                                </vs-th>
+                                                <vs-th>
+                                                    分数
+                                                </vs-th>
+
+                                            </template>
+
+                                            <template slot-scope="{data}">
+                                                <vs-tr
+                                                    :state="indextr == 0 || indextr == 1|| indextr == 2?'success':null&indextr == 4?'success':null"
+                                                    :key="indextr" v-for="(tr, indextr) in cunData">
+                                                    <vs-td style="text-align: left">
+                                                        <icon v-if="indextr===0" name="RankFirstIcon" scale="2"></icon>
+                                                        <icon v-if="indextr===1" name="RankSecondIcon" scale="2"></icon>
+                                                        <icon v-if="indextr===2" name="RankThirdIcon" scale="2"></icon>
+                                                        <a v-if="indextr<3">{{indextr+1}}</a>
+                                                        <a v-else style="margin-left: 45.28px">{{indextr+1}}</a>
+                                                    </vs-td>
+
+                                                    <vs-td :data="tr.cun" style="text-align: left">
+                                                        {{tr.cun}}
+                                                    </vs-td>
+
+                                                    <vs-td :data="tr.exam" style="text-align: left">
+                                                        <countTo :startVal='0' :endVal='tr.exam'
+                                                                 :duration='1500'></countTo>
+                                                    </vs-td>
+
+                                                </vs-tr>
+                                            </template>
+                                        </vs-table>
+                                    </div>
+                                </div>
+                                <div slot="footer">
+                                    <vs-row vs-justify="flex-end">
+                                        <vs-button color="primary" type="gradient">表格数据</vs-button>
+                                    </vs-row>
+                                </div>
+                            </vs-card>
+                            <vs-card actionable class="cardx" v-if="scoreOrPercent===false">
+                                <div slot="header">
+                                    <h3>
+                                        {{this.secondTown}}各村完成比例
+                                    </h3>
+                                </div>
+                                <div slot="media">
+                                    <img src="static/img/blue.png" style="height:30px">
+                                </div>
+                                <div>
+                                    <div>
+                                        <vs-table :data="cunPercent">
+                                            <template slot="header">
+
+                                            </template>
+                                            <template slot="thead">
+                                                <vs-th style="width: 180px">
+                                                    <a style="margin-left: 20px">排名</a>
+                                                </vs-th>
+                                                <vs-th>
+                                                    村名
+                                                </vs-th>
+                                                <vs-th>
+                                                    完成情况
+                                                </vs-th>
+
+                                            </template>
+
+                                            <template slot-scope="{data}">
+                                                <vs-tr
+                                                    :state="indextr == 0 || indextr == 1|| indextr == 2?'success':null"
+                                                    :key="indextr" v-for="(tr, indextr) in cunPercent">
+                                                    <vs-td style="text-align: left">
+                                                        <icon v-if="indextr===0" name="RankFirstIcon" scale="2"></icon>
+                                                        <icon v-if="indextr===1" name="RankSecondIcon" scale="2"></icon>
+                                                        <icon v-if="indextr===2" name="RankThirdIcon" scale="2"></icon>
+                                                        <a v-if="indextr<3">{{indextr+1}}</a>
+                                                        <a v-else style="margin-left: 45.28px">{{indextr+1}}</a>
+                                                    </vs-td>
+
+                                                    <vs-td :data="tr.cun" style="text-align: left">
+                                                        {{tr.cun}}
+                                                    </vs-td>
+
+                                                    <vs-td :data="tr.score" style="text-align: left">
+                                                        <el-progress v-if="(tr.score || 0) < 0.3"
+                                                                     :percentage="Math.round((tr.score || 0) * 1000)/10"
+                                                                     color="#951200" :stroke-width="5"></el-progress>
+                                                        <el-progress v-else-if="(tr.score || 0) < 0.7"
+                                                                     :percentage="Math.round((tr.score || 0) * 1000)/10"
+                                                                     color="#e6a23c" :stroke-width="5"></el-progress>
+                                                        <el-progress v-else-if="(tr.score || 0) < 1"
+                                                                     :percentage="Math.round((tr.score || 0) * 1000)/10"
+                                                                     color="#0c89c2" :stroke-width="5"></el-progress>
+                                                        <el-progress v-else-if="(tr.score || 0) === 1"
+                                                                     :percentage="Math.round((tr.score || 0) * 1000)/10"
+                                                                     color="#67c23a" :stroke-width="5"></el-progress>
+                                                        <!--<vs-progress :percent="tr.score*100" color="primary">primary</vs-progress>-->
+                                                        <!--{{tr.score*100}}-->
+
+                                                    </vs-td>
+
+                                                </vs-tr>
+                                            </template>
+                                        </vs-table>
+                                    </div>
+                                </div>
+                                <div slot="footer">
+                                    <vs-row vs-justify="flex-end">
+                                        <vs-button color="primary" type="gradient">表格数据</vs-button>
+
+                                    </vs-row>
+                                </div>
+                            </vs-card>
+                        </div>
+                    </transition>
+                </div>
             </div>
-        </div>
-
-        <div style="clear: both" v-if="pictureOrTable===false" v-show="pictureOrTable">
-123
-
-        </div>
+        </transition>
+        <transition name="el-fade-in-linear">
+            <div style="clear: both" v-show="pictureOrTable===false" class="tableStyle">
+                <div id="containerOrganization"></div>
+            </div>
         </transition>
     </div>
 </template>
 
 <script>
-    import Highcharts from 'highcharts/highstock';
-    import HighchartsMore from 'highcharts/highcharts-more';
-    import Highcharts3D from 'highcharts/highcharts-3d';
+
+    // import Highcharts from 'highcharts/highstock';
+    // import HighchartsMore from 'highcharts/highcharts-more';
+    // import Highcharts3D from 'highcharts/highcharts-3d';
+    // import OrganizationT from 'highcharts/modules/organization';
     import countTo from 'vue-count-to';
 
-    HighchartsMore(Highcharts);
-    Highcharts3D(Highcharts);
+    // HighchartsMore(Highcharts);
+    // Highcharts3D(Highcharts);
+    // OrganizationT(Highcharts);
     export default {
         name: "ExaminationScore",
-        components: { countTo },
+        components: {countTo},
         data() {
             return {
                 options: [],
@@ -182,13 +194,15 @@
                 chooseRegion: ' ',
                 chart: {},
                 chart01: {},
+                containerOrganization: [],
                 pageable: {
                     total: 0,
                     pageNumber: 1,
                     pageSize: 10
                 },
                 scoreOptions: [],
-                percentOptions:[],
+                percentOptions: [],
+                scoreAll: [],
                 theme1: {
                     colors: "#2b908f #90ee7e #f45b5b #7798BF #aaeeee #ff0066 #eeaaee #55BF3B #DF5353 #7798BF #aaeeee".split(" "),
                     chart: {
@@ -196,7 +210,7 @@
                             radialGradient: {cx: 0.5, cy: 0.5, r: 0.5},
                             stops: [
                                 [0, '#89baed'],
-                                [1, '#f2f2f2'],
+                                [1, '#ffffff'],
                             ]
                         }, style: {fontFamily: "'Unica One', sans-serif"}, plotBorderColor: "#606063"
                     },
@@ -278,12 +292,14 @@
                 //分数默认第一个镇
                 firstTown: '',
                 //比例默认第一个镇
-                secondTown:'',
+                secondTown: '',
                 //村比例详细数据
-                cunPercent:[],
-                scoreOrPercent:true,
+                cunPercent: [],
+                scoreOrPercent: true,
                 //图表或表格
-                pictureOrTable:true
+                pictureOrTable: true,
+                pictureOrTableShowone: true,
+                pictureOrTableShowtwo: false
             }
         },
         methods: {
@@ -310,7 +326,7 @@
                 })
 
                 let op2 = this.showPercent();
-                op2.then(()=>{
+                op2.then(() => {
                     this.chart01.update({
                             series: [{
                                 name: ['完成比例'],
@@ -326,6 +342,44 @@
                             }
                         }
                     )
+                })
+                this.containerOrganization.update({
+                    series: [{
+                        type: 'organization',
+                        name: 'Highsoft',
+                        keys: ['from', 'to'],
+                        data: this.district(),
+                        levels: [{
+                            level: 0,
+                            color: 'silver',
+                            dataLabels: {
+                                color: 'black'
+                            },
+                            height: 25
+                        }, {
+                            level: 1,
+                            color: 'silver',
+                            dataLabels: {
+                                color: 'black'
+                            },
+                            height: 25
+                        }, {
+                            level: 2,
+                            color: '#980104'
+                        }, {
+                            level: 4,
+                            color: '#359154'
+                        }],
+                        nodes: this.scoreAll,
+                        colorByPoint: false,
+                        color: '#007ad0',
+                        dataLabels: {
+                            color: 'white'
+                        },
+                        borderColor: 'white',
+                        nodeWidth: 65
+                    }],
+
                 })
 
             },
@@ -464,15 +518,15 @@
                     })
                 })
             },
-            //比例highcharts赋值
+            //比例highcharts定义
             percentData(Options) {
                 Highcharts.setOptions(this.theme1);
                 let os = this
                 this.chart01 = new Highcharts.Chart('containerPer', {
                     colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
                         '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
-                    tooltip:{
-                        valueDecimals:1
+                    tooltip: {
+                        valueDecimals: 1
                     },
                     chart: {
                         type: 'column',
@@ -544,20 +598,154 @@
 
                 });
             },
-            changeType(){
-                if(this.pictureOrTable == true){
+            //考核数据组织架构HighCharts定义
+            scoreOrganizationData(dataOptions,seriesOptions) {
+                console.log(dataOptions,1)
+                console.log(seriesOptions,2)
+                this.containerOrganization = new Highcharts.chart('containerOrganization', {
+                    chart: {
+                        height: 600,
+                        inverted: true
+                    },
+                    title: {
+                        text: '各组织积分及完成情况'
+                    },
+                    series: [{
+                        type: 'organization',
+                        name: 'Highsoft',
+                        keys: ['from', 'to'],
+                        data: dataOptions,
+                        levels: [{
+                            level: 0,
+                            color: 'silver',
+                            dataLabels: {
+                                color: 'black'
+                            },
+                            height: 25
+                        }, {
+                            level: 1,
+                            color: 'silver',
+                            dataLabels: {
+                                color: 'black'
+                            },
+                            height: 25
+                        }, {
+                            level: 2,
+                            color: '#980104'
+                        }, {
+                            level: 4,
+                            color: '#359154'
+                        }],
+                        nodes: seriesOptions,
+                        colorByPoint: false,
+                        color: '#007ad0',
+                        dataLabels: {
+                            color: 'white'
+                        },
+                        borderColor: 'white',
+                        nodeWidth: 65
+                    }],
+                    tooltip: {
+                        outside: true
+                    },
+                    exporting: {
+                        allowHTML: true,
+                        sourceWidth: 800,
+                        sourceHeight: 600
+                    }
+                });
+            },
+            //去除重复
+            unique(list) {
+                var arr = [];
+                for (var i = 0; i < list.length; i++) {
+                    if (i == 0) arr.push(list[i]);
+                    let b = false;
+                    if (arr.length > 0 && i > 0) {
+                        for (var j = 0; j < arr.length; j++) {
+                            if (arr[j].id == list[i].id) {
+                                b = true;
+                                //break;
+                            }
+                        }
+                        if (!b) {
+                            arr.push(list[i]);
+                        }
+                    }
+                }
+                return arr;
+            },
+            changeType() {
+
+                if (this.pictureOrTable == true) {
+                    this.pictureOrTableShowone = false
+                    this.pictureOrTableShowtwo = true
                     this.pictureOrTable = false
-                }else if(this.pictureOrTable == false){
+
+                } else if (this.pictureOrTable == false) {
+                    this.pictureOrTableShowone = true
+                    this.pictureOrTableShowtwo = false
                     this.pictureOrTable = true
                     let op = this.show();
                     op.then(() => {
                         this.scoreData(this.scoreOptions);
                     })
                     let op2 = this.showPercent();
-                    op2.then(()=>{
+                    op2.then(() => {
                         this.percentData(this.percentOptions);
                     })
                 }
+            },
+            //合并列
+            objectSpanMethod({row, column, rowIndex, columnIndex}) {
+                if (columnIndex === 0) {
+                    if (rowIndex % 2 === 0) {
+                        return {
+                            rowspan: 2,
+                            colspan: 1
+                        };
+                    } else {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        };
+                    }
+                }
+            },
+            //组织结构
+            district() {
+                let dis = []
+                this.$http('Post', 'identity/sysDistrict/list?sort=districtLevel,asc&districtName,desc', {isDelete:0}, false).then((data) => {
+                    data.forEach(item1 => {
+                        if(item1.districtLevel !=2){
+                            dis.push([item1.parentName,item1.districtName])
+                        }
+
+                    })
+                    let op3 = this.scoreDataOptions(dis)
+                })
+
+                return dis
+            },
+            scoreDataOptions(oo) {
+                let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=&year=${this.chooseYear}`
+                let scoreLast = [{id:'句容市委',name:'',column: 3}]
+                this.$http('Post', path, false).then((data) => {
+
+                    let arr = []
+                    let arrNext = []
+                    data.forEach(item => {
+                        scoreLast.push({id: item.cun, name: item.exam,column: 3})
+                        arr.push({id: item.town, name: item.townExam,column: 3})
+                    })
+                    arrNext = this.unique(arr)
+                    arrNext.forEach((items) => {
+                        scoreLast.push({id: items.id, name: items.name,column: 3,layout: 'hanging'})
+                    })
+
+                })
+
+                this.scoreOrganizationData(oo,scoreLast);
             }
         },
         mounted() {
@@ -566,9 +754,11 @@
                 this.scoreData(this.scoreOptions);
             })
             let op2 = this.showPercent();
-            op2.then(()=>{
+            op2.then(() => {
                 this.percentData(this.percentOptions);
             })
+            this.district();
+
         },
         created() {
             let nowYear = new Date().Format('yyyy')
@@ -602,6 +792,7 @@
         display: inline-block;
         vertical-align: top;
         margin-top: 20px;
+        margin-left: -50px;
         width: 52%;
         text-align: left;
     }
@@ -610,7 +801,14 @@
         display: inline-block;
         vertical-align: top;
         margin-top: 20px;
-        margin-left: 10px;
+        margin-left: 25px;
         width: 40%
+    }
+
+    .tableStyle {
+        border: solid;
+        margin-top: 20px;
+        margin: auto;
+        text-align: left;
     }
 </style>

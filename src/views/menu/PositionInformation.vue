@@ -79,7 +79,6 @@
         created(){
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns =this.$store.state.classInfo.properties;
-            console.log(this.formColumns);
             this.showAllOrg();
             this.handleSelectOptions();
             tansfer(this.columns);

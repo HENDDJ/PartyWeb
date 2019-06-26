@@ -68,7 +68,7 @@
                 let file = http.file;
                 let formData = new FormData();
                 formData.append('file', file);
-                this.$http('POST', '/identity/accessory/', formData, false).then(
+                this.$http('POST', '/zuul/identity/accessory/', formData, false).then(
                     res => {
                         this.images.push({path: res.path, active: false});
                         this.$emit('getValue', this.images.map(item => item.path).join(','));

@@ -337,7 +337,7 @@
                     })
                 });
 
-
+                this.checkForm = {}
                 //审核内容赋值
                 this.checkForm.activityID = item.activityId
                 //长ID
@@ -345,7 +345,10 @@
                 //短ID
                 this.checkForm.districtId = item.organizationId
 
-
+                this.checkForm.activityTime = item.month
+                this.checkForm.score = item.score
+                this.checkForm.type = '基本活动'
+                this.checkForm.createTime = new Date().Format('yyyy-MM-ddTHH:mm:ss')
             },
             imgTF(val){
                 if (!val.split("&")[1]) {

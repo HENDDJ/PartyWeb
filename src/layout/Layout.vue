@@ -10,7 +10,7 @@
                     <div class="dashboard-bg-top"></div>
                     <div class="dashboard-bg-bottom"></div>
                 </div>
-                <div style="position: relative;z-index: 10">
+                <div style="position: relative;z-index: 10;width: inherit;height: inherit;">
                     <nav-bar></nav-bar>
                     <!--<tags-view></tags-view>-->
                     <app-main></app-main>

@@ -19,18 +19,16 @@
                         <vs-avatar  size="70px" :src="user.image"/>
                         <h4>{{user.name}}</h4>
                     </div>
-                    <span style="font-size: 16px;color: #91bbe9">&nbsp; &nbsp;<vs-icon icon="question_answer" color="#91bbe9"></vs-icon><b>&nbsp;&nbsp;组织介绍</b></span>
-                 <!--   <vs-sidebar-item  icon="question_answer"><b>组织介绍</b></vs-sidebar-item>-->
+                    <span style="font-size: 14px;color: #3a8ee6">&nbsp; &nbsp;<b>&nbsp;&nbsp;组织介绍</b></span>
                     <p>{{user.introduction}}</p><br/>
-                   <!-- <span style="font-size: 16px;color: #91bbe9">&nbsp; &nbsp;<vs-icon icon="person" color="#91bbe9"></vs-icon><b>&nbsp;&nbsp;账号信息</b></span>
--->
-                    <vs-divider icon="person" position="left">11111</vs-divider>
+                    <hr/>
+                    <span style="font-size: 14px;color: #3a8ee6">&nbsp; &nbsp;<b>&nbsp;&nbsp;账号信息</b></span><br><br>
                         <div>
-                            <p class="">登录名：{{user.userName}}</p>
-                            <p>所在组织：{{user.organizationName}}</p>
-                            <p>当前角色：{{user.roleName}}</p>
-                            <p>联系方式：{{user.phone}}</p>
-                            <p>最近登录时间：{{user.lastTime}}</p>
+                            <p><icon name="loguser" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.userName}}</p>
+                            <p><icon name="logorg" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.organizationName}}</p>
+                            <p><icon name="logrole" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.roleName}}</p>
+                            <p><icon name="logphone" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.phone}}</p>
+                            <p><icon name="logtime" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.lastTime}}</p>
                         </div>
                     <div class="footer-sidebar" slot="footer">
                         <vs-button icon="edit" color="warning" type="flat" @click="pswDia=true;active=false">修改密码</vs-button>
@@ -258,6 +256,14 @@
     }
     .vs-list--item{
         cursor:pointer;
+    }
+    hr{
+        background-color: #f0f0f0;
+        border: none;
+        height: 1px;
+    }
+    svg {
+        margin: 0 5px;
     }
 
 </style>

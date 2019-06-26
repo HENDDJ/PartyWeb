@@ -1,18 +1,31 @@
 <template>
     <section>
-        <div><span style="float: left;font-size: 14px;">{{testUser.name}}</span>
-            <el-switch
-                v-model="testUser.codeValue"
-                active-text="可用"
-                inactive-text="不可用"
-                active-value="0"
-                inactive-value="1"
-                @change="handleTestUser()">
-            </el-switch>
-        </div>
-        <div><span style="float: left;font-size: 14px;">{{shotScreen.name}}</span>
-            <vs-input-number @click="updateShotTime()" color="success" v-model="shotScreen.codeValue"/>
-        </div>
+        <el-row :gutter="12">
+            <el-col :span="6">
+                <el-card shadow="hover">
+                   <img src="@/svg/testuser.svg" class="image"/>
+                    <div class="labelPosiotn">{{testUser.name}}<br/><br/>
+                        <el-switch
+                            v-model="testUser.codeValue"
+                            active-text="可用"
+                            inactive-text="不可用"
+                            active-value="0"
+                            inactive-value="1"
+                            @change="handleTestUser()"
+                        style="height: 27px;">
+                        </el-switch>
+                    </div>
+                </el-card>
+            </el-col>
+            <el-col :span="6">
+                <el-card shadow="hover">
+                    <img src="@/svg/time2.svg" class="image"/>
+                    <div class="labelPosiotn">{{shotScreen.name}}<br/><br/>
+                        <vs-input-number @click="updateShotTime()" color="success" v-model="shotScreen.codeValue"/>
+                    </div>
+                </el-card>
+            </el-col>
+        </el-row>
     </section>
 
 </template>
@@ -73,5 +86,24 @@
 <style scoped>
     .vs-input-number{
         background: transparent;
+    }
+    .el-card{
+        width: 350px;
+        height: 160px;
+    }
+    .image{
+        float: left;
+        width: 150px;
+        height: 120px;
+    }
+    .labelPosiotn{
+        font-size: 14px;
+        text-align: left;
+        margin: 32px 12px;
+    }
+    .vs-input-number {
+        justify-content: left;
+        padding-left: 10px;
+        margin: 0;
     }
 </style>

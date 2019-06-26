@@ -58,7 +58,7 @@
                 </el-badge>
             </vs-navbar-item>
             <el-dialog v-if="waitCheckTips" title="未查看消息" :visible.sync="waitCheckTips" width="60%" align="left" :modal-append-to-body='false' :append-to-body="true" :before-close="handleClose" >
-                <vs-list v-for="item in waitCheckList">
+                <vs-list v-for="item in waitCheckList" key="index">
                     <vs-list-item :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===0">
                         <vs-item style="float: right; font-size: 12px;color:rgb(96, 98, 102);font-weight: bold">{{item.createdAt}}</vs-item>
                     </vs-list-item>

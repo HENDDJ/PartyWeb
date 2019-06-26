@@ -154,7 +154,7 @@
                 let currentUser = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
                 //处理接收公告
                 if(currentUser != '01'){
-                    this.form.status = true;
+                    this.form.status = "1";
                     this.$http('PUT', `identity/acceptInformation/${this.form.id}id`,this.form).then(() =>{
 
                     });

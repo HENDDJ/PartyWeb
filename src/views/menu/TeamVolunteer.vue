@@ -430,6 +430,9 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .vs-tabs--btn {
+        font-size: 14px !important;
+    }
 
 </style>

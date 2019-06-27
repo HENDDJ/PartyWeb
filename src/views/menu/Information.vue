@@ -155,7 +155,7 @@
                     //处理接收公告
                     if(currentUser != '01'){
                         this.form.status = "1";
-                        this.$http('PUT', `identity/acceptInformation/${this.form.id}id`,this.form).then(() =>{
+                        this.$http('PUT', `identity/acceptInformation/${this.form.id}id`,this.form,false).then(() =>{
 
                         });
                     }

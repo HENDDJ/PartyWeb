@@ -193,9 +193,15 @@
             },
             handleCheck(item){
                 item.isRead = 1;
-                this.$http("PUT",`identity/messageCenter/${item.id}id`,item).then( () => {
+                this.$http("PUT",`identity/messageCenter/${item.id}id`,item,false).then( () => {
+                    this.waitCheckTips = false;
+                    this.handleMessageCenter();
                     if(item.type==='party'||'distLearning'){
                         let path = "/activity/parActivityReview"
+                        this.$router.push({path: path});
+                    }
+                    if(item.type==='information'){
+                        let path = "/home/information";
                         this.$router.push({path: path});
                     }
 

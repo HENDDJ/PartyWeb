@@ -1,7 +1,7 @@
 <template>
     <section>
         <vs-tabs :color="colorx">
-            <vs-tab @click="colorx = 'success'" label="村干部信息">
+            <vs-tab @click="colorx = 'success'" label="村干部信息" >
                 <div class="con-tab-ejemplo">
                     <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns" :queryFormColumns="cadreQuery"></CommonCRUD>
                 </div>
@@ -174,6 +174,8 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    .vs-tabs--btn {
+        font-size: 14px !important;
+    }
 </style>

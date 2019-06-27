@@ -1,17 +1,26 @@
 <template>
-    <section>
+    <section class="common-crud">
         <div class="handler-btn">
             <el-button type="primary" v-if="authorityControl" plain @click="add()" class="self-add self-btn">&nbsp;</el-button>
             <el-button type="success"  v-if="authorityControl" plain class="self-btn self-edit" @click="edit()">&nbsp;</el-button>
             <el-button type="success" plain class="self-btn self-look" @click="look()">&nbsp;</el-button>
             <el-button type="danger" v-if="authorityControl" plain @click="del()" class="self-del self-btn">&nbsp;</el-button>
         </div>
+        <div class="common-query">
+            <el-form :inline="true" class="demo-form-inline" label-width="75px">
+                <el-form-item label="标题">
+                    <el-input v-model="queryTitle"></el-input>
+                </el-form-item>
+                <el-button @click="query" type="primary" size="mini" icon="el-icon-search">搜索</el-button>
+            </el-form>
+        </div>
         <el-table :data="informationList" v-loading="loading" border align="center" stripe  @selection-change="handleSelectionChange"
                   :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}">
             <el-table-column type="selection" width="55" align="center"></el-table-column>
             <el-table-column prop="name" label="发布组织" align="center" ></el-table-column>
             <el-table-column prop="title" label="标题" align="center" ></el-table-column>
-            <el-table-column prop="description" label="内容" align="center"></el-table-column>
+            <el-table-column prop="description" label="内容" align="center" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="createdAt" label="发布时间" align="center"></el-table-column>
         </el-table>
         <el-pagination style="text-align: right;margin-top: 20px;"
                        background
@@ -81,6 +90,7 @@
                 authorityControl:true,
                 //发布的对象只有新增时可以看到，编辑查看都不能看到
                 acceptPerson:true,
+                queryTitle:'',
             };
         },
         methods: {
@@ -113,7 +123,7 @@
                 let currentUser = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
                 if(currentUser=== '01'){
                     this.authorityControl = true;
-                    this.$http('POST',`/identity/information/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,false).then(data => {
+                    this.$http('POST',`/identity/information/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}&sort=createdAt,desc`,false).then(data => {
                         this.informationList = data.content;
                         this.pageable.total= data.totalElements;
                         this.loading = false;
@@ -226,6 +236,24 @@
                 }
                 return true;
             },
+            query() {
+                this.pageable.currentPage = 1;
+                this.pageable.pageSize = 10;
+                let currentUser = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
+                if(currentUser=== '01'){
+                    this.$http('POST',`/identity/information/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}&sort=createdAt,desc`,{title:this.queryTitle},false).then(data => {
+                        this.informationList = data.content;
+                        this.pageable.total= data.totalElements;
+                        this.loading = false;
+                    });
+                }else{
+                    this.$http('POST',`/identity/acceptInformation/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,{objs: currentUser,title:this.queryTitle},false).then(data => {
+                        this.informationList = data.content;
+                        this.pageable.total= data.totalElements;
+                        this.loading = false;
+                    });
+                }
+            },
         },
         created() {
             this.showInformationList();
@@ -234,11 +262,6 @@
 </script>
 
 <style scoped>
-    .common-crud {
-        width: 95%;
-        padding: 2%;
-        background-color: rgba(255, 255, 255, .9);
-    }
     .el-pagination__sizes .el-input--mini .el-input__inner {
         width: 120px !important;
     }
@@ -269,5 +292,11 @@
     .self-look {
         background: url('../../../static/img/look.png') !important;
         background-size: cover !important;
+    }
+    .common-query {
+        float: right;
+    }
+    .common-crud {
+        width: calc(100% - 10px);
     }
 </style>

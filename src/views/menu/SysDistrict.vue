@@ -4,6 +4,7 @@
                      :columns="columns"
                      apiRoot="identity/sysDistrict"
                      :sortColumns="sortQuery"
+                     :queryFormColumns="queryColumns"
                      :addBtnVis=false
                      :editBtnVis=false
                      :lookBtnVis = false
@@ -66,10 +67,26 @@
                 title:'',
                 disabled: false,
                 submitLoading: false,
+                zhenList:[],
                 sortQuery:[
                     {
                         name:'createdAt',
                         type:'desc'
+                    }
+                ],
+                queryColumns:[
+                    {
+                        des: '所属组织',
+                        name: 'districtId',
+                        type: 'select',
+                        visible: true,
+                        options: ''
+                    },
+                    {
+                        des: '名称',
+                        name: 'districtName',
+                        type: 'string',
+                        visible: true,
                     }
                 ]
             };
@@ -164,11 +181,23 @@
                     })
                     .catch(_ => {});
             },
+            //form表单上级组织下拉项
             showParentList() {
                 this.$http('POST',`identity/sysDistrict/listSome` ,false).then(data => {
                     this.parentList = data;
                 })
             },
+            //查询框下拉项
+            showZhenList(){
+                //镇级组织
+                this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
+                    data.forEach( item => {
+                        this.zhenList.push( {value:item.districtId , label:item.districtName});
+                    })
+                    this.queryColumns[0].options = this.zhenList;
+                })
+            }
+
         },
         components: {
             CommonCRUD
@@ -177,6 +206,7 @@
             this.columns = this.$store.state.classInfo.properties;
             tansfer(this.columns);
             this.showParentList();
+            this.showZhenList();
         }
     }
 </script>

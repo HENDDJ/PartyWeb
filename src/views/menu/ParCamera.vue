@@ -5,6 +5,7 @@
                      :formColumns="formColumns"
                      apiRoot="/identity/parCamera"
                      :sortColumns="sortQuery"
+                     :queryFormColumns="queryColumns"
                      :addBtnVis=false
                      :editBtnVis=false
                      :lookBtnVis = false
@@ -69,6 +70,20 @@
                     {
                         name:'createdAt',
                         type:'desc'
+                    }
+                ],
+                queryColumns:[
+                    {
+                        des: '地名',
+                        name: 'name',
+                        type: 'string',
+                        visible: true,
+                    },
+                    {
+                        des: '序列号',
+                        name: 'number',
+                        type: 'string',
+                        visible: true,
                     }
                 ]
             };

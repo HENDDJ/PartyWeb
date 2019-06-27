@@ -45,10 +45,9 @@
                 </el-form-item>
                 <el-form-item label="发布对象" v-if="acceptPerson">
                     <el-tree
+                        :data="idList"
                         :props="props"
                         ref="tree"
-                        :load="loadNode"
-                        lazy
                         show-checkbox
                         @check = "handleId">
                     </el-tree>
@@ -91,16 +90,14 @@
                 //发布的对象只有新增时可以看到，编辑查看都不能看到
                 acceptPerson:true,
                 queryTitle:'',
+                idList:[],
             };
         },
         methods: {
             //树节点数据
-            loadNode(node, resolve) {
-                if (node.level === 0) {
-                    return resolve([{ id: '01', label: '句容市委', children: [] }]);
-                }
-                this.$http('GET',`/identity/sysDistrict/${node.data.id}tree`,false).then((data)=>{
-                    return resolve(data);
+            loadNode() {
+                this.$http('GET',`/identity/sysDistrict/01alltree`,false).then((data)=>{
+                    this.idList = data;
                 })
             },
             handleId(){
@@ -257,6 +254,7 @@
         },
         created() {
             this.showInformationList();
+            this.loadNode();
         }
     }
 </script>

@@ -9,11 +9,11 @@
                      :editBtnVis=false
                      :lookBtnVis = false
                      :delBtnVis=false>
-            <template slot="header-btn" slot-scope="slotProps">
+            <template slot="header-btn">
                 <el-button type="primary" plain @click="add()" class="self-add self-btn">&nbsp;</el-button>
-                <el-button type="success" plain class="self-btn self-edit" @click="edit(slotProps.selected[0])">&nbsp;</el-button>
-                <el-button type="success" plain class="self-btn self-look" @click="look(slotProps.selected[0])">&nbsp;</el-button>
-                <el-button type="danger" plain @click="del(slotProps.selected[0])" class="self-del self-btn">&nbsp;</el-button>
+                <el-button type="success" plain class="self-btn self-edit" @click="edit()">&nbsp;</el-button>
+                <el-button type="success" plain class="self-btn self-look" @click="look()">&nbsp;</el-button>
+                <el-button type="danger" plain @click="del()" class="self-del self-btn">&nbsp;</el-button>
             </template>
         </CommonCRUD>
         <el-dialog
@@ -79,22 +79,29 @@
                 this.dialogVisible = true;
                 this.disabled = false;
             },
-            edit(row){
-                this.title = "编辑";
-                this.dialogVisible = true;
-                this.disabled = false;
-                this.form = row;
+            edit(){
+               if(this.$refs.table.validateRows()){
+                   this.title = "编辑";
+                   this.dialogVisible = true;
+                   this.disabled = false;
+                   this.form = Object.assign({},this.$refs.table.selected[0]);
+               }
             },
-            look(row){
-                this.title = "查看";
-                this.dialogVisible = true;
-                this.disabled = true;
-                this.form = row;
+            look(){
+                if(this.$refs.table.validateRows()){
+                    this.title = "查看";
+                    this.dialogVisible = true;
+                    this.disabled = true;
+                    this.form = Object.assign({},this.$refs.table.selected[0]);
+                }
             },
-            del(row){
+            del(){
+                if (!this.$refs.table.validateRows()) {
+                    return;
+                }
                 this.$confirm('确认删除？')
                     .then(_ => {
-                        this.$http(`DELETE`, `identity/parCamera/${row.id}id`).then(_ => {
+                        this.$http(`DELETE`, `identity/parCamera/${this.$refs.table.selected[0].id}id`).then(_ => {
                             this.$refs.table.refreshTableData();
                         });
                     })
@@ -102,7 +109,6 @@
             },
             submit (form) {
                 this.submitLoading = true;
-                console.log(form);
                 //新增
                 if(form.id==null){
                     this.$http('POST',`identity/parCamera/`,form).then(() => {
@@ -140,12 +146,10 @@
             },
             handleSelect(){
                 this.$http("POST",`identity/sysDistrict/list`,false).then( data => {
-                    console.log(data);
                     data.forEach( item => {
                         this.districtList.push({label:item.districtName,value:item.id});
                     })
                 })
-
             },
             handleId(){
                 this.districtList.filter(item => {
@@ -153,7 +157,7 @@
                         this.form.organizationId = item.value;
                     }
                 })
-            }
+            },
         },
         components: {
             CommonCRUD

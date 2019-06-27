@@ -2,17 +2,17 @@
     <section>
         <CommonCRUD  ref="table"
                      :columns="columns"
-                     apiRoot="/identity/sysDistrict"
+                     apiRoot="identity/sysDistrict"
                      :sortColumns="sortQuery"
                      :addBtnVis=false
                      :editBtnVis=false
                      :lookBtnVis = false
                      :delBtnVis=false>
-            <template slot="header-btn" slot-scope="slotProps">
+            <template slot="header-btn" >
                 <el-button type="primary" plain @click="add()" class="self-add self-btn">&nbsp;</el-button>
-                <el-button type="success" plain class="self-btn self-edit" @click="edit(slotProps.selected[0])">&nbsp;</el-button>
-                <el-button type="success" plain class="self-btn self-look" @click="look(slotProps.selected[0])">&nbsp;</el-button>
-                <el-button type="danger" plain @click="del(slotProps.selected[0])" class="self-del self-btn">&nbsp;</el-button>
+                <el-button type="success" plain class="self-btn self-edit" @click="edit()">&nbsp;</el-button>
+                <el-button type="success" plain class="self-btn self-look" @click="look()">&nbsp;</el-button>
+                <el-button type="danger" plain @click="del()" class="self-del self-btn">&nbsp;</el-button>
             </template>
         </CommonCRUD>
 
@@ -60,11 +60,7 @@
             return {
                 columns:[],
                 parentList:[],
-                form:{
-                    districtName:'',
-                    districtLevel:'',
-                    attachTo:''
-                },
+                form:{},
                 dialogVisible: false,
                 loading: false,
                 title:'',
@@ -83,23 +79,33 @@
                 this.title = "新增";
                 this.dialogVisible = true;
                 this.disabled = false;
+                this.form={};
             },
-            edit(row){
-                this.title = "编辑";
-                this.dialogVisible = true;
-                this.disabled = false;
-                this.form = row;
+            edit(){
+                if(this.$refs.table.validateRows()){
+                    this.title = "编辑";
+                    this.dialogVisible = true;
+                    this.disabled = false;
+                    this.form = Object.assign({},this.$refs.table.selected[0]);
+                }
+
             },
-            look(row){
-                this.title = "查看";
-                this.dialogVisible = true;
-                this.disabled = true;
-                this.form = row;
+            look(){
+                if(this.$refs.table.validateRows()){
+                    this.title = "查看";
+                    this.dialogVisible = true;
+                    this.disabled = true;
+                    this.form =  Object.assign({},this.$refs.table.selected[0]);
+                }
             },
-            del(row){
+            del(){
+                if(!this.$refs.table.validateRows()){
+                    return
+                }
                 this.$confirm('确认删除？')
                     .then(_ => {
-                        this.$http(`DELETE`, `identity/sysDistrict/${row.id}id`).then(_ => {
+                        console.log(this.$refs.table.selected[0].id);
+                        this.$http("DELETE", `identity/sysDistrict/${this.$refs.table.selected[0].id}id`).then(_ => {
                             this.$refs.table.refreshTableData();
                         });
                     })

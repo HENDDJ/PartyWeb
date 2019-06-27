@@ -1,20 +1,17 @@
 <template>
-    <div class="common-crud">
-        <div class="handler-btn" >
-            <el-button type="primary" plain @click="add()" class="self-btn" v-if="authorityControl">新增</el-button>
+    <section>
+        <div class="handler-btn">
+            <el-button type="primary" v-if="authorityControl" plain @click="add()" class="self-add self-btn">&nbsp;</el-button>
+            <el-button type="success"  v-if="authorityControl" plain class="self-btn self-edit" @click="edit()">&nbsp;</el-button>
+            <el-button type="success" plain class="self-btn self-look" @click="look()">&nbsp;</el-button>
+            <el-button type="danger" v-if="authorityControl" plain @click="del()" class="self-del self-btn">&nbsp;</el-button>
         </div>
-        <el-table :data="informationList" v-loading="loading" border align="center" stripe
+        <el-table :data="informationList" v-loading="loading" border align="center" stripe  @selection-change="handleSelectionChange"
                   :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}">
+            <el-table-column type="selection" width="55" align="center"></el-table-column>
             <el-table-column prop="name" label="发布组织" align="center" ></el-table-column>
             <el-table-column prop="title" label="标题" align="center" ></el-table-column>
             <el-table-column prop="description" label="内容" align="center"></el-table-column>
-            <el-table-column  label="操作" align="center" width="200">
-                <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="edit(scope.row)" v-if="authorityControl">编辑</el-button>
-                    <el-button  type="text" size="small" @click="look(scope.row)" >查看</el-button>
-                    <el-button  type="text" size="small" @click="del(scope.row)"  v-if="authorityControl">删除</el-button>
-                </template>
-            </el-table-column>
         </el-table>
         <el-pagination style="text-align: right;margin-top: 20px;"
                        background
@@ -53,7 +50,7 @@
                 <el-button @click="handleClose">取 消</el-button>
             </div>
         </el-dialog>
-    </div>
+    </section>
 </template>
 
 <script>
@@ -73,7 +70,7 @@
                 title:'',
                 disabled: false,
                 submitLoading: false,
-
+                selected:[],
                 props: {
                     id: 'id',
                     label: 'label',
@@ -103,7 +100,6 @@
                 })
                 this.form.districtIdList = ids;
             },
-
             currentChange(currentPage){
                 this.pageable.currentPage = currentPage;
                 this.showInformationList();
@@ -138,44 +134,53 @@
                 this.disabled = false;
                 this.acceptPerson = true;
             },
-            edit(row){
+            edit(){
                 this.title = "编辑";
-                this.dialogVisible = true;
-                this.disabled = false;
-                this.acceptPerson = false;
-                this.form = row;
-            },
-            look(row){
-                this.title = "查看";
-                this.dialogVisible = true;
-                this.disabled = true;
-                this.acceptPerson = false;
-                this.form = row;
-                let currentUser = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
-                //处理接收公告
-                if(currentUser != '01'){
-                    this.form.status = "1";
-                    this.$http('PUT', `identity/acceptInformation/${this.form.id}id`,this.form).then(() =>{
-
-                    });
+                if (this.validateRows()) {
+                    console.log(this.selected[0])
+                    this.dialogVisible = true;
+                    this.disabled = false;
+                    this.acceptPerson = false;
+                    this.form = Object.assign({}, this.selected[0]);
                 }
             },
-            del(row){
+            look(){
+                this.title = "查看";
+                if (this.validateRows()) {
+                    this.dialogVisible = true;
+                    this.disabled = true;
+                    this.acceptPerson = false;
+                    this.form = Object.assign({}, this.selected[0]);
+                    let currentUser = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
+                    //处理接收公告
+                    if(currentUser != '01'){
+                        this.form.status = "1";
+                        this.$http('PUT', `identity/acceptInformation/${this.form.id}id`,this.form).then(() =>{
+
+                        });
+                    }
+                }
+
+            },
+            del(){
+                if (!this.validateRows()) {
+                    return;
+                }
                 this.$confirm('确认删除？')
                     .then(_ => {
-                        this.$http(`DELETE`, `identity/information/${row.id}id`).then(_ => {
+                        this.$http(`DELETE`, `identity/information/${this.selected[0].id}id`).then(_ => {
                             this.showInformationList();
                         });
                     })
                     .catch(_ => {});
             },
-            submit (form) {
+            submit () {
                 this.submitLoading = true;
                 //新增
-                if(form.id==null){
-                    form.releaseTime = form.createdAt;
-                    form.districtID = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
-                    this.$http('POST',`identity/information/`,form).then(() => {
+                if(this.form.id==null){
+                    this.form.releaseTime = this.form.createdAt;
+                    this.form.districtID = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
+                    this.$http('POST',`identity/information/`,this.form).then(() => {
                         this.submitLoading = false;
                         this.dialogVisible = false;
                         this.showInformationList();
@@ -183,8 +188,8 @@
                     });
                 }
                 //编辑
-                if((form.id!=null)&&(this.disabled===false)){
-                    this.$http('PUT', `identity/information/${form.id}id`,form).then(() =>{
+                if((this.form.id!=null)&&(this.disabled===false)){
+                    this.$http('PUT', `identity/information/${this.form.id}id`,this.form).then(() =>{
                         this.submitLoading = false;
                         this.dialogVisible = false;
                         this.showInformationList();
@@ -207,6 +212,19 @@
                         done();
                     })
                     .catch(_ => {});
+            },
+            handleSelectionChange(val) {
+                this.selected = val;
+            },
+            validateRows() {
+                if (this.selected.length !== 1) {
+                    this.$message({
+                        type: 'warning',
+                        message: this.selected.length > 1 ? '仅能选择一行记录' : '请选择一行记录'
+                    });
+                    return false;
+                }
+                return true;
             },
         },
         created() {
@@ -236,10 +254,20 @@
         height: 28px !important;
         border-radius: 5px !important;
     }
-    .footer-position {
-        margin-right: 84px;
+    .self-add {
+        background: url('../../../static/img/add.png') !important;
+        background-size: cover !important;
     }
-    .filter-tree {
-        font-size: 14px;
+    .self-del {
+        background: url('../../../static/img/del.png') !important;
+        background-size: cover !important;
+    }
+    .self-edit {
+        background: url('../../../static/img/edit.png') !important;
+        background-size: cover !important;
+    }
+    .self-look {
+        background: url('../../../static/img/look.png') !important;
+        background-size: cover !important;
     }
 </style>

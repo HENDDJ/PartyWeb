@@ -58,6 +58,11 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+
+    // ** 跳转路由钱将对应的属性集合拿到Vuex中
+    let matched = to.matched;
+    router.app.$store.commit("getClassInfo", matched[matched.length-1].meta.classInfo);
+
     NProgress.start();
     if (to.path === '/login') {
         sessionStorage.removeItem("token");

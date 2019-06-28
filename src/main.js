@@ -6,6 +6,7 @@ import '@/utils/proxy-poyfill';
 import '@/utils/sessionStorage'
 import Vue from 'vue';
 import App from './App';
+import store from '@/store';
 import router from './router';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
@@ -15,7 +16,6 @@ import 'material-icons/iconfont/material-icons.css';
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import Icon from 'vue-svg-icon/Icon.vue';
 import { generate, common, getRouter ,ht } from '@/api';
-import store from '@/store';
 import '@/utils/DateFormatter.js'
 import DynamicRoutes from '@/utils/dynamic-routes';
 import Vuesax from 'vuesax';

@@ -38,20 +38,40 @@
                                             <p style="border-right: 1px solid #888">&nbsp;</p>
                                         </div>
                                         <div class="left-time">
-                                            <template v-if="calcLeftDays(item.month)">
-                                                <icon name="miaobiao" scale="3"></icon>
-                                                <p><span>{{calcLeftDays(item.month)}}</span>天</p>
+                                            <template v-if="roleCode === 'COUNTRY_SIDE_ACTOR'">
+                                                <el-tag v-if="item.status === '2'" type="success" effect="dark"  name="已完成">已完成</el-tag>
+                                                <el-tag v-else-if="item.status === '1'" type="warning" effect="dark"  name="待审核">待审核</el-tag>
+                                                <template v-else>
+                                                    <template v-if="calcLeftDays(item.month)">
+                                                        <icon name="miaobiao" scale="3"></icon>
+                                                        <p><span>{{calcLeftDays(item.month)}}</span>天</p>
+                                                    </template>
+                                                    <template v-else>
+                                                        <el-tag type="danger" effect="dark"  name="未完成">未完成</el-tag>
+                                                    </template>
+                                                </template>
                                             </template>
                                             <template v-else>
-                                                <el-tag type="success" effect="dark"  name="已完成">已完成</el-tag>
+                                                <template v-if="calcLeftDays(item.month)">
+                                                    <icon name="miaobiao" scale="3"></icon>
+                                                    <p><span>{{calcLeftDays(item.month)}}</span>天</p>
+                                                </template>
+                                                <template v-else>
+                                                    <el-tag type="success" effect="dark"  name="已完成">已完成</el-tag>
+                                                </template>
                                             </template>
                                         </div>
                                         <div class="processing">
-                                            <el-progress style="width: 80%;text-align: center" v-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
-                                            <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.7" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
-                                            <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
-                                            <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) === 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
-                                            <span v-else>ERROR</span>
+                                            <template v-if="roleCode === 'COUNTRY_SIDE_ACTOR'">
+                                                <el-progress style="width: 80%;text-align: center" :percentage="((item.status || 0)/2) * 100" :stroke-width="5"></el-progress>
+                                            </template>
+                                            <template v-else>
+                                                <el-progress style="width: 80%;text-align: center" v-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                                <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.7" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                                <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                                <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) === 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                                <span v-else>ERROR</span>
+                                            </template>
                                         </div>
                                         <!--<div class="detail">-->
                                             <!--<div style="border: 1px solid #444; width: 30px;height: 30px; border-radius: 30px">-->
@@ -657,7 +677,7 @@
                     let path = `${this.apiRootObject}/findByOrganizationIdAndActivityId`;
                     let query = {
                         organizationId: this.sysDistrict.districtId,
-                        activityId: this.detailForm.id
+                        activityId: this.detailForm.activityId
                     };
                     this.$http("POST", path, query, false).then(data => {
                         console.log(data,"ss");
@@ -672,6 +692,10 @@
             // 获取表格数据
             loadTableData(path, statusChange) {
                 this.activityLoading = false;
+                if (this.roleCode === 'COUNTRY_SIDE_ACTOR') {
+                    path = path.replace('parActivity', 'parActivityObject');
+                    this.queryForm.organizationId = this.sysDistrict.districtId;
+                }
                 this.$http('POST', path, this.queryForm, false).then(
                     data => {
                         this.tableData = data.content;

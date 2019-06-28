@@ -46,6 +46,9 @@
                                                         <icon name="miaobiao" scale="3"></icon>
                                                         <p><span>{{calcLeftDays(item.month)}}</span>天</p>
                                                     </template>
+                                                    <template v-else>
+                                                        <el-tag type="danger" effect="dark"  name="未完成">未完成</el-tag>
+                                                    </template>
                                                 </template>
                                             </template>
                                             <template v-else>

@@ -3,7 +3,7 @@
         <div :class="$route.name === 'DashboardRoot' ? 'menu-bar isDashboard' : 'menu-bar'">
             <icon name="home" scale="2" style="display: inline-block;"></icon>
             <el-breadcrumb separator="/"  style="display: inline-block;">
-                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item :to="{ path: '/MainView' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item v-for="item in breadList" :key="item.path">
                     {{item.meta.title}}
                 </el-breadcrumb-item>

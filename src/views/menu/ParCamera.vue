@@ -58,7 +58,7 @@
         data() {
             return {
                 columns:[],
-                formColumns:{},
+                formColumns:[],
                 districtList:[],
                 form:{},
                 dialogVisible: false,

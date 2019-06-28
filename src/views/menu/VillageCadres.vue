@@ -26,7 +26,7 @@
                 colorx:'success',
                 zhenList:[],//所有镇级
                 cadreColumns:[],//村干部列表
-                cadreFormColumns:{},//村干部表单
+                cadreformColumns:[],//村干部表单
                 //村干部查询条件
                 cadreQuery:[
                     {

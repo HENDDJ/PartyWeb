@@ -13,7 +13,7 @@
         data(){
             return {
                 columns:[],
-                formColumns:{},
+                formColumns:[],
                 districtList:[],//所有组织层级
                 zhenList:[],//所有镇级
                 queryColumns:[
@@ -47,7 +47,7 @@
                     ['type', 'PositionType'],
                 ].forEach(item => {
                     this.formColumns.filter(sub => sub.name === item[0])[0].options = LookUp[item[1]]
-                })
+                });
             },
             showAllOrg(){
                 //层级组织请求

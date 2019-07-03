@@ -19,18 +19,16 @@
                         <vs-avatar  size="70px" :src="user.image"/>
                         <h4>{{user.name}}</h4>
                     </div>
-                    <span style="font-size: 16px;color: #91bbe9">&nbsp; &nbsp;<vs-icon icon="question_answer" color="#91bbe9"></vs-icon><b>&nbsp;&nbsp;组织介绍</b></span>
-                 <!--   <vs-sidebar-item  icon="question_answer"><b>组织介绍</b></vs-sidebar-item>-->
+                    <span style="font-size: 14px;color: #3a8ee6">&nbsp; &nbsp;<b>&nbsp;&nbsp;组织介绍</b></span>
                     <p>{{user.introduction}}</p><br/>
-                   <!-- <span style="font-size: 16px;color: #91bbe9">&nbsp; &nbsp;<vs-icon icon="person" color="#91bbe9"></vs-icon><b>&nbsp;&nbsp;账号信息</b></span>
--->
-                    <vs-divider icon="person" position="left">11111</vs-divider>
+                    <hr/>
+                    <span style="font-size: 14px;color: #3a8ee6">&nbsp; &nbsp;<b>&nbsp;&nbsp;账号信息</b></span><br><br>
                         <div>
-                            <p class="">登录名：{{user.userName}}</p>
-                            <p>所在组织：{{user.organizationName}}</p>
-                            <p>当前角色：{{user.roleName}}</p>
-                            <p>联系方式：{{user.phone}}</p>
-                            <p>最近登录时间：{{user.lastTime}}</p>
+                            <p><icon name="loguser" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.userName}}</p>
+                            <p><icon name="logorg" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.organizationName}}</p>
+                            <p><icon name="logrole" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.roleName}}</p>
+                            <p><icon name="logphone" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.phone}}</p>
+                            <p><icon name="logtime" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.lastTime}}</p>
                         </div>
                     <div class="footer-sidebar" slot="footer">
                         <vs-button icon="edit" color="warning" type="flat" @click="pswDia=true;active=false">修改密码</vs-button>
@@ -58,7 +56,7 @@
                 </el-badge>
             </vs-navbar-item>
             <el-dialog v-if="waitCheckTips" title="未查看消息" :visible.sync="waitCheckTips" width="60%" align="left" :modal-append-to-body='false' :append-to-body="true" :before-close="handleClose" >
-                <vs-list v-for="item in waitCheckList">
+                <vs-list v-for="item in waitCheckList" key="index">
                     <vs-list-item :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===0">
                         <vs-item style="float: right; font-size: 12px;color:rgb(96, 98, 102);font-weight: bold">{{item.createdAt}}</vs-item>
                     </vs-list-item>
@@ -195,9 +193,15 @@
             },
             handleCheck(item){
                 item.isRead = 1;
-                this.$http("PUT",`identity/messageCenter/${item.id}id`,item).then( () => {
+                this.$http("PUT",`identity/messageCenter/${item.id}id`,item,false).then( () => {
+                    this.waitCheckTips = false;
+                    this.handleMessageCenter();
                     if(item.type==='party'||'distLearning'){
                         let path = "/activity/parActivityReview"
+                        this.$router.push({path: path});
+                    }
+                    if(item.type==='information'){
+                        let path = "/home/information";
                         this.$router.push({path: path});
                     }
 
@@ -258,6 +262,14 @@
     }
     .vs-list--item{
         cursor:pointer;
+    }
+    hr{
+        background-color: #f0f0f0;
+        border: none;
+        height: 1px;
+    }
+    svg {
+        margin: 0 5px;
     }
 
 </style>

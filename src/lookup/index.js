@@ -121,4 +121,18 @@ export default {
             label :'副主任'
         }
     ],
+    'DistrictLevel': [
+        {
+            value :1,
+            label :'句容市委'
+        },
+        {
+            value :2,
+            label :'镇级组织'
+        },
+        {
+            value :3,
+            label :'村级组织'
+        },
+    ],
 }

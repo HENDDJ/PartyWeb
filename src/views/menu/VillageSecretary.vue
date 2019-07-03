@@ -11,7 +11,8 @@
         data(){
             return {
                 columns:[],
-                formColumns:{},
+                formColumns:[],
+                districtList:[],
                 queryForm:[
                     {
                         des: '姓名',
@@ -29,6 +30,24 @@
                 ]
             }
         },
+        methods:{
+            handelOrg(){
+                //层级组织请求
+                this.$http('GET',`identity/sysDistrict/${'01'}alltree`,false).then( data => {
+                    this.districtList = data[0].children;
+                    this.handleOrgLeaf(this.districtList);
+                    this.formColumns.filter(item => item.name === 'districtId')[0].options = this.districtList;
+                });
+            },
+            //处理村级组织children为空的情况
+            handleOrgLeaf(districtList){
+                districtList.forEach(item => {
+                    item.children.forEach(subitem => {
+                        delete subitem.children;
+                    })
+                })
+            }
+        },
         components: {
             CommonCRUD
         },
@@ -36,6 +55,7 @@
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns =this.$store.state.classInfo.properties;
             this.queryForm[1].value = 'SECRETARY';
+            this.handelOrg();
         }
     }
 </script>

@@ -11,13 +11,20 @@ module.exports = {
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         proxyTable: {
+            '/api/zuul': {
+                target: 'http://localhost:8762',  // 本地域名
+                changeOrigin: true,  //是否跨域
+                pathRewrite: {
+                    '^/api/zuul': '/zuul/api',   //需要rewrite重写的,
+                }
+            },
             '/api': {
                 target: 'http://localhost:8762',  // 本地域名
                 changeOrigin: true,  //是否跨域
                 pathRewrite: {
-                    '^/api': '/api'   //需要rewrite重写的,
+                    '^/api': '/api',   //需要rewrite重写的,
                 }
-            }
+            },
         },
 
         // Various Dev Server settings

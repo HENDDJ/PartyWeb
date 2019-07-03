@@ -47,25 +47,25 @@
                     <el-input v-model="form.education" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="特长或技能">
-                    <el-input type="textarea" v-model="form.talent" :disabled="disabled"></el-input>
+                    <el-input type="textarea"  class="common-textarea" :rows="2" v-model="form.talent" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="个人简历">
-                    <el-input type="textarea" v-model="form.resume" :disabled="disabled"></el-input>
+                    <el-input type="textarea" class="common-textarea" :rows="2" v-model="form.resume" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="主要表现">
-                    <el-input type="textarea" v-model="form.performance" :disabled="disabled"></el-input>
+                    <el-input type="textarea" class="common-textarea" :rows="2" v-model="form.performance" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="政审情况">
-                    <el-input type="textarea" v-model="form.politicalTrial" :disabled="disabled"></el-input>
+                    <el-input type="textarea" class="common-textarea" :rows="2" v-model="form.politicalTrial" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="奖惩情况">
-                    <el-input type="textarea" v-model="form.rewardPunish" :disabled="disabled"></el-input>
+                    <el-input type="textarea" class="common-textarea" :rows="2" v-model="form.rewardPunish" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="单位意见">
-                    <el-input type="textarea" v-model="form.opinion" :disabled="disabled"></el-input>
+                    <el-input type="textarea" class="common-textarea" :rows="2" v-model="form.opinion" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="备注">
-                    <el-input type="textarea" v-model="form.remark" :disabled="disabled"></el-input>
+                    <el-input type="textarea" class="common-textarea" :rows="2" v-model="form.remark" :disabled="disabled"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer footer-position">
@@ -83,7 +83,7 @@
         data(){
             return {
                 columns:[],
-                formColumns:{},
+                formColumns:[],
                 partyMemberList:[],
                 dialogVisible:false,
                 form:{
@@ -245,5 +245,7 @@
 </script>
 
 <style scoped>
-
+    .common-textarea .el-textarea__inner {
+        width: 585px !important;
+    }
 </style>

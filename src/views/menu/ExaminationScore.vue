@@ -855,12 +855,10 @@
     }
 
     .tableStyle {
-        overflow: scroll;
         margin-top: 20px;
         margin-left: -20px;
         width: 100%;
         text-align: left;
-        height: 600px;
     }
 
 </style>

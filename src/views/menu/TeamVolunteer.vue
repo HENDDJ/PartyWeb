@@ -138,7 +138,7 @@
             return {
                 colorx:'success',
                 volunteerColumns:[],//志愿者列表
-                volunteerFormColumns:{},//志愿者
+                volunteerformColumns:[],//志愿者
                 //志愿者查询条件
                 volunteerQuery:[
                     {
@@ -430,6 +430,9 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .vs-tabs--btn {
+        font-size: 14px !important;
+    }
 
 </style>

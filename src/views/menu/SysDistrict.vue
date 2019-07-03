@@ -1,26 +1,22 @@
 <template>
-    <div class="common-crud">
-        <div class="handler-btn">
-            <el-button type="primary" plain @click="add()" class="self-btn">新增</el-button>
-        </div>
-        <el-table :data="districtList" v-loading="loading" border align="center" stripe
-                  :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}">
-            <el-table-column prop="districtName" label="组织名称" align="center" ></el-table-column>
-            <el-table-column prop="districtLevel" label="组织类型" :formatter="formatterColumn" align="center"></el-table-column>
-            <el-table-column prop="parentName" label="所属组织" align="center"  ></el-table-column>
-            <el-table-column  label="操作" align="center" width="200">
-                <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
-                    <el-button  type="text" size="small" @click="look(scope.row)">查看</el-button>
-                    <el-button  type="text" size="small" @click="del(scope.row)">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-        <el-pagination style="text-align: right;margin-top: 20px;"
-                       background
-                       :total="pageable.total" :current-page.sync="pageable.currentPage" :page-size.sync="pageable.pageSize"
-                       @current-change="currentChange" @size-change="sizeChange" layout="total, sizes, prev, pager, next">
-        </el-pagination>
+    <section>
+        <CommonCRUD  ref="table"
+                     :columns="columns"
+                     apiRoot="identity/sysDistrict"
+                     :sortColumns="sortQuery"
+                     :queryFormColumns="queryColumns"
+                     :addBtnVis=false
+                     :editBtnVis=false
+                     :lookBtnVis = false
+                     :delBtnVis=false>
+            <template slot="header-btn" >
+                <el-button type="primary" plain @click="add()" class="self-add self-btn">&nbsp;</el-button>
+                <el-button type="success" plain class="self-btn self-edit" @click="edit()">&nbsp;</el-button>
+                <el-button type="success" plain class="self-btn self-look" @click="look()">&nbsp;</el-button>
+                <el-button type="danger" plain @click="del()" class="self-del self-btn">&nbsp;</el-button>
+            </template>
+        </CommonCRUD>
+
         <el-dialog
             v-if="dialogVisible"
             :title="title"
@@ -41,6 +37,9 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item label="组织id">
+                    <el-input v-model="form.districtId" :disabled="disabled"></el-input>
+                </el-form-item>
                 <el-form-item label="组织名称">
                     <el-input v-model="form.districtName" :disabled="disabled"></el-input>
                 </el-form-item>
@@ -50,72 +49,81 @@
                 <el-button @click="handleClose">取 消</el-button>
             </div>
         </el-dialog>
-    </div>
+    </section>
 </template>
 
 <script>
+    import { tansfer} from "../../lookup/transfer";
+    import CommonCRUD from '@/components/CommonCRUD';
     export default {
         name: "SysDistrict",
         data() {
             return {
-                districtList:[],
+                columns:[],
                 parentList:[],
-                pageable: {
-                    total: 0,
-                    currentPage: 1,
-                    pageSize: 10
-                },
-                form:{
-                    districtName:'',
-                    districtLevel:'',
-                    attachTo:''
-                },
+                form:{},
                 dialogVisible: false,
                 loading: false,
                 title:'',
                 disabled: false,
                 submitLoading: false,
+                zhenList:[],
+                sortQuery:[
+                    {
+                        name:'createdAt',
+                        type:'desc'
+                    }
+                ],
+                queryColumns:[
+                    {
+                        des: '所属组织',
+                        name: 'districtId',
+                        type: 'select',
+                        visible: true,
+                        options: ''
+                    },
+                    {
+                        des: '名称',
+                        name: 'districtName',
+                        type: 'string',
+                        visible: true,
+                    }
+                ]
             };
         },
         methods: {
-            currentChange(currentPage){
-                this.pageable.currentPage = currentPage;
-                this.showDistrictList();
-            },
-            sizeChange(size){
-                this.pageable.pageSize = size;
-                this.showDistrictList();
-            },
-            showDistrictList(){
-                this.loading = true;
-                this.$http('POST',`/identity/sysDistrict/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,false).then(data => {
-                    this.districtList = data.content;
-                    this.pageable.total= data.totalElements;
-                    this.loading = false;
-                });
-            },
             add(){
                 this.title = "新增";
                 this.dialogVisible = true;
                 this.disabled = false;
+                this.form={};
             },
-            edit(row){
-                this.title = "编辑";
-                this.dialogVisible = true;
-                this.disabled = false;
-                this.form = row;
+            edit(){
+                if(this.$refs.table.validateRows()){
+                    this.title = "编辑";
+                    this.dialogVisible = true;
+                    this.disabled = false;
+                    this.form = Object.assign({},this.$refs.table.selected[0]);
+                }
+
             },
-            look(row){
-                this.title = "查看";
-                this.dialogVisible = true;
-                this.disabled = true;
-                this.form = row;
+            look(){
+                if(this.$refs.table.validateRows()){
+                    this.title = "查看";
+                    this.dialogVisible = true;
+                    this.disabled = true;
+                    this.form =  Object.assign({},this.$refs.table.selected[0]);
+                }
             },
-            del(row){
+            del(){
+                if(!this.$refs.table.validateRows()){
+                    return
+                }
                 this.$confirm('确认删除？')
                     .then(_ => {
-                        this.$http(`DELETE`, `identity/sysDistrict/${row.id}id`).then(_ => {
-                            this.showDistrictList();
+                        console.log(this.$refs.table.selected[0].id);
+                        this.$http("DELETE", `identity/sysDistrict/${this.$refs.table.selected[0].id}id`).then(_ => {
+                            this.$refs.table.refreshTableData();
                         });
                     })
                     .catch(_ => {});
@@ -135,7 +143,7 @@
                     this.$http('POST',`/identity/sysDistrict/`,form).then(() => {
                         this.submitLoading = false;
                         this.dialogVisible = false;
-                        this.showDistrictList();
+                        this.$refs.table.refreshTableData();
                         this.form ={};
                     });
                 }
@@ -152,7 +160,7 @@
                     this.$http('PUT', `identity/sysDistrict/${form.id}id`,form).then(() =>{
                         this.submitLoading = false;
                         this.dialogVisible = false;
-                        this.showDistrictList();
+                        this.$refs.table.refreshTableData();
                         this.form={};
                     });
                 }else{//查看
@@ -173,45 +181,35 @@
                     })
                     .catch(_ => {});
             },
-            formatterColumn(row, column, cellValue, index) {
-                return row.districtLevel == 1 ? '句容市委' : row.districtLevel == 2 ? '镇级组织' :  row.districtLevel == 3 ? '村级组织' :' ';
-            },
+            //form表单上级组织下拉项
             showParentList() {
                 this.$http('POST',`identity/sysDistrict/listSome` ,false).then(data => {
                     this.parentList = data;
                 })
+            },
+            //查询框下拉项
+            showZhenList(){
+                //镇级组织
+                this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
+                    data.forEach( item => {
+                        this.zhenList.push( {value:item.districtId , label:item.districtName});
+                    })
+                    this.queryColumns[0].options = this.zhenList;
+                })
             }
+
         },
-        mounted() {
-            this.showDistrictList();
+        components: {
+            CommonCRUD
+        },
+        created() {
+            this.columns = this.$store.state.classInfo.properties;
+            tansfer(this.columns);
             this.showParentList();
+            this.showZhenList();
         }
     }
 </script>
 
 <style scoped>
-    .common-crud {
-        width: 95%;
-        padding: 2%;
-        background-color: rgba(255, 255, 255, .9);
-        border-radius: 2px;
-    }
-    .el-pagination__sizes .el-input--mini .el-input__inner {
-        width: 120px !important;
-    }
-    .el-pagination__sizes .el-select {
-        width: 120px !important;
-    }
-    .handler-btn {
-        float: left;
-        margin-bottom: 12px;
-    }
-    .self-btn {
-        width: 56px !important;
-        height: 28px !important;
-        border-radius: 5px !important;
-    }
-    .footer-position {
-        margin-right: 84px;
-    }
 </style>

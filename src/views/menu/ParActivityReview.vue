@@ -12,14 +12,15 @@
                             <div v-show="activityLoading">
                                 <div class="list-item" v-for="(item, index) in tableData" :key="item.id" @click="details(item)">
                                     <div class="status">
-                                        <icon name="check" scale="4"></icon>
-                                    </div>
-                                    <div class="left-date">
-                                        <p class="label">组织名称：<span class="value">{{item.districtName}}</span></p>
+                                        <img v-show="item.taskType === 'Party'" style="position: relative;left: 5px;top:13px" src="/static/img/party-logo.png" alt="党建logo"/>
+                                        <img v-show="item.taskType === 'DistLearning'" style="position: relative;left: 5px;top:13px" src="/static/img/learning-logo.png" alt="远教logo"/>
                                     </div>
                                     <div class="title-type">
                                         <p class="title">{{item.title}}</p>
                                         <p class="type">{{item.type}}</p>
+                                    </div>
+                                    <div class="left-date">
+                                        <p class="label">执行组织：<span class="value">{{item.districtName}}</span></p>
                                     </div>
                                     <div class="left-date">
                                         <p class="label">截止日期：<span class="value">{{item.month}}</span></p>

@@ -11,7 +11,7 @@
         data(){
             return {
                 columns:[],
-                formColumns:{},
+                formColumns:[],
                 queryForm:[
                     {
                         des: '姓名',

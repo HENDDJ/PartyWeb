@@ -9,7 +9,7 @@
         data(){
             return {
                 columns:[],
-                formColumns:{},
+                formColumns:[],
             }
         },
         methods: {
@@ -18,7 +18,7 @@
         components: {
             CommonCRUD
         },
-        created () {
+        mounted () {
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns =this.$store.state.classInfo.properties;
         }

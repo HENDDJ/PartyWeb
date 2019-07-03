@@ -266,8 +266,10 @@
             look() {
                 this.title = '查看';
                 this.disabled = true;
-                this.form = Object.assign({}, this.selected[0]);
-                this.dialogVisible = true;
+                if (this.validateRows()) {
+                    this.form = Object.assign({}, this.selected[0]);
+                    this.dialogVisible = true;
+                }
             },
             deleteRow() {
                 if (!this.validateRows()) {

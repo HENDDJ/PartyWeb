@@ -168,42 +168,51 @@
                 })
                 let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=6&sort=time,desc`;
                 let phoneForm = {userId:item.districtId,snId:item.activityId}
-                this.$http("Post",phonePath,phoneForm,false).then(data=>{
-                    data.content.forEach(item=>{
-                        let formItem = {}
-                        formItem.timestamp =item.time
-                        formItem.imgurl = item.imageUrl
-                        this.PhonePic.push(formItem)
-                        this.PhonePicFull.push(this.imgTFPhone(item))
+                this.$http("Post",phonePath,phoneForm,false).then((data)=>{
+                    if (!data.content[0]) {
+                        return;
+                    }
+                    console.log(data,11)
+                    data.content[0].imageUrl.forEach((item)=>{
+                        item.time = data.content[0].time;
+                        let formItem = {};
+                        formItem.timestamp =data.content[0].time;
+                        formItem.imgurl = data.content[0].imageUrl;
+                        this.PhonePic.push(formItem);
+                        this.PhonePicFull.push(this.imgTFPhone(item));
                     })
-                })
-
-
+                }).catch((res)=>{
+                    this.$message({
+                        type: 'error',
+                        message: '手机截图拉取失败'+res
+                    });
+                    console.log(res)
+                });
             },
             imgTF(val){
-                if (!val.split("&")[1]) {
+                if (val.indexOf("http" )== -1) {
                     return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${val}`
                 }else {
-                    console.log(val)
                     return val
                 }
             },
             imgTFPhone(item){
-                console.log(item)
                 let imgUrl = item.imageUrl.toString()
-                console.log(item.time.toString())
-                if (!imgUrl.split("&")[1]) {
-                    let time1 = item.time.toString().split("T")[0]
-                    let time2 =  Number(time1.split("-")[0])
-                    let time3 = Number(time1.split("-")[1])
-                    let time4 = Number(time1.split("-")[2])
-                    console.log(time1,111)
-                    let time5 = time3.toString()+time4.toString()
-                    return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${item.imageUrl}`
+                if (imgUrl.indexOf("http" )== -1) {
+                    if(imgUrl[0] === '.'){
+                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
+                    }else {
+                        let time1 = item.time.toString().split("T")[0]
+                        let time2 =  Number(time1.split("-")[0])
+                        let time3 = Number(time1.split("-")[1])
+                        let time4 = Number(time1.split("-")[2])
+                        let time5 = time3.toString()+time4.toString()
+                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${imgUrl}`
+                    }
                 }else {
                     return item.imageUrl
                 }
-            },
+                },
             //关闭详情
             picDetailClose() {
                 this.picDetail = false;

@@ -1012,17 +1012,17 @@
                 });
             },
             imgTF(val){
-                if (!val.split("&")[1]) {
+                if (val.indexOf("http" )== -1) {
                     return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${val}`
                 }else {
-                    console.log(val)
                     return val
                 }
             },
             imgTFPhone(item){
-                let imgUrl = item.imageUrl
-                if (!imgUrl.split("&")[1]) {
-                    if(imgUrl[0] == '.'){
+
+                let imgUrl = item.imageUrl.toString()
+                if (imgUrl.indexOf("http" )== -1) {
+                    if(imgUrl[0] === '.'){
                         return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
                     }else {
                         let time1 = item.time.toString().split("T")[0]
@@ -1030,7 +1030,7 @@
                         let time3 = Number(time1.split("-")[1])
                         let time4 = Number(time1.split("-")[2])
                         let time5 = time3.toString()+time4.toString()
-                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${item.imageUrl}`
+                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${imgUrl}`
                     }
                 }else {
                     return item.imageUrl

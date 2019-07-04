@@ -2,30 +2,33 @@
     <section>
         <div id="allmap"></div>
         <nav class="nav">
-            <ul>
+           <!-- <ul>
                 <li class="store" @click="showBattleField()"><span class="store-icon"></span><a href="#">基本阵地分布图</a></li>
                 <li class="movies" @click="showPapo()"><span class="movies-icon"></span><a href="#">各阵地人流量气泡图</a></li>
                 <li class="books" @click="showChild()"><span class="books-icon"></span><a href="#">各支部分布图</a></li>
                 <li class="music" @click="showPapo()"><span class="music-icon"></span><a href="#">各阵地活动次数柱状图</a></li>
                 <li class="books" @click="showLeader()"><span class="books-icon"></span><a href="#">村干部分布图</a></li>
+            </ul>-->
+            <ul>
+                <li class="store" @click="showChild()"><span class="books-icon"></span><a href="#">党组织</a></li>
+                <li class="movies" @click="showBattleField()"><span class="store-icon"></span><a href="#">基本阵地</a></li>
             </ul>
         </nav>
-       <!-- <div id="census" onclick="toggleDiv()">
-            <img src="某村各阵地使用次数.png" height="369" width="551"/>
-            <img src="某村实时人流图.png" height="472" width="670"/>
-            <img src="某村时间内人流峰值统计.png" height="369" width="539"/>
-        </div>-->
+        <div id="census" >
+            <img src="/static/img/test.png" height="472" width="670" onclick="toggleDiv('11')"/>
+        </div>
     </section>
 </template>
 
 <script>
+    import LookUp from '@/lookup';
     export default {
         name: "GISmap",
         data () {
             return {
                 map: {},
-                posinitionList:[],
-                pointList:[
+                positionList:[],
+               /* pointList:[
                     {label: '茅山村党员教育室', x: 119.302738, y: 31.797112},
                     {label: '宝华村党员教育室', x: 119.083573, y: 32.155268},
                     {label: '二圣村党员教育室', x: 119.195893, y: 31.86983},
@@ -61,12 +64,12 @@
                     {label: '乔飞飞', x: 119.125817, y: 32.115599},
                     {label: '任玉生', x: 119.276697, y: 32.026439},
                     {label: '蒋振华', x: 119.187457, y: 32.137519},
-                ],
+                ],*/
                 markerList:[],
                 mapvLayer:'',
                 opts : {
                     width : 250,     // 信息窗口宽度
-                    height: 80,     // 信息窗口高度
+                    height: 200,     // 信息窗口高度
                     title : "信息窗口" , // 信息窗口标题
                     enableMessage:true//设置允许信息窗发送短息
                 },
@@ -130,7 +133,6 @@
                         }); //建立多边形覆盖物
                         self.map.addOverlay(ply)
                     }
-
                 });
             },
             //展示基本阵地点位
@@ -148,12 +150,22 @@
                     });
                     this.map.addOverlay(marker);
                  });*/
-               this.$http("POST",`identity/positionInformation/list`,false).then( data =>{
+               this.$http("POST",`identity/gis/positionlist`,false).then( data =>{
                    data.forEach(item => {
-                       if(item.lonLat){
-                           let marker = new BMap.Marker(new BMap.Point(item.lonLat.split(",")[0],item.lonLat.split(",")[1]));
+                       if(item.positionLonLat){
+                           let marker = new BMap.Marker(new BMap.Point(item.positionLonLat.split(",")[0],item.positionLonLat.split(",")[1]));
                            marker.addEventListener('click', e => {
-                               this.openInfo(item.name,e);
+                               this.opts.title= LookUp['PositionType'].filter(sub => sub.value === item.positionType)[0].label;
+                               let sContent =
+                                   "<table>"+
+                                   "<tr><th>名称</th><th>"+item.positionName+"</th></tr>" +
+                                   "<tr><th>组织</th><th>"+item.positionDistrictName+"</th></tr>"+
+                                   "<tr><th>村干部数量</th><th>"+item.positionCadresNumber+"</th></tr>" +
+                                   "<tr><th>村书记</th><th>"+item.positionCadreName+"</th></tr>"+
+                                   "<tr><th>功能介绍</th><th >"+item.positionIntroduction+"</th></tr>"+
+                                   "</table>"
+                               this.openInfo(sContent,e);
+                               this.toggleDiv("show");
                            });
                            this.map.addOverlay(marker);
                        }
@@ -259,10 +271,10 @@
         list-style: none;
         height: 50px;
     }
-    nav ul li:hover {
+/*    nav ul li:hover {
         width: 200px;
         height: 50px;
-    }
+    }*/
     nav ul li a {
         position: absolute;
         width: 140px;
@@ -271,9 +283,9 @@
         color: #555;
         padding: 10px 0 0 60px;
     }
-    nav ul li a:hover {
+/*    nav ul li a:hover {
         color: #fff;
-    }
+    }*/
     .store {
         background: #b3c833;
         width: 50px;
@@ -318,7 +330,7 @@
 
     .store-icon {
         position: absolute;
-        margin-left: 10px;
+        margin-left: -10px;
         padding-top: 12px;
     }
     .store-icon:before {
@@ -354,7 +366,7 @@
 
     .books-icon {
         position: absolute;
-        margin-left: 10px;
+        margin-left: -10px;
         padding-top: 12px;
     }
     .books-icon:before {
@@ -392,15 +404,15 @@
 <style scoped>
     #allmap{
         width: 100%;
-        height: 610px;
+        height: 750px;
         overflow: hidden;
         margin:0;font-family:"微软雅黑";
     }
     #census{
         width: 0;
-        height: 93vh;
+        height: 300px;
         position: fixed;
-        top: 50px;
+        top: 200px;
         right: 10px;
         border-left: 1px solid grey;
         border-top: 1px solid grey;
@@ -437,7 +449,8 @@
         -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         width: 200px;
         z-index: 8888;
-        top: 30px;
+        top: 100px;
+        top: 100px;
         left: 30px;
         margin:30px 0 0 200px;
     }

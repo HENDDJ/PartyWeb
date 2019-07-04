@@ -254,7 +254,7 @@
                                     message: '上传成功'
                                 });
                                 this.$refs[form].resetFields();
-                                this.form = {taskType: 'Party'};
+                                this.form = {taskType: 'Party',score: 10};
                                 this.dialogVisible = false;
                             }).catch(res => {
                             this.dialogVisible = true;

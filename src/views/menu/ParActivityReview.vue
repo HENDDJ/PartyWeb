@@ -352,7 +352,7 @@
                 this.checkForm.createTime = new Date().Format('yyyy-MM-ddTHH:mm:ss')
             },
             imgTF(val){
-                if (!val.split("&")[1]) {
+                if (val.indexOf("http" )== -1) {
                     return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${val}`
                 }else {
                     return val;
@@ -360,7 +360,7 @@
             },
             imgTFPhone(item){
                 let imgUrl = item.imageUrl;
-                if (!imgUrl.split("&")[1]) {
+                if (imgUrl.indexOf("http" )== -1) {
                     if(imgUrl[0] === '.'){
                         return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
                     }else {

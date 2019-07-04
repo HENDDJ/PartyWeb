@@ -185,7 +185,7 @@
                 </div>
                 <div class="content-right">
                     <swiper :options="swiperOption" ref="mySwiper">
-                        <swiper-slide v-for="(item,index) in currentActivityList" >
+                        <swiper-slide v-for="(item,index) in currentActivityList" :key="item.title">
                             <vs-card class="card-sat my-swiper" style="height: 668px;">
                                 <h4 slot="header" style="vertical-align: bottom;text-align: left">
                                     执行中的活动（{{index + 1}}）

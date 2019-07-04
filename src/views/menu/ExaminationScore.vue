@@ -214,7 +214,11 @@
                                 [0, '#89baed'],
                                 [1, '#ffffff'],
                             ]
+
                         }, style: {fontFamily: "'Unica One', sans-serif"}, plotBorderColor: "#606063"
+                    },
+                    exporting:{
+                        buttons:{contextButton:{x:-15}}
                     },
                     title: {style: {color: "#505053", textTransform: "uppercase", fontSize: "20px"}},
                     subtitle: {style: {color: "##505053", textTransform: "uppercase"}},

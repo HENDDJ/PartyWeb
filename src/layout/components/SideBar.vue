@@ -1,6 +1,6 @@
 <template>
     <el-scrollbar wrapClass="scrollbar-wrapper" viewClass="scrollbar_view">
-        <el-menu  router  unique-opened  class="el-menu-personal">
+        <el-menu background-color="#363C42" text-color="#fff" active-text-color="#409EFF" router  unique-opened  class="el-menu-personal">
             <div v-for="item in routes" :key="item.name">
                 <!-- 有子菜单 -->
                 <el-submenu :index="item.path" v-if="item.children&&item.children.length">
@@ -58,45 +58,45 @@
     svg {
         margin: 0 5px 0 20px;
     }
-    .el-menu-item {
-        background: url("/static/img/menu_item_bg.png") no-repeat center left;
-        background-size: 75%;
-        color: white;
-    }
-    .el-menu-item svg {
-        margin: -7px 20px 0 -8px;
-    }
-    .el-menu-item span {
-        position: relative;
-        top: -3px;
-        color: #1e6abc;
-    }
+    /*.el-menu-item {*/
+        /*background: url("/static/img/menu_item_bg.png") no-repeat center left;*/
+        /*background-size: 75%;*/
+        /*color: white;*/
+    /*}*/
+    /*.el-menu-item svg {*/
+        /*margin: -7px 20px 0 -8px;*/
+    /*}*/
+    /*.el-menu-item span {*/
+        /*position: relative;*/
+        /*top: -3px;*/
+        /*color: #1e6abc;*/
+    /*}*/
 
-    .el-submenu .el-menu-item {
-        background: url("/static/img/menu_item_bg.png") no-repeat center center;
-        background-size: 75%;
-        color: white;
-    }
-    .el-submenu .el-menu-item svg {
-        margin: -8px 20px 0 -2px;
-    }
-    .el-submenu .el-menu-item span {
-        position: relative;
-        top: -3px;
-        color: #1e6abc;
-    }
-    .el-submenu__title {
-        background: url("/static/img/menu_item_bg.png") no-repeat center left;
-        background-size: 75%;
-        color: white;
-    }
-    .el-submenu__title svg {
-        margin: -7px 20px 0 -8px;
-    }
-    .el-submenu__title span {
-        position: relative;
-        top: -3px;
-        color: #1e6abc;
-    }
+    /*.el-submenu .el-menu-item {*/
+        /*background: url("/static/img/menu_item_bg.png") no-repeat center center;*/
+        /*background-size: 75%;*/
+        /*color: white;*/
+    /*}*/
+    /*.el-submenu .el-menu-item svg {*/
+        /*margin: -8px 20px 0 -2px;*/
+    /*}*/
+    /*.el-submenu .el-menu-item span {*/
+        /*position: relative;*/
+        /*top: -3px;*/
+        /*color: #1e6abc;*/
+    /*}*/
+    /*.el-submenu__title {*/
+        /*background: url("/static/img/menu_item_bg.png") no-repeat center left;*/
+        /*background-size: 75%;*/
+        /*color: white;*/
+    /*}*/
+    /*.el-submenu__title svg {*/
+        /*margin: -7px 20px 0 -8px;*/
+    /*}*/
+    /*.el-submenu__title span {*/
+        /*position: relative;*/
+        /*top: -3px;*/
+        /*color: #1e6abc;*/
+    /*}*/
 </style>
 

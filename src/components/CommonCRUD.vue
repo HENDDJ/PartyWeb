@@ -76,7 +76,6 @@
         :visible.sync="dialogVisible"
         width="880px"
         align="left"
-        :modal-append-to-body='false'
         :append-to-body="true"
         :before-close="handleClose">
         <el-form :inline="true" :model="form" :rules="rules" ref="form" class="demo-form-inline" label-width="170px" >

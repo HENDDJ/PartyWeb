@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="overflow-x:scroll;">
         <div style="position:relative;">
             <p style="float:left;margin-left: 10px">年份：</p>
             <vs-select
@@ -13,7 +13,7 @@
                 <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in options"/>
             </vs-select>
 
-            <vs-button type="gradient" style="float:left;margin-left: 160px" @click="changeType">可视化统计图</vs-button>
+            <vs-button type="gradient" style="float:left;margin-left: 160px" @click="changeType" v-if="viewType">可视化统计图</vs-button>
         </div>
         <transition name="el-fade-in-linear">
             <div style="clear: both" v-show="pictureOrTable===true">
@@ -80,7 +80,7 @@
                                 </div>
                                 <div slot="footer">
                                     <vs-row vs-justify="flex-end">
-                                        <vs-button color="primary" type="gradient">表格数据</vs-button>
+                                        <vs-button color="primary" type="gradient" @click="changeType">表格数据</vs-button>
                                     </vs-row>
                                 </div>
                             </vs-card>
@@ -153,7 +153,7 @@
                                 </div>
                                 <div slot="footer">
                                     <vs-row vs-justify="flex-end">
-                                        <vs-button color="primary" type="gradient">表格数据</vs-button>
+                                        <vs-button color="primary" type="gradient" @click="changeType">表格数据</vs-button>
 
                                     </vs-row>
                                 </div>
@@ -165,7 +165,11 @@
         </transition>
         <transition name="el-fade-in-linear">
             <div style="clear: both" v-show="pictureOrTable===false" class="tableStyle">
-                <div id="containerOrganization"></div>
+                <div class="titleStyle">{{nowName}}考核积分及完成情况</div>
+                <div id="containerOrganization" class="orgPos" :style="orgStyle">
+
+                </div>
+
             </div>
         </transition>
     </div>
@@ -187,6 +191,9 @@
         components: {countTo},
         data() {
             return {
+                orgStyle:{
+                    'width':'100%'
+                },
                 options: [],
                 optionsRegion: [{text: '全市', value: ' '}],
                 chooseYear: 2019,
@@ -305,12 +312,87 @@
                 //图表或表格
                 pictureOrTable: true,
                 pictureOrTableShowone: true,
-                pictureOrTableShowtwo: false
+                pictureOrTableShowtwo: false,
+                //角色
+                role:'shi',
+                //按钮是否显示
+                viewType:true,
+                //当前用户名
+                nowName:''
             }
         },
         methods: {
             con(val) {
+
                 this.chooseYear = val
+
+                    let op3 = this.getScoreLast();
+                    let form = {isDelete:0}
+                    let userInfo = JSON.parse(sessionStorage.getItem("userInfo"))
+                    let dis = []
+                    if(this.role=='shi'){
+                        form = form
+                    }else if(this.role=='zhen'){
+                        dis = [['句容市委',userInfo.organizationName]]
+                        form.attachTo = userInfo.districtId
+                    }else {
+                        dis = [['句容市委',userInfo.sysDistrict.parentName]]
+                        form.districtId = userInfo.districtId
+                    }
+                    op3.then(() => {
+                        this.$http('Post', 'identity/sysDistrict/list?sort=districtLevel,asc&districtName,desc', form, false).then((data) => {
+                            data.forEach((item1,index) => {
+                                if(item1.districtLevel !=1 ){
+                                    dis.push([item1.parentName,item1.districtName])
+                                }
+                            })
+                            this.districtStruct = []
+                            this.districtStruct = dis
+                            this.containerOrganization.update({
+                                series: [{
+                                    type: 'organization',
+                                    name: 'Highsoft',
+                                    keys: ['from', 'to'],
+                                    data: this.districtStruct,
+                                    levels: [{
+                                        level: 0,
+                                        color: '#980104',
+                                        borderWidth:0,
+                                        borderColor:'#980104',
+                                        dataLabels: {
+                                            color: 'white',
+                                            fontSize: 40
+                                        },
+                                        height: 30,
+                                    }, {
+                                        level: 1,
+                                        color: '#359154',
+                                        dataLabels: {
+                                            color: 'white',
+                                            fontSize: 40
+                                        },
+                                        height: 25
+                                    }],
+                                    nodes: this.scoreStruct,
+                                    colorByPoint: false,
+                                    color: '#007ad0',
+                                    dataLabels: {
+                                        color: 'black',
+                                    },
+                                    borderColor: 'white',
+                                    nodeWidth: 90,
+                                    shadow:true
+                                }]
+                            })
+                            this.$vs.loading.close()
+                        })
+
+                    })
+
+                if(this.role!='shi'){
+                    return
+                }
+
                 this.scoreOrPercent = true
                 let op = this.show();
                 op.then(() => {
@@ -350,57 +432,7 @@
                     )
                 })
 
-                let op3 = this.getScoreLast();
-                op3.then(() => {
-                    this.$http('Post', 'identity/sysDistrict/list?sort=districtLevel,asc&districtName,desc', {isDelete:0}, false).then((data) => {
-                        let dis = []
-                        data.forEach((item1,index) => {
-                            if(item1.districtLevel !=1 ){
-                                dis.push([item1.parentName,item1.districtName])
-                            }
-                        })
-                        this.districtStruct = []
-                        this.districtStruct = dis
-                        this.containerOrganization.update({
-                            series: [{
-                                type: 'organization',
-                                name: 'Highsoft',
-                                keys: ['from', 'to'],
-                                data:  this.districtStruct,
-                                levels: [{
-                                    level: 0,
-                                    color: '#980104',
-                                    borderWidth:0,
-                                    borderColor:'#980104',
-                                    dataLabels: {
-                                        color: 'white',
-                                        fontSize: 40
-                                    },
-                                    height: 30
-                                }, {
-                                    level: 1,
-                                    color: '#359154',
-                                    dataLabels: {
-                                        color: 'white',
-                                        fontSize: 40
-                                    },
-                                    height: 25
-                                }],
-                                nodes: this.scoreStruct,
-                                colorByPoint: false,
-                                color: '#007ad0',
-                                dataLabels: {
-                                    color: 'black',
-                                },
-                                borderColor: 'white',
-                                nodeWidth: 75,
-                                shadow:true
-                            }],
-                        })
-                            this.$vs.loading.close()
-                    })
 
-                })
             },
             scoreData(Options) {
                 Highcharts.setOptions(this.theme1);
@@ -625,15 +657,16 @@
             },
             //考核数据组织架构HighCharts定义
             scoreOrganizationData(dataOptions,seriesOptions) {
-                console.log(dataOptions,1)
-                console.log(seriesOptions,2)
                 let options = { tooltip:{enabled:false}}
                 Highcharts.setOptions(options);
                 this.containerOrganization = new Highcharts.chart('containerOrganization', {
                     chart: {
-                        height: 2200,
                         inverted: true,
-                        backgroundColor: 'rgba(0,0,0,0)'
+                        height: 2380,
+                        backgroundColor: 'rgba(0,0,0,0)',
+                    },
+                    exporting: {
+                        buttons:{contextButton:{x:-15}}
                     },
                     credits: {
                         enabled: false     //不显示LOGO
@@ -641,7 +674,6 @@
                     title: {
                         text: '各组织积分及完成情况'
                     },
-
                     series: [{
                         type: 'organization',
                         name: 'Highsoft',
@@ -680,10 +712,80 @@
                         outside: true
                     },
                     exporting: {
+                        buttons:{contextButton:{x:-15}},
                         allowHTML: true,
                         sourceWidth: 800,
                         sourceHeight: 600
-                    }
+                    },
+
+                });
+            },
+            //考核数据组织架构HighCharts定义 -- 非市及
+            scoreOrganizationDataTwo(dataOptions,seriesOptions) {
+                let options = { tooltip:{enabled:false}}
+                Highcharts.setOptions(options);
+                let btnPosition= {}
+                if(this.role == 'zhen'){
+                    btnPosition = {contextButton:{x:-15}}
+                }else if(this.role == 'cun'){
+                    btnPosition ={contextButton:{x:-8}}
+                }
+                this.containerOrganization = new Highcharts.chart('containerOrganization', {
+                    chart: {inverted: true,
+
+                        backgroundColor: 'rgba(0,0,0,0)',
+                    },
+                    credits: {
+                        enabled: false     //不显示LOGO
+                    },
+                    title: {
+                        text: ''
+                    },
+                    series: [{
+                        type: 'organization',
+                        name: 'Highsoft',
+                        keys: ['from', 'to'],
+                        data: dataOptions,
+                        levels: [{
+                            level: 0,
+                            color: '#980104',
+                            borderWidth:0,
+                            borderColor:'#980104',
+                            dataLabels: {
+                                color: 'white',
+                                fontSize: 40
+                            },
+                            height: 30,
+                            width:70
+                        }, {
+                            level: 1,
+                            color: '#359154',
+                            dataLabels: {
+                                color: 'white',
+                                fontSize: 40
+                            },
+                            height: 25
+                        }],
+                        nodes: seriesOptions,
+                        colorByPoint: false,
+                        color: '#007ad0',
+                        dataLabels: {
+                            color: 'black',
+                        },
+                        borderColor: 'white',
+                        nodeWidth: 90,
+                        shadow:true
+                    }],
+                    tooltip: {
+                        outside: true
+                    },
+                    exporting: {
+                        buttons:btnPosition,
+                        allowHTML: true,
+                        sourceWidth: 800,
+                        sourceHeight: 600
+                    },
+
                 });
             },
             //去除重复
@@ -759,9 +861,49 @@
 
                 return dis
             },
+            //非市组织架构-zhen
+            districtTwo() {
+                let userInfo = JSON.parse(sessionStorage.getItem("userInfo"))
+                let dis = [['句容市委',userInfo.organizationName]]
+                this.$http('Post', 'identity/sysDistrict/list?sort=districtLevel,asc&districtName,desc', {isDelete:0,attachTo:userInfo.districtId}, false).then((data) => {
+                    data.forEach((item1,index) => {
+                        if(item1.districtLevel !=1 ){
+                            dis.push([item1.parentName,item1.districtName])
+                        }
+                    })
+                    let op3 = this.scoreDataOptions(dis)
+
+
+                })
+
+                return dis
+            },
+            //非市组织架构-cun
+            districtThree() {
+                let userInfo = JSON.parse(sessionStorage.getItem("userInfo"))
+                let dis = [['句容市委',userInfo.sysDistrict.parentName]]
+                this.$http('Post', 'identity/sysDistrict/list?sort=districtLevel,asc&districtName,desc', {isDelete:0,districtId:userInfo.districtId}, false).then((data) => {
+                    data.forEach((item1,index) => {
+                        if(item1.districtLevel !=1 ){
+                            dis.push([item1.parentName,item1.districtName])
+                        }
+                    })
+                    let op3 = this.scoreDataOptions(dis)
+
+
+                })
+
+                return dis
+            },
             scoreDataOptions(oo) {
                 let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=&year=${this.chooseYear}`
-                let scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
+                let scoreLast=[]
+                if(this.role == 'shi'){
+                     scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
+                }else{
+                     scoreLast = [{id: '句容市委',name:'句容市委'}]
+                }
+
                 this.$http('Post', path, false).then((data) => {
                     let arr = []
                     let arrNext = []
@@ -771,9 +913,20 @@
                     })
                     arrNext = this.unique(arr)
                     arrNext.forEach((items) => {
-                        scoreLast.push({layout:'hanging',id: items.id, name: items.name,description:items.description})
+                        if(this.role == 'shi'){
+                            scoreLast.push({layout:'hanging',id: items.id, name: items.name,description:items.description})
+                        }else {
+                            scoreLast.push({id: items.id, name: items.name,description:items.description})
+                        }
+
                     })
-                    this.scoreOrganizationData(oo,scoreLast);
+                    if(this.role == 'shi'){
+                        this.scoreOrganizationData(oo,scoreLast);
+
+                    }else {
+                        this.scoreOrganizationDataTwo(oo,scoreLast);
+
+                    }
                 })
             },
             //scoreDataOptions计算scoreLast方法
@@ -783,7 +936,12 @@
                     text:"数据计算重新绘图中，请稍后..."
                 })
                 let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=&year=${this.chooseYear}`
-                let scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
+                let scoreLast = []
+                if(this.role == 'shi'){
+                    scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
+                }else {
+                    scoreLast = [{id: '句容市委',name:'句容市委'}]
+                }
                 return this.$http('Post', path, false).then((data) => {
                     let arr = []
                     let arrNext = []
@@ -793,45 +951,90 @@
                     })
                     arrNext = this.unique(arr)
                     arrNext.forEach((items) => {
-                        scoreLast.push({layout:'hanging',id: items.id, name: items.name,description:items.description})
+                        if(this.role == 'shi'){
+                            scoreLast.push({layout:'hanging',id: items.id, name: items.name,description:items.description})
+                        }else {
+                            scoreLast.push({id: items.id, name: items.name,description:items.description})
+                        }
                     })
                     this.scoreStruct = []
                     this.scoreStruct = scoreLast
-
                 })
+            },
+            selectRole(){
+                let userInfo = JSON.parse(sessionStorage.getItem("userInfo"))
+                if(userInfo.districtId == '01'){
+                    this.role = "shi"
+                }else  if(userInfo.sysDistrict.attachTo == '01'){
+                    this.role = "zhen"
+                }
+                else {
+                    this.role = "cun"
+                }
             }
         },
         mounted() {
-            let op = this.show();
-            op.then(() => {
-                this.scoreData(this.scoreOptions);
-            })
-            let op2 = this.showPercent();
-            op2.then(() => {
-                this.percentData(this.percentOptions);
-            })
-            this.district();
+            if (this.role == "shi") {
+                let op = this.show();
+                op.then(() => {
+                    this.scoreData(this.scoreOptions);
+                })
+                let op2 = this.showPercent();
+                op2.then(() => {
+                    this.percentData(this.percentOptions);
+                })
+                this.district();
+            }
+        else if(this.role == "zhen"){
+                this.$http('Post', 'identity/sysDistrict/list?sort=districtLevel,asc&districtName,desc', {isDelete:0,attachTo:JSON.parse(sessionStorage.getItem("userInfo")).districtId}, false).then((data) => {
+                    if(data.length>=20){
+                        this.orgStyle = {
+                            'width':"170%"
+                        }
+                    } else if(data.length>=18){
+                        this.orgStyle = {
+                            'width':"160%"
+                        }
+                    }else  if(data.length>14){
+                        this.orgStyle = {
+                            'width':"130%"
+                        }
+                    }else  if(data.length>10){
+                        this.orgStyle = {
+                            'width':"115%"
+                        }
+                    }else {
+                        this.orgStyle = {
+                            'width':"100%"
+                        }
+                    }
+                })
+                this.districtTwo();
+            }else {
+                this.orgStyle = {
+                    'width':"10%",
+                    'marginLeft':"45%"
+                }
+                this.districtThree();
+            }
 
         },
         created() {
+            this.selectRole();
             let nowYear = new Date().Format('yyyy')
             let interval = Number(nowYear) - 2017
             for (let i = 0; i <= interval; i++) {
                 this.options.push({text: i + 2017, value: i + 2017})
             }
             this.chooseYear = nowYear
-            this.$http('Post', 'identity/sysDistrict/list', {districtLevel: 2}, false).then(data => {
-                data.forEach(item => {
-                    this.optionsRegion.push({text: item.districtName, value: item.id})
-                })
-            }).catch(_ => {
-                this.$message(
-                    {
-                        type: 'warning',
-                        message: '镇级数据拉取失败'
-                    }
-                )
-            })
+            if(this.role!="shi"){
+                this.viewType = false
+                this.pictureOrTableShowone = false
+                this.pictureOrTableShowtwo = true
+                this.pictureOrTable = false
+
+                this.nowName = JSON.parse(sessionStorage.getItem('userInfo')).organizationName
+            }
         }
     }
 </script>
@@ -880,6 +1083,8 @@
         position: absolute;
         left: 12px;
         line-height: 16px;
+        z-index:99;
+        color:white;
     }
     #containerOrganization img {
         position: absolute;
@@ -887,5 +1092,19 @@
         top:16px;
         z-index: 999;
         transform: scale(3.5);
+    }
+    #containerOrganization .highcharts-label .highcharts-data-label .highcharts-data-label-color-undefined .highcharts-tracker{
+        width:60px
+    }
+    .titleStyle{
+        font-weight: bold;
+        font-size: 26px;
+        position: absolute;
+        left: 40%;
+        top: 5%;
+
+    }
+    .orgPos{
+        margin-top: 50px;
     }
 </style>

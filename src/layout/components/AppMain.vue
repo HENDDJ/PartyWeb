@@ -26,7 +26,7 @@ export default {
         overflow-y: hidden!important;
     }
     .app-main {
-        padding: 15px 0;
+        padding: 15px 0 0 0;
         width: calc(100% + 5px);;
         height: calc(100% - 35px);
         overflow-x: hidden;

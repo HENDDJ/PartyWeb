@@ -474,7 +474,7 @@
 <style scoped>
     #allmap{
         width: 100%;
-        height: 750px;
+        height: 822px;
         overflow: hidden;
         margin:0;font-family:"微软雅黑";
     }

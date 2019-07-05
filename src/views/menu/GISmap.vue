@@ -70,10 +70,10 @@
                 pContent:'',
                 opts:{
                     boxStyle: {
-                        opacity: "0.8",
+                       // opacity: "0.8",
                         background: 'white',
-                        width: "250px",
-                        height: "250px"
+                        width: "350px",
+                        height: "300px"
                     },
                     closeIconUrl:"/static/img/close.png",
                     closeIconMargin: "5px 5px 0 0",
@@ -430,7 +430,7 @@
         width: 0;
         height: 0;
         border: 20px solid transparent;
-        border-top-color: #333333;
+        border-top-color:white;
         position: absolute;
         left: 50%;
         top: 100%;
@@ -444,6 +444,30 @@
         background-color: #ffbe3c;
         border-top-left-radius: 12px;
         border-top-right-radius: 12px;
+    }
+    .infoBox {
+        border-radius: 12px;
+        box-shadow: 1px 1px 1px 1px rgba(167,167,167,0.2);
+    }
+    .infoBox:after{
+        /* content: "";
+         box-shadow: 80px 10px 5px #888888;
+       !*  transform:rotate(40deg);
+        transform-origin: bottom center;*!*/
+        content: "";
+        position: absolute;
+        bottom: -30px;
+        left: 10px;
+        width: calc(0.5 * 1144px);
+        height: calc(0.5 * 370px);
+        background-size: contain;
+        background: url("/static/img/iws3.png") no-repeat;
+   //   background-color: rgba(167,167,167,0.5);
+     //   -moz-box-shadow: 10px 10px 10px 10px rgba(0,0,0,0.3);
+    //  box-shadow: 10px 0px 5px  rgba(167,167,167,0.5),10px 0px 5px  rgba(167,167,167,0.5),0px -10px 5px  rgba(167,167,167,0.5),0px 10px 5px  rgba(167,167,167,0.5);
+     //   transform: skewX(130deg);
+        z-index: -1;
+      //  transform-origin: bottom center;
     }
 
 </style>
@@ -474,7 +498,6 @@
         from {width: 0}
         to {width: 350px}
     }
-
     @keyframes hide
     {
         from {width: 350px}
@@ -500,5 +523,6 @@
         left: 30px;
         margin:30px 0 0 200px;
     }
+
 </style>
 

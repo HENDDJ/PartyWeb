@@ -138,6 +138,9 @@
     .vs-card--header {
         padding: 0;
     }
+    .common-crud .el-button--mini, .el-button--mini.is-round {
+        padding: 6px 15px !important;
+    }
 </style>
 <style>
     @keyframes an-dialog{

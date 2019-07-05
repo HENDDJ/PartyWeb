@@ -3,11 +3,13 @@
         <vs-tabs :color="colorx">
             <vs-tab @click="colorx = 'success'" label="村干部信息" >
                 <div class="con-tab-ejemplo">
+                    <br>
                     <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns" :queryFormColumns="cadreQuery"></CommonCRUD>
                 </div>
             </vs-tab>
             <vs-tab @click="handleSelect()" label="岗位信息">
                 <div class="con-tab-ejemplo">
+                    <br>
                     <CommonCRUD :columns="positionColumns" api-root="identity/cadrePosition" :formColumns="positionFormColumns" :queryFormColumns="positionQuery"></CommonCRUD>
                 </div>
             </vs-tab>

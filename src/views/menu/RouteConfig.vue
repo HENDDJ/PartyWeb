@@ -13,7 +13,7 @@
             :render-content="renderContent">
         </el-tree>
 
-        <el-dialog title="路由配置" v-if="handlerVis" :visible.sync="handlerVis" width="30%" align="left">
+        <el-dialog title="路由配置" v-if="handlerVis" :visible.sync="handlerVis"  :append-to-body="true"  width="30%" align="left">
             <el-form :model="handlerForm" class="dialog-form" ref="handlerForm">
                 <template v-for="item in classInfo.properties">
                     <el-form-item v-if="item.isObject === '0'" :key="item.id" :label="item.des" :prop="item.name" :inline="true" label-width="105px">

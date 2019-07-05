@@ -348,7 +348,6 @@
                 :visible.sync="townDetailVis"
                 width="880px"
                 align="left"
-                :modal-append-to-body='false'
                 :append-to-body="true"
                 :before-close="townDetailClose">
                 <el-row :gutter="10" type="flex" justify="center">

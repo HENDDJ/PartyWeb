@@ -10,14 +10,14 @@
                 <span class="svg-container svg-container_login">
                   <icon name="user" scale="2.5"></icon>
                 </span>
-                <el-input name="code" size="small" type="text" v-model="loginForm.userName" autoComplete="on" placeholder="code"></el-input>
+                <el-input name="code" size="small" type="text" v-model="loginForm.userName" autoComplete="on" placeholder="请输入用户名"></el-input>
             </el-form-item>
 
             <el-form-item prop="password">
                 <span class="svg-container">
                   <icon name="password" scale="2"/>
                 </span>
-                <el-input name="password" size="small" :type="passwordType" @keyup.enter.prevent="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="password"></el-input>
+                <el-input name="password" size="small" :type="passwordType" @keyup.enter.prevent="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="请输入密码"></el-input>
                 <span class="show-pwd" @click="showPwd">
                     <icon name="eye" scale="2"/>
                 </span>

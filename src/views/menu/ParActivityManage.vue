@@ -715,8 +715,8 @@
             calcSummary() {
                 let temp = ['总计', 0, 0, 0, 0];
                 this.trackTable.forEach((item) => {
-                    temp[1] += item.waitCheck;
-                    temp[2] += item.passed;
+                    temp[1] += item.passed;
+                    temp[2] += item.waitCheck;
                     temp[3] += item.fail;
                 });
                 temp[4] = (temp[2] * 100/(temp[1] + temp[2] + temp[3])).toFixed(1) + '%';

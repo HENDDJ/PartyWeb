@@ -14,8 +14,8 @@
                 <li class="movies" @click="showBattleField()"><span class="store-icon"></span><a href="#">基本阵地</a></li>
             </ul>
         </nav>
-        <div id="census" >
-            <img src="/static/img/test.png" height="472" width="670" onclick="toggleDiv('11')"/>
+        <div id="census" onclick="toggleDiv('')">
+            <img src="/static/img/test.png" height="472" width="670" />
         </div>
     </section>
 </template>
@@ -67,11 +67,18 @@
                 ],*/
                 markerList:[],
                 mapvLayer:'',
-                opts : {
-                    width : 250,     // 信息窗口宽度
-                    height: 200,     // 信息窗口高度
-                    title : "信息窗口" , // 信息窗口标题
-                    enableMessage:true//设置允许信息窗发送短息
+                pContent:'',
+                opts:{
+                    boxStyle: {
+                        opacity: "0.8",
+                        background: 'white',
+                        width: "250px",
+                        height: "250px"
+                    },
+                    closeIconUrl:"/static/img/close.png",
+                    closeIconMargin: "5px 5px 0 0",
+                    enableAutoPan: true,
+                    align: INFOBOX_AT_TOP,
                 },
             }
         },
@@ -150,28 +157,28 @@
                     });
                     this.map.addOverlay(marker);
                  });*/
+               var infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
                this.$http("POST",`identity/gis/positionlist`,false).then( data =>{
                    data.forEach(item => {
                        if(item.positionLonLat){
                            let marker = new BMap.Marker(new BMap.Point(item.positionLonLat.split(",")[0],item.positionLonLat.split(",")[1]));
                            marker.addEventListener('click', e => {
-                               this.opts.title= LookUp['PositionType'].filter(sub => sub.value === item.positionType)[0].label;
-                               let sContent =
-                                   "<table>"+
-                                   "<tr><th>名称</th><th>"+item.positionName+"</th></tr>" +
-                                   "<tr><th>组织</th><th>"+item.positionDistrictName+"</th></tr>"+
-                                   "<tr><th>村干部数量</th><th>"+item.positionCadresNumber+"</th></tr>" +
-                                   "<tr><th>村书记</th><th>"+item.positionCadreName+"</th></tr>"+
-                                   "<tr><th>功能介绍</th><th >"+item.positionIntroduction+"</th></tr>"+
-                                   "</table>"
-                               this.openInfo(sContent,e);
-                               this.toggleDiv("show");
+                               let title= LookUp['PositionType'].filter(sub => sub.value === item.positionType)[0].label;
+                               this.pContent =
+                                   "<div class='infoBoxContent'>" +
+                                   "<div class='infoBoxTitle'>"+title+"</div>"+
+                                   "<div style='padding: 10px;'><p>&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;称&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"+item.positionName+"</p>" +
+                                   "<p>&nbsp;&nbsp;所属组织&nbsp;&nbsp;:&nbsp;&nbsp;"+item.positionDistrictName+"</p>"+
+                                   "<p>村干部数量&nbsp;:&nbsp;&nbsp;"+item.positionCadresNumber+"</p>"+
+                                   "<p>&nbsp;&nbsp;村&nbsp;书&nbsp;记&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"+item.positionCadreName+"</p>"+
+                                   "<p>&nbsp;&nbsp;功能介绍&nbsp;&nbsp;:&nbsp;&nbsp;"+item.positionIntroduction+"</p></div>"+
+                                   "</div>";
+                               infoBox._setContent(this.pContent,infoBox.open(marker));
                            });
                            this.map.addOverlay(marker);
                        }
                    })
                });
-
             },
             clearBattleField() {
                 this.markerList.forEach( item => {
@@ -398,6 +405,45 @@
         height: 50px;
         margin-right: 30px;
         content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAa0lEQVRIx2P4//8/Az0wusCC/5SDBAYowGcRVQDRFjGQCciyiBxfjFo0ci0C5TkBAqmQKhYZEKHmA8UWwdQQka9GLRq1aNSiUYtItYjYqpsii4gAB3BZhFyi47PoApEWgUplBShNVulNMwwA8TkerCj0FuMAAAAASUVORK5CYII=");
+    }
+    .infoBoxContent{
+        margin:0 ;
+    }
+  /*  .infoBoxContent button{
+        background-color: #008CBA;
+        border: none;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 16px;
+        width: 120px;
+    }*/
+    .infoBoxContent p{
+        color:black;
+        font-size: 14px;
+        line-height: 26px;
+    }
+    .infoBoxContent:before {
+        content: '';
+        width: 0;
+        height: 0;
+        border: 20px solid transparent;
+        border-top-color: #333333;
+        position: absolute;
+        left: 50%;
+        top: 100%;
+        margin-left: -20px;
+    }
+    .infoBoxTitle{
+        padding: 10px;
+        width: 100%;
+        height:40px;
+        font-size: 16px;
+        background-color: #ffbe3c;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
     }
 
 </style>

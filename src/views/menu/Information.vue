@@ -144,7 +144,6 @@
             edit(){
                 this.title = "编辑";
                 if (this.validateRows()) {
-                    console.log(this.selected[0])
                     this.dialogVisible = true;
                     this.disabled = false;
                     this.acceptPerson = false;
@@ -163,7 +162,6 @@
                     if(currentUser != '01'){
                         this.form.status = "1";
                         this.$http('PUT', `identity/acceptInformation/${this.form.id}id`,this.form,false).then(() =>{
-
                         });
                     }
                 }

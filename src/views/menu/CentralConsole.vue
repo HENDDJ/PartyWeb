@@ -84,7 +84,11 @@
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属村书记总数</p>
-                                <p style="font-size: 36px;font-weight: bold">163</p>
+                                <p style="font-size: 36px;font-weight: bold">
+                                    <template>
+                                        <CountTo :startVal="0" :endVal="villageSecretaryNumber" :duration="1300"></CountTo>
+                                    </template>
+                                </p>
                             </div>
                             <div style="flex: 1;text-align: center">
                                 <template>
@@ -345,6 +349,7 @@
                 activityCompleteRate:0,//活动完成率
                 villageCadresNumber:0, //村干部数量
                 positionNumber:0,//阵地数量
+                villageSecretaryNumber:0,//村书记数量
                 rank: {
                     tooltip : {
                         trigger: 'axis'
@@ -455,6 +460,7 @@
                     this.activityPerformNumber = data.activityPerformNumber;
                     this.villageCadresNumber = data.villageCadresNumber;
                     this.positionNumber =data.positionNumber;
+                    this.villageSecretaryNumber = data.villageSecretaryNumber;
                     this.activityCompleteRate = ((data.activityCompleteRate*1000).toFixed())/10;
                 })
             },

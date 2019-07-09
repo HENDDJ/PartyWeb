@@ -1,6 +1,6 @@
 <template>
     <el-scrollbar wrapClass="scrollbar-wrapper" viewClass="scrollbar_view">
-        <el-menu background-color="#363C42" text-color="#fff" active-text-color="#409EFF" router  unique-opened  class="el-menu-personal" @select="changeActiveIndex">
+        <el-menu background-color="rgb(0,0,0,0)" text-color="#fff" active-text-color="#409EFF" router  unique-opened  class="el-menu-personal" @select="changeActiveIndex">
             <div v-for="item in routes" :key="item.name">
                 <!-- 有子菜单 -->
                 <el-submenu :index="item.path" v-if="item.children&&item.children.length">
@@ -17,7 +17,8 @@
                 </el-submenu>
                 <!-- 没有子菜单 -->
                 <el-menu-item :index="item.path" v-else>
-                    <img :src="`/static/menu/${item.meta.icon}.png`" alt="">
+                    <img v-show="activeIndex === item.path" :src="`/static/menu/active/${item.meta.icon}.png`" alt="">
+                    <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="">
                     &emsp;<span slot="title">{{item.meta && item.meta.title}}</span>
                 </el-menu-item>
             </div>
@@ -61,7 +62,20 @@
     .el-menu-personal {
         height: 100%;
         text-align: left;
+        background: url("/static/img/menu2.png");
+        background-size: 100% 100%;
     }
+   .el-submenu__title:hover {
+        outline: 0 !important;
+        background-color: rgba(0,0,0,0.3)  !important;
+    }
+
+   .el-menu-item:hover{
+        outline: 0 !important;
+        background-color: rgba(0,0,0,0.3) !important;
+    }
+
+
     svg {
         margin: 0 5px 0 20px;
     }

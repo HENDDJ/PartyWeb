@@ -5,26 +5,33 @@
                 <!-- 有子菜单 -->
                 <el-submenu :index="item.path" v-if="item.children&&item.children.length">
                     <template slot="title">
-                        <div>
-                            <img v-show="activeIndex === item.path" :src="`/static/menu/active/${item.meta.icon}.png`" alt="">
-                            <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="">
-                            &emsp;<span slot="title">{{item.meta && item.meta.title}}</span>
+                        <div :class="`menu-item-detail${activeIndex === item.path ? '-active' : ''}`">
+                            <div>
+                                <img v-show="activeIndex === item.path" :src="`/static/menu/active/${item.meta.icon}.png`" alt="">
+                                <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="">
+                                &emsp;<span slot="title">{{item.meta && item.meta.title}}</span>
+                            </div>
                         </div>
                     </template>
                     <el-menu-item :index="item.path+'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id">
-                        <div>
-                            <img v-show="activeIndex === (item.path+'/'+subItem.path)" :src="`/static/menu/active/${subItem.meta.icon}.png`" alt="">
-                            <img v-show="activeIndex !== (item.path+'/'+subItem.path)"  :src="`/static/menu/${subItem.meta.icon}.png`" alt="">
-                            &emsp;<span slot="title">{{subItem.meta && subItem.meta.title}}     <el-badge style="float: right;padding-right: 20px" class="mark" :value="5" v-if="subItem.meta.title=='活动审核'"/></span>
+                        <div :class="`menu-item-detail${activeIndex === (item.path+'/'+subItem.path) ? '-active' : ''}`">
+                            <div>
+                                <img v-show="activeIndex === (item.path+'/'+subItem.path)" :src="`/static/menu/active/${subItem.meta.icon}.png`" alt="">
+                                <img v-show="activeIndex !== (item.path+'/'+subItem.path)"  :src="`/static/menu/${subItem.meta.icon}.png`" alt="">
+                                &emsp;<span slot="title">{{subItem.meta && subItem.meta.title}}
+                                <el-badge style="margin-left: 25px;margin-top: -6px" :value="5" v-if="subItem.meta.title=='活动审核'"/></span>
+                            </div>
                         </div>
                     </el-menu-item>
                 </el-submenu>
                 <!-- 没有子菜单 -->
                 <el-menu-item :index="item.path" v-else>
-                    <div>
-                        <img v-show="activeIndex === item.path" :src="`/static/menu/active/${item.meta.icon}.png`" alt="">
-                        <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="">
-                        &emsp;<span slot="title">{{item.meta && item.meta.title}}</span>
+                    <div :class="`menu-item-detail${activeIndex === item.path ? '-active' : ''}`">
+                        <div>
+                            <img v-show="activeIndex === item.path" :src="`/static/menu/active/${item.meta.icon}.png`" alt="">
+                            <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="">
+                            &emsp;<span slot="title">{{item.meta && item.meta.title}}</span>
+                        </div>
                     </div>
                 </el-menu-item>
             </div>
@@ -89,6 +96,26 @@
     }
     svg {
         margin: 0 5px 0 20px;
+    }
+    .menu-item-detail > div,.menu-item-detail-active > div {
+        transition: .3s;
+    }
+    .menu-item-detail > div > span,.menu-item-detail-active > div > span {
+        transition: none;
+    }
+    .menu-item-detail-active {
+        background: linear-gradient(118deg,rgba(var(--vs-menu),.9),rgba(var(--vs-menu),.6));
+        font-weight: 400;
+        -webkit-box-shadow: 0 0 10px 1px rgba(var(--vs-menu),.6);
+        box-shadow: 0 0 10px 1px rgba(var(--vs-menu),.6);
+        margin-left: -45px;
+        padding: 0 45px;
+    }
+    .menu-item-detail:hover > div,.menu-item-detail-active:hover > div{
+        transform: translateX(4px);
+    }
+    .el-menu-item {
+        padding-right:0 !important;
     }
     /*.el-menu-item {*/
         /*background: url("/static/img/menu_item_bg.png") no-repeat center left;*/

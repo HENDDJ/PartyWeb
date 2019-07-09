@@ -53,7 +53,11 @@
                     <a href="#" @click="showTips()"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
                 </el-badge>
             </vs-navbar-item>
-            <el-dialog v-if="waitCheckTips" title="未查看消息" :visible.sync="waitCheckTips" width="60%" align="left" :append-to-body="true" :before-close="handleClose" >
+            <el-dialog v-if="waitCheckTips" title="未查看消息" :visible.sync="waitCheckTips" width="45%" align="left" :append-to-body="true" :before-close="handleClose">
+                 <div  v-if="waitCheckList.length == 0" style="text-align: center">
+                     <img style="margin: 0 auto" src="/static/img/nodata.png" width="300" height="300" />
+                     <p style="text-align: center">&emsp;&emsp;&emsp;暂无数据</p>
+                 </div>
                 <vs-list v-for="item in waitCheckList" key="index">
                     <vs-list-item icon="email" :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===0">
                         <vs-item style="float: right; font-size: 12px;color:rgb(96, 98, 102);font-weight: bold">{{item.createdAt}}</vs-item>
@@ -63,7 +67,7 @@
                         <vs-item style="float: right; font-size: 12px;color:#9b9b9b;font-weight: bold">{{item.createdAt}}</vs-item>
                     </vs-list-item>
                 </vs-list>
-                <el-pagination style="text-align: right;margin-top: 20px;"
+                <el-pagination  v-if="waitCheckList.length != 0"style="text-align: right;margin-top: 20px;"
                                background
                                :total="pageable.total" :current-page.sync="pageable.currentPage" :page-size.sync="pageable.pageSize"
                                @current-change="currentChange" @size-change="sizeChange" layout="total, sizes, prev, pager, next">
@@ -310,5 +314,4 @@
     svg {
         margin: 0 5px;
     }
-
 </style>

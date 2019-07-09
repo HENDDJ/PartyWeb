@@ -323,6 +323,6 @@
 </style>
 <style>
     .top_bar header {
-        box-shadow: 0 4px 20px 0 rgba(0,0,0,0.25) inset, 0 4px 20px 0 rgba(0,0,0,0.35)
+        box-shadow: 0 4px 20px 0 rgba(0,0,0,0.25) inset, 0 0 20px 0 rgba(0,0,0,0.35)
     }
 </style>

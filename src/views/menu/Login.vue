@@ -106,6 +106,15 @@ export default {
 
     /* reset element-ui css */
     .login-container {
+        svg {
+            margin: 0 0 0 5px!important;
+            position: relative;
+            top: 3px;
+        }
+        .el-form-item__error {
+            top: 110%;
+            right: 0;
+        }
         .login-title{
             background: url("/static/img/inactive/title.png") center no-repeat;
             background-size: 100% 100%;

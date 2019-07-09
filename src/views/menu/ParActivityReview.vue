@@ -29,11 +29,13 @@
                                         <p style="border-right: 1px solid #888">&nbsp;</p>
                                     </div>
                                     <div class="left-time">
-                                        <template v-if="item.month">
-                                            <icon name="miaobiao" scale="3.5"></icon>
+                                        <template v-if="calcLeftDays(item.month)">
+                                            <icon name="miaobiao" scale="3"></icon>
                                             <p><span>{{calcLeftDays(item.month)}}</span>天</p>
                                         </template>
-                                        <template v-else>&nbsp;</template>
+                                        <template v-else>
+                                            <el-tag type="warning" effect="dark"  name="已截止">已截止</el-tag>
+                                        </template>
                                     </div>
                                 </div>
                             </div>

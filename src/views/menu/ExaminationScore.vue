@@ -18,8 +18,12 @@
         <transition name="el-fade-in-linear">
             <div style="clear: both" v-show="pictureOrTable===true">
                 <div class="downLeft">
+                    <vs-card>
                     <div id="containerScore" style="height: 400px"></div>
+                    </vs-card>
+                    <vs-card>
                     <div id="containerPer" style="height: 400px"></div>
+                    </vs-card>
                 </div>
                 <div class="downRight">
                     <transition name="el-zoom-in-center" mode="out-in">
@@ -216,13 +220,14 @@
                     colors: "#2b908f #90ee7e #f45b5b #7798BF #aaeeee #ff0066 #eeaaee #55BF3B #DF5353 #7798BF #aaeeee".split(" "),
                     chart: {
                         backgroundColor: {
-                            radialGradient: {cx: 0.5, cy: 0.5, r: 0.5},
-                            stops: [
-                                [0, '#89baed'],
-                                [1, '#ffffff'],
-                            ]
+                            // radialGradient: {cx: 0.5, cy: 0.5, r: 0.5},
+                            // stops: [
+                            //     [0, '#89baed'],
+                            //     [1, '#ffffff'],
+                            // ]
 
-                        }, style: {fontFamily: "'Unica One', sans-serif"}, plotBorderColor: "#606063"
+                        },
+                        style: {fontFamily: "'Unica One', sans-serif"}, plotBorderColor: "#606063"
                     },
                     exporting:{
                         buttons:{contextButton:{x:-15}}
@@ -244,7 +249,29 @@
                         minorGridLineColor: "#505053",
                         tickColor: "#707073",
                         tickWidth: 1,
-                        title: {style: {color: "#A0A0A3"}}
+                        title: {style: {color: "#A0A0A3"}},
+                        plotBands: [{
+                            color: '#f6ebd861',
+                            from: 50,
+                            to: 100
+                        },{
+                            color: '#f6ebd861',
+                            from: 150,
+                            to: 200
+                        },{
+                            color: '#f6ebd861',
+                            from: 250,
+                            to: 300
+                        },{
+                            color: '#f6ebd861',
+                            from: 350,
+                            to: 400
+                        },{
+                                color: '#f6ebd861',
+                                from: 450,
+                                to: 500
+                            }
+                        ],
                     },
                     tooltip: {backgroundColor: "rgba(0, 0, 0, 0.85)", style: {color: "#F0F0F0"}},
                     plotOptions: {
@@ -435,6 +462,7 @@
 
             },
             scoreData(Options) {
+                let _this = this
                 Highcharts.setOptions(this.theme1);
                 let os = this
                 this.chart = new Highcharts.Chart('containerScore', {
@@ -450,7 +478,7 @@
                         enabled: false     //不显示LOGO
                     },
                     title: {
-                        text: '各镇得分'
+                        text: '句容市各镇活动得分柱状图'
                     },
                     legend: {
                         enabled: false
@@ -493,6 +521,7 @@
                             events: {
                                 click: function (event) {
                                     os.scoreOrPercent = true
+                                    _this.firstTown = event.point.name
                                     let path1 = `identity/exaExamine/scoreCun${os.chooseYear}Y${event.point.name}T`
                                     os.activityLoading = false
                                     os.$http('Post', path1, false).then((data) => {
@@ -574,7 +603,20 @@
             },
             //比例highcharts定义
             percentData(Options) {
-                Highcharts.setOptions(this.theme1);
+                let _this = this
+                let theme2 = JSON.parse(JSON.stringify(this.theme1))
+                theme2.yAxis.plotBands = [{
+                    color: '#f6ebd861',
+                    from: 20,
+                    to: 40
+                }, {
+                        color: '#f6ebd861',
+                        from: 60,
+                        to: 80
+                    },
+                    ]
+                console.log(theme2)
+                Highcharts.setOptions(theme2);
                 let os = this
                 this.chart01 = new Highcharts.Chart('containerPer', {
                     colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9',
@@ -626,7 +668,7 @@
                             dataLabels: {
                                 enabled: true,
                                 color: '#FFFFFF',
-                                align: 'right',
+                                align: 'center',
                                 format: '{point.y:.1f}%', // :.1f 为保留 1 位小数
                                 y: 0
                             }
@@ -636,6 +678,7 @@
                             events: {
                                 click: function (event) {
                                     os.scoreOrPercent = false
+                                    _this.secondTown = event.point.name
                                     let path1 = `identity/exaScore/percentCun${os.chooseYear}Y${event.point.name}T`
                                     os.activityLoading = false
                                     os.$http('Post', path1, false).then((data) => {

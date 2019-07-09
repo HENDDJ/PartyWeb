@@ -250,18 +250,24 @@
         height: calc(52 * 100vw/1920 * 0.9);
         background: url("/static/header/cun.png") no-repeat;
         background-size: 100% 100%;
+        position: relative;
+        left: 25px;
     }
     .zhen_bg .header-title {
         width: calc(911 * 100vw/1920 * 0.9);
         height: calc(52 * 100vw/1920 * 0.9);
         background: url("/static/header/zhen.png") no-repeat;
         background-size: 100% 100%;
+        position: relative;
+        left: 25px;
     }
     .city_bg .header-title {
         width: calc(911 * 100vw/1920 * 0.9);
         height: calc(52 * 100vw/1920 * 0.9);
         background: url("/static/header/city.png") no-repeat;
         background-size: 100% 100%;
+        position: relative;
+        left: 25px;
     }
     .top_bar {
         background-size: 100% 100%;
@@ -313,5 +319,10 @@
     }
     svg {
         margin: 0 5px;
+    }
+</style>
+<style>
+    .top_bar header {
+        box-shadow: 0 4px 20px 0 rgba(0,0,0,0.25) inset, 0 0 20px 0 rgba(0,0,0,0.35)
     }
 </style>

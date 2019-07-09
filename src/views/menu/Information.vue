@@ -31,17 +31,17 @@
             v-if="dialogVisible"
             :title="title"
             :visible.sync="dialogVisible"
-            width="60%"
+            width="880px"
             align="left"
             :modal-append-to-body='false'
             :append-to-body="true"
             :before-close="handleClose">
-            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="100px">
+            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="170px">
                 <el-form-item label="标题">
                     <el-input v-model="form.title" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="内容">
-                    <el-input v-model="form.description" :disabled="disabled"></el-input>
+                    <el-input  type="textarea" class="common-textarea" :rows="2" v-model="form.description" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="发布对象" v-if="acceptPerson">
                     <el-tree
@@ -294,5 +294,8 @@
     }
     .common-crud {
         width: calc(100% - 10px);
+    }
+    .common-textarea .el-textarea__inner {
+        width: 585px !important;
     }
 </style>

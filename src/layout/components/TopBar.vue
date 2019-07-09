@@ -49,7 +49,7 @@
                 </el-dialog>
             </vs-navbar-item>
             <vs-navbar-item index="1">
-                <el-badge :value="waitCheckNumber" class="item">
+                <el-badge :value="waitCheckNumber" class="item" :hidden="waitCheckNumber==0">
                     <a href="#" @click="showTips()"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
                 </el-badge>
             </vs-navbar-item>

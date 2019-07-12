@@ -5,6 +5,7 @@ import Login from '@/views/menu/Login';
 import NProgress from "nprogress";
 import 'nprogress/nprogress.css';
 import MainView from '@/layout/components/MainView';
+import Cloud from '@/views/cloud/Cloud';
 
 Vue.use(Router);
 
@@ -53,7 +54,12 @@ const router = new Router({
                 name: 'GISmap',
                 component: () => import('@/views/menu/GISmap')
             }]
-        }
+        },
+        {
+            path: '/cloud',
+            name: 'Cloud',
+            component: Cloud
+        },
     ]
 });
 
@@ -67,6 +73,10 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("menu");
+        next();
+        return;
+    }
+    if(to.path === '/cloud'){
         next();
         return;
     }

@@ -17,6 +17,45 @@
         <div id="census" onclick="toggleDiv('')">
             <img src="/static/img/test.png" height="472" width="670" />
         </div>
+
+        <div class="closeBtnBg" v-if="this.msgFloatRight.marginRight === '48px'" @click="close">
+            <div class="closeBtn"></div>
+        </div>
+
+        <vs-card class="msgCard" :style="msgFloatRight">
+                <div slot="header" style="padding-bottom: 8px;padding-top: 6px;">
+                    <a v-if="!rightMessage.districtName">暂无数据</a>
+                  {{rightMessage.districtName}}
+                </div>
+                    <div  v-for="(item,index) in rightMessage.positionInformation">
+                    <div class='block' style="margin-top: 2px"></div>
+                    <div style="float: left;font-size: 17px">{{item.name}}</div><br>
+                    <div style="font-size: 25px">
+                        <el-tag style="margin-right: 132px" effect="plain" size="small">
+                        <i class="el-icon-picture"style="margin-right: 5px;vertical-align: middle"/>
+                        图片
+                        </el-tag>
+                    </div>
+                    <div style="margin-top: 10px">
+                        <viewer >
+                            <img :src="item.pictures" v-if="item.pictures"
+                                 style="width: 200px;height: 135px;">
+                            <img src="/static/img/nodata.png" v-else
+                                 style="width: 200px;height: 135px;">
+                           </viewer>
+                    </div>
+                    <div style="font-size: 25px">
+                        <el-tag style="margin-left: -87px" effect="plain" size="small">
+                            <i class="el-icon-user-solid"style="margin-right: 5px;vertical-align: middle"/>
+                            人流量统计图
+                        </el-tag>
+                    </div>
+                    <div style="margin-top: 10px;width: 200px;height: 150px; border: 1px solid #c1c1c1;margin-left: 12px" :id='msgFloatRight.zIndex'>
+                    </div>
+                        <el-divider style="margin-top: 8px"></el-divider>
+                    </div>
+            </vs-card>
+
     </section>
 </template>
 
@@ -72,17 +111,36 @@
                     boxStyle: {
                        // opacity: "0.8",
                         background: 'white',
-                        width: "350px",
-                        height: "300px"
+                        width: "400px",
+                        // height:"300px"
+                        maxHeight:'600px'
                     },
                     closeIconUrl:"/static/img/close.png",
                     closeIconMargin: "5px 5px 0 0",
                     enableAutoPan: true,
                     align: INFOBOX_AT_TOP,
                 },
+                zhenList:[],
+                //控制右侧导航栏
+                msgFloatRight:{
+                    marginRight:'-285px',
+                    // marginRight:'48px',
+                    position: 'absolute',
+                    zIndex: 1000,
+                    top:'90px',
+                    right: '-45px',
+                    transition: 'all 1.5s'
+                },
+                rightMessage:{},
             }
         },
         methods: {
+            close(){
+                this.msgFloatRight.marginRight = '-285px'
+            },
+            posit(val){
+                return `margin-top:${val*108}px;`;
+            },
             initMap() {
                 // 百度地图API功能
                 this.map = new BMap.Map("allmap");    // 创建Map实例
@@ -113,6 +171,7 @@
                         strokeOpacity: 0.5
                     }); //建立多边形覆盖物
                     self.map.addOverlay(ply1);
+                    ply1.disableMassClear();
 
                     let count =  rs.boundaries.length; //行政区域的点有多少个
                     if (count === 0) {
@@ -129,6 +188,7 @@
                             fillOpacity: "0"
                         }); //建立多边形覆盖物
                         self.map.addOverlay(ply)
+                        ply.disableMassClear();
                     }
                     for (let i = 0; i < count; i++) {
                         let ply = new BMap.Polygon(rs.boundaries[i], {
@@ -138,9 +198,16 @@
                             fillColor: '#fff',
                             fillOpacity: "0.1"
                         }); //建立多边形覆盖物
-                        self.map.addOverlay(ply)
+                        self.map.addOverlay(ply);
+                        ply.disableMassClear();
                     }
                 });
+            },
+            pandTo(val){
+               this.map.panTo(val);
+               setTimeout(()=> {
+                    this.map.setZoom(14);
+                },500)
             },
             //展示基本阵地点位
             showBattleField() {
@@ -157,28 +224,108 @@
                     });
                     this.map.addOverlay(marker);
                  });*/
-               var infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
-               this.$http("POST",`identity/gis/positionlist`,false).then( data =>{
-                   data.forEach(item => {
-                       if(item.positionLonLat){
-                           let marker = new BMap.Marker(new BMap.Point(item.positionLonLat.split(",")[0],item.positionLonLat.split(",")[1]));
-                           marker.addEventListener('click', e => {
-                               let title= LookUp['PositionType'].filter(sub => sub.value === item.positionType)[0].label;
-                               this.pContent =
-                                   "<div class='infoBoxContent'>" +
-                                   "<div class='infoBoxTitle'>"+title+"</div>"+
-                                   "<div style='padding: 10px;'><p>&nbsp;&nbsp;&nbsp;名&nbsp;&nbsp;称&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"+item.positionName+"</p>" +
-                                   "<p>&nbsp;&nbsp;所属组织&nbsp;&nbsp;:&nbsp;&nbsp;"+item.positionDistrictName+"</p>"+
-                                   "<p>村干部数量&nbsp;:&nbsp;&nbsp;"+item.positionCadresNumber+"</p>"+
-                                   "<p>&nbsp;&nbsp;村&nbsp;书&nbsp;记&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;"+item.positionCadreName+"</p>"+
-                                   "<p>&nbsp;&nbsp;功能介绍&nbsp;&nbsp;:&nbsp;&nbsp;"+item.positionIntroduction+"</p></div>"+
-                                   "</div>";
-                               infoBox._setContent(this.pContent,infoBox.open(marker));
-                           });
-                           this.map.addOverlay(marker);
-                       }
-                   })
-               });
+                this.msgFloatRight.marginRight = '-285px'
+                this.map.clearOverlays();
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.$http("POST",`identity/sysDistrict/list`,{districtLevel:2},false).then( data =>{
+                    data.forEach(item => {
+                            if(item.location) {
+                                //定义镇名
+                                this.zhenList.push(item.districtName);
+                                let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
+                                let myIcon = new BMap.Icon("/static/img/close.png", new BMap.Size(100, 100));
+                                let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
+                                marker2.addEventListener('click', e => {
+                                    this.pandTo(marker)
+                                    setTimeout(this.setCunMaker(item.districtId),600);
+
+                                })
+                                this.map.addOverlay(marker2);
+                                marker2.disableMassClear();
+                                let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
+                                label.setStyle({
+                                    backgroundColor: '#ecf5ff',
+                                display: 'inline-block',
+                                height: '28px',
+                                padding: '0 5px',
+                                lineHeight: '26px',
+                                fontSize: '13px',
+                                color: '#409eff',
+                                border: '1px solid #d9ecff',
+                                borderRadius: '4px',
+                                boxSizing: 'border-box',
+                                whiteSpace: 'nowrap',
+                                });
+                                marker2.setLabel(label);
+                            }
+                            })
+                })
+
+
+
+            },
+            setCunMaker(val){
+                this.map.clearOverlays();
+                //基本阵地
+                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
+                this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
+                    data.forEach(item => {
+                        if(item.location){
+                            let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0],item.location.split(",")[1]));
+                            let content = ''
+                            //获取最新阵地修改时间
+                            let newTime = ''
+                            if(item.positionInformation){
+                                let times = []
+                                item.positionInformation.forEach((val)=>{
+                                    times.push(val.modifiedAt.split('T')[0])
+                                    content = content + "<div class='house'><div class='block'></div><div class='houseName'>"+val.name+":</div><div class='rowF'><div class='row'><label class='detailLabel'>设施</label><div class='detailText'>"+val.facilities+"</div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.facilities+"</span></div></div>" +
+                                        "<div class='rowF'><div class='row'><label class='detailLabel'>占地面积</label><div class='detailText'>"+val.area+"平方米</div></div></div>"+
+                                        "<div class='rowF'><div class='row'><label class='detailLabel'>功能介绍</label><div class='detailText'>"+val.introduction+"</div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.introduction+"</span></div></div>"+
+                                        "</div>"
+                                })
+                                let year=[]
+                                let mon = []
+                                let day = []
+                                times.forEach((val)=>{
+                                    year.push(Number(val.substring(0,4)))
+                                    mon.push(Number(val.substring(5,7)))
+                                    day.push(Number(val.substring(8,10)))
+                                })
+                                newTime =  Math.max.apply(Math,year)+'-'+Math.max.apply(Math,mon)+'-'+Math.max.apply(Math,day)
+                            }
+                            marker.addEventListener('click', e => {
+                                this.pContent =
+                                    "<div class='infoBoxContent'>" +
+                                    "<div class='infoBoxTitle'><span class='text'>"+item.districtName+"</span>" +
+                                    "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>"+item.parentName+"</span></div><div class='title02'><img src='/static/img/active/party_build_active.png' class='zhen'><span>更新时间:"+newTime+"</span></div></div></div>"+
+                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 400px'>"+content+
+                                      "</div>"+
+                                    "</div>";
+                                this.map.panTo(new BMap.Point(item.location.split(",")[0],item.location.split(",")[1]));
+                                this.rightMessage = item
+                                this.msgFloatRight.marginRight = '48px'
+                                setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
+                            });
+                            this.map.addOverlay(marker);
+                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-8,28)});
+                            label.setStyle({
+                                backgroundColor: '#ecf5ff',
+                                display: 'inline-block',
+                                height: '24px',
+                                padding: '0 8px',
+                                lineHeight: '22px',
+                                fontSize: '13px',
+                                color: '#139c56',
+                                border: '1px solid #d9ecff',
+                                borderRadius: '4px',
+                                boxSizing: 'border-box',
+                                whiteSpace: 'nowrap',
+                            });
+                            marker.setLabel(label);
+                        }
+                    })
+                });
             },
             clearBattleField() {
                 this.markerList.forEach( item => {
@@ -437,39 +584,214 @@
         margin-left: -20px;
     }
     .infoBoxTitle{
-        padding: 10px;
-        width: 100%;
-        height:40px;
-        font-size: 16px;
-        background-color: #ffbe3c;
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
+        padding: 12px 12px 16px 12px;
+        background: #D2EDFE;
+        color: #212121;
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+    .infoBoxTitle .text{
+        display: block;
+        width: 240px;
+        font-size: 18px;
+        color: #030303;
+        font-family: "Microsoft YaHei";
+        font-weight: bold;
+    }
+    .infoBoxTitle .system-field{
+        display: flex;
+        margin-top: 11px;
+    }
+    .infoBoxTitle .title01{
+        max-width: 100px;
+        overflow: hidden;
+        font-size: 14px;
+    }
+    .infoBoxTitle .title02{
+        flex: 1;
+        text-align: right;
+        font-size: 14px;
+    }
+    .infoBoxTitle .title01 .zhen{
+        position: relative;
+       width: 18px;
+        height: 18px;
+        top:2px;
+    }
+    .infoBoxTitle .title02 .zhen{
+        position: relative;
+        width: 18px;
+        height: 18px;
+        top:2px;
     }
     .infoBox {
-        border-radius: 12px;
-        box-shadow: 1px 1px 1px 1px rgba(167,167,167,0.2);
+        animation: boxmove 500ms ease;
+        background: #fff;
+        border-radius: 3px;
+        box-shadow: 2px 2px 10px rgba(51, 51, 51, 0.6);
+        z-index: 99;
     }
-    .infoBox:after{
-        /* content: "";
-         box-shadow: 80px 10px 5px #888888;
-       !*  transform:rotate(40deg);
-        transform-origin: bottom center;*!*/
-        content: "";
+    .house{
+        z-index: 1111;
+        text-align: center;
+        border-bottom: 1px solid #c1c1c1;
+        padding-bottom: 10px;
+    }
+    .tooltiptext{
+        visibility: hidden;
+        width: 290px;
+        background-color: #1d21249e;
+        color: #fff;
+        text-align: left;
+        border-radius: 6px;
+        padding: 5px 0;
+        white-space:normal;
+        font-size: 14px;
+        /* 定位 */
         position: absolute;
-        bottom: -30px;
-        left: 10px;
-        width: calc(0.5 * 1144px);
-        height: calc(0.5 * 370px);
-        background-size: contain;
-        background: url("/static/img/iws3.png") no-repeat;
-   //   background-color: rgba(167,167,167,0.5);
-     //   -moz-box-shadow: 10px 10px 10px 10px rgba(0,0,0,0.3);
-    //  box-shadow: 10px 0px 5px  rgba(167,167,167,0.5),10px 0px 5px  rgba(167,167,167,0.5),0px -10px 5px  rgba(167,167,167,0.5),0px 10px 5px  rgba(167,167,167,0.5);
-     //   transform: skewX(130deg);
-        z-index: -1;
-      //  transform-origin: bottom center;
+        margin-left: 75px;
+        margin-top: -55px;
+        z-index: 1999 !important;
     }
+    .block{
+        float: left;
+        width: 4px;
+        background: #108ee9;
+        height: 14px;
+        margin-right: 8px;
+        margin-top: 6px;
+    }
+    .houseName{
+        float: left;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        text-align: left;
+        position: relative;
+        left: 5px;
+        font-weight: 500;
+        font-size: 14px;
+    }
+    .row{
+        margin: auto;
+        width: 100%;
+        display: table;
+        min-height: 25px;
+        overflow: hidden;
+        border: 1px solid #EDEDED;
+        /*border-bottom: none;*/
+    }
+    .detailLabel{
+        display: table-cell;
+        vertical-align: middle;
+        width: 94px;
+        padding: 7px 8px;
+        color: #212121;
+        font-size: 12px;
+        border-right: 1px solid #EDEDED;
+        background: #FAFAFA;
 
+    }
+    .detailText{
+        display: block;
+        vertical-align: middle;
+        width: 240px;
+        padding: 7px 8px;
+        font-size: 12px;
+        color: #706874;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        word-break:keep-all;
+    }
+    .rowF{
+        margin: auto;
+        clear: both;
+        width: 85%;
+        z-index: 1111
+    }
+    .rowF:hover .tooltiptext{
+        visibility: visible;
+        z-index: 1000;
+        animation: tooltiptext 0.1s;
+    }
+    @keyframes tooltiptext {
+        0% {
+            transform: scale(0.6);
+        }
+        10% {
+              transform: scale(0.65);
+          }
+        20% {
+            transform: scale(0.7);
+        }
+        35% {
+            transform: scale(0.75);
+        }
+        50% {
+            transform: scale(0.8);
+        }
+        70% {
+            transform: scale(0.85);
+        }
+        85% {
+            transform: scale(0.9);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    /*.infoBox:after{*/
+        /*!* content: "";*/
+         /*box-shadow: 80px 10px 5px #888888;*/
+       /*!*  transform:rotate(40deg);*/
+        /*transform-origin: bottom center;*!*!*/
+        /*content: "";*/
+        /*position: absolute;*/
+        /*bottom: -30px;*/
+        /*left: 10px;*/
+        /*width: calc(0.5 * 1144px);*/
+        /*height: calc(0.5 * 370px);*/
+        /*background-size: contain;*/
+        /*background: url("/static/img/iws3.png") no-repeat;*/
+   /*//   background-color: rgba(167,167,167,0.5);*/
+     /*//   -moz-box-shadow: 10px 10px 10px 10px rgba(0,0,0,0.3);*/
+    /*//  box-shadow: 10px 0px 5px  rgba(167,167,167,0.5),10px 0px 5px  rgba(167,167,167,0.5),0px -10px 5px  rgba(167,167,167,0.5),0px 10px 5px  rgba(167,167,167,0.5);*/
+     /*//   transform: skewX(130deg);*/
+        /*z-index: -1;*/
+      /*//  transform-origin: bottom center;*/
+    /*}*/
+    .msgCard{
+        width:250px;
+        height: 530px;
+        overflow-y:scroll;
+        position: relative;
+    }
+    .closeBtnBg{
+        transition: all 0.3s;
+        position: absolute;right: 256px;top: 102px;background-color: rgba(28, 24, 24, 0.60);width: 30px;height: 30px;border-radius: 3px
+    }
+    .closeBtnBg:hover{
+        transform: scale(1.05);
+        cursor:pointer;
+        background-color: rgba(28, 24, 24, 0.34);
+    }
+    .closeBtn{
+        position: absolute;
+        top:12px;
+        left: 3px;
+        width: 25px;
+        height:5px;
+        background: white;
+        transform: rotate(45deg);
+    }
+    .closeBtn:before{
+        content:'';
+        display:block;
+        width: 25px;
+        height:5px;
+        background: white;
+        transform: rotate(-90deg);
+    }
 </style>
 <style scoped>
     #allmap{

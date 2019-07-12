@@ -525,7 +525,7 @@
                                     let path1 = `identity/exaExamine/scoreCun${os.chooseYear}Y${event.point.name}T`
                                     os.activityLoading = false
                                     os.$http('Post', path1, false).then((data) => {
-                                        os.activityLoading = true
+                                        setTimeout(()=>{os.activityLoading = true},300)
                                         os.cunData = data
                                     }).catch(() => {
                                         os.$message({
@@ -682,7 +682,7 @@
                                     let path1 = `identity/exaScore/percentCun${os.chooseYear}Y${event.point.name}T`
                                     os.activityLoading = false
                                     os.$http('Post', path1, false).then((data) => {
-                                        os.activityLoading = true
+                                        setTimeout(()=>{os.activityLoading = true},300)
                                         os.cunPercent = data
                                     }).catch(() => {
                                         os.$message({

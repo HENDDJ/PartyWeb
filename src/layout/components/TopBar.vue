@@ -12,22 +12,33 @@
 
             <vs-navbar-item index="0" >
                 <a href="#" @click="active=true"><i class="el-icon-user-solid"></i>&nbsp;&nbsp;{{user.name}}</a>
-                <vs-sidebar position-right  parent="body" default-index="1"  color="primary" class="sidebarx" spacer v-model="active">
+                <vs-sidebar position-right  parent="body" color="primary" class="sidebarx" spacer v-model="active">
                     <div class="header-sidebar" slot="header">
                         <vs-avatar  size="70px" :src="user.image"/>
                         <h4>{{user.name}}</h4>
                     </div>
-                    <span style="font-size: 14px;color: #3a8ee6">&nbsp; &nbsp;<b>&nbsp;&nbsp;组织介绍</b></span>
+                    <vs-sidebar-item index="1" icon="question_answer">
+                        操作日志
+                    </vs-sidebar-item>
+
+                    <vs-sidebar-item index="2" icon="gavel">
+                        密码重置
+                    </vs-sidebar-item>
+                    <vs-divider style="font-size: 14px;font-weight: 600;color: #1f74ff" color="primary" position="left">
+                        账号信息
+                    </vs-divider>
+                    <div style="margin-left: -8px">
+                        <p><icon name="loguser" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.userName}}</p>
+                        <p><icon name="logorg" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.organizationName}}</p>
+                        <p><icon name="logrole" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.roleName}}</p>
+                        <p><icon name="logphone" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.phone}}</p>
+                        <p><icon name="logtime" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.lastTime}}</p>
+                    </div>
+                    <vs-divider style="font-size: 14px;font-weight: 600;color: #1f74ff" color="primary" position="left">
+                        组织介绍
+                    </vs-divider>
                     <p>{{user.introduction}}</p><br/>
-                    <hr/>
-                    <span style="font-size: 14px;color: #3a8ee6">&nbsp; &nbsp;<b>&nbsp;&nbsp;账号信息</b></span><br><br>
-                        <div>
-                            <p><icon name="loguser" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.userName}}</p>
-                            <p><icon name="logorg" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.organizationName}}</p>
-                            <p><icon name="logrole" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.roleName}}</p>
-                            <p><icon name="logphone" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.phone}}</p>
-                            <p><icon name="logtime" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.lastTime}}</p>
-                        </div>
+
                     <div class="footer-sidebar" slot="footer">
                         <vs-button icon="edit" color="warning" type="flat" @click="pswDia=true;active=false">修改密码</vs-button>
                         <vs-button icon="reply" color="danger" type="flat" @click="logOut">切换账号</vs-button>
@@ -49,7 +60,7 @@
                 </el-dialog>
             </vs-navbar-item>
             <vs-navbar-item index="1">
-                <el-badge :value="waitCheckNumber" class="item">
+                <el-badge :value="waitCheckNumber" class="item" :hidden="waitCheckNumber==0">
                     <a href="#" @click="showTips()"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
                 </el-badge>
             </vs-navbar-item>
@@ -324,5 +335,8 @@
 <style>
     .top_bar header {
         box-shadow: 0 4px 20px 0 rgba(0,0,0,0.25) inset, 0 0 20px 0 rgba(0,0,0,0.35)
+    }
+    .vs-sidebar.vs-sidebar-position-right {
+        right: 2px !important;
     }
 </style>

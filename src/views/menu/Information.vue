@@ -38,10 +38,10 @@
             :before-close="handleClose">
             <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="170px">
                 <el-form-item label="标题">
-                    <el-input v-model="form.title" :disabled="disabled"></el-input>
+                    <el-input v-model="form.title" :disabled="disabled"  ></el-input>
                 </el-form-item>
                 <el-form-item label="内容">
-                    <el-input  type="textarea" class="common-textarea" :rows="2" v-model="form.description" :disabled="disabled"></el-input>
+                    <Tinymce type= "rich-editor" v-model="form.description"></Tinymce>
                 </el-form-item>
                 <el-form-item label="发布对象" v-if="acceptPerson">
                     <el-tree
@@ -62,6 +62,7 @@
 </template>
 
 <script>
+    import Tinymce from '@/components/Tinymce';
     export default {
         name: "Information",
         data() {
@@ -250,6 +251,9 @@
                 }
             },
         },
+        components: {
+            Tinymce,
+        },
         created() {
             this.showInformationList();
             this.loadNode();
@@ -294,8 +298,5 @@
     }
     .common-crud {
         width: calc(100% - 10px);
-    }
-    .common-textarea .el-textarea__inner {
-        width: 585px !important;
     }
 </style>

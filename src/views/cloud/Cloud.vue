@@ -1,27 +1,31 @@
 <template>
     <section>
-        <div class="content-right">
+        <div class="cloud">
             <swiper :options="swiperOption" ref="mySwiper" v-if="showSwiper()">
                 <swiper-slide v-for="(item,index) in currentActivityList" :key="item.id">
                     <vs-card class="card-sat my-swiper" style="height: 668px;">
                         <div slot="media">
                             <el-row>
-                                <el-col :span="8">
+                                <el-col :span="16">
                                     <el-row>
-                                        <el-col :span="20" style="color: #fff;margin: 30px 0">
-                                            {{item.title}}
+                                        <el-col :span="24" style="color: #fff;margin: 40px 20px;text-align: left">
+                                            <img src="../../../static/img/learning-logo.png" class="logo" v-if="item.taskType=='DistLearning'">
+                                            <img src="../../../static/img/party-logo.png" class="logo" v-if="item.taskType=='Party'">
+                                            &nbsp;{{item.title}}
                                         </el-col>
                                     </el-row>
                                 </el-col>
-                                <el-col :span="16">
+                                <el-col :span="8" >
                                     <br>
                                     <radial-progress-bar
-                                        style="margin: -10px auto"
-                                        :diameter="70"
+                                        style="margin: -5px 60px 0 0;float: right"
+                                        :diameter="90"
                                         :completed-steps="handlePercent(item.totalPercent)"
                                         :total-steps="100"
-                                        :strokeWidth="5"
-                                        innerStrokeColor="#e4e7ed">
+                                        :strokeWidth="7"
+                                        startColor="#3fb1e3"
+                                        stopColor="#3fb1e3"
+                                        innerStrokeColor="transparent">
                                         <p style="font-size: 8px;line-height: 14px;position: relative;top:4px;color: #fff">{{handlePercent(item.totalPercent)}}%</p>
                                         <p style="font-size: 6px;color: #aeaeae">总进度</p>
                                     </radial-progress-bar>
@@ -129,7 +133,7 @@
                         delay: 5000,
                         autoplayDisableOnInteraction:false,
                     },
-                  /*  autoplay:false,*/
+              /*      autoplay:false,*/
                     speed: 800,
                     effect: 'cube',
                     loop:true,
@@ -186,8 +190,8 @@
 </script>
 
 <style scoped>
-    .content-right {
-/*background-color: #0d1736;*/
+    .cloud {
+  /*   background-color: #0d1736;*/
         width: 560px;
         height: 370px;
         flex: 1;
@@ -203,7 +207,7 @@
     .progress-content {
         float: left;
         width: 45%;
-        font-size: 16px;
+        font-size: 14px;
         color: #fff;
         margin: 8px 13px ;
     }
@@ -212,5 +216,16 @@
         width: 30%;
         margin-top: 12px;
         margin-right: 10px;
+    }
+    .logo{
+        width: 32px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+</style>
+<style>
+    .cloud .radial-progress-bar{
+        background: url("../../../src/svg/progress.svg") 100% 100% no-repeat !important;
     }
 </style>

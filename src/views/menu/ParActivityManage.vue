@@ -63,13 +63,13 @@
                                         </div>
                                         <div class="processing">
                                             <template v-if="roleCode === 'COUNTRY_SIDE_ACTOR'">
-                                                <el-progress style="width: 80%;text-align: center" :percentage="((item.status || 0)/2) * 100" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" :percentage="((item.status || 0)/2) * 100" :stroke-width="5"></el-progress>
                                             </template>
                                             <template v-else>
-                                                <el-progress style="width: 80%;text-align: center" v-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
-                                                <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.7" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
-                                                <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
-                                                <el-progress style="width: 80%;text-align: center" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) === 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.7" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) === 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
                                                 <span v-else>ERROR</span>
                                             </template>
                                         </div>
@@ -81,14 +81,15 @@
                                     </div>
                                 </div>
                             </transition>
+                            <el-pagination style="text-align: right;" background
+                                           :pager-count="4"
+                                           :page-sizes="[5, 7, 10]"
+                                           :total="pageable.total" :current-page.sync="pageable.currentPage"
+                                           :page-size.sync="pageable.pageSize"
+                                           @current-change="currentChange" @size-change="sizeChange"
+                                           layout="total, sizes, prev, pager, next">
+                            </el-pagination>
                         </div>
-                    <el-pagination style="text-align: right;" background
-                                   :page-sizes="[5, 7, 10]"
-                                   :total="pageable.total" :current-page.sync="pageable.currentPage"
-                                   :page-size.sync="pageable.pageSize"
-                                   @current-change="currentChange" @size-change="sizeChange"
-                                   layout="total, sizes, prev, pager, next">
-                    </el-pagination>
                 </div>
                 <div style="width: 3%"></div>
                 <div style="width: 48.5%">
@@ -230,7 +231,7 @@
                                             label="组织名称"
                                             align="center"
                                             sortable
-                                            width="110px"
+                                            min-width="110px"
                                             :show-overflow-tooltip="true"
                                         >
                                         </el-table-column>
@@ -239,7 +240,7 @@
                                             label="已完成"
                                             align="center"
                                             sortable
-                                            width="90px"
+                                            min-width="90px"
                                             :show-overflow-tooltip="true">
                                             <template slot-scope="scope">
                                                 <el-badge :value="scope.row.passed" class="item" type="success">
@@ -251,7 +252,7 @@
                                             label="待审核"
                                             align="center"
                                             sortable
-                                            width="90px"
+                                            min-width="90px"
                                             :show-overflow-tooltip="true">
                                             <template slot-scope="scope">
                                                 <el-badge :value="scope.row.waitCheck" class="item" type="warning">
@@ -263,7 +264,7 @@
                                             label="未完成"
                                             align="center"
                                             sortable
-                                            width="90px"
+                                            min-width="90px"
                                             :show-overflow-tooltip="true">
                                             <template slot-scope="scope">
                                                 <el-badge :value="scope.row.fail" class="item" type="danger">
@@ -573,6 +574,9 @@
                     districtId: this.sysDistrict.id,
                     activityId: this.detailForm.id
                 }
+            },
+            progressType() {
+                return this.$touristScreenWid <= 0.73 ? 'dashboard' : 'line'
             }
         },
         components: {
@@ -1242,15 +1246,24 @@
     .detail-row .el-input--mini .el-input__inner {
         width: 185px !important;
     }
+    .el-timeline .el-loading-mask {
+        height: 300px;
+    }
+    .processing svg {
+        margin: 0 !important;
+    }
+    .processing .el-progress--line {
+        width: 80% !important;
+        text-align: center;
+    }
     @media screen and (max-width: 1400px) {
         .right-detail {
             font-size: 14px;
         }
+        .processing {
+            flex: 1;
+        }
     }
-    .el-timeline .el-loading-mask {
-        height: 300px;
-    }
-
     /*.activity-management .el-textarea__inner {*/
         /*width: auto !important;*/
     /*}*/

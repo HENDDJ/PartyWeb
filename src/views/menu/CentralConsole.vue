@@ -64,7 +64,7 @@
                     <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #0dc9ce, #22e3ac);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
-                                <p style="line-height: 34px;font-weight: bold">下属村干部总数</p>
+                                <p style="line-height: 34px;font-weight: bold">下属村干部</p>
                                 <p style="font-size: 32px;font-weight: bold">
                                     <template>
                                         <CountTo :startVal="0" :endVal="villageCadresNumber" :duration="1300"></CountTo>
@@ -83,7 +83,7 @@
                     <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #cf8bf3, #fdb99b);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
-                                <p style="line-height: 34px;font-weight: bold">下属村书记总数</p>
+                                <p style="line-height: 34px;font-weight: bold">下属村书记</p>
                                 <p style="font-size: 36px;font-weight: bold">
                                     <template>
                                         <CountTo :startVal="0" :endVal="villageSecretaryNumber" :duration="1300"></CountTo>
@@ -189,7 +189,7 @@
                 </div>
                 <div class="content-right">
                     <swiper :options="swiperOption" ref="mySwiper">
-                        <swiper-slide v-for="(item,index) in currentActivityList" :key="item.title">
+                        <swiper-slide v-for="(item,index) in currentActivityList" :key="item.id">
                             <vs-card class="card-sat my-swiper" style="height: 668px;">
                                 <h4 slot="header" style="vertical-align: bottom;text-align: left">
                                     执行中的活动（{{index + 1}}）

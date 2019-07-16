@@ -9,8 +9,14 @@
             <div slot="title">
                 <div class="header-title"></div>
             </div>
+            <el-tooltip effect="dark" content="搜索" placement="bottom">
+                <div class="data_vis" @click="toggleSearch">
+                    <icon name="search" scale="2.2" v-show="searchIcon"></icon>
+                </div>
+            </el-tooltip>
+            <vs-input v-if="!searchIcon" autofocus="true" class="search-content" icon="search" placeholder="请输入关键词" @blur.lazy="toggleSearch" v-model="queryParam"></vs-input>
             <el-tooltip effect="dark" content="可视化大屏" placement="bottom">
-                <a href="http://sugar.baidubce.com/dashboard/b464603c86efa03bc0e7bfe227ddd7f6" class="data_vis" target="_blank">&nbsp;&nbsp;<icon name="data_vis" scale="1.7"></icon>&nbsp;&nbsp;</a>
+                <a href="http://sugar.baidubce.com/dashboard/b464603c86efa03bc0e7bfe227ddd7f6" class="data_vis" target="_blank">&nbsp;&nbsp;&nbsp;<icon name="data_vis" scale="1.7"></icon>&nbsp;&nbsp;</a>
             </el-tooltip>
             <vs-navbar-item index="1">
                 <a href="#" @click="active=true"><i class="el-icon-user-solid"></i>&nbsp;&nbsp;{{user.name}}</a>
@@ -117,6 +123,8 @@
                 waitCheckTips:false,//消息中心弹框
                 loading:false,
                 waitCheckList:[],
+                queryParam: '',
+                searchIcon: true
             }
         },
         computed: {
@@ -133,6 +141,9 @@
             }
         },
         methods: {
+            toggleSearch() {
+                this.searchIcon = !this.searchIcon;
+            },
             editPsw(form){
                 if(form.password&&(form.checkPsw)){
                     if(form.checkPsw===form.password){
@@ -344,11 +355,12 @@
     .data_vis {
         position: relative;
         bottom: -2px;
-        color: white;
+        color: white !important;
         transition: all .2s;
     }
     .data_vis:hover {
-        color: yellow;
+        color: yellow !important;
         transform: scale(1.2);
+        cursor: pointer;
     }
 </style>

@@ -53,11 +53,11 @@ Vue.prototype.$validate = (selected) => {
 
 function initTouristScreen() {
     Vue.prototype.$touristScreenWid = (() => {
-        let screenWidth = document.documentElement.clientWidth ;
+        let screenWidth = document.body.clientWidth ;
         return screenWidth/1920;
     })();
     Vue.prototype.$touristScreenHei = (() => {
-        let screenHeight = document.documentElement.clientHeight ;
+        let screenHeight = document.body.clientHeight ;
         return screenHeight/1080;
     })();
 }

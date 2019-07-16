@@ -225,7 +225,17 @@
                     this.map.addOverlay(marker);
                  });*/
                 this.msgFloatRight.marginRight = '-285px'
+                let allOverlay = this.map.getOverlays();
+                console.log(allOverlay)
+                if(allOverlay.length>4){
+                    for (let i = 0; i < allOverlay.length; i++) {
+                        console.log(123)
+                        allOverlay[i].enableMassClear();
+                    };
+                }
+
                 this.map.clearOverlays();
+                this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http("POST",`identity/sysDistrict/list`,{districtLevel:2},false).then( data =>{
                     data.forEach(item => {
@@ -233,7 +243,7 @@
                                 //定义镇名
                                 this.zhenList.push(item.districtName);
                                 let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
-                                let myIcon = new BMap.Icon("/static/img/close.png", new BMap.Size(100, 100));
+                                let myIcon = new BMap.Icon("/static/img/house06.svg", new BMap.Size(50, 50));
                                 let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
                                 marker2.addEventListener('click', e => {
                                     this.pandTo(marker)
@@ -299,7 +309,7 @@
                                     "<div class='infoBoxContent'>" +
                                     "<div class='infoBoxTitle'><span class='text'>"+item.districtName+"</span>" +
                                     "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>"+item.parentName+"</span></div><div class='title02'><img src='/static/img/active/party_build_active.png' class='zhen'><span>更新时间:"+newTime+"</span></div></div></div>"+
-                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 400px'>"+content+
+                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 400px' class='flowWin'>"+content+
                                       "</div>"+
                                     "</div>";
                                 this.map.panTo(new BMap.Point(item.location.split(",")[0],item.location.split(",")[1]));
@@ -762,7 +772,7 @@
     /*}*/
     .msgCard{
         width:250px;
-        height: 530px;
+        height: 579px;
         overflow-y:scroll;
         position: relative;
     }
@@ -792,6 +802,9 @@
         background: white;
         transform: rotate(-90deg);
     }
+    .flowWin::-webkit-scrollbar{
+        width: 8px;
+    }
 </style>
 <style scoped>
     #allmap{
@@ -800,6 +813,7 @@
         overflow: hidden;
         margin:0;font-family:"微软雅黑";
     }
+
     #census{
         width: 0;
         height: 300px;

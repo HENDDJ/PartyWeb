@@ -104,7 +104,7 @@
         letter-spacing: 1px;
     }
 
-    @media screen and (max-width: 1400px){
+    @media screen and (max-width: 1430px){
         .bg {
             padding: 30px;
         }

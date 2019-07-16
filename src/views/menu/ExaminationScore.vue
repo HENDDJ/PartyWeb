@@ -30,12 +30,12 @@
                         <div v-show="activityLoading">
                             <vs-card actionable class="cardx" v-if="scoreOrPercent">
                                 <div slot="header">
-                                    <h3>
-                                        {{this.firstTown}}各村分数
+                                    <h3 style="padding-top: 10px;padding-bottom: 8px">
+                                    {{this.firstTown}}各村分数
                                     </h3>
                                 </div>
                                 <div slot="media">
-                                    <img src="static/img/blue.png" style="height:30px">
+                                    <img src="static/img/blue.png" style="height:15px">
                                 </div>
                                 <div>
                                     <div>
@@ -64,8 +64,7 @@
                                                         <icon v-if="indextr===0" name="RankFirstIcon" scale="2"></icon>
                                                         <icon v-if="indextr===1" name="RankSecondIcon" scale="2"></icon>
                                                         <icon v-if="indextr===2" name="RankThirdIcon" scale="2"></icon>
-                                                        <a v-if="indextr<3">{{indextr+1}}</a>
-                                                        <a v-else style="margin-left: 45.28px">{{indextr+1}}</a>
+                                                        <a v-if="indextr>2" style="margin-left: 25.28px">{{indextr+1}}</a>
                                                     </vs-td>
 
                                                     <vs-td :data="tr.cun" style="text-align: left">
@@ -90,12 +89,12 @@
                             </vs-card>
                             <vs-card actionable class="cardx" v-if="scoreOrPercent===false">
                                 <div slot="header">
-                                    <h3>
-                                        {{this.secondTown}}各村完成比例
+                                    <h3 style="padding-top: 5px;padding-bottom: 3px">
+                                    {{this.secondTown}}各村完成比例
                                     </h3>
                                 </div>
                                 <div slot="media">
-                                    <img src="static/img/blue.png" style="height:30px">
+                                    <img src="static/img/blue.png" style="height:15px">
                                 </div>
                                 <div>
                                     <div>
@@ -124,8 +123,7 @@
                                                         <icon v-if="indextr===0" name="RankFirstIcon" scale="2"></icon>
                                                         <icon v-if="indextr===1" name="RankSecondIcon" scale="2"></icon>
                                                         <icon v-if="indextr===2" name="RankThirdIcon" scale="2"></icon>
-                                                        <a v-if="indextr<3">{{indextr+1}}</a>
-                                                        <a v-else style="margin-left: 45.28px">{{indextr+1}}</a>
+                                                        <a v-if="indextr>2" style="margin-left: 25.28px">{{indextr+1}}</a>
                                                     </vs-td>
 
                                                     <vs-td :data="tr.cun" style="text-align: left">
@@ -196,7 +194,7 @@
         data() {
             return {
                 orgStyle:{
-                    'width':'100%'
+                    'width':'101%'
                 },
                 options: [],
                 optionsRegion: [{text: '全市', value: ' '}],
@@ -715,7 +713,7 @@
                         enabled: false     //不显示LOGO
                     },
                     title: {
-                        text: '各组织积分及完成情况'
+                        text: ''
                     },
                     series: [{
                         type: 'organization',
@@ -940,12 +938,7 @@
             },
             scoreDataOptions(oo) {
                 let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=&year=${this.chooseYear}`
-                let scoreLast=[]
-                if(this.role == 'shi'){
-                     scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
-                }else{
-                     scoreLast = [{id: '句容市委',name:'句容市委'}]
-                }
+                let  scoreLast = [{id: '句容市委',name:'句容市委'}]
 
                 this.$http('Post', path, false).then((data) => {
                     let arr = []
@@ -979,12 +972,7 @@
                     text:"数据计算重新绘图中，请稍后..."
                 })
                 let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=&year=${this.chooseYear}`
-                let scoreLast = []
-                if(this.role == 'shi'){
-                    scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
-                }else {
-                    scoreLast = [{id: '句容市委',name:'句容市委'}]
-                }
+                let  scoreLast = [{id: '句容市委',name:'句容市委'}]
                 return this.$http('Post', path, false).then((data) => {
                     let arr = []
                     let arrNext = []
@@ -1149,5 +1137,6 @@
     }
     .orgPos{
         margin-top: 50px;
+        margin-left: -12px;
     }
 </style>

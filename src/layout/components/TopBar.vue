@@ -9,8 +9,10 @@
             <div slot="title">
                 <div class="header-title"></div>
             </div>
-
-            <vs-navbar-item index="0" >
+            <el-tooltip effect="dark" content="可视化大屏" placement="bottom">
+                <a href="http://sugar.baidubce.com/dashboard/b464603c86efa03bc0e7bfe227ddd7f6" class="data_vis" target="_blank">&nbsp;&nbsp;<icon name="data_vis" scale="1.7"></icon>&nbsp;&nbsp;</a>
+            </el-tooltip>
+            <vs-navbar-item index="1">
                 <a href="#" @click="active=true"><i class="el-icon-user-solid"></i>&nbsp;&nbsp;{{user.name}}</a>
                 <vs-sidebar position-right  parent="body" color="primary" class="sidebarx" spacer v-model="active">
                     <div class="header-sidebar" slot="header">
@@ -59,7 +61,7 @@
                     </span>
                 </el-dialog>
             </vs-navbar-item>
-            <vs-navbar-item index="1">
+            <vs-navbar-item index="2">
                 <el-badge :value="waitCheckNumber" class="item" :hidden="waitCheckNumber==0">
                     <a href="#" @click="showTips()"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
                 </el-badge>
@@ -84,7 +86,7 @@
                                @current-change="currentChange" @size-change="sizeChange" layout="total, sizes, prev, pager, next">
                 </el-pagination>
             </el-dialog>
-            <vs-navbar-item index="2">
+            <vs-navbar-item index="3">
                 <a href="/#/login"><icon name="exit" scale="1.75" style="vertical-align: sub"></icon>&nbsp;&nbsp;退出</a>
             </vs-navbar-item>
         </vs-navbar>
@@ -338,5 +340,15 @@
     }
     .vs-sidebar.vs-sidebar-position-right {
         right: 2px !important;
+    }
+    .data_vis {
+        position: relative;
+        bottom: -2px;
+        color: white;
+        transition: all .2s;
+    }
+    .data_vis:hover {
+        color: yellow;
+        transform: scale(1.2);
     }
 </style>

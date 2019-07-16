@@ -191,7 +191,7 @@
 
 <style scoped>
     .cloud {
-  /*   background-color: #0d1736;*/
+   /*  background-color: #0d1736;*/
         width: 560px;
         height: 370px;
         flex: 1;
@@ -227,5 +227,8 @@
 <style>
     .cloud .radial-progress-bar{
         background: url("../../../src/svg/progress.svg") 100% 100% no-repeat !important;
+    }
+    .cloud svg{
+        margin: 0 !important;
     }
 </style>

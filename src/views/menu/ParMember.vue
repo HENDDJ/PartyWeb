@@ -1,5 +1,9 @@
 <template>
-    <CommonCRUD :columns="columns" apiRoot="/identity/parMember" :formColumns="formColumns"></CommonCRUD>
+    <CommonCRUD :columns="columns" apiRoot="/identity/parMember" :formColumns="formColumns">
+        <template slot="header-btn" slot-scope="slotProps">
+            <el-button >{{slotProps}}</el-button>
+        </template>
+    </CommonCRUD>
 </template>
 
 <script>

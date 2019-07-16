@@ -91,8 +91,8 @@
                             </el-pagination>
                         </div>
                 </div>
-                <div style="width: 7%"></div>
-                <div style="width: 44.5%">
+                <div style="width: 3%"></div>
+                <div style="width: 48.5%">
                     <div class="detail-header">
                         <h1>任务详情</h1>
                     </div>
@@ -111,7 +111,7 @@
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="4">任务名称：</el-col>
-                                <el-col :span="6" style="color: #25252582">
+                                <el-col :span="8" style="color: #25252582">
                                     <template v-if="lookType">&nbsp;{{detailForm.title}}</template>
                                     <template v-if="editType">
                                         <el-input v-model="detailForm.title" :disabled="disabled"></el-input>
@@ -119,10 +119,11 @@
                                 </el-col>
                                 <el-col :span="4">任务类型：</el-col>
                                 <el-col :span="6" style="color: #25252582">&nbsp;{{detailForm.type}}</el-col>
+                                <el-col :span="2">123</el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="4">截止日期：</el-col>
-                                <el-col :span="6" style="color: #25252582">
+                                <el-col :span="8" style="color: #25252582">
                                     <template v-if="lookType">&nbsp;{{new Date(detailForm.month).toLocaleDateString()}}</template>
                                     <template v-if="editType">
                                         <el-date-picker v-model="detailForm.month"
@@ -147,7 +148,7 @@
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="4">任务分值：</el-col>
-                                <el-col :span="6" style="color: red;font-weight: bold">
+                                <el-col :span="8" style="color: red;font-weight: bold">
                                     <template v-if="lookType">&nbsp;{{detailForm.score || 0}}分</template>
                                     <template v-if="editType">
                                         <vs-input-number size="medium" v-model="detailForm.score"></vs-input-number>

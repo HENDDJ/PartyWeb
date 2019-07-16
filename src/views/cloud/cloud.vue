@@ -13,7 +13,7 @@
                                         </el-col>
                                     </el-row>
                                 </el-col>
-                                <el-col :span="16">
+                                <el-col :span="16" >
                                     <br>
                                     <radial-progress-bar
                                         style="margin: -10px auto"
@@ -125,11 +125,11 @@
                 swiperOption: {
                     direction: 'horizontal',
                     observeSlideChildren:true,
-                    autoplay: {
+                  /*  autoplay: {
                         delay: 5000,
                         autoplayDisableOnInteraction:false,
-                    },
-                  /*  autoplay:false,*/
+                    },*/
+                    autoplay:false,
                     speed: 800,
                     effect: 'cube',
                     loop:true,
@@ -187,7 +187,7 @@
 
 <style scoped>
     .content-right {
-/*background-color: #0d1736;*/
+     background-color: #0d1736;
         width: 560px;
         height: 370px;
         flex: 1;
@@ -212,5 +212,9 @@
         width: 30%;
         margin-top: 12px;
         margin-right: 10px;
+    }
+    .radial-progress-inner{
+        /*background: url("../../svg/progress.svg");*/
+background: white;
     }
 </style>

@@ -30,12 +30,12 @@
                         <div v-show="activityLoading">
                             <vs-card actionable class="cardx" v-if="scoreOrPercent">
                                 <div slot="header">
-                                    <h3>
-                                        {{this.firstTown}}各村分数
+                                    <h3 style="padding-top: 10px;padding-bottom: 8px">
+                                    {{this.firstTown}}各村分数
                                     </h3>
                                 </div>
                                 <div slot="media">
-                                    <img src="static/img/blue.png" style="height:30px">
+                                    <img src="static/img/blue.png" style="height:15px">
                                 </div>
                                 <div>
                                     <div>
@@ -64,8 +64,7 @@
                                                         <icon v-if="indextr===0" name="RankFirstIcon" scale="2"></icon>
                                                         <icon v-if="indextr===1" name="RankSecondIcon" scale="2"></icon>
                                                         <icon v-if="indextr===2" name="RankThirdIcon" scale="2"></icon>
-                                                        <a v-if="indextr<3">{{indextr+1}}</a>
-                                                        <a v-else style="margin-left: 45.28px">{{indextr+1}}</a>
+                                                        <a v-if="indextr>2" style="margin-left: 25.28px">{{indextr+1}}</a>
                                                     </vs-td>
 
                                                     <vs-td :data="tr.cun" style="text-align: left">
@@ -90,12 +89,12 @@
                             </vs-card>
                             <vs-card actionable class="cardx" v-if="scoreOrPercent===false">
                                 <div slot="header">
-                                    <h3>
-                                        {{this.secondTown}}各村完成比例
+                                    <h3 style="padding-top: 5px;padding-bottom: 3px">
+                                    {{this.secondTown}}各村完成比例
                                     </h3>
                                 </div>
                                 <div slot="media">
-                                    <img src="static/img/blue.png" style="height:30px">
+                                    <img src="static/img/blue.png" style="height:15px">
                                 </div>
                                 <div>
                                     <div>
@@ -124,8 +123,7 @@
                                                         <icon v-if="indextr===0" name="RankFirstIcon" scale="2"></icon>
                                                         <icon v-if="indextr===1" name="RankSecondIcon" scale="2"></icon>
                                                         <icon v-if="indextr===2" name="RankThirdIcon" scale="2"></icon>
-                                                        <a v-if="indextr<3">{{indextr+1}}</a>
-                                                        <a v-else style="margin-left: 45.28px">{{indextr+1}}</a>
+                                                        <a v-if="indextr>2" style="margin-left: 25.28px">{{indextr+1}}</a>
                                                     </vs-td>
 
                                                     <vs-td :data="tr.cun" style="text-align: left">

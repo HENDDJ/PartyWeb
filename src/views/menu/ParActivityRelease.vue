@@ -21,19 +21,19 @@
                     <br>
                 </el-col>
                 <el-row>
-                    <el-col :span="10">
+                    <el-col :span="11">
                         <el-form-item label="任务名称" prop="title">
                             <el-input v-model="form.title" :disabled=disabled></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="10">
+                    <el-col :span="11">
                         <el-form-item label="任务类型" prop="type">
                             <el-input v-model="form.type" :disabled=disabled></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="10">
+                    <el-col :span="11">
                         <el-form-item label="截止时间" prop="monVal">
                             <el-date-picker
                                 v-model="monVal"
@@ -42,7 +42,7 @@
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="10">
+                    <el-col :span="11">
                         <el-form-item label="任务分值" prop="score">
                             <el-input-number v-model="form.score" label="分值"
                                              style="width: 200px"></el-input-number>
@@ -50,7 +50,7 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="10">
+                    <el-col :span="11">
                         <el-form-item label="上传文件" prop="fileUrls">
                             <CommonFileUpload :value="form.fileUrls"
                                               @getValue="form.fileUrls = $event"></CommonFileUpload>
@@ -63,7 +63,7 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="10">
+                    <el-col :span="11">
                         <el-form-item label="任务对象" prop="taskObject">
                             <el-tree
                                 :props="props"
@@ -92,7 +92,7 @@
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="10">
+                    <el-col :span="11">
                         <br>
                         <el-form-item label=" ">
                             <el-button type="primary" @click="submit('form')">发 布</el-button>

@@ -196,7 +196,7 @@
         data() {
             return {
                 orgStyle:{
-                    'width':'100%'
+                    'width':'101%'
                 },
                 options: [],
                 optionsRegion: [{text: '全市', value: ' '}],
@@ -715,7 +715,7 @@
                         enabled: false     //不显示LOGO
                     },
                     title: {
-                        text: '各组织积分及完成情况'
+                        text: ''
                     },
                     series: [{
                         type: 'organization',
@@ -940,12 +940,7 @@
             },
             scoreDataOptions(oo) {
                 let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=&year=${this.chooseYear}`
-                let scoreLast=[]
-                if(this.role == 'shi'){
-                     scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
-                }else{
-                     scoreLast = [{id: '句容市委',name:'句容市委'}]
-                }
+                let  scoreLast = [{id: '句容市委',name:'句容市委'}]
 
                 this.$http('Post', path, false).then((data) => {
                     let arr = []
@@ -979,12 +974,7 @@
                     text:"数据计算重新绘图中，请稍后..."
                 })
                 let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=&year=${this.chooseYear}`
-                let scoreLast = []
-                if(this.role == 'shi'){
-                    scoreLast = [{id: '句容市委',image: 'static/img/jurong.png',name:'句容市委'}]
-                }else {
-                    scoreLast = [{id: '句容市委',name:'句容市委'}]
-                }
+                let  scoreLast = [{id: '句容市委',name:'句容市委'}]
                 return this.$http('Post', path, false).then((data) => {
                     let arr = []
                     let arrNext = []
@@ -1149,5 +1139,6 @@
     }
     .orgPos{
         margin-top: 50px;
+        margin-left: -12px;
     }
 </style>

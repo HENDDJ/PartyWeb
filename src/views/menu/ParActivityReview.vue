@@ -10,7 +10,7 @@
                     <div class="left-act-list" >
                         <transition name="translate" mode="out-in">
                             <div v-show="activityLoading">
-                                <div class="list-item" v-for="(item, index) in tableData" :key="item.id" @click="details(item)">
+                                <div class="list-item" v-for="(item, index) in tableData" :key="item.id" @click="details(item)" v-if="tableData.length!=0">
                                     <div class="status">
                                         <img v-show="item.taskType === 'Party'" style="position: relative;left: 5px;top:13px" src="/static/img/party-logo.png" alt="党建logo"/>
                                         <img v-show="item.taskType === 'DistLearning'" style="position: relative;left: 5px;top:13px" src="/static/img/learning-logo.png" alt="远教logo"/>
@@ -38,6 +38,7 @@
                                         </template>
                                     </div>
                                 </div>
+                                <div v-if="tableData.length===0">暂无待审核任务</div>
                             </div>
                         </transition>
                     </div>
@@ -49,22 +50,22 @@
                                    layout="total, sizes, prev, pager, next">
                     </el-pagination>
                 </div>
-                <div style="width: 7%"></div>
-                <div style="width: 44.5%">
+                <div style="width: 3%"></div>
+                <div style="width: 48.5%">
                     <div class="detail-header">
                         <h1>任务详情</h1>
                     </div>
                     <transition name="el-zoom-in-center" mode="out-in">
-                        <div v-show="activityDetailLoading" class="right-detail">
+                        <div v-show="activityDetailLoading" class="right-detail" v-if="tableData.length!=0">
                             <el-row class="detail-row">
                                 <el-col :span="4">任务名称：</el-col>
-                                <el-col :span="6" style="color: #25252582">{{activityDetail.title}}&nbsp;</el-col>
+                                <el-col :span="8" style="color: #25252582">{{activityDetail.title}}&nbsp;</el-col>
                                 <el-col :span="4">任务类型:</el-col>
                                 <el-col :span="6" style="color: #25252582">{{activityDetail.type}}&nbsp;</el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="4">截止日期：</el-col>
-                                <el-col :span="6" style="color: #25252582">{{activityDetail.month}}&nbsp;</el-col>
+                                <el-col :span="8" style="color: #25252582">{{activityDetail.month}}&nbsp;</el-col>
                                 <el-col :span="4">提醒时间:</el-col>
                                 <el-col :span="6" style="color: #25252582">{{activityDetail.alarmTime || '暂无'}}&nbsp;</el-col>
                             </el-row>
@@ -93,7 +94,7 @@
                                                 <img
                                                     :src="TvPicFull[index]"
                                                     :key="index"
-                                                    style="width: 200px"
+                                                    style="width: 220px"
                                                 >
                                             </el-timeline-item>
                                         </el-timeline>
@@ -101,7 +102,7 @@
 
                                 </el-col>
                                 <el-col :span="6" >
-                                    <el-button  v-if="TvPic.length !== 0" type="text" @click="TvMore">更多</el-button>
+                                    <el-button  v-if="TvPic.length !== 0" type="text" @click="TvMore" style="padding-left: 95px">更多</el-button>
                                 </el-col>
 
                             </el-row>
@@ -122,14 +123,14 @@
                                                 <img
                                                     :src="PhonePicFull[index]"
                                                     :key="index"
-                                                    style="width: 200px;height: 150px"
+                                                    style="width: 220px;height: 150px"
                                                 >
                                             </el-timeline-item>
                                         </el-timeline>
                                     </viewer>
                                 </el-col>
                                 <el-col :span="6" >
-                                    <el-button  v-if="PhonePic.length !== 0" type="text" @click="PhonePicShow">更多</el-button>
+                                    <el-button  v-if="PhonePic.length !== 0" type="text" @click="PhonePicShow" style="padding-left: 95px">更多</el-button>
                                 </el-col>
                             </el-row>
 
@@ -152,7 +153,8 @@
                             </el-row>
 
                             <!--<PictureShot :picData="this.activityDetail"></PictureShot>-->
-                        </div>
+                        </div >
+                        <div v-if="tableData.length===0">暂无待审核任务</div>
                     </transition>
                 </div>
                 <div style="width: 2%"></div>

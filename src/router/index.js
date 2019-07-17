@@ -7,6 +7,7 @@ import 'nprogress/nprogress.css';
 import MainView from '@/layout/components/MainView';
 import Cloud from '@/views/cloud/Cloud';
 import Search from '@/views/search/Search';
+import CloudRoot from '@/views/cloud/CloudRoot';
 
 Vue.use(Router);
 
@@ -80,6 +81,11 @@ const router = new Router({
             path: '/cloud',
             name: 'Cloud',
             component: Cloud
+        },
+        {
+            path: '/cloudRoot',
+            name: 'CloudRoot',
+            component: CloudRoot
         }
     ]
 });

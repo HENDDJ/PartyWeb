@@ -26,7 +26,7 @@
                 </el-input>
             </div>
             <el-tooltip effect="dark" content="可视化大屏" placement="bottom">
-                <a href="http://sugar.baidubce.com/dashboard/b464603c86efa03bc0e7bfe227ddd7f6" class="data_vis" target="_blank">&nbsp;&nbsp;&nbsp;<icon name="data_vis" scale="1.7"></icon>&nbsp;&nbsp;</a>
+                <a href="#/cloudRoot" class="data_vis" target="_blank">&nbsp;&nbsp;&nbsp;<icon name="data_vis" scale="1.7"></icon>&nbsp;&nbsp;</a>
             </el-tooltip>
             <vs-navbar-item index="1">
                 <a href="#" @click="active=true"><i class="el-icon-user-solid"></i>&nbsp;&nbsp;{{user.name}}</a>

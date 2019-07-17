@@ -1,7 +1,7 @@
 <template>
     <el-scrollbar wrapClass="scrollbar-wrapper" viewClass="scrollbar_view">
         <el-menu background-color="rgb(0,0,0,0)" text-color="#fff" active-text-color="#409EFF" router  unique-opened  class="el-menu-personal" @select="changeActiveIndex">
-            <div v-for="item in routes" :key="item.name">
+            <div v-for="item in routes" v-if="item.visible === 1" :key="item.name">
                 <!-- 有子菜单 -->
                 <el-submenu :index="item.path" v-if="item.children&&item.children.length">
                     <template slot="title">

@@ -14,7 +14,17 @@
                     <icon name="search" scale="2.2" v-show="searchIcon"></icon>
                 </div>
             </el-tooltip>
-            <vs-input v-if="!searchIcon" autofocus="true" class="search-content" icon="search" placeholder="请输入关键词" @blur.lazy="toggleSearch" v-model="queryParam"></vs-input>
+            <div v-show="!searchIcon">
+                <el-input
+                    placeholder="请输入关键词,回车搜索"
+                    :autofocus="true"
+                    ref="searchInput"
+                    @blur.lazy="toggleSearch"
+                    prefix-icon="el-icon-search"
+                    @keyup.enter.native="searchAll"
+                    v-model="queryParam">
+                </el-input>
+            </div>
             <el-tooltip effect="dark" content="可视化大屏" placement="bottom">
                 <a href="http://sugar.baidubce.com/dashboard/b464603c86efa03bc0e7bfe227ddd7f6" class="data_vis" target="_blank">&nbsp;&nbsp;&nbsp;<icon name="data_vis" scale="1.7"></icon>&nbsp;&nbsp;</a>
             </el-tooltip>
@@ -143,6 +153,12 @@
         methods: {
             toggleSearch() {
                 this.searchIcon = !this.searchIcon;
+                this.$nextTick(() => {
+                    if (!this.searchIcon) {
+                        this.queryParam = '';
+                        this.$refs.searchInput.focus();
+                    }
+                })
             },
             editPsw(form){
                 if(form.password&&(form.checkPsw)){
@@ -246,6 +262,9 @@
                     }
 
                 })
+            },
+            searchAll() {
+                this.$router.push({path: '/search/',params: {keyword: this.queryParam}})
             }
         },
         created(){

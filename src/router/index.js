@@ -6,6 +6,7 @@ import NProgress from "nprogress";
 import 'nprogress/nprogress.css';
 import MainView from '@/layout/components/MainView';
 import Cloud from '@/views/cloud/Cloud';
+import Search from '@/views/search/Search'
 
 Vue.use(Router);
 
@@ -46,6 +47,16 @@ const router = new Router({
             }]
         },
         {
+            path: '/search',
+            name: 'Search',
+            component: () => import('@/layout/Layout'),
+            children: [{
+                path: '/',
+                name: 'SearchRoot',
+                component: Search
+            }]
+        },
+        {
             path: '/gis',
             name: 'Gis',
             component: () => import('@/layout/Layout'),
@@ -59,7 +70,7 @@ const router = new Router({
             path: '/cloud',
             name: 'Cloud',
             component: Cloud
-        },
+        }
     ]
 });
 

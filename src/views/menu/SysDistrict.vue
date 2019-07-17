@@ -77,7 +77,7 @@
                 queryColumns:[
                     {
                         des: '所属组织',
-                        name: 'districtId',
+                        name: 'attachTo',
                         type: 'select',
                         visible: true,
                         options: ''
@@ -193,7 +193,8 @@
                 this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
                     data.forEach( item => {
                         this.zhenList.push( {value:item.districtId , label:item.districtName});
-                    })
+                    });
+                    this.zhenList.push({value:'01',label:'句容市委'});
                     this.queryColumns[0].options = this.zhenList;
                 })
             }

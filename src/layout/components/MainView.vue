@@ -19,7 +19,7 @@
                     {alt:"基本活动",path:"/activity/parActivityManage", className: 'activity'},
                     {alt:"基本队伍",path:"/baseTeam/parMember", className: 'team'},
                     {alt:"基本阵地",path:"/basePosition/positionInformation", className: 'position'},
-                    {alt:"基本组织",path:"", className: 'org'},
+                    {alt:"基本组织",path:"/baseOrg/sysDistrict", className: 'org'},
                     {alt:"GIS平台", path:"/gis/", className: 'gis'},
                     {alt:"综合考评",path:"/comprehensiveAccess/examinationScore", className: 'review'},
                     {alt:"党建品牌",path:"/siteSupervision/actualMonitor", className: 'brand'},

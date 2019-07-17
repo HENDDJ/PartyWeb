@@ -82,7 +82,7 @@
                                 </div>
                             </transition>
                             <el-pagination style="text-align: right;" background
-                                           :pager-count="3"
+                                           :page-count="3"
                                            :page-sizes="[5, 7, 10]"
                                            :total="pageable.total" :current-page.sync="pageable.currentPage"
                                            :page-size.sync="pageable.pageSize"

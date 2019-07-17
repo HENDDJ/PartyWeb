@@ -21,12 +21,12 @@
             v-if="dialogVisible"
             :title="title"
             :visible.sync="dialogVisible"
-            width="60%"
+            width="880px"
             align="left"
             :modal-append-to-body='false'
             :append-to-body="true"
             :before-close="handleClose">
-            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="100px">
+            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="170px">
                 <el-form-item label="上级组织">
                     <el-select v-model="form.attachTo" :disabled="disabled">
                         <el-option

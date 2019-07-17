@@ -79,10 +79,15 @@
             </vs-navbar-item>
             <vs-navbar-item index="2">
                 <el-badge :value="waitCheckNumber" class="item" :hidden="waitCheckNumber==0">
-                    <a href="#" @click="showTips()"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
+                    <a href="#" @click="handleMessageCenter()"><i class="el-icon-message-solid"></i>&nbsp;&nbsp;消息中心</a>
                 </el-badge>
             </vs-navbar-item>
-            <el-dialog v-if="waitCheckTips" title="未查看消息" :visible.sync="waitCheckTips" width="45%" align="left" :append-to-body="true" :before-close="handleClose">
+            <el-dialog v-if="waitCheckTips" title="消息中心" :visible.sync="waitCheckTips" width="45%" align="left" :append-to-body="true" :before-close="handleClose">
+                <div style="margin-left: 20px">
+                    <icon name="refresh" class="icoStyle" scale=" 2" @click.native="refreshList"></icon>
+                    <vs-radio color="warning" v-model="isRead" vs-value="0" @change="handleMessageCenter(isRead)" style="margin-left: 20px" >未读</vs-radio>
+                    <vs-radio color="success" v-model="isRead" vs-value="1" style="margin-left: 20px" @change="handleMessageCenter(isRead)">已读</vs-radio>
+                </div>
                  <div  v-if="waitCheckList.length == 0" style="text-align: center">
                      <img style="margin: 0 auto" src="/static/img/nodata.png" width="300" height="300" />
                      <p style="text-align: center">&emsp;&emsp;&emsp;暂无数据</p>
@@ -92,7 +97,7 @@
                         <vs-item style="float: right; font-size: 12px;color:rgb(96, 98, 102);font-weight: bold">{{item.createdAt}}</vs-item>
                     </vs-list-item>
 
-                    <vs-list-item icon="email" :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===1" style="color: #9b9b9b">
+                    <vs-list-item icon="drafts" :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===1" style="color: #9b9b9b">
                         <vs-item style="float: right; font-size: 12px;color:#9b9b9b;font-weight: bold">{{item.createdAt}}</vs-item>
                     </vs-list-item>
                 </vs-list>
@@ -134,7 +139,8 @@
                 loading:false,
                 waitCheckList:[],
                 queryParam: '',
-                searchIcon: true
+                searchIcon: true,
+                isRead:''
             }
         },
         computed: {
@@ -225,33 +231,36 @@
                 this.pageable.pageSize = size;
                 this.handleMessageCenter();
             },
-            handleMessageCenter(){
-                this.$http("POST",`identity/messageCenter/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`,{isRead:0,districtId:this.user.districtId},false).then( data=>{
+            handleMessageNumber(){
+                this.$http("POST",`identity/messageCenter/page`,{isRead:0,districtId:this.user.districtId},false).then(data=>{
                     this.waitCheckNumber = data.totalElements;
+                });
+            },
+            handleMessageCenter(isRead){
+                this.waitCheckTips = true;
+                this.loading = true;
+                this.$http("POST",`identity/messageCenter/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}&sort=createdAt,desc`,{isRead:isRead,districtId:this.user.districtId},false).then( data=>{
                     this.pageable.total= data.totalElements;
                     this.waitCheckList = data.content;
                     this.loading = false;
-                })
+                });
             },
-            showTips(){
+          /*  showTips(){
                 this.waitCheckTips = true;
                 this.loading = true;
                 this.handleMessageCenter();
-            },
+            },*/
             //关闭确认dialog
-            handleClose (done) {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        this.waitCheckTips = false;
-                        done();
-                    })
-                    .catch(_ => {});
+            handleClose () {
+                this.waitCheckTips = false;
+                this.isRead='';
+              //  document.getElementsByClassName("icoStyle")[0].style
             },
             handleCheck(item){
                 item.isRead = 1;
                 this.$http("PUT",`identity/messageCenter/${item.id}id`,item,false).then( () => {
-                    this.waitCheckTips = false;
-                    this.handleMessageCenter();
+                    this.handleClose();
+                    this.handleMessageNumber();
                     if(item.type==='party'||'distLearning'){
                         let path = "/activity/parActivityReview"
                         this.$router.push({path: path});
@@ -263,6 +272,10 @@
 
                 })
             },
+            refreshList(){
+                this.isRead='';
+                this.handleMessageCenter(this.isRead);
+            },
             searchAll() {
                 this.$router.push({path: '/search/',params: {keyword: this.queryParam}})
             }
@@ -271,7 +284,7 @@
             this.initForm();
             let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
             this.user = userInfo;
-            this.handleMessageCenter();
+            this. handleMessageNumber();
          //   this.user.organizationName = userInfo.districtName;
         }
     }
@@ -362,6 +375,20 @@
     }
     svg {
         margin: 0 5px;
+    }
+    .icoStyle {
+        transition: all 0.3s ease-in-out;
+        -webkit-transition: all 0.3s ease-in-out;
+        -moz-transition: all 0.3s ease-in-out;
+        -o-transition: all 0.3s ease-in-out;
+    }
+    .icoStyle:hover{
+        cursor: pointer;
+        transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
     }
 </style>
 <style>

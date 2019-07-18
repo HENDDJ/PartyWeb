@@ -35,7 +35,7 @@
                         <vs-avatar  size="70px" :src="user.image"/>
                         <h4>{{user.name}}</h4>
                     </div>
-                    <vs-sidebar-item index="1" icon="question_answer" v-if="this.user.roleCode=='DEVELOPER'||this.user.roleCode=='CITY_LEADER'">
+                    <vs-sidebar-item index="1" icon="question_answer" v-if="this.user.roleCode=='DEVELOPER'||this.user.roleCode=='CITY_LEADER'" @click="openLogDia()">
                         操作日志
                     </vs-sidebar-item>
 
@@ -62,6 +62,9 @@
                         <vs-button icon="reply" color="danger" type="flat" @click="logOut">切换账号</vs-button>
                     </div>
                 </vs-sidebar>
+                <el-dialog title="操作日志" :visible.sync="logDia" append-to-body :before-close="closeLogDia">
+                    <CommonCRUD ref="table" :columns="logColumns" api-root="/identity/sysLog"  :queryFormColumns="logQueryColumns" :sortColumns="logSortColumns" :addBtnVis=false :editBtnVis=false :lookBtnVis = false :delBtnVis=false></CommonCRUD>
+                </el-dialog>
                 <el-dialog title="修改密码" :visible.sync="pswDia" width="20%"  append-to-body :before-close="closeDia">
                     <el-form ref="form" :model="form" label-width="100px">
                         <el-form-item label="新密码" >
@@ -115,6 +118,7 @@
 </template>
 
 <script>
+    import CommonCRUD from '@/components/CommonCRUD';
     export default {
         name: "TopBar",
         data() {
@@ -140,7 +144,40 @@
                 waitCheckList:[],
                 queryParam: '',
                 searchIcon: true,
-                isRead:''
+                isRead:'',
+                logDia:false,
+                logSortColumns:[
+                    {
+                        name:'createdAt',
+                        type:'desc'
+                    }
+                ],
+                logColumns:[
+                    {
+                        name: 'modifiedAt',
+                        des: '操作时间',
+                        formatter: (row, column, value) => {
+                            return new Date(value).Format("yyyy-MM-dd HH:mm:ss");
+                        }
+                    },
+                    {
+                        name: 'msg',
+                        des: '操作内容'
+                    },
+                    {
+                        name: 'actor',
+                        des: '操作人'
+                    },
+                ],
+                logQueryColumns:[
+                    {
+                        des: '操作人',
+                        name: 'actor',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    },
+                ],
             }
         },
         computed: {
@@ -216,15 +253,24 @@
                     });
                 }
             },
-            closeDia(done) {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        this.pswDia = false;
-                        this.active = true;
-                        this.initForm();
-                        done();
-                    })
-                    .catch(_ => {});
+            //打开操作日志列表
+            openLogDia(){
+                this.logDia = true;
+                this.active = false;
+                this.$nextTick( ()=>{
+                    this.$refs.table.refreshTableData();
+                });
+
+            },
+            //关闭操作日志dia
+            closeLogDia(){
+                this.logDia=false;
+                this.active = true;
+            },
+            closeDia() {
+                this.pswDia = false;
+                this.active = true;
+                this.initForm();
             },
             initForm(){
                 this.form={
@@ -285,7 +331,6 @@
             handleClose () {
                 this.waitCheckTips = false;
                 this.isRead='';
-              //  document.getElementsByClassName("icoStyle")[0].style
             },
             handleCheck(item){
                 item.isRead = 1;
@@ -311,6 +356,9 @@
                 this.$router.push({path: '/search/',params: {keyword: this.queryParam}})
             },
 
+        },
+        components: {
+            CommonCRUD
         },
         mounted() {
             this.timer = setInterval(this.handleNotify, 60000);

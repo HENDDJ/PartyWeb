@@ -18,7 +18,7 @@
                         <el-table-column prop="type" label="阵地类型" align="center"  ></el-table-column>
                         <el-table-column prop="districtName" label="所属组织" align="center" ></el-table-column>
                         <el-table-column prop="area" label="占地面积" align="center" ></el-table-column>
-                        <el-table-column prop="facilities" label="设施" align="center" ></el-table-column>
+                        <el-table-column prop="facilities" label="设施" align="center" :show-overflow-tooltip="true"></el-table-column>
                         <el-table-column prop="hotDegree" label="热度" align="center" ></el-table-column>
 
                     </el-table>

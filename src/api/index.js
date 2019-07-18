@@ -129,3 +129,27 @@ export const ht =  (method, url, data, showMessage ) => {
     }
     return service({method, url, data, showMessage});
 }
+
+// 创建实例
+const es = axios.create({
+    baseURL: '/es', // 基准地址
+    timeout: 50000 // 超时时间
+});
+
+es.interceptors.response.use(
+    response => {
+        // 判断后台返回的请求状态码 如果错误直接弹匡提示
+        if (response.status === CODE_MAP.SUCCESS) {
+            return Promise.resolve(response.data.hits);
+        } else {
+            Message.error("搜索失败");
+            return Promise.reject(response.statusText);
+        }
+    });
+//es全文搜索接口
+export const esApi = (method, url, data) => {
+    if (!data) {
+        data = {};
+    }
+    return es({method, url, data});
+}

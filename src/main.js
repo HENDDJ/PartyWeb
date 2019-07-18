@@ -15,7 +15,7 @@ import './style/index.scss';
 import 'material-icons/iconfont/material-icons.css';
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import Icon from 'vue-svg-icon/Icon.vue';
-import { generate, common, getRouter ,ht } from '@/api';
+import { generate, common, getRouter, ht } from '@/api';
 import '@/utils/DateFormatter.js'
 import DynamicRoutes from '@/utils/dynamic-routes';
 import Vuesax from 'vuesax';

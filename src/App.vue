@@ -80,7 +80,7 @@
     .el-dialog {
         border-radius: 8px;
         animation: an-dialog .5s;
-        min-height: 450px;
+        min-height: 180px;
     }
     .el-dialog__headerbtn .el-dialog__close:hover {
         transform: translate(20px,-20px);

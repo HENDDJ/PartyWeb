@@ -35,11 +35,11 @@
                         <vs-avatar  size="70px" :src="user.image"/>
                         <h4>{{user.name}}</h4>
                     </div>
-                    <vs-sidebar-item index="1" icon="question_answer">
+                    <vs-sidebar-item index="1" icon="question_answer" v-if="this.user.roleCode=='DEVELOPER'||this.user.roleCode=='CITY_LEADER'">
                         操作日志
                     </vs-sidebar-item>
 
-                    <vs-sidebar-item index="2" icon="gavel">
+                    <vs-sidebar-item index="2" icon="gavel" @click.native="resetPassword">
                         密码重置
                     </vs-sidebar-item>
                     <vs-divider style="font-size: 14px;font-weight: 600;color: #1f74ff" color="primary" position="left">
@@ -62,7 +62,7 @@
                         <vs-button icon="reply" color="danger" type="flat" @click="logOut">切换账号</vs-button>
                     </div>
                 </vs-sidebar>
-                <el-dialog title="修改密码" :visible.sync="pswDia" width="30%" append-to-body :before-close="closeDia">
+                <el-dialog title="修改密码" :visible.sync="pswDia" width="20%"  append-to-body :before-close="closeDia">
                     <el-form ref="form" :model="form" label-width="100px">
                         <el-form-item label="新密码" >
                             <el-input v-model="form.password" type="password"></el-input>
@@ -92,16 +92,16 @@
                      <img style="margin: 0 auto" src="/static/img/nodata.png" width="300" height="300" />
                      <p style="text-align: center">&emsp;&emsp;&emsp;暂无数据</p>
                  </div>
-                <vs-list v-for="item in waitCheckList" key="index">
-                    <vs-list-item icon="email" :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===0">
-                        <vs-item style="float: right; font-size: 12px;color:rgb(96, 98, 102);font-weight: bold">{{item.createdAt}}</vs-item>
+                <vs-list v-for="item in waitCheckList" :key="item.id">
+                    <vs-list-item icon="email" :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===0" class="temp">
+                        <vs-list-item style="float: right; font-size: 12px;color:rgb(96, 98, 102);font-weight: bold">{{new Date(item.createdAt).Format("yyyy-MM-dd HH:mm")}}</vs-list-item>
                     </vs-list-item>
 
-                    <vs-list-item icon="drafts" :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===1" style="color: #9b9b9b">
-                        <vs-item style="float: right; font-size: 12px;color:#9b9b9b;font-weight: bold">{{item.createdAt}}</vs-item>
+                    <vs-list-item icon="drafts" :title="item.content" @click.native="handleCheck(item)" v-if="item.isRead===1" style="color: #9b9b9b" class="temp">
+                        <vs-list-item style="float: right; font-size: 12px;color:#9b9b9b;font-weight: bold">{{new Date(item.createdAt).Format("yyyy-MM-dd HH:mm")}}</vs-list-item>
                     </vs-list-item>
                 </vs-list>
-                <el-pagination  v-if="waitCheckList.length != 0"style="text-align: right;margin-top: 20px;"
+                <el-pagination  v-if="waitCheckList.length != 0"style="text-align: right;margin-top: 50px;margin-bottom: 30px"
                                background
                                :total="pageable.total" :current-page.sync="pageable.currentPage" :page-size.sync="pageable.pageSize"
                                @current-change="currentChange" @size-change="sizeChange" layout="total, sizes, prev, pager, next">
@@ -129,7 +129,7 @@
                 },
                 pswDia:false,//修改密码弹框
                 submitLoad:false,
-                waitCheckNumber:0,//待审核数量
+                waitCheckNumber:0,//待处理数量
                 pageable:{
                     currentPage:1,
                     pageSize:10,
@@ -166,6 +166,22 @@
                     }
                 })
             },
+            //密码重置
+            resetPassword(){
+                this.$http('GET',`identity/sysUser/${this.user.id}id`,false).then( data => {
+                    let resetUser = data;
+                    resetUser.password = "123";
+                    this.$http('PUT',`identity/sysUser/${this.user.id}id`,resetUser,false).then( () => {
+                        this.active = false;
+                        this.$message({
+                            message: '密码重置成功，请重新登录',
+                            type: 'success'
+                        });
+                        setTimeout(this.logOut,3000);
+                    })
+                })
+            },
+            //修改密码
             editPsw(form){
                 if(form.password&&(form.checkPsw)){
                     if(form.checkPsw===form.password){
@@ -173,15 +189,16 @@
                             this.submitLoad = true;
                             let userForm = data;
                             userForm.password = form.password;
-                            this.$http('PUT',`identity/sysUser/${this.user.id}id`,userForm).then( () => {
-                                this.logOut();
+                            this.$http('PUT',`identity/sysUser/${this.user.id}id`,userForm,false).then( () => {
+                                this.pswDia = false;
+                                this.initForm();
+                                this.submitLoad = false;
+                                this.active = false;
                                 this.$message({
                                     message: '密码修改成功，请重新登录',
                                     type: 'success'
                                 });
-                                this.pswDia = false;
-                                this.initForm();
-                                this.submitLoad = false;
+                                setTimeout(this.logOut,3000);
                             })
                         })
                     }else{
@@ -236,6 +253,20 @@
                     this.waitCheckNumber = data.totalElements;
                 });
             },
+            handleNotify(){
+                this.$http("POST",`identity/messageCenter/page`,{isRead:0,districtId:this.user.districtId},false).then(data=>{
+                    if(data.totalElements > this.waitCheckNumber){
+                        const h = this.$createElement;
+                        this.$notify.info({
+                            title:'新消息提示',
+                            message: h('i', { style: 'color: teal'}, '有新消息要处理啦！'),
+                            duration:30000,
+                            position: 'bottom-right'
+                        });
+                    }
+                    this.waitCheckNumber = data.totalElements;
+                });
+            },
             handleMessageCenter(isRead){
                 this.waitCheckTips = true;
                 this.loading = true;
@@ -278,13 +309,20 @@
             },
             searchAll() {
                 this.$router.push({path: '/search/',params: {keyword: this.queryParam}})
-            }
+            },
+
+        },
+        mounted() {
+            this.timer = setInterval(this.handleNotify, 60000);
+        },
+        beforeDestroy() {
+            clearInterval(this.timer);
         },
         created(){
             this.initForm();
             let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
             this.user = userInfo;
-            this. handleMessageNumber();
+            this.handleMessageNumber();
          //   this.user.organizationName = userInfo.districtName;
         }
     }
@@ -390,6 +428,7 @@
         -o-transform: rotate(180deg);
         -ms-transform: rotate(180deg);
     }
+
 </style>
 <style>
     .top_bar header {
@@ -408,5 +447,11 @@
         color: yellow !important;
         transform: scale(1.2);
         cursor: pointer;
+    }
+    .el-notification{
+        margin-bottom: 60px !important;
+    }
+    .temp .vs-list--item{
+        border: none;
     }
 </style>

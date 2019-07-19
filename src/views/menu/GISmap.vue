@@ -10,8 +10,9 @@
                 <li class="books" @click="showLeader()"><span class="books-icon"></span><a href="#">村干部分布图</a></li>
             </ul>-->
             <ul>
-                <li class="store" @click="showChild()"><span class="books-icon"></span><a href="#">党组织</a></li>
-                <li class="movies" @click="showBattleField()"><span class="store-icon"></span><a href="#">基本阵地</a></li>
+                <li class="store" @click="showChild()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
+                <li class="movies" @click="showBattleField()"><span class="store-icon"></span><a href="#" style="padding-left: 50px">基本阵地</a></li>
+                <li class="working" @click="showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">执行任务中</a></li>
             </ul>
         </nav>
         <div id="census" onclick="toggleDiv('')">
@@ -109,11 +110,24 @@
                 pContent:'',
                 opts:{
                     boxStyle: {
-                       // opacity: "0.8",
+                        // opacity: "0.8",
                         background: 'white',
                         width: "400px",
                         // height:"300px"
                         maxHeight:'600px'
+                    },
+                    closeIconUrl:"/static/img/close.png",
+                    closeIconMargin: "5px 5px 0 0",
+                    enableAutoPan: true,
+                    align: INFOBOX_AT_TOP,
+                },
+                workingOpts:{
+                    boxStyle: {
+                        // opacity: "0.8",
+                        background: 'white',
+                        width: "500px",
+                        // height:"300px"
+                        maxHeight:'700px'
                     },
                     closeIconUrl:"/static/img/close.png",
                     closeIconMargin: "5px 5px 0 0",
@@ -229,8 +243,9 @@
                 console.log(allOverlay)
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
-                        console.log(123)
-                        allOverlay[i].enableMassClear();
+                        if(allOverlay[i].ba) {
+                            allOverlay[i].enableMassClear();
+                        }
                     };
                 }
 
@@ -273,6 +288,51 @@
 
 
 
+            },
+            showWorking(){
+                let allOverlay = this.map.getOverlays();
+                console.log(allOverlay)
+                if(allOverlay.length>4){
+                    for (let i = 0; i < allOverlay.length; i++) {
+                       if(allOverlay[i].ba){
+                           allOverlay[i].enableMassClear();
+                       }
+                    };
+                }
+                this.map.clearOverlays();
+                this.initMap();
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.workingDataList();
+                setInterval(()=>{
+                    this.map.clearOverlays();
+                    this.workingDataList();
+                },30000)
+
+            },
+            workingDataList(){
+                this.$http('Post','identity/parActivityObject/list',{isWorking:1},false).then(
+                    (data)=>{
+                        let orgId = []
+                        data.forEach(item=>{
+                            orgId.push(item.organizationId)
+                        })
+                        let orgSort = [];
+                        //删除重复阵地
+                        for(let i = 0;i<orgId.length;i++){
+                            if(orgSort.indexOf(orgId[i]) == -1){
+                                orgSort.push(orgId[i]);
+                            }
+                        }
+                        this.setWorkingMaker(orgSort,data);
+                    }
+                ).catch(_=>{
+                    this.$message(
+                        {
+                            type:'error',
+                            message:'网络错误'
+                        }
+                    )
+                })
             },
             setCunMaker(val){
                 this.map.clearOverlays();
@@ -336,6 +396,83 @@
                         }
                     })
                 });
+            },
+            setWorkingMaker(ids,value){
+                this.map.clearOverlays();
+                //正在执行的活动
+                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.workingOpts );
+                let workList = []
+                if(ids){
+                    ids.forEach(idItem=>{     //整合数据，解决一村都任务的情况
+                        let idValue = {}
+                        let values= []
+                        value.forEach(valueItem=>{
+                            if(idItem == valueItem.organizationId){
+                                values.push(valueItem)
+                            }
+                        })
+                        if(values){
+                            idValue.id = idItem
+                            idValue.value = values
+                            workList.push(idValue)
+                        }
+                    })
+                    console.log(workList)
+                    workList.forEach(res=>{
+                        let marker = new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]);
+                        let myIcon = new BMap.Icon("/static/img/working.gif", new BMap.Size(50, 50));
+                        let marker2 = new BMap.Marker(marker, {icon: myIcon});  // 创建标注
+                        let content = ''
+                        let ip = '123'
+
+                        let time = (res.value[0].modifiedAt.split('T')[0]+" "+res.value[0].modifiedAt.split('T')[1]).split('.')[0]
+                        marker2.addEventListener('click', e => {
+                            this.map.panTo(new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]+0.001));
+                                this.map.setZoom(13);
+                            let path = 'identity/parCamera/redisIp?key='+res.value[0].organizationId;
+                            this.$http('Get',path,false).then(data=>{
+                                if(data){
+                                    ip = data.ip;
+                                    res.value.forEach(item=>{
+                                        content =   "<div style='position: relative;padding-bottom: 10px;padding-top: 3px'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>任务名称：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.title+"</span></span>" +
+                                            "<span style='color:#2C3E50;font-size: 15px;font-weight: 500;right: 29px;position: absolute;;'>任务类型：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.type+"</span></span>" +
+                                            "</div>"+
+                                            "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>截止日期：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.month+"</span></span>" +
+                                            "</div>"+
+                                            "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;float:left;'>任务要求：</span><div style='color:rgba(37, 37, 37, 0.51);font-size: 15px;font-weight: 500;margin-left: 92px;'>"+item.context+"</div>" +
+                                            "</div>"+
+                                            "<div style='position: relative;;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>直播视频：</span>" +
+                                            "</div>"+
+                                            "<div style='position: relative;margin-left: 17px'>" +
+                                            "<video class='tvhou' width='100%' height='100%'" +
+                                            " controls='controls' autoplay='autoplay'" +
+                                            " x-webkit-airplay='true' x5-video-player-fullscreen='true'" +
+                                            " preload='auto' playsinline='true' webkit-playsinline" +
+                                            " x5-video-player-typ='h5'>" +
+                                            " <source type='application/x-mpegURL' src='"+ip+"'>" +
+                                            "</video> "+
+                                            "</div>"
+                                    })
+
+                            this.pContent =
+                                "<div class='infoBoxContent'>" +
+                                "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>"+res.value[0].districtName+"</span>" +
+                                "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>"+res.value[0].parentName+"</span></div><div class='title02' style='font-size:12px'><img src='/static/img/active/party_build_active.png' class='zhen'><span style='margin-right: 3px'>摄像头状态:<span class='minitor'>正常</span><img src='/static/img/active/party_build_active.png' class='zhen'>" +
+                                "<span>开始时间:<span style='background-color: #44ffd4ad;border-radius: 2px;margin-left: 2px;padding:0 5px'>"+time+"</span></span></div></div></div>"+
+                                "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 700px;width: 80%;margin: auto' class='flowWin'>"+content+
+                                "</div>"+
+                                "</div>";
+
+                            setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker2)),600)
+                                }
+                            })
+                        });
+                        this.map.addOverlay(marker2);
+
+                    })
+
+
+                }
             },
             clearBattleField() {
                 this.markerList.forEach( item => {
@@ -456,7 +593,12 @@
         height: 50px;
         margin-bottom: px;
     }
-
+    .working{
+        background: #c3cec1;
+        width: 50px;
+        height: 50px;
+        margin-bottom: px;
+    }
     .movies {
         background: #ce5043;
         width: 50px;
@@ -503,7 +645,17 @@
         margin-right: 30px;
         content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAA0UlEQVRIx+XWUQ2DMBCA4UpAAhIqAQmTgIRJqIRKqAQkIAEJSKiDfy+3rFm6wpWyJeySvnC0H1euBAOYbwzzE6gUQAcEIPKKCbCFOToIsAkQAAd4uRaBWytokQVtpspnrj8EAaNUMn7I95L3R6EJWDfeX/YeLTQD0wbkyCxQam9P+3A5yF0OuhcmRGBtBQ2FCXPS7lEBDVVQclDdTrAeejusoQbqNFAClh7QZg+ssqI9W2gOQdIUe7qwDpJtWhRdp4aifPe0oYZq4x+g6/1unTkek/bCyLhDiUMAAAAASUVORK5CYII=");
     }
-
+    working-icon{
+        position: absolute;
+        margin-left: 10px;
+        padding-top: 12px;
+    }
+    working-icon:before{
+        width: 50px;
+        height: 50px;
+        margin-right: 30px;
+        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAANklEQVRIx2P4//8/Az0ww6hF1LCIVmCALWKAArJNxdQ/GnSjQTcadKNBNxp0wyLoRtsMI9wiAFADCXZf9dlZAAAAAElFTkSuQmCC");
+    }
     .movies-icon {
         position: absolute;
         margin-left: 10px;
@@ -804,6 +956,14 @@
     }
     .flowWin::-webkit-scrollbar{
         width: 8px;
+    }
+    .minitor{
+        margin-right: 8px;
+        background-color: #67C23A;
+        border-radius: 3px;
+        color: #FFF;
+        display: inline-block;
+        padding: 0 6px;
     }
 </style>
 <style scoped>

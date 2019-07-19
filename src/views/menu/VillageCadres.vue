@@ -4,13 +4,21 @@
             <vs-tab @click="colorx = 'success'" label="村干部信息" >
                 <div class="con-tab-ejemplo">
                     <br>
-                    <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns" :queryFormColumns="cadreQuery"></CommonCRUD>
+                    <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns" :queryFormColumns="cadreQuery">
+                        <template slot="header-btn" slot-scope="slotProps">
+                            <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
+                        </template>
+                    </CommonCRUD>
                 </div>
             </vs-tab>
             <vs-tab @click="handleSelect()" label="岗位信息">
                 <div class="con-tab-ejemplo">
                     <br>
-                    <CommonCRUD :columns="positionColumns" api-root="identity/cadrePosition" :formColumns="positionFormColumns" :queryFormColumns="positionQuery"></CommonCRUD>
+                    <CommonCRUD :columns="positionColumns" api-root="identity/cadrePosition" :formColumns="positionFormColumns" :queryFormColumns="positionQuery">
+                        <template slot="header-btn" slot-scope="slotProps">
+                            <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
+                        </template>
+                    </CommonCRUD>
                 </div>
             </vs-tab>
         </vs-tabs>
@@ -124,6 +132,30 @@
                 ],
                 districtList:[],//所属组织
                 villageCadreList:[],//干部人员列表
+                props: {
+                    lazy: true,
+                    lazyLoad:(node, resolve)=>{
+                        if(node.level==0){
+                            let nodes = []
+                            this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
+                                data.forEach(item=>{
+                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                })
+                                resolve(nodes);
+                            })
+
+                        }else {
+                            let nodes = []
+                            this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
+                                data.forEach(item=>{
+                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                })
+                                resolve(nodes);
+                            })
+                        }
+
+                    }
+                }
             }
         },
         methods:{

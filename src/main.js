@@ -23,6 +23,10 @@ import Spinner from 'vue-spinkit';
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
 import Vue2OrgTree from 'vue2-org-tree';
+import * as custom from './common/filters/custome.js'
+Object.keys(custom).forEach(key => {
+    Vue.filter(key, custom[key])
+})
 Vue.use(Vue2OrgTree)
 Vue.use(Viewer)
 Viewer.setDefaults({

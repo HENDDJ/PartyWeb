@@ -3,7 +3,7 @@
     <el-row>
         <el-col>
             <el-card class="box-card">
-                <div style="float:left;margin:auto  20px;">
+                <div style="float:left;margin:auto  20px;position: relative;bottom: 9px;">
                     <div style="float:left;">
                         <h3 style="display: inline;top:10px">
                             积分排名

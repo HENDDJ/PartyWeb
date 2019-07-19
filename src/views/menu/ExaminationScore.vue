@@ -83,7 +83,7 @@
                                 </div>
                                 <div slot="footer">
                                     <vs-row vs-justify="flex-end">
-                                        <vs-button color="primary" type="gradient" @click="changeType">表格数据</vs-button>
+                                        <vs-button color="primary" type="gradient" @click="changeType">可视化统计</vs-button>
                                     </vs-row>
                                 </div>
                             </vs-card>
@@ -155,7 +155,7 @@
                                 </div>
                                 <div slot="footer">
                                     <vs-row vs-justify="flex-end">
-                                        <vs-button color="primary" type="gradient" @click="changeType">表格数据</vs-button>
+                                        <vs-button color="primary" type="gradient" @click="changeType">可视化统计</vs-button>
 
                                     </vs-row>
                                 </div>

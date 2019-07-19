@@ -59,7 +59,6 @@
         },
         methods: {
             changeActiveIndex(index) {
-                console.log(index, "s")
                 this.activeIndex = index;
             }
         }
@@ -76,7 +75,7 @@
         height: 100%;
         text-align: left;
         background: url("/static/img/menu2.png");
-        background-size: 100% 100%;
+        background-size: cover;
     }
     .el-menu-personal  .el-badge__content{
         background-color: #e6a23c;

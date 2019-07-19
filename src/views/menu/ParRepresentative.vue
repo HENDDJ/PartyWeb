@@ -15,6 +15,7 @@
                 <el-button type="warning"  plain  class="self-btn self-edit" @click="edit(slotProps.selected)" >&nbsp;</el-button>
                 <el-button type="success" plain  class="self-btn self-look" @click="look(slotProps.selected)" >&nbsp;</el-button>
                 <el-button type="danger" plain class="self-del self-btn" @click="del(slotProps.selected)" >&nbsp;</el-button>
+                <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
             </template>
         </CommonCRUD>
         <!--新增、编辑、查看-->
@@ -111,7 +112,31 @@
                         value: '',
                         visible: true,
                     }
-                ]
+                ],
+                props: {
+                    lazy: true,
+                    lazyLoad:(node, resolve)=>{
+                        if(node.level==0){
+                            let nodes = []
+                            this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
+                                data.forEach(item=>{
+                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                })
+                                resolve(nodes);
+                            })
+
+                        }else {
+                            let nodes = []
+                            this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
+                                data.forEach(item=>{
+                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                })
+                                resolve(nodes);
+                            })
+                        }
+
+                    }
+                }
             }
         },
         methods: {

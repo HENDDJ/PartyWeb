@@ -1,6 +1,10 @@
 <template>
     <section>
-        <CommonCRUD :columns="columns" api-root="identity/reserve" :formColumns="formColumns" :queryFormColumns="queryForm"></CommonCRUD>
+        <CommonCRUD :columns="columns" api-root="identity/reserve" :formColumns="formColumns" :queryFormColumns="queryForm">
+            <template slot="header-btn" slot-scope="slotProps">
+                <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
+            </template>
+        </CommonCRUD>
     </section>
 </template>
 
@@ -20,7 +24,31 @@
                         value: '',
                         visible: true,
                     }
-                ]
+                ],
+                props: {
+                    lazy: true,
+                    lazyLoad:(node, resolve)=>{
+                        if(node.level==0){
+                            let nodes = []
+                            this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
+                                data.forEach(item=>{
+                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                })
+                                resolve(nodes);
+                            })
+
+                        }else {
+                            let nodes = []
+                            this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
+                                data.forEach(item=>{
+                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                })
+                                resolve(nodes);
+                            })
+                        }
+
+                    }
+                }
             }
         },
         components: {

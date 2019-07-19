@@ -1,7 +1,7 @@
 <template>
     <CommonCRUD :columns="columns" apiRoot="/identity/parMember" :formColumns="formColumns">
         <template slot="header-btn" slot-scope="slotProps">
-            <el-button >{{slotProps}}</el-button>
+            <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
         </template>
     </CommonCRUD>
 </template>
@@ -10,14 +10,43 @@
     import CommonCRUD from '@/components/CommonCRUD';
     export default {
         name: "ParMember",
-        data(){
+        data() {
             return {
-                columns:[],
-                formColumns:[],
+                columns: [],
+                formColumns: [],
+                self:this,
+                props: {
+                    lazy: true,
+                    lazyLoad:(node, resolve)=>{
+                        if(node.level==0){
+                            let nodes = []
+                            this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
+                                data.forEach(item=>{
+                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                })
+                                resolve(nodes);
+                            })
+
+                        }else {
+                            let nodes = []
+                            this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
+                                data.forEach(item=>{
+                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                })
+                                resolve(nodes);
+                            })
+                        }
+
+                    }
+                }
             }
         },
         methods: {
-
+            getNodeData(val){
+                this.$http('GET', `/identity/sysDistrict/${val}tree`, false).then((data) => {
+                    return data
+                })
+            }
         },
         components: {
             CommonCRUD
@@ -29,6 +58,11 @@
     }
 </script>
 
+<style>
+    .el-cascader--small{
+        width: 178px !important;
+    }
+</style>
 <style scoped>
 
 </style>

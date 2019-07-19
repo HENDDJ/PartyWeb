@@ -119,6 +119,7 @@
                                 </el-col>
                                 <el-col :span="4">任务类型：</el-col>
                                 <el-col :span="6" style="color: #25252582">&nbsp;{{detailForm.type}}</el-col>
+                                <el-col :span="2"></el-col>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="4">截止日期：</el-col>

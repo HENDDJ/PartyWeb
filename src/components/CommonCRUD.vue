@@ -65,7 +65,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination style="text-align: right;margin-top: 20px;" ref="pagination"
+        <el-pagination style="text-align: right;margin-top: 20px; margin-bottom: 20px" ref="pagination"
                        background
                        :total="pageable.total" :current-page.sync="pageable.currentPage" :page-size.sync="pageable.pageSize"
                        @current-change="currentChange" @size-change="sizeChange" layout="total, sizes, prev, pager, next">
@@ -378,7 +378,7 @@
             setTimeout( () => {
                 let headerHeight = this.$screen() * 156;
                 let menuHeight = this.$screen() * 53;
-                document.getElementsByClassName('common-crud')[0].style.minHeight = `${Math.ceil(document.body.clientHeight - headerHeight - menuHeight - 45)}px`;
+                document.getElementsByClassName('common-crud')[0].style.minHeight = `${Math.ceil(document.body.clientHeight - headerHeight - menuHeight - 310)}px`;
             }, 200)
         }
     };

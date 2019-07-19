@@ -87,6 +87,14 @@
         },
         created(){
             this.changeCol();
+            console.log(this.columns)
+            this.columns.forEach(item => {
+                if (item.name == "lastTime") {
+                    item.formatter = (row, column) => {
+                        return row.lastTime.replace(/T/, " ").split('.')[0]
+                    }
+                }
+            })
         },
         components: {
             CommonCRUD

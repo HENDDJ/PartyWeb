@@ -2,15 +2,9 @@
     <section>
         <div id="allmap"></div>
         <nav class="nav">
-           <!-- <ul>
-                <li class="store" @click="showBattleField()"><span class="store-icon"></span><a href="#">基本阵地分布图</a></li>
-                <li class="movies" @click="showPapo()"><span class="movies-icon"></span><a href="#">各阵地人流量气泡图</a></li>
-                <li class="books" @click="showChild()"><span class="books-icon"></span><a href="#">各支部分布图</a></li>
-                <li class="music" @click="showPapo()"><span class="music-icon"></span><a href="#">各阵地活动次数柱状图</a></li>
-                <li class="books" @click="showLeader()"><span class="books-icon"></span><a href="#">村干部分布图</a></li>
-            </ul>-->
+
             <ul>
-                <li class="store" @click="showChild()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
+                <li class="store" @click="showParty()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
                 <li class="movies" @click="showBattleField()"><span class="store-icon"></span><a href="#" style="padding-left: 50px">基本阵地</a></li>
                 <li class="working" @click="showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">执行任务中</a></li>
             </ul>
@@ -149,6 +143,7 @@
             }
         },
         methods: {
+            //关闭右侧弹出栏目
             close(){
                 this.msgFloatRight.marginRight = '-285px'
             },
@@ -225,19 +220,6 @@
             },
             //展示基本阵地点位
             showBattleField() {
-               /* if (this.mapvLayer) {
-                    this.mapvLayer.hide();
-                }
-                this.clearBattleField();
-                this.pointList.forEach( item =>  {
-                     var marker = new BMap.Marker(new BMap.Point(item.x, item.y));
-                    this.markerList.push(marker);
-                    marker.addEventListener('click', function (e) {
-                        this.openInfo(item.label,e);
-                        this.toggleDiv("show");
-                    });
-                    this.map.addOverlay(marker);
-                 });*/
                 this.msgFloatRight.marginRight = '-285px'
                 let allOverlay = this.map.getOverlays();
                 console.log(allOverlay)
@@ -289,9 +271,9 @@
 
 
             },
+            //展示正在执行
             showWorking(){
                 let allOverlay = this.map.getOverlays();
-                console.log(allOverlay)
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
                        if(allOverlay[i].ba){
@@ -309,6 +291,7 @@
                 },30000)
 
             },
+            //展示正在执行内的封装方法
             workingDataList(){
                 this.$http('Post','identity/parActivityObject/list',{isWorking:1},false).then(
                     (data)=>{
@@ -334,6 +317,7 @@
                     )
                 })
             },
+            //定义村级阵地
             setCunMaker(val){
                 this.map.clearOverlays();
                 //基本阵地
@@ -397,6 +381,7 @@
                     })
                 });
             },
+            //定义正在执行maker
             setWorkingMaker(ids,value){
                 this.map.clearOverlays();
                 //正在执行的活动
@@ -474,68 +459,69 @@
 
                 }
             },
-            clearBattleField() {
-                this.markerList.forEach( item => {
-                    this.map.removeOverlay(item);
+            //展示党组织镇级
+            showParty() {
+                let allOverlay = this.map.getOverlays();
+                if(allOverlay.length>4){
+                    for (let i = 0; i < allOverlay.length; i++) {
+                        if(allOverlay[i].ba){
+                            allOverlay[i].enableMassClear();
+                        }
+                    };
+                }
+                this.map.clearOverlays();
+                this.initMap();
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
+                this.$http("POST",`identity/sysDistrict/list`,{districtLevel:2},false).then( data =>{
+                    data.forEach(item => {
+                        if(item.location) {
+                            //定义镇名
+                            this.zhenList.push(item.districtName);
+                            let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
+                            let myIcon = new BMap.Icon("/static/img/partyFlag.svg", new BMap.Size(50, 50));
+                            let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
+                            marker2.addEventListener('click', e => {
+                                this.pandTo(marker)
+                                //定义具体党组织maker
+                                setTimeout(this.setPartyMaker(item.districtId),600);
+
+                            })
+                            this.map.addOverlay(marker2);
+                            marker2.disableMassClear();
+                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
+                            label.setStyle({
+                                backgroundColor: '#ecf5ff',
+                                display: 'inline-block',
+                                height: '28px',
+                                padding: '0 5px',
+                                lineHeight: '26px',
+                                fontSize: '13px',
+                                color: '#409eff',
+                                border: '1px solid #d9ecff',
+                                borderRadius: '4px',
+                                boxSizing: 'border-box',
+                                whiteSpace: 'nowrap',
+                            });
+                            marker2.setLabel(label);
+                        }
+                    })
                 })
             },
-            showPapo() {
-                this.clearBattleField();
-                if (this.mapvLayer) {
-                    this.mapvLayer.hide();
-                }
-                let data = [];
-                this.pointList.forEach( item => {
-                    data.push({
-                        geometry: {
-                            type: 'Point',
-                            coordinates: [item.x, item.y]
-                        },
-                        count: Math.random() * 100
-                    });
-                });
-                var dataSet = new mapv.DataSet(data);
-                var options = {
-                    fillStyle: 'rgba(255, 50, 50, 0.6)',
-                    maxSize: 20,
-                    max: 100,
-                    draw: 'bubble'
-                }
+            setPartyMaker(){
+                this.map.clearOverlays();
+                //基本阵地
+                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
+                this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
+                    data.forEach(item => {
+                            if(item.location) {
+                                let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]));
+                                let content = ''
 
-                this.mapvLayer = new mapv.baiduMapLayer(this.map, dataSet, options);
-            },
-            showChild() {
-                if (this.mapvLayer) {
-                    this.mapvLayer.hide();
-                }
-                this.clearBattleField();
-                var icon = new BMap.Icon('./zheng.png', new BMap.Size(30, 30));
-                this.orgList.forEach( item => {
-                    var marker = new BMap.Marker(new BMap.Point(item.x, item.y),{icon: icon});
-                    marker.addEventListener('click', function (e) {
-                        this.openInfo(item,e);
-                     });
-                    this.markerList.push(marker);
-                    this.map.addOverlay(marker);
-                });
-            },
-            showLeader() {
-                if (this.mapvLayer) {
-                    this.mapvLayer.hide();
-                }
-                this.clearBattleField();
-                var icon = new BMap.Icon('./dangy.png', new BMap.Size(30, 30));
-                this.leaderList.forEach( item => {
-                     var marker = new BMap.Marker(new BMap.Point(item.x, item.y),{icon: icon});
-                     this.markerList.push(marker);
-                    this.map.addOverlay(marker);
-                });
-            },
-            openInfo(content,e){
-                let p = e.target;
-                let point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-                let infoWindow = new BMap.InfoWindow(content,this.opts);  // 创建信息窗口对象
-                this.map.openInfoWindow(infoWindow,point); //开启信息窗口
+
+                            }
+                            })
+                })
+
             },
             toggleDiv(action) {
                 var census = document.getElementById('census');

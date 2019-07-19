@@ -265,8 +265,8 @@
         },
         created() {
            let  path = `identity/exaScore/scoreCunPercentAll?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}&sort=desc&year=${this.year}`
-            this.loadTable(path)
-            this.showMesg();
+           this.loadTable(path)
+           this.showMesg();
            this.yearOptions();
         }
     }

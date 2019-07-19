@@ -14,7 +14,8 @@ export default new Vuex.Store({
         //跳入扬尘界面默认工程
         projectId: '',
         projectName: '',
-        routeIndex:''
+        routeIndex:'',
+        isCollapse: false
     },
     mutations: {
         getMenu(state, data) {
@@ -31,6 +32,14 @@ export default new Vuex.Store({
         },
         getRouterIndex(state,data){
             state.routeIndex = data;
+        },
+        updateIsCollapse(state, data) {
+            state.isCollapse = data;
+            if (data) {
+                document.getElementsByClassName('side-position')[0].style.width='63px';
+            } else {
+                document.getElementsByClassName('side-position')[0].style.width='200px';
+            }
         }
 
     }

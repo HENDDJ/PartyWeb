@@ -1,7 +1,9 @@
 <template>
     <section class="nav-bar">
         <div :class="$route.name === 'DashboardRoot' ? 'menu-bar isDashboard' : 'menu-bar'">
-            <icon name="home" scale="2" style="display: inline-block;"></icon>
+            <el-tooltip effect="dark" content="切换菜单" placement="bottom">
+                <icon name="home" scale="2" class="home-icon" style="display: inline-block;" @click.native="changeCollapse"></icon>
+            </el-tooltip>
             <el-breadcrumb separator="/"  style="display: inline-block;">
                 <el-breadcrumb-item :to="{ path: '/MainView' }">首页</el-breadcrumb-item>
                 <el-breadcrumb-item v-for="item in breadList" :key="item.path">
@@ -48,7 +50,7 @@ export default {
     methods: {
         // 改变左侧菜单收缩
         changeCollapse() {
-            this.$store.commit('SET_COLLAPSE', !this.$store.state.collapse)
+            this.$store.commit('updateIsCollapse', !this.$store.state.isCollapse);
         },
         // 我的消息
         myMessage() {
@@ -121,4 +123,13 @@ export default {
         line-height: 18px;
     }
 }
+    .home-icon {
+        display: inline-block;
+    }
+    .home-icon:hover {
+        cursor: pointer;
+        transform: scale(1.1);
+        transition: all .5s;
+        color: blue;
+    }
 </style>

@@ -22,6 +22,7 @@ import Vuesax from 'vuesax';
 import Spinner from 'vue-spinkit';
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'
+import '@/style/csshake.min.css';
 import Vue2OrgTree from 'vue2-org-tree';
 import * as custom from './common/filters/custome.js'
 Object.keys(custom).forEach(key => {

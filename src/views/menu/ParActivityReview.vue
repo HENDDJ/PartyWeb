@@ -635,7 +635,7 @@
     .detail-row .el-input--mini .el-input__inner {
         width: 185px !important;
     }
-    @media screen and (max-width: 1400px) {
+    @media screen and (max-width: 1430px) {
         .right-detail {
             font-size: 14px;
         }

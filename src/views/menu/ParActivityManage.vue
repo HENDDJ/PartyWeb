@@ -82,7 +82,7 @@
                                 </div>
                             </transition>
                             <el-pagination style="text-align: right;" background
-                                           :pager-count="4"
+                                           :page-count="3"
                                            :page-sizes="[5, 7, 10]"
                                            :total="pageable.total" :current-page.sync="pageable.currentPage"
                                            :page-size.sync="pageable.pageSize"
@@ -240,7 +240,7 @@
                                             label="已完成"
                                             align="center"
                                             sortable
-                                            min-width="90px"
+                                            width="90px"
                                             :show-overflow-tooltip="true">
                                             <template slot-scope="scope">
                                                 <el-badge :value="scope.row.passed" class="item" type="success">
@@ -252,7 +252,7 @@
                                             label="待审核"
                                             align="center"
                                             sortable
-                                            min-width="90px"
+                                            width="90px"
                                             :show-overflow-tooltip="true">
                                             <template slot-scope="scope">
                                                 <el-badge :value="scope.row.waitCheck" class="item" type="warning">
@@ -264,7 +264,7 @@
                                             label="未完成"
                                             align="center"
                                             sortable
-                                            min-width="90px"
+                                            width="90px"
                                             :show-overflow-tooltip="true">
                                             <template slot-scope="scope">
                                                 <el-badge :value="scope.row.fail" class="item" type="danger">
@@ -276,7 +276,7 @@
                                             align="left"
                                             header-align="center"
                                             sortable
-                                            min-width="140px"
+                                            min-width="120px"
                                             prop="finishRatio">
                                             <template slot-scope="scope">
                                                 <el-progress v-if="scope.row.finishRatio < 0.3" :percentage="Math.round(scope.row.finishRatio * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
@@ -553,9 +553,8 @@
                 PicFull: [],
                 Pic: [],
                 picLoading: false,
-                picTitle: ''
-
-
+                picTitle: '',
+                progressType: 'line'
             }
         },
         watch: {
@@ -574,9 +573,6 @@
                     districtId: this.sysDistrict.id,
                     activityId: this.detailForm.id
                 }
-            },
-            progressType() {
-                return this.$touristScreenWid <= 0.73 ? 'dashboard' : 'line'
             }
         },
         components: {
@@ -1075,6 +1071,10 @@
             this.handleSelectOptions();
             let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
             this.loadTableData(path);
+            this.progressType = document.body.clientWidth/1920 <= 0.73 ? 'dashboard' : 'line';
+            window.onresize = () => {
+                this.progressType = document.body.clientWidth/1920 <= 0.73 ? 'dashboard' : 'line';
+            }
         }
     }
 </script>
@@ -1256,12 +1256,19 @@
         width: 80% !important;
         text-align: center;
     }
-    @media screen and (max-width: 1400px) {
+    .cell .el-progress--line {
+        width: 100% !important;
+        text-align: left;
+    }
+    @media screen and (max-width: 1430px) {
         .right-detail {
             font-size: 14px;
         }
         .processing {
             flex: 1;
+        }
+        .right-detail .el-col-4 {
+            width: 20% !important;
         }
     }
     /*.activity-management .el-textarea__inner {*/

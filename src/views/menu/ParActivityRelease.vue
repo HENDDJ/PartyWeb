@@ -371,7 +371,7 @@
         background: #fff !important;
         border-radius: 3px;
     }
-    @media screen and (max-width: 1400px){
+    @media screen and (max-width: 1430px){
         .activity-release {
             width: 100%;
         }

@@ -759,7 +759,7 @@
     .card-sat {
         padding: 20px 30px;
     }
-    @media screen and (max-device-width: 1400px){
+    @media screen and (max-device-width: 1430px){
         .card-sat {
             padding: 25px 10px;
         }

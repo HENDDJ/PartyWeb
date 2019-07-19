@@ -21,12 +21,12 @@
             v-if="dialogVisible"
             :title="title"
             :visible.sync="dialogVisible"
-            width="60%"
+            width="880px"
             align="left"
             :modal-append-to-body='false'
             :append-to-body="true"
             :before-close="handleClose">
-            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="100px">
+            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="170px">
                 <el-form-item label="上级组织">
                     <el-select v-model="form.attachTo" :disabled="disabled">
                         <el-option
@@ -77,7 +77,7 @@
                 queryColumns:[
                     {
                         des: '所属组织',
-                        name: 'districtId',
+                        name: 'attachTo',
                         type: 'select',
                         visible: true,
                         options: ''
@@ -193,7 +193,8 @@
                 this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
                     data.forEach( item => {
                         this.zhenList.push( {value:item.districtId , label:item.districtName});
-                    })
+                    });
+                    this.zhenList.push({value:'01',label:'句容市委'});
                     this.queryColumns[0].options = this.zhenList;
                 })
             }

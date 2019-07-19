@@ -15,7 +15,7 @@ import './style/index.scss';
 import 'material-icons/iconfont/material-icons.css';
 import 'vuesax/dist/vuesax.css' //Vuesax styles
 import Icon from 'vue-svg-icon/Icon.vue';
-import { generate, common, getRouter ,ht } from '@/api';
+import { generate, common, getRouter, ht } from '@/api';
 import '@/utils/DateFormatter.js'
 import DynamicRoutes from '@/utils/dynamic-routes';
 import Vuesax from 'vuesax';
@@ -57,11 +57,11 @@ Vue.prototype.$validate = (selected) => {
 
 function initTouristScreen() {
     Vue.prototype.$touristScreenWid = (() => {
-        let screenWidth = document.documentElement.clientWidth ;
+        let screenWidth = document.body.clientWidth ;
         return screenWidth/1920;
     })();
     Vue.prototype.$touristScreenHei = (() => {
-        let screenHeight = document.documentElement.clientHeight ;
+        let screenHeight = document.body.clientHeight ;
         return screenHeight/1080;
     })();
 }

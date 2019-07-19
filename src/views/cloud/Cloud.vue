@@ -26,8 +26,8 @@
                                         startColor="#3fb1e3"
                                         stopColor="#3fb1e3"
                                         innerStrokeColor="transparent">
-                                        <p style="font-size: 8px;line-height: 14px;position: relative;top:4px;color: #fff">{{handlePercent(item.totalPercent)}}%</p>
-                                        <p style="font-size: 6px;color: #aeaeae">总进度</p>
+                                        <p style="font-size: 20px;position: relative;top:4px;color: #fff">{{handlePercent(item.totalPercent)}}%</p>
+                                        <p style="font-size: 6px;margin-top:6px;color: #aeaeae">总进度</p>
                                     </radial-progress-bar>
                                 </el-col>
                             </el-row>
@@ -191,7 +191,7 @@
 
 <style scoped>
     .cloud {
-  /*   background-color: #0d1736;*/
+ /*    background-color: #0d1736;*/
         width: 560px;
         height: 370px;
         flex: 1;
@@ -227,5 +227,8 @@
 <style>
     .cloud .radial-progress-bar{
         background: url("../../../src/svg/progress.svg") 100% 100% no-repeat !important;
+    }
+    .cloud svg{
+        margin: 0 !important;
     }
 </style>

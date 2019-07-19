@@ -1,7 +1,7 @@
 <template>
     <el-scrollbar wrapClass="scrollbar-wrapper" viewClass="scrollbar_view">
         <el-menu background-color="rgb(0,0,0,0)" text-color="#fff" active-text-color="#409EFF" router  unique-opened  class="el-menu-personal" @select="changeActiveIndex">
-            <div v-for="item in routes" :key="item.name">
+            <div v-for="item in routes" v-if="item.visible === 1" :key="item.name">
                 <!-- 有子菜单 -->
                 <el-submenu :index="item.path" v-if="item.children&&item.children.length">
                     <template slot="title">
@@ -59,7 +59,6 @@
         },
         methods: {
             changeActiveIndex(index) {
-                console.log(index, "s")
                 this.activeIndex = index;
             }
         }
@@ -76,7 +75,7 @@
         height: 100%;
         text-align: left;
         background: url("/static/img/menu2.png");
-        background-size: 100% 100%;
+        background-size: cover;
     }
     .el-menu-personal  .el-badge__content{
         background-color: #e6a23c;

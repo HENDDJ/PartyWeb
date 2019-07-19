@@ -63,7 +63,7 @@
                     </div>
                 </vs-sidebar>
                 <el-dialog title="操作日志" :visible.sync="logDia" append-to-body :before-close="closeLogDia">
-                    <CommonCRUD ref="table" :columns="logColumns" api-root="/identity/sysLog"  :queryFormColumns="logQueryColumns" :sortColumns="logSortColumns" :addBtnVis=false :editBtnVis=false :lookBtnVis = false :delBtnVis=false></CommonCRUD>
+                    <CommonCRUD ref="table"  :columns="logColumns" api-root="/identity/sysLog"  :queryFormColumns="logQueryColumns" :sortColumns="logSortColumns" :addBtnVis=false :editBtnVis=false :lookBtnVis = false :delBtnVis=false></CommonCRUD>
                 </el-dialog>
                 <el-dialog title="修改密码" :visible.sync="pswDia" width="20%"  append-to-body :before-close="closeDia">
                     <el-form ref="form" :model="form" label-width="100px">
@@ -207,7 +207,7 @@
             resetPassword(){
                 this.$http('GET',`identity/sysUser/${this.user.id}id`,false).then( data => {
                     let resetUser = data;
-                    resetUser.password = "123";
+                    resetUser.password =null;
                     this.$http('PUT',`identity/sysUser/${this.user.id}id`,resetUser,false).then( () => {
                         this.active = false;
                         this.$message({
@@ -266,6 +266,8 @@
             closeLogDia(){
                 this.logDia=false;
                 this.active = true;
+                this.$refs.table.pageable.currentPage=1;
+                this.$refs.table.pageable.pageSize = 10;
             },
             closeDia() {
                 this.pswDia = false;

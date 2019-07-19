@@ -1,22 +1,23 @@
 <template>
     <el-scrollbar wrapClass="scrollbar-wrapper" viewClass="scrollbar_view">
-        <el-menu background-color="rgb(0,0,0,0)" text-color="#fff" active-text-color="#409EFF" router  unique-opened  class="el-menu-personal" @select="changeActiveIndex">
+        <el-menu background-color="rgb(0,0,0,0)" text-color="#fff" active-text-color="#deb26b" router  unique-opened
+                 class="el-menu-personal" @select="changeActiveIndex"  :collapse="$store.state.isCollapse">
             <div v-for="item in routes" v-if="item.visible === 1" :key="item.name">
                 <!-- 有子菜单 -->
                 <el-submenu :index="item.path" v-if="item.children&&item.children.length">
                     <template slot="title">
                         <div :class="`menu-item-detail${activeIndex === item.path ? '-active' : ''}`">
                             <div>
-                                <img v-show="activeIndex === item.path" :src="`/static/menu/active/${item.meta.icon}.png`" alt="">
+                                <img v-show="activeIndex === item.path" :src="`/static/menu/an_active/${item.meta.icon}.png`" alt="">
                                 <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="">
-                                &emsp;<span slot="title">{{item.meta && item.meta.title}}</span>
+                                &emsp;<span slot="title"> {{item.meta && item.meta.title}}</span>
                             </div>
                         </div>
                     </template>
                     <el-menu-item :index="item.path+'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id">
                         <div :class="`menu-item-detail${activeIndex === (item.path+'/'+subItem.path) ? '-active' : ''}`">
                             <div>
-                                <img v-show="activeIndex === (item.path+'/'+subItem.path)" :src="`/static/menu/active/${subItem.meta.icon}.png`" alt="">
+                                <img v-show="activeIndex === (item.path+'/'+subItem.path)" :src="`/static/menu/an_active/${subItem.meta.icon}.png`" alt="">
                                 <img v-show="activeIndex !== (item.path+'/'+subItem.path)"  :src="`/static/menu/${subItem.meta.icon}.png`" alt="">
                                 &emsp;<span slot="title">{{subItem.meta && subItem.meta.title}}
                                 <el-badge style="margin-left: 25px;margin-top: -6px" :value="5" v-if="subItem.meta.title=='活动审核'"/></span>
@@ -28,9 +29,9 @@
                 <el-menu-item :index="item.path" v-else>
                     <div :class="`menu-item-detail${activeIndex === item.path ? '-active' : ''}`">
                         <div>
-                            <img v-show="activeIndex === item.path" :src="`/static/menu/active/${item.meta.icon}.png`" alt="">
+                            <img v-show="activeIndex === item.path" :src="`/static/menu/an_active/${item.meta.icon}.png`" alt="">
                             <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="">
-                            &emsp;<span slot="title">{{item.meta && item.meta.title}}</span>
+                            &emsp;<span slot="title"> {{item.meta && item.meta.title}}</span>
                         </div>
                     </div>
                 </el-menu-item>
@@ -85,7 +86,12 @@
         outline: 0 !important;
         background-color: rgba(0,0,0,0.3)  !important;
     }
-
+    .el-menu-item{
+        overflow: hidden;
+    }
+    .el-submenu__title {
+        overflow: hidden;
+    }
    .el-menu-item:hover{
         outline: 0 !important;
         background-color: rgba(0,0,0,0.3) !important;
@@ -115,6 +121,9 @@
     }
     .el-menu-item {
         padding-right:0 !important;
+    }
+    .el-menu--vertical {
+        background: url("/static/img/menu2.png");
     }
     /*.el-menu-item {*/
         /*background: url("/static/img/menu_item_bg.png") no-repeat center left;*/

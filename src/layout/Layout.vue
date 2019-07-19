@@ -85,7 +85,6 @@
         top: calc(60 * 100vw/1920);
         bottom: 0;
         left: 0;
-        z-index: 1001;
         overflow: hidden;
     }
     @media screen and (max-width: 1600px){
@@ -98,7 +97,7 @@
         flex: 1;
         height: 100%;
         padding: 7px 28px 30px 20px;
-        transition: margin-left .28s;
+        transition: margin-left .28s, width .5s;
         overflow: hidden;
         background-image: url("/static/img/bg.png");
         background-size: 100% 100%;

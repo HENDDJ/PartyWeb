@@ -79,8 +79,12 @@
                     });
                     return;
                 }
-                data[0].password = "123456";
-                this.$http('PUT',`identity/sysUser/${data[0].id}id`,data[0]).then( () => {
+                data[0].password = null;
+                this.$http('PUT',`identity/sysUser/${data[0].id}id`,data[0],false).then( () => {
+                    this.$message({
+                        message: '密码重置成功',
+                        type: 'success'
+                    });
                     this.$refs.table.refreshTableData();
                 })
             }

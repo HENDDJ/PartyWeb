@@ -1,10 +1,10 @@
 <template>
     <div id="login" class="login-container">
         <div class="filter-display"></div>
-        <!--<div class="login-title"></div>-->
+        <div class="login-title"></div>
         <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
             <div class="title-container">
-                <h3 class="title">用 户 登 录</h3>
+                <h3 class="title">用户登录</h3>
             </div>
             <el-form-item prop="userName">
                 <el-input prefix-icon="el-icon-user-solid" name="code" size="small" type="text" v-model="loginForm.userName" autoComplete="on" placeholder="请输入用户名">
@@ -20,9 +20,8 @@
                     <icon name="eye" scale="2"/>
                 </span>
             </el-form-item>
-            <vs-button ref="loadableButton"  id="button-with-loading" class="vs-con-loading__container"  style="width:100%;margin:15px 0;border-radius: 50px" type="gradient" vslor="primary" @click.native.prevent="handleLogin">{{btnText}}</vs-button>
+            <vs-button ref="loadableButton"  id="button-with-loading" class="vs-con-loading__container login-btn" type="gradient" vslor="primary" @click.native.prevent="handleLogin">{{btnText}}</vs-button>
         </el-form>
-
     </div>
 </template>
 
@@ -117,12 +116,13 @@ export default {
             text-align: right;
         }
         .login-title{
-            background: url("/static/img/inactive/title.png") center no-repeat;
+            background: url("/static/img/login/title.png") center no-repeat;
             background-size: 100% 100%;
-            width: calc(1318 * 100vw/1920);
-            height: calc(84 * 100vw/1920);
-            margin: 3% auto;
+            width: calc(1008 * 100vw/1920);
+            height: calc(76 * 100vw/1920);
             position: relative;
+            left: calc(50 * 100vw/1920);
+            margin-top: calc(30 * 100vw/1920);
             z-index: 11;
         }
         .el-input {
@@ -144,7 +144,7 @@ export default {
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
             background: rgba(255, 255, 255, 0.1);
             color: #454545;
-            margin: calc(45 * 100vw/1920) 0;
+            margin: calc(35 * 100vw/1920) 0;
             transition: all .2s linear;
         }
         .el-form-item:focus-within {
@@ -163,16 +163,18 @@ export default {
         position: fixed;
         height: 100%;
         width: 100%;
-        //<!--background-color: $bg;-->
         .login-form {
             position: absolute;
-            left: calc(1275 * 100vw/1920);
-            top: calc(300 * 100vh/1080);
-            width:  calc(390 * 100vw/1920);
-            height:  calc(330 * 100vh/1080);
+            left: calc(1350 * 100vw/1920);
+            top: calc(350 * 100vh/1080);
+            width:  calc(340 * 100vw/1920);
+            min-width: 280px;
             padding: 35px 35px 15px 35px;
             z-index: 22;
-            transform: scale(1.45);
+            transform: scale(1.2);
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 14px 0 rgba(0,0,0,.5)
         }
         .tips {
             font-size: 14px;
@@ -197,11 +199,12 @@ export default {
         .title-container {
             position: relative;
             .title {
-                font-size: 24px;
+                font-size: 22px;
                 color: $light_gray;
                 margin: 0 auto 30px auto;
                 text-align: left;
-                font-weight: 300;
+                font-weight: 500;
+                letter-spacing: 2px;
             }
             .set-language {
                 color: #fff;
@@ -235,6 +238,14 @@ export default {
         /*filter: blur(4px);*/
         /*background-size: 100% 100%;*/
         z-index: 1;
-        background: url("/static/img/inactive/bg.png") no-repeat 0 -50px;
+        background: url("/static/img/login/bg.jpg") 0 -70px;
+        background-size: cover;
+    }
+    .login-btn {
+        background: url("/static/img/login/loginbtn.png");
+        background-size: cover;
+        width:100%;
+        margin: 15px 0 calc(60 * 100vh/1080) 0;
+        border-radius: 50px
     }
 </style>

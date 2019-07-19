@@ -1,5 +1,5 @@
 <template>
-    <div class="login-container">
+    <div id="login" class="login-container">
         <div class="filter-display"></div>
         <!--<div class="login-title"></div>-->
         <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
@@ -7,17 +7,15 @@
                 <h3 class="title">用 户 登 录</h3>
             </div>
             <el-form-item prop="userName">
-                <span class="svg-container svg-container_login">
-                  <icon name="user" scale="2.5"></icon>
-                </span>
-                <el-input name="code" size="small" type="text" v-model="loginForm.userName" autoComplete="on" placeholder="请输入用户名"></el-input>
+                <el-input prefix-icon="el-icon-user-solid" name="code" size="small" type="text" v-model="loginForm.userName" autoComplete="on" placeholder="请输入用户名">
+                    <span solt="perpend" class="svg-container svg-container_login">
+                      <icon name="user" scale="2.5"></icon>
+                    </span>
+                </el-input>
             </el-form-item>
 
             <el-form-item prop="password">
-                <span class="svg-container">
-                  <icon name="password" scale="2"/>
-                </span>
-                <el-input name="password" size="small" :type="passwordType" @keyup.enter.prevent="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="请输入密码"></el-input>
+                <el-input prefix-icon="el-icon-s-goods" name="password" size="small" :type="passwordType" @keyup.enter.prevent="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="请输入密码"></el-input>
                 <span class="show-pwd" @click="showPwd">
                     <icon name="eye" scale="2"/>
                 </span>
@@ -94,6 +92,8 @@ export default {
     created () {
         // window.addEventListener('hashchange', this.afterQRScan)
     },
+    mounted() {
+    },
     destroyed () {
         // window.removeEventListener('hashchange', this.afterQRScan)
     }
@@ -127,13 +127,12 @@ export default {
         }
         .el-input {
             display: inline-block;
-            width: 85%;
             input {
                 background: transparent;
                 border: 0;
                 -webkit-appearance: none;
                 border-radius: 0;
-                padding: 12px 5px 20px 5px;
+                padding: 15px 5px 15px 40px;
                 color: $light_gray;
                 &:-webkit-autofill {
                     background-color: transparent;
@@ -145,7 +144,7 @@ export default {
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
             background: rgba(255, 255, 255, 0.1);
             color: #454545;
-            margin: 45px 0;
+            margin: calc(45 * 100vw/1920) 0;
             transition: all .2s linear;
         }
         .el-form-item:focus-within {
@@ -167,10 +166,10 @@ export default {
         //<!--background-color: $bg;-->
         .login-form {
             position: absolute;
-            left: 1275px;
-            top: 300px;
-            width: 390px;
-            height: 330px;
+            left: calc(1275 * 100vw/1920);
+            top: calc(300 * 100vh/1080);
+            width:  calc(390 * 100vw/1920);
+            height:  calc(330 * 100vh/1080);
             padding: 35px 35px 15px 35px;
             z-index: 22;
             transform: scale(1.45);
@@ -236,6 +235,6 @@ export default {
         /*filter: blur(4px);*/
         /*background-size: 100% 100%;*/
         z-index: 1;
-        background: url("/static/img/inactive/bg.png") 0 -50px;
+        background: url("/static/img/inactive/bg.png") no-repeat 0 -50px;
     }
 </style>

@@ -1,11 +1,16 @@
 <template>
     <div class="bg">
-        <div class="title"></div>
-        <div  class="choose">
-            <template v-for="(item,index) in picMenu">
-                <div style="display: inline-block;vertical-align: top"><div class="jump"><div :class=" 'sub ' + item.className" :alt=item.alt @click="router(item.path)"></div><div class="label">{{item.alt}}</div></div></div>
-                <p v-if="index == 3"></p>
-            </template>
+        <div class="content">
+            <div class="title"></div>
+            <div  class="choose">
+                <template v-for="(item,index) in picMenu">
+                    <div style="display: inline-block;vertical-align: top">
+                        <div class="jump" :class=" item.className" :alt=item.alt @click="router(item.path)">
+                        </div>
+                    </div>
+                    <p v-if="index == 3"></p>
+                </template>
+            </div>
         </div>
     </div>
 </template>
@@ -55,78 +60,54 @@
 </script>
 
 <style scoped>
+    .content {
+        max-width: 1344px;
+        margin: 0 auto;
+    }
     .bg{
         position: absolute;
         background: url("/static/img/inactive/bg.jpg") center no-repeat ;
-        background-size: 100% 100%;
+        background-size: cover;
         width: 100%;
         height: 100%;
-        padding: 50px 0;
     }
     .title{
         background: url("/static/img/inactive/title.png") center no-repeat;
         background-size: 100% 100%;
-        width: calc(1318 * 100vw/1920);
-        height: calc(84 * 100vw/1920);
-        margin: 3% auto 0 auto ;
-        top:5%;
+        width: calc(1031 * 100vw/1920);
+        height: calc(197 * 100vw/1920);
+        margin: calc(60 * 100vw / 1920) auto 0 auto;
+        position: relative;
+        left: calc(-123 * 100vw / 1920);
     }
     .choose{
         overflow: hidden;
-        margin: 4% auto 0 auto;
-        width:85%;
-        height:70%;
+        position: relative;
+        width:100%;
     }
     .jump {
-        width: calc(261 * 100vw/1920);
-        height: calc(215 * 100vw/1920);
-        margin: 34px;
+        width: calc(260 * 100vw / 1920);
+        height: calc(221 * 100vw / 1920);
+        margin: calc(25 * 100vw / 1920);
         overflow: hidden;
-        background: url("/static/img/inactive/border.png") center no-repeat ;
         display: flex;
         flex-direction: column;
-        justify-content: center;  /*水平居中*/
+        justify-content: center; /*水平居中*/
         align-items: center;
         font-size: 28px;
         color: #666;
         font-weight: 500;
         border-radius: 2px;
-        transition: all .4s;
+        background-size: 100% 100%;
+        transition: all linear .1s;
     }
-    .sub {
-        margin: 0 auto;
-        transition: all .3s;
-        width: 103px;
-        height: 88px;
-    }
-    .label {
-        padding-top: 16px;
-        letter-spacing: 1px;
-    }
-
-    @media screen and (max-width: 1430px){
-        .bg {
-            padding: 30px;
-        }
-        .jump {
-            font-size: 24px;
-            margin: 22px;
-        }
-        .label {
-            padding-top: 10px;
-        }
-    }
-    /*.jump :hover{*/
-    /*    box-shadow: 0 0 10px grey;*/
-    /*    transform: scale(1.1) translateY(-15px);*/
-    /*    transition: all .5s;*/
-    /*    cursor: pointer;*/
-    /*}*/
     .activity {
-        background: url("/static/img/inactive/activity.png") no-repeat;
+        background: url("/static/img/inactive/activity.png");
+        background-size: 100% 100%;
     }
     .team {
-        background: url("/static/img/inactive/team.png")  no-repeat;
+        background: url("/static/img/inactive/team.png");
+        background-size: 100% 100%;
     }
     .position {
         background-image: url("/static/img/inactive/position.png");
@@ -148,35 +129,39 @@
     }
 
     .jump:hover {
-        color: white;
-        background: url("/static/img/active/border_active.png") center no-repeat ;
-        transform: scale(1.15);
         cursor: pointer;
     }
 
-
-    .jump:hover .activity {
-        background: url("/static/img/active/activity_active.png") no-repeat;
+    .jump:hover.activity {
+        background: url("/static/img/active/activity_active.png");
+        background-size: 100% 100%;
     }
-    .jump:hover .team {
-        background: url("/static/img/active/team_active.png")  no-repeat;
+    .jump:hover.team {
+        background: url("/static/img/active/team_active.png");
+        background-size: 100% 100%;
     }
-    .jump:hover .position {
+    .jump:hover.position {
         background-image: url("/static/img/active/position_active.png");
+        background-size: 100% 100%;
     }
-    .jump:hover .org {
+    .jump:hover.org {
         background-image: url("/static/img/active/org_active.png");
+        background-size: 100% 100%;
     }
-    .jump:hover .gis {
+    .jump:hover.gis {
         background-image: url("/static/img/active/map_active.png");
+        background-size: 100% 100%;
     }
-    .jump:hover .review {
+    .jump:hover.review {
         background-image: url("/static/img/active/review_active.png");
+        background-size: 100% 100%;
     }
-    .jump:hover .brand {
+    .jump:hover.brand {
         background-image: url("/static/img/active/party_build_active.png");
+        background-size: 100% 100%;
     }
-    .jump:hover .sys {
+    .jump:hover.sys {
         background-image: url("/static/img/active/system_active.png");
+        background-size: 100% 100%;
     }
 </style>

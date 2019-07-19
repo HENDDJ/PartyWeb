@@ -88,7 +88,11 @@
         z-index: 1001;
         overflow: hidden;
     }
-
+    @media screen and (max-width: 1600px){
+        .sidebar-container {
+            top: 50px;
+        }
+    }
     // 主体区域
     .main-container {
         flex: 1;

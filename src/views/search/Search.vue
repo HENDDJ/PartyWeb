@@ -99,7 +99,7 @@
         },
         created() {
             this.esClient  = new elasticsearch.Client({
-                host: '/es',
+                host: './es',
                 log: 'trace'
             });
             if (this.$route.query.keyword) {

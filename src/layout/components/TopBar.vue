@@ -355,7 +355,7 @@
                 this.handleMessageCenter(this.isRead);
             },
             searchAll() {
-                this.$router.push({path: '/search/',params: {keyword: this.queryParam}})
+                this.$router.push({path: '/search/',query: {keyword: this.queryParam}})
             },
 
         },

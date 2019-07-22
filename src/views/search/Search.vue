@@ -61,7 +61,7 @@
             },
             mutipartSearch(queryParam) {
                 this.esClient.search({
-                    q: this.queryParam,
+                    q: queryParam,
                     from: (this.pageable.currentPage - 1) * this.pageable.pageSize,
                     size: this.pageable.pageSize,
                     body: {
@@ -99,9 +99,14 @@
         },
         created() {
             this.esClient  = new elasticsearch.Client({
-                host: 'localhost:9200',
+                host: 'http://122.97.218.162:21018/es',
                 log: 'trace'
             });
+            if (this.$route.query.keyword) {
+                let temp = this.$route.query.keyword;
+                this.queryParam = temp;
+                this.search();
+            }
         },
         mounted() {
             this.$store.state.menuList[3].children.filter( (item) => item.name === 'parMember')[0].sysClass.properties.forEach(item => {

@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="gis-map">
         <div id="allmap"></div>
         <nav class="nav">
 
@@ -16,7 +16,7 @@
         <div class="closeBtnBg" v-if="this.msgFloatRight.marginRight === '48px'" @click="close">
             <div class="closeBtn"></div>
         </div>
-
+        <div style="width: 250px;height: 579px">
         <vs-card class="msgCard" :style="msgFloatRight">
                 <div slot="header" style="padding-bottom: 8px;padding-top: 6px;">
                     <a v-if="!rightMessage.districtName">暂无数据</a>
@@ -50,7 +50,7 @@
                         <el-divider style="margin-top: 8px"></el-divider>
                     </div>
             </vs-card>
-
+        </div>
     </section>
 </template>
 
@@ -137,7 +137,7 @@
                     zIndex: 1000,
                     top:'90px',
                     right: '-45px',
-                    transition: 'all 1.5s'
+                    transition: 'all 1.5s',
                 },
                 rightMessage:{},
             }
@@ -368,6 +368,7 @@
 
                                 this.rightMessage = item
                                 this.msgFloatRight.marginRight = '48px'
+                                this.msgFloatRight.display = 'block'
                                 setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
                             });
                             this.map.addOverlay(marker);
@@ -924,6 +925,10 @@
         height: 579px;
         overflow-y:scroll;
         position: relative;
+    }
+    .gis-map .con-vs-card {
+        width:250px !important;
+        height: 579px  !important;
     }
     .closeBtnBg{
         transition: all 0.3s;

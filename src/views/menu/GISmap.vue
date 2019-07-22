@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="gis-map">
         <div id="allmap"></div>
         <nav class="nav">
 
@@ -915,7 +915,7 @@
         overflow-y:scroll;
         position: relative;
     }
-    .con-vs-card {
+    .gis-map .con-vs-card {
         width:250px !important;
         height: 579px  !important;
     }

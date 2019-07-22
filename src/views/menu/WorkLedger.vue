@@ -6,8 +6,9 @@
                     {{(scope.row.enclosure) ? scope.row.enclosure.split("&")[1] : ' ' }}
                 </div>
             </template>
-            <template slot="header-btn" slot-scope="slotProps">
-                <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
+            <template slot="query" slot-scope="slotProps">
+                <label style="font-size: 14px;width: 75px">所属组织</label>
+                <el-cascader :props="props" placeholder="选择镇名" size="mini" style="margin-right: -28px;"></el-cascader>
             </template>
         </CommonCRUD>
     </section>

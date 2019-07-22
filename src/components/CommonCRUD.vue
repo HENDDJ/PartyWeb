@@ -1,8 +1,8 @@
 <template>
     <div class="common-crud">
         <div class="common-query">
-            <slot name="query"></slot>
             <el-form :inline="true" :model="queryForm" ref="form" class="demo-form-inline" label-width="75px">
+                <slot name="query"></slot>
                 <el-form-item v-for="item in queryFormColumns" v-if="item.visible" :key="item.des" :label="item.type === 'checkbox' ? '' : item.des">
                     <el-input v-model="queryForm[item.name]" v-if="item.type === 'string'"></el-input>
                     <el-select v-model="queryForm[item.name]" v-else-if="item.type === 'select'">

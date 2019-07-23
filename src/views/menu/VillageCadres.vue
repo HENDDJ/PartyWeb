@@ -5,8 +5,9 @@
                 <div class="con-tab-ejemplo">
                     <br>
                     <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns" :queryFormColumns="cadreQuery">
-                        <template slot="header-btn" slot-scope="slotProps">
-                            <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
+                        <template slot="query" slot-scope="slotProps">
+                            <label style="font-size: 14px;width: 75px">所属组织</label>
+                            <el-cascader :props="props" placeholder="选择镇名" size="mini" style="margin-right: -28px;"></el-cascader>
                         </template>
                     </CommonCRUD>
                 </div>
@@ -15,8 +16,9 @@
                 <div class="con-tab-ejemplo">
                     <br>
                     <CommonCRUD :columns="positionColumns" api-root="identity/cadrePosition" :formColumns="positionFormColumns" :queryFormColumns="positionQuery">
-                        <template slot="header-btn" slot-scope="slotProps">
-                            <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
+                        <template slot="query" slot-scope="slotProps">
+                            <label style="font-size: 14px;width: 75px">所属组织</label>
+                            <el-cascader :props="props" placeholder="选择镇名" size="mini" style="margin-right: -28px;"></el-cascader>
                         </template>
                     </CommonCRUD>
                 </div>
@@ -55,14 +57,14 @@
                         type: 'string',
                         value: '',
                         visible: true,
-                    },
-                    {
-                        des: '所属组织',
-                        name: 'districtId',
-                        type: 'select',
-                        visible: true,
-                        options: ''
-                    }
+                     },
+                    // {
+                    //     des: '所属组织',
+                    //     name: 'districtId',
+                    //     type: 'select',
+                    //     visible: true,
+                    //     options: ''
+                    // }
                 ],
                 //岗位列表
                 positionColumns:[

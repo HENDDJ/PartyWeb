@@ -72,13 +72,13 @@
         height: 100%;
     }
     .title{
-        background: url("/static/img/inactive/title.png") center no-repeat;
+        background: url("/static/img/login/title.png") center no-repeat;
         background-size: 100% 100%;
-        width: calc(1031 * 100vw/1920);
-        height: calc(197 * 100vw/1920);
-        margin: calc(60 * 100vw / 1920) auto 0 auto;
+        width: calc(1008 * 100vw/1920);
+        height: calc(76 * 100vw/1920);
+        margin: calc(100 * 100vw / 1920) auto calc(40 * 100vw / 1920) auto;
         position: relative;
-        left: calc(-123 * 100vw / 1920);
+        /*left: calc(-123 * 100vw / 1920);*/
     }
     .choose{
         overflow: hidden;

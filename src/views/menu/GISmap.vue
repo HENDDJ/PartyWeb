@@ -345,7 +345,13 @@
                                     mon.push(Number(val.substring(5,7)))
                                     day.push(Number(val.substring(8,10)))
                                 })
-                                newTime =  Math.max.apply(Math,year)+'-'+Math.max.apply(Math,mon)+'-'+Math.max.apply(Math,day)
+                                console.log(year)
+                                if(year.length == 0 ||mon.length == 0  ||day.length == 0 ){
+                                    newTime = '无数据'
+                                }else {
+                                    newTime =  Math.max.apply(Math,year)+'-'+Math.max.apply(Math,mon)+'-'+Math.max.apply(Math,day)
+
+                                }
                             }
                             marker.addEventListener('click', e => {
                                 this.pContent =
@@ -355,7 +361,10 @@
                                     "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 400px' class='flowWin'>"+content+
                                       "</div>"+
                                     "</div>";
-                                this.map.panTo(new BMap.Point(item.location.split(",")[0],item.location.split(",")[1]));
+                                setTimeout(()=> {
+                                    this.map.panTo(new BMap.Point(item.location.split(",")[0],item.location.split(",")[1]));
+                                },300)
+
                                 this.rightMessage = item
                                 this.msgFloatRight.marginRight = '48px'
                                 this.msgFloatRight.display = 'block'
@@ -412,7 +421,9 @@
 
                         let time = (res.value[0].modifiedAt.split('T')[0]+" "+res.value[0].modifiedAt.split('T')[1]).split('.')[0]
                         marker2.addEventListener('click', e => {
-                            this.map.panTo(new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]+0.001));
+                            setTimeout(()=> {
+                                this.map.panTo(new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1] + 0.001));
+                            })
                                 this.map.setZoom(13);
                             let path = 'identity/parCamera/redisIp?key='+res.value[0].organizationId;
                             this.$http('Get',path,false).then(data=>{

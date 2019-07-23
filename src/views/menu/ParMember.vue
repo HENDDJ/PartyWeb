@@ -1,7 +1,8 @@
 <template>
-    <CommonCRUD :columns="columns" apiRoot="/identity/parMember" :formColumns="formColumns">
-        <template slot="header-btn" slot-scope="slotProps">
-            <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
+    <CommonCRUD :columns="columns" apiRoot="/identity/parMember" :formColumns="formColumns"  :queryFormColumns="queryForm">
+        <template slot="query" slot-scope="slotProps">
+            <label style="font-size: 14px;width: 75px">所属组织</label>
+            <el-cascader :props="props" placeholder="选择镇名" size="mini" style="margin-right: -28px;"></el-cascader>
         </template>
     </CommonCRUD>
 </template>
@@ -38,7 +39,16 @@
                         }
 
                     }
-                }
+                },
+                queryForm:[
+                    {
+                        des: '姓名',
+                        name: 'name',
+                        type: 'string',
+                        value: '',
+                        visible: true,
+                    }
+                ],
             }
         },
         methods: {

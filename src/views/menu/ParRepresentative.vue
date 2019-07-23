@@ -15,7 +15,10 @@
                 <el-button type="warning"  plain  class="self-btn self-edit" @click="edit(slotProps.selected)" >&nbsp;</el-button>
                 <el-button type="success" plain  class="self-btn self-look" @click="look(slotProps.selected)" >&nbsp;</el-button>
                 <el-button type="danger" plain class="self-del self-btn" @click="del(slotProps.selected)" >&nbsp;</el-button>
-                <el-cascader :props="props" placeholder="选择镇名" size="small"></el-cascader>
+            </template>
+            <template slot="query" slot-scope="slotProps">
+                <label style="font-size: 14px;width: 75px">所属组织</label>
+                <el-cascader :props="props" placeholder="选择镇名" size="mini" style="margin-right: -28px;"></el-cascader>
             </template>
         </CommonCRUD>
         <!--新增、编辑、查看-->

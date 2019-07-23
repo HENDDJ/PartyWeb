@@ -121,8 +121,7 @@ export default {
             width: calc(1008 * 100vw/1920);
             height: calc(76 * 100vw/1920);
             position: relative;
-            left: calc(50 * 100vw/1920);
-            margin-top: calc(30 * 100vw/1920);
+            margin: calc(30 * 100vw/1920) auto 0 auto;
             z-index: 11;
         }
         .el-input {

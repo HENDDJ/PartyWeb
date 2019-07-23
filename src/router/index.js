@@ -8,6 +8,8 @@ import MainView from '@/layout/components/MainView';
 import Cloud from '@/views/cloud/Cloud';
 import Search from '@/views/search/Search';
 import CloudRoot from '@/views/cloud/CloudRoot';
+import CloudMap from '@/views/cloud/CloudMap';
+import CloudVideo from '@/views/cloud/CloudVideo';
 
 Vue.use(Router);
 
@@ -83,10 +85,21 @@ const router = new Router({
             component: Cloud
         },
         {
+            path: '/cloudMap',
+            name: 'CloudMap',
+            component: CloudMap
+        },
+        {
             path: '/cloudRoot',
             name: 'CloudRoot',
             component: CloudRoot
+        },
+        {
+            path: '/cloudVideo',
+            name: 'CloudVideo',
+            component: CloudVideo
         }
+
     ]
 });
 
@@ -104,6 +117,14 @@ router.beforeEach((to, from, next) => {
         return;
     }
     if(to.path === '/cloud'){
+        next();
+        return;
+    }
+    if(to.path === '/cloudMap'){
+        next();
+        return;
+    }
+    if(to.path === '/cloudVideo'){
         next();
         return;
     }

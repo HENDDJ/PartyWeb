@@ -2,7 +2,6 @@
     <section class="gis-map">
         <div id="allmap"></div>
         <nav class="nav">
-
             <ul>
                 <li class="store" @click="showParty()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
                 <li class="movies" @click="showBattleField()"><span class="store-icon"></span><a href="#" style="padding-left: 50px">基本阵地</a></li>

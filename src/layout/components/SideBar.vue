@@ -6,19 +6,19 @@
                 <!-- 有子菜单 -->
                 <el-submenu :index="item.path" v-if="item.children&&item.children.length">
                     <template slot="title">
-                        <div :class="`menu-item-detail${activeIndex === item.path ? '-active' : ''}`">
+                        <div :class="`menu-item-detail${activeIndex === item.path ? '-active' : ''}`" class="fontStyle">
                             <div>
-                                <img v-show="activeIndex === item.path" :src="`/static/menu/an_active/${item.meta.icon}.png`" alt="">
-                                <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="">
+                                <img v-show="activeIndex === item.path" :src="`/static/menu/an_active/${item.meta.icon}.png`" alt="" class="imgStyle">
+                                <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="" class="imgStyle">
                                 &emsp;<span slot="title"> {{item.meta && item.meta.title}}</span>
                             </div>
                         </div>
                     </template>
                     <el-menu-item :index="item.path+'/'+subItem.path" v-for="subItem in item.children" :key="subItem.id">
-                        <div :class="`menu-item-detail${activeIndex === (item.path+'/'+subItem.path) ? '-active' : ''}`">
+                        <div :class="`menu-item-detail${activeIndex === (item.path+'/'+subItem.path) ? '-active' : ''}`" class="fontStyle">
                             <div>
-                                <img v-show="activeIndex === (item.path+'/'+subItem.path)" :src="`/static/menu/an_active/${subItem.meta.icon}.png`" alt="">
-                                <img v-show="activeIndex !== (item.path+'/'+subItem.path)"  :src="`/static/menu/${subItem.meta.icon}.png`" alt="">
+                                <img v-show="activeIndex === (item.path+'/'+subItem.path)" :src="`/static/menu/an_active/${subItem.meta.icon}.png`" alt="" class="imgStyle">
+                                <img v-show="activeIndex !== (item.path+'/'+subItem.path)"  :src="`/static/menu/${subItem.meta.icon}.png`" alt="" class="imgStyle">
                                 &emsp;<span slot="title">{{subItem.meta && subItem.meta.title}}
                                 <el-badge style="margin-left: 25px;margin-top: -6px" :value="5" v-if="subItem.meta.title=='活动审核'"/></span>
                             </div>
@@ -27,10 +27,10 @@
                 </el-submenu>
                 <!-- 没有子菜单 -->
                 <el-menu-item :index="item.path" v-else>
-                    <div :class="`menu-item-detail${activeIndex === item.path ? '-active' : ''}`">
+                    <div :class="`menu-item-detail${activeIndex === item.path ? '-active' : ''}`" class="fontStyle">
                         <div>
-                            <img v-show="activeIndex === item.path" :src="`/static/menu/an_active/${item.meta.icon}.png`" alt="">
-                            <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="">
+                            <img v-show="activeIndex === item.path" :src="`/static/menu/an_active/${item.meta.icon}.png`" alt="" class="imgStyle">
+                            <img v-show="activeIndex !== item.path" :src="`/static/menu/${item.meta.icon}.png`" alt="" class="imgStyle">
                             &emsp;<span slot="title"> {{item.meta && item.meta.title}}</span>
                         </div>
                     </div>
@@ -165,5 +165,11 @@
         /*top: -3px;*/
         /*color: #1e6abc;*/
     /*}*/
+    .fontStyle{
+        font-size: 17px;font-family:'Microsoft YaHei'
+    }
+    .imgStyle{
+        transform: scale(1.2);
+    }
 </style>
 

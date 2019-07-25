@@ -10,7 +10,7 @@
                     <el-col :span="10">
                         <el-form-item label="任务分类" prop="taskType">
                             <vs-radio color="success" v-model="form.taskType" vs-value="Party">党建任务</vs-radio>
-                            <vs-radio color="success" v-model="form.taskType" vs-value="DistLearning">远教任务</vs-radio>
+                            <vs-radio color="success" v-model="form.taskType" vs-value="DistLearning" disabled="true">远教任务</vs-radio>
                             <!--<vs-checkbox icon="flag" color="danger"   v-model="form.taskType" vs-value="Party">党建任务</vs-checkbox>-->
                             <!--<vs-checkbox icon="cast" color="success" v-model="form.taskType" vs-value="DistLearning">远教任务</vs-checkbox>-->
                         </el-form-item>
@@ -64,16 +64,20 @@
                 </el-row>
                 <el-row>
                     <el-col :span="11">
-                        <el-form-item label="任务对象" prop="taskObject">
-                            <el-tree
-                                :props="props"
-                                ref="tree"
-                                :load="loadNode"
-                                lazy
-                                show-checkbox
-                                v-model="form.taskObject"
-                                @check="ss">
-                            </el-tree>
+                        <!--<el-form-item label="任务对象" prop="taskObject">-->
+                            <!--<el-tree-->
+                                <!--:props="props"-->
+                                <!--ref="tree"-->
+                                <!--:load="loadNode"-->
+                                <!--lazy-->
+                                <!--show-checkbox-->
+                                <!--v-model="form.taskObject"-->
+                                <!--@check="ss">-->
+                            <!--</el-tree>-->
+                        <!--</el-form-item>-->
+                        <el-form-item label="任务对象" prop="newObjext">
+                        <vs-checkbox v-model="newObjext.countryside">农村</vs-checkbox>
+                        <vs-checkbox v-model="newObjext.office">机关</vs-checkbox>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -151,7 +155,8 @@
                 count: 1,
                 activeNames: ['1'],
                 videoColl: '点击隐藏',
-                isVisible: false
+                isVisible: false,
+                newObjext:{countryside:false,office:false}
             }
         },
         watch: {
@@ -167,7 +172,7 @@
         methods: {
             reWrite() {
                 this.form = {taskType: 'Party', score: 10}
-                this.$refs.tree.setChecked([]);
+                // this.$refs.tree.setChecked([]);
             },
             //给taskObject赋值
             ss() {
@@ -246,6 +251,7 @@
                             })
                             this.form.video = videoList
                         }
+                        this.form.newObject = this.newObjext
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {
                                 this.isVisible = false;

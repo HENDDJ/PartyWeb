@@ -12,7 +12,6 @@
             >
                 <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in options"/>
             </vs-select>
-
             <vs-button type="gradient" style="float:left;margin-left: 160px" @click="changeType" v-if="viewType">可视化统计图</vs-button>
         </div>
         <transition name="el-fade-in-linear">

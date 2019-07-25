@@ -1,10 +1,10 @@
 <template>
-    <section class="nav-bar">
-        <div :class="$route.name === 'DashboardRoot' ? 'menu-bar isDashboard' : 'menu-bar'">
+    <section class="nav-bar" style="height: 40px">
+        <div :class="$route.name === 'DashboardRoot' ? 'menu-bar isDashboard' : 'menu-bar'" style="height: 100%">
             <el-tooltip effect="dark" content="切换菜单" placement="bottom">
                 <icon name="home" scale="2" class="home-icon" style="display: inline-block;" @click.native="changeCollapse"></icon>
             </el-tooltip>
-            <el-breadcrumb separator="/"  style="display: inline-block;">
+            <el-breadcrumb separator="/"  style="display: inline-block;font-size: 17px">
                 <el-breadcrumb-item>首页</el-breadcrumb-item>
                 <el-breadcrumb-item v-for="item in breadList" :key="item.path">
                     {{item.meta.title}}
@@ -91,7 +91,7 @@ export default {
     text-align: left;
     border-bottom: 1px solid #dcdfe6;
     svg {
-        margin: 0 6px 0 0 !important;
+        margin: 8px 6px 0 0 !important;
     }
     .fl {
         float: left;

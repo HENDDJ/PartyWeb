@@ -4,8 +4,8 @@
             <br>
             <el-row :gutter="30" type="flex" justify="space-between">
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #1ca5ff, #28c9fa);color: #f2f2f2">
-                        <div style="display: flex">
+                    <vs-card class="card-sat"  style="height: 125px;background-color: rgba(118,155,237,0.54);color: #f2f2f2">
+                        <div style="display: flex;">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">党员总人数</p>
                                 <p style="font-size: 32px;font-weight: bold">
@@ -23,7 +23,7 @@
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #ffa10e, #fdb513);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px; background-color: rgba(169,214,236,0.54);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属组织数</p>
@@ -42,7 +42,7 @@
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #fe8e8b, #ff7288);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px;  background-color: rgba(155,236,236,0.57);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属阵地数</p>
@@ -61,7 +61,7 @@
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #0dc9ce, #22e3ac);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px;background-color: rgba(160,236,172,0.57);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属村干部</p>
@@ -80,7 +80,7 @@
                     </vs-card>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px; background-image: linear-gradient(to right, #cf8bf3, #fdb99b);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px; background-color: rgba(193,236,119,0.57);color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属村书记</p>
@@ -894,5 +894,25 @@
         font-size: 14px;
         color: #aeaeae;
         margin-bottom: 4px;
+    }
+    .filter-display {
+        position: absolute;
+        background-image: linear-gradient(to right, #a1ff7d, #fabe49);
+        width: 100%;
+        height: 234.6px;
+        filter: blur(4px);
+        z-index: -9;
+        clear:both;
+        background-size: cover;
+    }
+    #countOne .con-vs-card{
+        overflow: hidden;
+        z-index: 2;
+    }
+    #countOne .con-vs-card::before{
+        content: '';
+        position: absolute;
+        filter: blur(10px);
+        z-index: -1;
     }
 </style>

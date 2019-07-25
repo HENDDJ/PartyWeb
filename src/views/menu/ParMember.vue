@@ -64,6 +64,13 @@
         mounted () {
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns =this.$store.state.classInfo.properties;
+            this.columns.forEach(item => {
+                if (item.name == "birth"||item.name == "graduationTime" || item.name == "workTime") {
+                    item.formatter=(row, column, value) => {
+                        return new Date(value).Format("yyyy-MM-dd");
+                    }
+                }
+            })
         }
     }
 </script>

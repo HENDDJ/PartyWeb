@@ -37,7 +37,7 @@
                     enableAutoPan: true,
                     align: INFOBOX_AT_TOP,
                 },
-                videoUrl:'http://172.16.1.140:9391/vod/JTEDU0245492022.mp4',
+                videoUrl:'',
             }
         },
         methods: {
@@ -181,14 +181,14 @@
 
                         let time = (res.value[0].modifiedAt.split('T')[0]+" "+res.value[0].modifiedAt.split('T')[1]).split('.')[0]
                         marker2.addEventListener('click', e => {
-                            localStorage.setItem("videoUrl", this.videoUrl);
-                            console.log(this.videoUrl);
+
                             this.map.panTo(new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]+0.001));
                             this.map.setZoom(13);
                             let path = 'identity/parCamera/redisIp?key='+res.value[0].organizationId;
                             this.$http('Get',path,false).then(data=>{
-                                /*if(data){
+                                if(data){
                                     ip = data.ip;
+                                    localStorage.setItem("videoUrl", ip);
                                     res.value.forEach(item=>{
                                         content =   "<div style='position: relative;padding-bottom: 10px;padding-top: 3px'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>任务名称：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.title+"</span></span>" +
                                             "<span style='color:#2C3E50;font-size: 15px;font-weight: 500;right: 29px;position: absolute;;'>任务类型：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.type+"</span></span>" +
@@ -219,7 +219,7 @@
                                         "</div>";
 
                                     setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker2)),600)
-                                }*/
+                                }
 
                             })
                         });

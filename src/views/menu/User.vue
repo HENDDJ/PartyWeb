@@ -93,8 +93,8 @@
             this.changeCol();
             this.columns.forEach(item => {
                 if (item.name == "lastTime") {
-                    item.formatter = (row, column) => {
-                        return row.lastTime ? row.lastTime.replace(/T/, " ").split('.')[0] : ''
+                    item.formatter=(row, column, value) => {
+                        return new Date(value).Format("yyyy-MM-dd HH:mm:ss");
                     }
                 }
             })

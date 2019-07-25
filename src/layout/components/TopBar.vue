@@ -50,7 +50,7 @@
                         <p><icon name="logorg" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.organizationName}}</p>
                         <p><icon name="logrole" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.roleName}}</p>
                         <p><icon name="logphone" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.phone}}</p>
-                        <p><icon name="logtime" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{user.lastTime}}</p>
+                        <p><icon name="logtime" scale="1.75" style="vertical-align: sub"></icon>&nbsp; &nbsp;{{new Date(user.lastTime).Format("yyyy-MM-dd HH:mm:ss")}}</p>
                     </div>
                     <vs-divider style="font-size: 14px;font-weight: 600;color: #1f74ff" color="primary" position="left">
                         组织介绍

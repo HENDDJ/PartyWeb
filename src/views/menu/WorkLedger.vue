@@ -77,6 +77,13 @@
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns = this.$store.state.classInfo.properties;
             this.handleEnc();
+            this.columns.forEach(item => {
+                if (item.name == "workTime") {
+                    item.formatter=(row, column, value) => {
+                        return new Date(value).Format("yyyy-MM-dd");
+                    }
+                }
+            })
         }
     }
 </script>

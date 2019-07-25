@@ -571,7 +571,7 @@
             picQuery() {
                 return {
                     districtId: this.sysDistrict.id,
-                    activityId: this.detailForm.id
+                    activityId: this.detailForm.activityId
                 }
             }
         },

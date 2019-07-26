@@ -398,6 +398,7 @@
                     </el-col>
                     <el-col :span="16">
                         <h3 style="text-align: center;line-height: 1.1">{{picTitle}}</h3>
+                        <h4 style="text-align: center;line-height: 1.5">开始时间：{{timeLines[1]|dateServer}}——结束时间：{{timeLines[0]|dateServer}}</h4>
                         <viewer :images="PicFull">
                             <el-timeline
                                 v-loading="picLoading"
@@ -407,7 +408,7 @@
                                     v-for="(activity, index) in Pic"
                                     :key="index"
                                     color="#1989fa"
-                                    :timestamp="activity.timestamp"
+                                    :timestamp="activity.timestamp|dateServer"
                                     placement="top">
                                     <img :src="PicFull[index]"
                                         :key="index"
@@ -554,7 +555,9 @@
                 Pic: [],
                 picLoading: false,
                 picTitle: '',
-                progressType: 'line'
+                progressType: 'line',
+                //图片时间
+                timeLines:[]
             }
         },
         watch: {
@@ -987,16 +990,23 @@
                 this.picLoading = true;
                 this.Pic = [];
                 this.PicFull = [];
-                let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
+                let path = `/identity/parPictureInfro/page?page=0&size=100&sort=CreateTime,desc`;
                 let form = {organizationId:item.districtId,studyContent:item.activityId};
+                let timeAll = []
                 this.$http("Post",path,form,false).then(data=>{
-                    data.content.forEach(item=>{
-                        let formItem = {};
-                        formItem.timestamp =item.createTime;
-                        formItem.imgurl = item.imageURL;
-                        this.Pic.push(formItem);
-                        this.PicFull.push(this.imgTF(item.imageURL));
+                    data.content.forEach((item,index)=>{
+                        if(index<6){
+                            let formItem = {};
+                            formItem.timestamp =item.createTime;
+                            formItem.imgurl = item.imageURL;
+                            this.Pic.push(formItem);
+                            this.PicFull.push(this.imgTF(item.imageURL));
+                        }
+                        timeAll.push(item.createTime)
+
                     });
+                    this.timeLines[0] = timeAll[0]
+                    this.timeLines[1] = timeAll[timeAll.length -1]
                     this.picLoading = false;
                 }).catch(()=>{
                     this.$message({

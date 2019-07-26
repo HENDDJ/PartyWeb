@@ -20,7 +20,7 @@
                     <icon name="eye" scale="2"/>
                 </span>
             </el-form-item>
-            <vs-button ref="loadableButton"  id="button-with-loading" class="vs-con-loading__container login-btn" type="gradient" vslor="primary" @click.native.prevent="handleLogin">{{btnText}}</vs-button>
+            <vs-button ref="loadableButton"  id="button-with-loading" class="vs-con-loading__container login-btn" type="gradient" vslor="primary" @click.native.prevent="handleLogin" @keyup.enter.prevent="handleLogin">{{btnText}}</vs-button>
         </el-form>
     </div>
 </template>

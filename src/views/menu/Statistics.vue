@@ -16,11 +16,11 @@
                     :value="item.value">
                 </el-option>
             </el-select>
-            <el-button type="primary" icon="el-icon-printer" size="small">打印</el-button>
+            <el-button type="primary" icon="el-icon-printer" size="small" @click="print()">打印</el-button>
         </div>
-        <div border="1px grey solids">
-            <div class="contentDiv" >
-                <h3>{{toneName+"活动完成情况一览表"}}</h3>
+        <div style="margin-top:30px;">
+            <div class="contentDiv" style="border: 1px #d8caca80 solid" >
+                <p class="titleStyle">{{toneName+"活动完成情况一览表"}}</p>
                 <table class="tableCol" >
                     <tr>
                         <td>
@@ -34,9 +34,9 @@
                         <td class="tableColContent"> {{key}}</td>
                     </tr>
                 </table>
-               <table class="tableContent">
+                <table class="tableContent">
                    <tr>
-                       <td v-for="item in activityList.title" style="background-color: #0dc9ce;">
+                       <td v-for="item in activityList.title">
                            <button type="text" >{{item}}</button>
                        </td>
                    </tr>
@@ -49,12 +49,60 @@
                        </td>
                    </tr>
                </table>
-                <div class="pictureshow" >
-                    <h4>{{countryName+"活动执行截图"}}</h4><br/>
-                    <div v-if="tipShow">请选择需要查看的任务记录！</div>
-                    <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
-                    <PictureShot :picData="picQuery" v-if="pictureShow" ></PictureShot>
+            </div>
+            <div class="pictureshow" style="border: 1px #d8caca80 solid" >
+                <p class="titleStyle">{{countryName+"活动执行截图"}}</p><br/>
+                <div v-if="tipShow">请选择需要查看的任务记录！</div>
+                <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
+                <div v-if="pictureShow">
+                    <el-row class="detail-row" >
+                        <el-col :span="2" v-if="TvPic.length === 0"><icon name="tv" scale="3" style="vertical-align: sub"></icon></el-col>
+                        <el-col :span="20" v-if="TvPic.length === 0" style="color: rgba(37, 37, 37, 0.51);padding-left: 40px;text-align: left;">
+                            暂无截图记录！
+                        </el-col>
+                        <el-col :span="8" v-else style="padding-top: 8px;margin-left: 60px;">
+                            <viewer :images="TvPicFull">
+                                <el-timeline>
+                                    <el-timeline-item
+                                        v-for="(activity, index) in TvPic"
+                                        :key="index"
+                                        :timestamp="activity.timestamp"
+                                        placement="top">
+                                        <div style="margin-left: -98px;float: left; margin-top: -30px;"><icon name="tv" scale="3" style="vertical-align: sub"></icon></div>
+                                        <img
+                                            :src="TvPicFull[index]"
+                                            :key="index"
+                                            style="width: 270%">
+                                    </el-timeline-item>
+                                </el-timeline>
+                            </viewer>
+                        </el-col>
+                    </el-row>
+                    <el-row class="detail-row" style="padding-bottom: 20px;">
+                        <el-col :span="2" v-if="PhonePic.length === 0"><icon name="mobile" scale="3" style="vertical-align: sub"></icon></el-col>
+                        <el-col :span="20" v-if="PhonePic.length === 0" style="color: rgba(37, 37, 37, 0.51);padding-left: 40px;text-align: left;">
+                            暂无截图记录！
+                        </el-col>
+                        <el-col v-else :span="8" style="padding-top: 8px;margin-left: 60px;">
+                            <viewer :images="PhonePicFull">
+                                <el-timeline>
+                                    <el-timeline-item
+                                        v-for="(activity, index) in PhonePic"
+                                        :key="index"
+                                        :timestamp="activity.timestamp"
+                                        placement="top">
+                                        <div style="margin-left: -98px;float: left; margin-top: -30px;"><icon name="mobile" scale="3" style="vertical-align: sub"></icon></div>
+                                        <img
+                                            :src="PhonePicFull[index]"
+                                            :key="index"
+                                            style="width: 270%">
+                                    </el-timeline-item>
+                                </el-timeline>
+                            </viewer>
+                        </el-col>
+                    </el-row>
                 </div>
+                <!--  <PictureShot :picData="picQuery" v-if="pictureShow" ></PictureShot>-->
             </div>
         </div>
     </section>
@@ -76,6 +124,10 @@
                 countryName:'',
                 toneName:'句容市委',
                 tipShow:true,
+                TvPic: [],
+                TvPicFull:[],
+                PhonePic:[],
+                PhonePicFull:[],
             }
         },
         methods:{
@@ -110,29 +162,94 @@
                 this.countryName = item.districtName;
                 this.organizationId = item.organizationId;
                 this.activityId = item.activityId;
+                this.details(item);
                 this.$nextTick( () => {
                     setTimeout( ()=> {
-                        this.$vs.loading.close('#div-with-loading > .con-vs-loading')
-                        this.pictureShow = true;
+                        this.$vs.loading.close('#div-with-loading > .con-vs-loading');
+                        this.$nextTick( ()=>{
+                            this.pictureShow = true;
+                        })
                     }, 1000);
                 })
-
-            }
-        },
-        components: {
-            PictureShot
-        },
-        computed:{
-            picQuery() {
-                return {
-                    districtId: this.organizationId,
-                    activityId: this.activityId
+            },
+            details(item){
+                this.TvPic = [];
+                this.PhonePic = [];
+                this.PhonePicFull = [];
+                this.TvPicFull = [];
+                let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
+                let form = {organizationId:item.districtId,studyContent:item.activityId}
+                this.$http("Post",path,form,false).then(data=>{
+                    data.content.forEach(item=>{
+                        let formItem = {}
+                        formItem.timestamp =item.createTime;
+                        formItem.imgurl = item.imageURL;
+                        this.TvPic.push(formItem);
+                        this.TvPicFull.push(this.imgTF(item.imageURL));
+                    })
+                }).catch(()=>{
+                    this.$message({
+                        type: 'warning',
+                        message: '电视截图拉取失败'
+                    })
+                });
+                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=6&sort=time,desc`;
+                let phoneForm = {userId:item.organizationId,snId:item.activityId}
+                this.$http("Post",phonePath,phoneForm,false).then((data)=>{
+                    if (!data.content[0]) {
+                        return;
+                    }
+                    data.content[0].imageUrl.forEach((item)=>{
+                        item.time = data.content[0].time;
+                        let formItem = {};
+                        formItem.timestamp =data.content[0].time;
+                        formItem.imgurl = data.content[0].imageUrl;
+                        this.PhonePic.push(formItem);
+                        this.PhonePicFull.push(this.imgTFPhone(item));
+                    })
+                }).catch((res)=>{
+                    this.$message({
+                        type: 'error',
+                        message: '手机截图拉取失败'+res
+                    });
+                });
+            },
+            imgTF(val){
+                if (val.indexOf("http" )== -1) {
+                    return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${val}`
+                }else {
+                    return val
                 }
+            },
+            imgTFPhone(item){
+                let imgUrl = item.imageUrl.toString()
+                if (imgUrl.indexOf("http" )== -1) {
+                    if(imgUrl[0] === '.'){
+                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
+                    }else {
+                        let time1 = item.time.toString().split("T")[0]
+                        let time2 =  Number(time1.split("-")[0])
+                        let time3 = Number(time1.split("-")[1])
+                        let time4 = Number(time1.split("-")[2])
+                        let time5 = time3.toString()+time4.toString()
+                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${imgUrl}`
+                    }
+                }else {
+                    return item.imageUrl
+                }
+            },
+            print(){
+                let page = document.getElementsByClassName("contentDiv")[0];
+                console.log(page)
+                let newStr = page.innerHTML;
+                let oldStr = document.body.innerHTML;
+                document.body.innerHTML = newStr;
+                window.print();
+                document.body.innerHTML = oldStr;
             }
         },
         created() {
             this.showDistrictList();
-
         }
     }
 </script>
@@ -150,7 +267,7 @@
         width:100px;
         height:100px;
         box-sizing:border-box;
-        border:1px solid #333;
+        border:1px solid #d8caca80;
     }
 
     .tableline::before{
@@ -161,7 +278,7 @@
         width:100%;
         height:50px;
         box-sizing:border-box;
-        border-bottom:1px solid deeppink;
+        border-bottom:1px solid #d8caca80;
         transform-origin:bottom center;
         transform:rotateZ(45deg) scale(1.414);
     }
@@ -183,12 +300,16 @@
     .contentDiv{
         overflow-x: auto;
         text-align:center;
-        width: 100%;
+        width: 68%;
+        display: inline-block;
+        margin-left: -25px;
     }
     .tableCol{
         width:100px;
         display: inline-block;
         vertical-align: top;
+        margin-top: -3px;
+        margin-left: -20px;
     }
     .tableCol td{
         height: 100px;
@@ -204,10 +325,11 @@
         height: 25px!important;
     }
     .tableContent{
-        width: 61.4%;
+        width: calc(100% - 110px);
         display: inline-block;
         overflow: scroll;
         text-align: center;
+        margin-top: -3px;
     }
 
     .tableContent button{
@@ -226,6 +348,12 @@
     }
     .tableContent .content :hover{
         cursor: pointer;
+    }
+    .titleStyle{
+        border-bottom: 1px #d8caca80 solid;
+        line-height: 45px;
+        font-size: 20px;
+        font-weight: bold;
     }
 </style>
 <style>

@@ -71,7 +71,7 @@ export default {
                     this.$store.commit("getMenu",data);
                     DynamicRoutes.transfer(data);
                     this.$router.addRoutes(data);
-                    this.$router.push({path: 'MainView'});
+                    this.$router.push({path: 'Dashboard'});
                     this.loading = false;
                 });
             }).catch(e => {

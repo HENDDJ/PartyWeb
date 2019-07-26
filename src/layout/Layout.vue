@@ -69,20 +69,20 @@
     }
 
     .main {
-        height: calc(100vh - (60 * 100vw/1920));
+        height: calc(100vh - (70 * 100vw/1920));
         display: flex;
         overflow: hidden;
     }
 
     .side-position {
-        width: 200px;
+        width: 220px;
     }
     .sidebar-container {
         transition: width 0.28s;
-        width: 200px !important;
+        width: 220px !important;
         height: 100%;
         position: fixed;
-        top: calc(60 * 100vw/1920);
+        top: calc(70 * 100vw/1920);
         bottom: 0;
         left: 0;
         overflow: hidden;

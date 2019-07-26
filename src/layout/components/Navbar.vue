@@ -5,7 +5,7 @@
                 <icon name="home" scale="2" class="home-icon" style="display: inline-block;" @click.native="changeCollapse"></icon>
             </el-tooltip>
             <el-breadcrumb separator="/"  style="display: inline-block;font-size: 17px">
-                <el-breadcrumb-item :to="{ path: '/MainView' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>首页</el-breadcrumb-item>
                 <el-breadcrumb-item v-for="item in breadList" :key="item.path">
                     {{item.meta.title}}
                 </el-breadcrumb-item>

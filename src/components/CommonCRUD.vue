@@ -317,6 +317,7 @@
                 this.selected = val;
             },
             defaultRequestConfig(path) {
+                console.log(this.queryFormColumns,123)
                 this.queryFormColumns.forEach((item) => {
                     if (item.value) {
                         this.queryForm[item.name] = item.value;
@@ -330,7 +331,7 @@
                 this.pageable.currentPage = 1;
                 this.pageable.pageSize = 10;
                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
-                this.loadTableData(path);
+                this.refreshTableData(path);
             },
             //生成验证策略
             validationRules(){

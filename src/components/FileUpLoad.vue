@@ -28,19 +28,25 @@
             },
         },
         watch: {
-            value() {
-                if (!this.value) {
-                    this.files = [];
-                    return;
-                }
-                this.files = [];
-                this.value.split(',').forEach(item => {
-                    if (!item.split("&")[1]) {
-                        this.files.push({name: item, res: `http://122.97.218.162:18006/JRPartyService/Upload/Activity/${item}`, active: false})
-                    } else {
-                        this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
+            value: {
+                immediate: true,
+                handler: function () {
+                    if (!this.value) {
+                        this.files = [];
+                        console.log("不处理文件字符串")
+
+                        return;
                     }
-                })
+                    console.log("处理文件字符串")
+                    this.files = [];
+                    this.value.split(',').forEach(item => {
+                        if (!item.split("&")[1]) {
+                            this.files.push({name: item, res: `http://122.97.218.162:18006/JRPartyService/Upload/Activity/${item}`, active: false})
+                        } else {
+                            this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
+                        }
+                    })
+                }
             },
             disabled() {
                 if (!this.disabled) {

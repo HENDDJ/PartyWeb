@@ -113,6 +113,7 @@
         font-size: 14px;
         background-color: white;
         text-align: right;
+
         position: fixed;
         bottom: 0;
         right: 0;

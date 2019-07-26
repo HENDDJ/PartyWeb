@@ -11,7 +11,7 @@
             </div>
             <el-tooltip effect="dark" content="搜索" placement="bottom">
                 <div class="data_vis" @click="toggleSearch">
-                    <icon name="search" scale="2.2" v-show="searchIcon"></icon>
+                    <icon name="search" scale="2.3" v-show="searchIcon"></icon>
                 </div>
             </el-tooltip>
             <div v-show="!searchIcon">
@@ -26,7 +26,7 @@
                 </el-input>
             </div>
             <el-tooltip effect="dark" content="可视化大屏" placement="bottom">
-                <a href="#/cloudRoot" class="data_vis" target="_blank">&nbsp;&nbsp;&nbsp;<icon name="data_vis" scale="1.7"></icon>&nbsp;&nbsp;</a>
+                <a href="#/cloudRoot" class="data_vis" target="_blank">&nbsp;&nbsp;&nbsp;<icon name="data_vis" scale="1.85"></icon>&nbsp;&nbsp;</a>
             </el-tooltip>
             <vs-navbar-item index="1">
                 <a href="#" @click="active=true"><i class="el-icon-user-solid"></i>&nbsp;&nbsp;{{user.name}}</a>
@@ -111,7 +111,7 @@
                 </el-pagination>
             </el-dialog>
             <vs-navbar-item index="3">
-                <a href="/#/login"><icon name="exit" scale="1.75" style="vertical-align: sub"></icon>&nbsp;&nbsp;退出</a>
+                <a href="/#/login"><icon name="exit" scale="2" style="vertical-align: sub"></icon>&nbsp;&nbsp;退出</a>
             </vs-navbar-item>
         </vs-navbar>
     </div>
@@ -424,7 +424,7 @@
         width: calc(1920 * 100vw/1920);
     }
     .top_bar_content {
-        height: calc(60 * 100vw/1920);
+        height: calc(70 * 100vw/1920);
         min-height: 50px;
         font-size: 16px !important;
     }
@@ -509,5 +509,11 @@
     }
     .temp .vs-list--item{
         border: none;
+    }
+    .vs-navbar--item a {
+        font-size: 1rem !important;
+    }
+    .vs-con-items i {
+        font-size: 19px !important;
     }
 </style>

@@ -38,7 +38,7 @@ export default new Vuex.Store({
             if (data) {
                 document.getElementsByClassName('side-position')[0].style.width='63px';
             } else {
-                document.getElementsByClassName('side-position')[0].style.width='200px';
+                document.getElementsByClassName('side-position')[0].style.width='220px';
             }
         }
 

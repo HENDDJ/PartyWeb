@@ -2,9 +2,9 @@
     <section>
         <div id="dashboard">
             <br>
-            <el-row :gutter="30" type="flex" justify="space-between">
+            <el-row :gutter="30" type="flex" justify="space-between" style="height: 145px;padding: 0 6px">
                 <el-col :span="5">
-                    <vs-card class="card-sat"  style="height: 125px;background-color: rgba(118,155,237,0.54);color: #f2f2f2">
+                    <vs-card class="card-sat"  style="height: 125px;background-color: transparent;color: #f2f2f2">
                         <div style="display: flex;">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">党员总人数</p>
@@ -21,9 +21,10 @@
                             </div>
                         </div>
                     </vs-card>
+                    <div class="card-sat filter-display"></div>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px; background-color: rgba(169,214,236,0.54);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px; background-color: transparent;color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属组织数</p>
@@ -40,9 +41,10 @@
                             </div>
                         </div>
                     </vs-card>
+                    <div class="card-sat filter-display"></div>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px;  background-color: rgba(155,236,236,0.57);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px;  background-color: transparent;color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属阵地数</p>
@@ -59,9 +61,10 @@
                             </div>
                         </div>
                     </vs-card>
+                    <div class="card-sat filter-display"></div>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px;background-color: rgba(160,236,172,0.57);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px;background-color: transparent;color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属村干部</p>
@@ -78,9 +81,10 @@
                             </div>
                         </div>
                     </vs-card>
+                    <div class="card-sat filter-display"></div>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px; background-color: rgba(193,236,119,0.57);color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px; background-color: transparent;color: #f2f2f2">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
                                 <p style="line-height: 34px;font-weight: bold">下属村书记</p>
@@ -97,6 +101,7 @@
                             </div>
                         </div>
                     </vs-card>
+                    <div class="card-sat filter-display"></div>
                 </el-col>
             </el-row>
             <div style="display: flex">
@@ -749,6 +754,9 @@
         transform: translateY(-15px);
         cursor: pointer;
     }
+    .con-vs-card:hover + .filter-display {
+        transform: translateY(-15px);
+    }
     .con-vs-card:hover .icon-tran {
         transform: rotateY(180deg);
         transition: all .5s;
@@ -779,6 +787,8 @@
     #dashboard .vs-card--content {
         margin-bottom: 0!important;
         padding: 0 10px;
+        clear: both;
+        position: relative;
     }
     #dashboard svg {
         margin: 0!important;
@@ -895,16 +905,6 @@
         color: #aeaeae;
         margin-bottom: 4px;
     }
-    .filter-display {
-        position: absolute;
-        background-image: linear-gradient(to right, #a1ff7d, #fabe49);
-        width: 100%;
-        height: 234.6px;
-        filter: blur(4px);
-        z-index: -9;
-        clear:both;
-        background-size: cover;
-    }
     #countOne .con-vs-card{
         overflow: hidden;
         z-index: 2;
@@ -914,5 +914,18 @@
         position: absolute;
         filter: blur(10px);
         z-index: -1;
+    }
+    .filter-display {
+        filter: blur(2px);
+        clear: both;
+        width: 100%;
+        height: 125px;
+        float: left;
+        position: relative;
+        top: -145px;
+        z-index: -1;
+        transition: all .5s;
+        border-radius: 10px;
+        background:linear-gradient(to right, #cb2d3e, #ef473a);
     }
 </style>

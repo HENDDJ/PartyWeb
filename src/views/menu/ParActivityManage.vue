@@ -98,16 +98,10 @@
                     </div>
                     <transition name="el-zoom-in-center" mode="out-in">
                         <div class="right-detail" v-if="detailLoading">
-                            <el-row style="margin: 10px 0 -20px 0" v-show="queryForm.currentStatus === 'PLAN' && roleCode === 'CITY_LEADER'">
-                                <el-tooltip class="item" effect="dark" content="删除" placement="top-start">
-                                    <el-button style="float: right;" size="mini" type="danger" icon="el-icon-delete" circle @click="del(row)"></el-button>
-                                </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="保存" placement="top-start">
-                                    <el-button :disabled="!editType" style="float: right;margin-right: 10px" type="primary" icon="el-icon-receiving" :loading="submitLoading" circle @click="detailSubmit('detailForm')"></el-button>
-                                </el-tooltip>
-                                <el-tooltip class="item" effect="dark" content="编辑/查看切换" placement="top-start">
-                                    <vs-switch style="float: right;margin-right: 3px" v-model="editType" @click="lookOrEdit" vs-icon-off="edit" vs-icon-on="done"></vs-switch>
-                                </el-tooltip>
+                            <el-row style="margin: 10px 0 -20px 0" v-show="roleCode === 'CITY_LEADER'">
+                                <el-button style="float: right;color: #F56C6C" type="text" icon="el-icon-delete" @click="del(row)">删除</el-button>
+                                <el-button :disabled="!editType" style="float: right;margin-right: 10px;"  type="text" icon="el-icon-receiving" :loading="submitLoading" @click="detailSubmit('detailForm')">保存</el-button>
+                                <el-button style="float: right;margin-right: 3px" type="text" icon="el-icon-edit" @click="lookOrEdit">编辑</el-button>
                             </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="4">任务名称：</el-col>
@@ -704,6 +698,7 @@
                         this.activityLoading = true;
                         if(!this.detailLoading || statusChange) {
                             this.detailForm = this.tableData[0];
+                            this.detailFormNext = this.tableData[0];
                             this.handleFile(this.detailForm);
                             this.handleDifferentRole();
                         }
@@ -788,8 +783,9 @@
                 }
                 this.detailLoading = false;
                 this.row = val;
-                this.handleFile(val);
                 this.detailForm = JSON.parse(JSON.stringify(val));
+                this.detailForm.fileUrls = this.detailForm.urls.map(item => item.url).join(",");
+                console.log(this.detailForm, "s")
                 this.detailFormNext = JSON.parse(JSON.stringify(val));
                 this.lookType = true;
                 this.editType = false;

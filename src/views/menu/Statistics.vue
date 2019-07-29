@@ -56,7 +56,7 @@
                 <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
                 <div v-if="pictureShow">
                     <el-row class="detail-row" >
-                        <el-col :span="2" v-if="TvPic.length === 0"><icon name="tv" scale="3" style="vertical-align: sub"></icon></el-col>
+                        <el-col :span="2" v-if="TvPic.length === 0" ><icon name="tv" scale="3" style="vertical-align: sub;margin-left: 8px;"></icon></el-col>
                         <el-col :span="20" v-if="TvPic.length === 0" style="color: rgba(37, 37, 37, 0.51);padding-left: 40px;text-align: left;">
                             暂无截图记录！
                         </el-col>
@@ -72,14 +72,14 @@
                                         <img
                                             :src="TvPicFull[index]"
                                             :key="index"
-                                            style="width: 270%">
+                                            style="width: 280%">
                                     </el-timeline-item>
                                 </el-timeline>
                             </viewer>
                         </el-col>
                     </el-row>
-                    <el-row class="detail-row" style="padding-bottom: 20px;">
-                        <el-col :span="2" v-if="PhonePic.length === 0"><icon name="mobile" scale="3" style="vertical-align: sub"></icon></el-col>
+                    <el-row class="detail-row" style="padding-bottom: 20px;margin-top: 20px">
+                        <el-col :span="2" v-if="PhonePic.length === 0"><icon name="mobile" scale="3" style="vertical-align: sub;margin-left: 11px;"></icon></el-col>
                         <el-col :span="20" v-if="PhonePic.length === 0" style="color: rgba(37, 37, 37, 0.51);padding-left: 40px;text-align: left;">
                             暂无截图记录！
                         </el-col>
@@ -91,11 +91,11 @@
                                         :key="index"
                                         :timestamp="activity.timestamp"
                                         placement="top">
-                                        <div style="margin-left: -98px;float: left; margin-top: -30px;"><icon name="mobile" scale="3" style="vertical-align: sub"></icon></div>
+                                        <div style="margin-left: -97px;float: left; margin-top: -30px;"><icon name="mobile" scale="3" style="vertical-align: sub"></icon></div>
                                         <img
                                             :src="PhonePicFull[index]"
                                             :key="index"
-                                            style="width: 270%">
+                                            style="width: 280%">
                                     </el-timeline-item>
                                 </el-timeline>
                             </viewer>
@@ -178,7 +178,7 @@
                 this.PhonePicFull = [];
                 this.TvPicFull = [];
                 let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
-                let form = {organizationId:item.districtId,studyContent:item.activityId}
+                let form = {organizationId:item.organizationId,studyContent:item.activityId}
                 this.$http("Post",path,form,false).then(data=>{
                     data.content.forEach(item=>{
                         let formItem = {}

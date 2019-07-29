@@ -193,7 +193,7 @@
                                     <template v-if="lookType">
                                         <vs-chip v-for="items in detailForm.video" :key="items.name" @click.native="showVideo(items)">
                                             <vs-avatar icon="videocam"></vs-avatar>
-                                            {{items.name}}
+                                            {{JSON.parse(items).name}}
                                         </vs-chip>
                                     </template>
                                     <template v-if="editType" id="vd">
@@ -392,6 +392,7 @@
                     </el-col>
                     <el-col :span="16">
                         <h3 style="text-align: center;line-height: 1.1">{{picTitle}}</h3>
+                        <h4 style="text-align: center;line-height: 1.5">开始时间：{{timeLines[1]|dateServer}}——结束时间：{{timeLines[0]|dateServer}}</h4>
                         <viewer :images="PicFull">
                             <el-timeline
                                 v-loading="picLoading"
@@ -401,7 +402,7 @@
                                     v-for="(activity, index) in Pic"
                                     :key="index"
                                     color="#1989fa"
-                                    :timestamp="activity.timestamp"
+                                    :timestamp="activity.timestamp|dateServer"
                                     placement="top">
                                     <img :src="PicFull[index]"
                                         :key="index"
@@ -475,7 +476,6 @@
                 chooseType: '',
                 form: {taskType: 'Party', score: 10},
                 detailForm: {},
-                detailFormNext: {},
                 disabled: false,
                 dialogVisible: false,
                 title: '任务发布',
@@ -548,7 +548,9 @@
                 Pic: [],
                 picLoading: false,
                 picTitle: '',
-                progressType: 'line'
+                progressType: 'line',
+                //图片时间
+                timeLines:[]
             }
         },
         watch: {
@@ -565,7 +567,7 @@
             picQuery() {
                 return {
                     districtId: this.sysDistrict.id,
-                    activityId: this.detailForm.id
+                    activityId: this.detailForm.activityId
                 }
             }
         },
@@ -698,7 +700,6 @@
                         this.activityLoading = true;
                         if(!this.detailLoading || statusChange) {
                             this.detailForm = this.tableData[0];
-                            this.detailFormNext = this.tableData[0];
                             this.handleFile(this.detailForm);
                             this.handleDifferentRole();
                         }
@@ -785,8 +786,13 @@
                 this.row = val;
                 this.detailForm = JSON.parse(JSON.stringify(val));
                 this.detailForm.fileUrls = this.detailForm.urls.map(item => item.url).join(",");
-                console.log(this.detailForm, "s")
-                this.detailFormNext = JSON.parse(JSON.stringify(val));
+                this.detailForm.video = this.detailForm.video.map(item => {
+                    let temp = "http://42.48.60.247:8085/xingsha/info-video.html?assetId=";
+                    let videoCode = item.videoUrl.split('/')[4].split('.')[0];
+                    let videoCover = item.videoCover.split("/");
+                    item.videoCover = videoCover[7] + "/" + videoCover[8];
+                    return '{"name":"' + item.name + '","lengthOfTime":"' + item.lengthOfTime + '","videoUrl":"' + temp + videoCode + '","videoCover":"' + item.videoCover + '"}'
+                });
                 this.lookType = true;
                 this.editType = false;
                 this.handleDifferentRole();
@@ -799,12 +805,7 @@
                     this.lookType = false;
                     this.editType = true;
                     this.loadVideo();
-                    var data = this.detailForm.video;
-                    this.detailForm.video = data.map(item => {
-                        return '{"name":"' + item.name + '","lengthOfTime":"' + item.lengthOfTime + '","videoUrl":"' + item.videoUrl + '","videoCover":"' + item.videoCover + '"}'
-                    })
                 } else {
-                    this.detailForm = JSON.parse(JSON.stringify(this.detailFormNext))
                     this.lookType = true
                     this.editType = false
                 }
@@ -875,9 +876,9 @@
                     });
             },
             add() {
-                this.dialogVisible = true
-                var type = this.queryForm.taskType
-                this.form = {taskType: 'Party', score: 10}
+                this.dialogVisible = true;
+                var type = this.queryForm.taskType;
+                this.form = {taskType: 'Party', score: 10};
                 this.$nextTick(() => {
                     this.$refs['form'].resetFields();
                 })
@@ -930,28 +931,26 @@
                 })
             },
             detailSubmit(form) {
-                this.detailForm.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
-                let beforeUrl = this.detailForm.fileUrls
-                if (this.detailForm.fileUrls) {
-                    var ss = this.detailForm.fileUrls.toString().split(",")
-                    this.detailForm.fileUrls = ss
+                let data = Object.assign({}, this.detailForm);
+                data.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId;
+                if (data.fileUrls) {
+                    data.fileUrls = this.detailForm.fileUrls.split(",");
                 }
-                let video = this.detailForm.video
-                let videoList = []
+                let video = data.video;
+                let videoList = [];
                 video.forEach(item => {
                     videoList.push(JSON.parse(item))
-                })
-                this.detailForm.video = videoList
-                this.$http('put', `/identity/parActivity/${this.detailForm.id}id`, this.detailForm, false).then(
-                    (data) => {
+                });
+                data.video = videoList;
+                this.$http('put', `/identity/parActivity/${data.id}id`, data, false).then(
+                    () => {
                         this.$message({
                             type: 'success',
                             message: '修改成功'
                         });
+                        this.detailForm.version ++;
                         let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                         this.loadTableData(path);
-
-                        this.detailForm.fileUrls = beforeUrl;
                         this.lookType = true;
                         this.editType = false;
                     }).catch(res => {
@@ -983,16 +982,23 @@
                 this.picLoading = true;
                 this.Pic = [];
                 this.PicFull = [];
-                let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
+                let path = `/identity/parPictureInfro/page?page=0&size=100&sort=CreateTime,desc`;
                 let form = {organizationId:item.districtId,studyContent:item.activityId};
+                let timeAll = []
                 this.$http("Post",path,form,false).then(data=>{
-                    data.content.forEach(item=>{
-                        let formItem = {};
-                        formItem.timestamp =item.createTime;
-                        formItem.imgurl = item.imageURL;
-                        this.Pic.push(formItem);
-                        this.PicFull.push(this.imgTF(item.imageURL));
+                    data.content.forEach((item,index)=>{
+                        if(index<6){
+                            let formItem = {};
+                            formItem.timestamp =item.createTime;
+                            formItem.imgurl = item.imageURL;
+                            this.Pic.push(formItem);
+                            this.PicFull.push(this.imgTF(item.imageURL));
+                        }
+                        timeAll.push(item.createTime)
+
                     });
+                    this.timeLines[0] = timeAll[0]
+                    this.timeLines[1] = timeAll[timeAll.length -1]
                     this.picLoading = false;
                 }).catch(()=>{
                     this.$message({

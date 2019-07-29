@@ -75,7 +75,9 @@
                 );
             },
             remove(file, files) {
-                this.$emit('getValue', files.map(item => item.path + '&' +item.name).join(','));
+                let str = files.map(item => item.path + '&' +item.name).join(',');
+                console.log("更新的文件字符串", str);
+                this.$emit('getValue', str || null);
             },
             downLoad(file){
                 window.open(file.res,'_self');

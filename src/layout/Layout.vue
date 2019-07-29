@@ -107,12 +107,13 @@
     }
     .copyright {
         padding-right: 20px;
-        width: calc(100vw - 200px);
+        width: calc(100vw - 220px);
         height: 24px;
         line-height: 24px;
         font-size: 14px;
         background-color: white;
         text-align: right;
+
         position: fixed;
         bottom: 0;
         right: 0;

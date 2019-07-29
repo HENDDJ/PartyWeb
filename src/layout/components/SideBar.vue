@@ -169,7 +169,7 @@
         font-size: 17px;font-family:'Microsoft YaHei'
     }
     .imgStyle{
-        transform: scale(1.2);
+        transform: scale(1.1);
     }
 </style>
 

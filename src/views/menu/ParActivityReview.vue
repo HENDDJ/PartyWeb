@@ -432,6 +432,9 @@
                     })
                     let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                     this.loadTableData(path);
+                    this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
+                        this.$store.commit("getCheckNumber",data);
+                    });
                 }).catch(_=>{
                     this.$message({
                         type: 'warning',
@@ -449,6 +452,9 @@
                     })
                     let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                     this.loadTableData(path);
+                    this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
+                        this.$store.commit("getCheckNumber",data);
+                    });
                 }).catch(_=>{
                     this.$message({
                         type: 'warning',

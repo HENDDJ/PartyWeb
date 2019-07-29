@@ -106,7 +106,6 @@
                         </el-col>
                     </el-row>
                 </div>
-                <!--  <PictureShot :picData="picQuery" v-if="pictureShow" ></PictureShot>-->
             </div>
         </div>
     </section>

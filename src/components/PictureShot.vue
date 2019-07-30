@@ -11,7 +11,7 @@
                     <el-timeline-item
                         v-for="(activity, index) in TvPic"
                         :key="index"
-                        :timestamp="activity.timestamp"
+                        :timestamp="activity.timestamp | dateServer"
                         placement="top"
                         v-if="index<2">
                         <img
@@ -40,7 +40,7 @@
                     <el-timeline-item
                         v-for="(activity, index) in PhonePic"
                         :key="index"
-                        :timestamp="activity.timestamp"
+                        :timestamp="activity.timestamp | dateServer"
                         placement="top"
                         v-if="index<2">
                         <img
@@ -66,6 +66,12 @@
             :append-to-body="true"
             :before-close="picDetailClose">
             <el-row>
+                <div style="width: 100%;text-align: center;padding-bottom: 5px;">
+                    <h4 style="text-align: left;line-height: 2;display: inline-block" v-if="timeLines[0] || timeLines[1] ">会议时间：<a style="font-weight: 100;color: #909399">{{timeLines[1]|dateServer}} — {{timeLines[0]|dateServer}}</a></h4>
+                    <h4 style="text-align: right;line-height: 2;display: inline-block;margin-left: 25%" v-if="timeLines[0] && timeLines[1] ">时长：<a style="font-weight: 100;color: #909399">{{timeLength}}</a></h4>
+                </div>
+            </el-row>
+            <el-row>
                 <el-col :span="3">
                     &nbsp;
                 </el-col>
@@ -75,7 +81,7 @@
                             <el-timeline-item
                                 v-for="(activity, index) in TvPic"
                                 :key="index"
-                                :timestamp="activity.timestamp"
+                                :timestamp="activity.timestamp | dateServer"
                                 placement="top">
                                 <img
                                     :src="TvPicFull[index]"
@@ -109,7 +115,7 @@
                             <el-timeline-item
                                 v-for="(activity, index) in PhonePic"
                                 :key="index"
-                                :timestamp="activity.timestamp"
+                                :timestamp="activity.timestamp | dateServer"
                                 placement="top">
                                 <img
                                     :src="PhonePicFull[index]"
@@ -141,6 +147,7 @@
                 PhonePic:[],
                 PhonePicFull:[],
                 picPhoneDetail:false,
+                timeLines:[]
             }
         },
         methods:{
@@ -149,15 +156,22 @@
                 this.PhonePic = []
                 this.PhonePicFull = []
                 this.TvPicFull = []
-                let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
+                let path = `/identity/parPictureInfro/page?page=0&size=500&sort=CreateTime,desc`;
                 let form = {organizationId:item.districtId,studyContent:item.activityId}
+                let timeAll = []
                 this.$http("Post",path,form,false).then(data=>{
-                    data.content.forEach(item=>{
-                        let formItem = {}
-                        formItem.timestamp =item.createTime
-                        formItem.imgurl = item.imageURL
-                        this.TvPic.push(formItem)
-                        this.TvPicFull.push(this.imgTF(item.imageURL))
+                    data.content.forEach((item,index)=>{
+                        if(index<6) {
+                            let formItem = {}
+                            formItem.timestamp = item.createTime
+                            formItem.imgurl = item.imageURL
+                            this.TvPic.push(formItem)
+                            this.TvPicFull.push(this.imgTF(item.imageURL))
+                        }
+                        timeAll.push(item.createTime)
+                        this.timeLines = []
+                        this.timeLines[0] = timeAll[0]
+                        this.timeLines[1] = timeAll[timeAll.length -1]
                     })
 
                 }).catch(()=>{
@@ -172,12 +186,31 @@
                     if (!data.content[0]) {
                         return;
                     }
-                    console.log(data,11)
-                    data.content[0].imageUrl.forEach((item)=>{
-                        item.time = data.content[0].time;
+                    let i = 0
+                    for(let j = 0;j<data.content.length;j++){
+                        if(data.content[j].imageUrl){
+                            i = j
+                            break;
+                            return;
+                        }
+                        else if(data.content.length -1 == j){
+                            break;
+                            return;
+                            }
+                            else {
+                                continue;
+                            }
+                        }
+
+
+                    if(!data.content[i].imageUrl){
+                        return;
+                    }
+                    data.content[i].imageUrl.forEach((item)=>{
+                        item.time = data.content[i].time;
                         let formItem = {};
-                        formItem.timestamp =data.content[0].time;
-                        formItem.imgurl = data.content[0].imageUrl;
+                        formItem.timestamp =data.content[i].time;
+                        formItem.imgurl = data.content[i].imageUrl;
                         this.PhonePic.push(formItem);
                         this.PhonePicFull.push(this.imgTFPhone(item));
                     })
@@ -233,6 +266,24 @@
             PhonePicShow(){
                 this.picPhoneDetail = true
             },
+        },
+        computed:{
+            //会议时常
+            timeLength(){
+                if(this.timeLines[0]&&this.timeLines[1]){
+                    let sec1=parseInt(this.timeLines[0].substr(11,2))*60*60+parseInt(this.timeLines[0].substr(14,2))*60+parseInt(this.timeLines[0].substr(17,2));
+                    let sec2=parseInt(this.timeLines[1].substr(11,2))*60*60+parseInt(this.timeLines[1].substr(14,2))*60+parseInt(this.timeLines[0].substr(17,2));
+                    let interval = Math.abs(sec2-sec1)
+                    console.log(interval)
+                    let length = ''
+                    if(interval/3600>=1){
+                        length = length+parseInt(interval/3600)+':'+parseInt((interval%3600)/60)
+                    }else{
+                        length = length+'00:'+parseInt(interval/60)
+                    }
+                    return length
+                }
+            }
         },
         created() {
             this.details(this.picData);

@@ -8,9 +8,9 @@
                         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                             <label style="font-size: 14px;width: 75px">所属组织</label>
                             <el-cascader :props="propsOne" v-if="userAuthority === 1" placeholder="选择镇名" size="mini"
-                                         style="margin-right: -28px;" @change="selValue"></el-cascader>
+                                         style="margin-right: -28px;" @change="selValue" clearable></el-cascader>
                             <el-cascader :props="propsTwo" v-if="userAuthority === 2" placeholder="选择村名" size="mini"
-                                         style="margin-right: -28px;" @change="selValueCun"></el-cascader>
+                                         style="margin-right: -28px;" @change="selValueCun" clearable></el-cascader>
                         </template>
                     </CommonCRUD>
                 </div>
@@ -22,9 +22,9 @@
                         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                             <label style="font-size: 14px;width: 75px">所属组织</label>
                             <el-cascader :props="propsOne" v-if="userAuthority === 1" placeholder="选择镇名" size="mini"
-                                         style="margin-right: -28px;" @change="selValue"></el-cascader>
+                                         style="margin-right: -28px;" @change="selValue" clearable></el-cascader>
                             <el-cascader :props="propsTwo" v-if="userAuthority === 2" placeholder="选择村名" size="mini"
-                                         style="margin-right: -28px;" @change="selValueCun"></el-cascader>
+                                         style="margin-right: -28px;" @change="selValueCun" clearable></el-cascader>
                         </template>
                     </CommonCRUD>
                 </div>

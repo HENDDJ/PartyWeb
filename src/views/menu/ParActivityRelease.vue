@@ -2,7 +2,7 @@
     <div class="activity-release">
         <div>
             <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" align="left"
-                     label-width="170px" id="labelOne">
+                     label-width="170px" id="labelOne" :rules="rules">
                 <el-row>
                     <div>&nbsp;</div>
                 </el-row>
@@ -75,9 +75,9 @@
                                 <!--@check="ss">-->
                             <!--</el-tree>-->
                         <!--</el-form-item>-->
-                        <el-form-item label="任务对象" prop="newObjext">
-                        <vs-checkbox v-model="newObjext.countryside">农村</vs-checkbox>
-                        <vs-checkbox v-model="newObjext.office">机关</vs-checkbox>
+                        <el-form-item label="任务对象" prop="newObject" class="is-required">
+                        <vs-checkbox v-model="form.newObject.countryside">农村</vs-checkbox>
+                        <vs-checkbox v-model="form.newObject.office">机关</vs-checkbox>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -122,6 +122,15 @@
     export default {
         name: "ParActivityRelease",
         data() {
+           let validatePass = (rule, value, callback) => {
+               console.log(value)
+                if (!value.countryside && !value.office) {
+                    console.log(123)
+                    callback(new Error('请选择对象'));
+                } else {
+                    callback();
+                }
+            }
             return {
                 queryForm: {taskType: ''},
                 form: {
@@ -129,7 +138,10 @@
                         id: '',
                         label: '',
                         children: '',
-                    }
+                    },
+                    taskType: 'Party',
+                    score: 10,
+                    newObject:{countryside:true,office:false}
                 },
                 props: {
                     id: 'id',
@@ -145,7 +157,6 @@
                 //视频添加
                 addVideoList: [],
                 chooseType: '',
-                form: {taskType: 'Party', score: 10},
                 disabled: false,
                 dialogVisible: false,
                 title: '任务发布',
@@ -156,7 +167,12 @@
                 activeNames: ['1'],
                 videoColl: '点击隐藏',
                 isVisible: false,
-                newObjext:{countryside:false,office:false}
+                rules:{
+                    title:[{required:true,message:'请输入任务名称', trigger: 'blur'}],
+                    type:[{required:true,message:'请输入任务类型', trigger: 'blur'}],
+                    newObject:[{validator:validatePass, trigger: 'blur'}]
+                     },
+
             }
         },
         watch: {
@@ -170,8 +186,9 @@
             CommonFileUpload,
         },
         methods: {
+
             reWrite() {
-                this.form = {taskType: 'Party', score: 10}
+                this.form = {taskType: 'Party', score: 10,newObject:{countryside:true,office:false}}
                 // this.$refs.tree.setChecked([]);
             },
             //给taskObject赋值
@@ -251,21 +268,20 @@
                             })
                             this.form.video = videoList
                         }
-                        this.form.newObject = this.newObjext
+                        console.log(this.form)
                         this.$http('Post', '/identity/parActivity/', this.form, false).then(
                             (data) => {
-                                this.isVisible = false;
+                                setTimeout(()=>{this.isVisible = false},1000)
                                 this.$message({
                                     type: 'success',
                                     message: '上传成功'
                                 });
                                 this.$refs[form].resetFields();
-                                this.form = {taskType: 'Party',score: 10};
+                                this.form = {taskType: 'Party',score: 10,newObject:{countryside:true,office:false}};
                                 this.dialogVisible = false;
                             }).catch(res => {
                             this.dialogVisible = true;
                             this.isVisible = false
-                            console.log(res)
                             this.$message({
                                 type: 'error',
                                 message: '上传文件失败'

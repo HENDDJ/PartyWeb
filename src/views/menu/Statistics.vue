@@ -20,7 +20,7 @@
         </div>
         <div style="margin-top:30px;">
             <div class="contentDiv" style="border: 1px #d8caca80 solid" >
-                <p class="titleStyle">{{toneName+"活动完成情况一览表"}}</p>
+                <p class="titleContent">{{toneName+"活动完成情况一览表"}}</p>
                 <table class="tableCol" >
                     <tr>
                         <td>
@@ -51,7 +51,7 @@
                 </table>
             </div>
             <div class="pictureshow" style="border: 1px #d8caca80 solid" >
-                <p class="titleStyle">{{countryName+"活动执行截图"}}</p><br/>
+                <p class="titleContent">{{countryName+"活动执行截图"}}</p><br/>
                 <div v-if="tipShow">请选择需要查看的任务记录！</div>
                 <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
                 <div v-if="pictureShow">
@@ -407,7 +407,7 @@
     .tableContent .content :hover{
         cursor: pointer;
     }
-    .titleStyle{
+   .titleContent{
         border-bottom: 1px #d8caca80 solid;
         line-height: 45px;
         font-size: 20px;

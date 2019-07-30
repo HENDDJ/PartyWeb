@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section id="pos">
         <CommonCRUD :columns="columns" api-root="identity/positionInformation" :formColumns="formColumns" :queryFormColumns="queryColumns"></CommonCRUD>
     </section>
 </template>
@@ -87,6 +87,14 @@
 </script>
 
 <style scoped>
-
 </style>
+<style>
+    #pos .el-input--mini .el-input__inner {
+        width: 140px !important;
+    }
+    #pos  .el-select {
+        width: 140px !important;
+    }
+</style>
+
 

@@ -392,7 +392,10 @@
                     </el-col>
                     <el-col :span="16">
                         <h3 style="text-align: center;line-height: 1.1">{{picTitle}}</h3>
-                        <h4 style="text-align: center;line-height: 1.5">开始时间：{{timeLines[1]|dateServer}}——结束时间：{{timeLines[0]|dateServer}}</h4>
+                        <div style="width: 100%">
+                        <h4 style="text-align: left;line-height: 2;display: inline-block" v-if="timeLines[0] || timeLines[1] ">会议时间：<a style="font-weight: 100;color: #909399">{{timeLines[1]|dateServer}} — {{timeLines[0]|dateServer}}</a></h4>
+                        <h4 style="text-align: right;line-height: 2;display: inline-block;margin-left: 12%" v-if="timeLines[0] && timeLines[1] ">时长：<a style="font-weight: 100;color: #909399">{{timeLength}}</a></h4>
+                        </div>
                         <viewer :images="PicFull">
                             <el-timeline
                                 v-loading="picLoading"
@@ -550,7 +553,7 @@
                 picTitle: '',
                 progressType: 'line',
                 //图片时间
-                timeLines:[]
+                timeLines:[],
             }
         },
         watch: {
@@ -569,6 +572,23 @@
                     districtId: this.sysDistrict.id,
                     activityId: this.detailForm.activityId
                 }
+            },
+            //会议时常
+            timeLength(){
+                if(this.timeLines[0]&&this.timeLines[1]){
+                    let sec1=parseInt(this.timeLines[0].substr(11,2))*60*60+parseInt(this.timeLines[0].substr(14,2))*60+parseInt(this.timeLines[0].substr(17,2));
+                    let sec2=parseInt(this.timeLines[1].substr(11,2))*60*60+parseInt(this.timeLines[1].substr(14,2))*60+parseInt(this.timeLines[0].substr(17,2));
+                    let interval = Math.abs(sec2-sec1)
+                    console.log(interval)
+                    let length = ''
+                    if(interval/3600>=1){
+                        length = length+parseInt(interval/3600)+':'+parseInt((interval%3600)/60)
+                    }else{
+                        length = length+'00:'+parseInt(interval/60)
+                    }
+                    return length
+                }
+
             }
         },
         components: {
@@ -785,14 +805,18 @@
                 this.detailLoading = false;
                 this.row = val;
                 this.detailForm = JSON.parse(JSON.stringify(val));
-                this.detailForm.fileUrls = this.detailForm.urls.map(item => item.url).join(",");
-                this.detailForm.video = this.detailForm.video.map(item => {
-                    let temp = "http://42.48.60.247:8085/xingsha/info-video.html?assetId=";
-                    let videoCode = item.videoUrl.split('/')[4].split('.')[0];
-                    let videoCover = item.videoCover.split("/");
-                    item.videoCover = videoCover[7] + "/" + videoCover[8];
-                    return '{"name":"' + item.name + '","lengthOfTime":"' + item.lengthOfTime + '","videoUrl":"' + temp + videoCode + '","videoCover":"' + item.videoCover + '"}'
-                });
+                if(this.detailForm.urls){
+                    this.detailForm.fileUrls = this.detailForm.urls.map(item => item.url).join(",");
+                }
+                if( this.detailForm.video){
+                    this.detailForm.video = this.detailForm.video.map(item => {
+                        let temp = "http://42.48.60.247:8085/xingsha/info-video.html?assetId=";
+                        let videoCode = item.videoUrl.split('/')[4].split('.')[0];
+                        let videoCover = item.videoCover.split("/");
+                        item.videoCover = videoCover[7] + "/" + videoCover[8];
+                        return '{"name":"' + item.name + '","lengthOfTime":"' + item.lengthOfTime + '","videoUrl":"' + temp + videoCode + '","videoCover":"' + item.videoCover + '"}'
+                    });
+                }
                 this.lookType = true;
                 this.editType = false;
                 this.handleDifferentRole();
@@ -982,7 +1006,7 @@
                 this.picLoading = true;
                 this.Pic = [];
                 this.PicFull = [];
-                let path = `/identity/parPictureInfro/page?page=0&size=100&sort=CreateTime,desc`;
+                let path = `/identity/parPictureInfro/page?page=0&size=500&sort=CreateTime,desc`;
                 let form = {organizationId:item.districtId,studyContent:item.activityId};
                 let timeAll = []
                 this.$http("Post",path,form,false).then(data=>{
@@ -997,6 +1021,7 @@
                         timeAll.push(item.createTime)
 
                     });
+                    this.timeLines = []
                     this.timeLines[0] = timeAll[0]
                     this.timeLines[1] = timeAll[timeAll.length -1]
                     this.picLoading = false;
@@ -1023,11 +1048,32 @@
                         this.picLoading = false;
                         return;
                     }
-                    data.content[0].imageUrl.forEach((item)=>{
-                        item.time = data.content[0].time;
+                    let i = 0
+                    for(let j = 0;j<data.content.length;j++){
+                        if(data.content[j].imageUrl){
+                            i = j
+                            break;
+                            return;
+                        }
+                        else if(data.content.length -1 == j){
+                            break;
+
+                            return;
+                        }
+                            else {
+                                continue;
+                            }
+
+
+                    }
+                    if(!data.content[i].imageUrl){
+                        return;
+                    }
+                    data.content[i].imageUrl.forEach((item)=>{
+                        item.time = data.content[i].time;
                         let formItem = {};
-                        formItem.timestamp =data.content[0].time;
-                        formItem.imgurl = data.content[0].imageUrl;
+                        formItem.timestamp =data.content[i].time;
+                        formItem.imgurl = data.content[i].imageUrl;
                         this.Pic.push(formItem);
                         this.PicFull.push(this.imgTFPhone(item));
                         this.picLoading = false;

@@ -365,7 +365,7 @@
             handleChange(value) {
                 //组织层级只传村级id
                 if(this.form.districtId){
-                    this.form.districtId = value[1];
+                    this.form.districtId = value[value.length-1];
                 }
             }
         },

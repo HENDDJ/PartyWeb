@@ -1,68 +1,58 @@
 <template>
-    <CommonCRUD :columns="columns" apiRoot="/identity/parMember" :formColumns="formColumns"
-                :queryFormColumns="queryForm">
+    <CommonCRUD :columns="columns" apiRoot="/identity/parMember" :formColumns="formColumns" :queryFormColumns="queryForm">
         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
             <label style="font-size: 14px;width: 75px">所属组织</label>
-            <el-cascader :props="propsOne" v-if="userAuthority === 1" placeholder="选择镇名" size="mini"
+            <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
                          style="margin-right: -28px;" @change="selValue"></el-cascader>
-            <el-cascader :props="propsTwo" v-if="userAuthority === 2" placeholder="选择村名" size="mini"
-                         style="margin-right: -28px;" @change="selValueCun"></el-cascader>
         </template>
     </CommonCRUD>
 </template>
 
 <script>
     import CommonCRUD from '@/components/CommonCRUD';
-
     export default {
         name: "ParMember",
         data() {
             return {
                 columns: [],
                 formColumns: [],
-                self: this,
-                searchCascader:'',
+                user:{},
+                districtList:[],
                 propsOne: {
                     lazy: true,
-                    lazyLoad: (node, resolve) => {
-                        if (node.level == 0) {
-                            let nodes = []
-                            this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
-                                data.forEach(item => {
-                                    nodes.push({label: item.label, value: item.id, leaf: item.leaf})
+                    lazyLoad:(node, resolve)=>{
+                        if(this.userAuthority ==1){
+                            if(node.level==0){
+                                let nodes = [];
+                                this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
+                                    data.forEach(item=>{
+                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                    });
+                                    resolve(nodes);
                                 })
-                                resolve(nodes);
-                            })
-
-                        } else {
-                            let nodes = []
-                            this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
-                                data.forEach(item => {
-                                    nodes.push({label: item.label, value: item.id, leaf: item.leaf})
+                            }else {
+                                let nodes = [];
+                                this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
+                                    data.forEach(item=>{
+                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                    });
+                                    resolve(nodes);
                                 })
-                                resolve(nodes);
-                            })
+                            }
                         }
-
-                    }
-                },
-                propsTwo: {
-                    lazy: true,
-                    lazyLoad: (node, resolve) => {
-                        if (node.level == 0) {
-                            let nodes = []
-                            let userId = JSON.parse(sessionStorage.getItem('userInfo')).districtId
-                            this.$http('GET', `/identity/sysDistrict/${userId}tree`, false).then((data) => {
-                                data.forEach(item => {
-                                    nodes.push({label: item.label, value: item.id, leaf: item.leaf})
+                        if(this.userAuthority==2){
+                            if(node.level==0){
+                                let nodes = [];
+                                this.$http('GET', `/identity/sysDistrict/${this.user.districtId}tree`, false).then((data) => {
+                                    data.forEach(item=>{
+                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                    });
+                                    resolve(nodes);
                                 })
-                                resolve(nodes);
-                            })
-
+                            }
                         }
                     }
                 },
-
                 userAuthority: 1,
                 queryForm: [
                     {
@@ -74,7 +64,7 @@
                     },
                     {
                         des: '组织',
-                        name: 'nativePlace',
+                        name: 'districtId',
                         type: 'string',
                         value: '',
                         visible: false,
@@ -83,42 +73,62 @@
             }
         },
         methods: {
-            getNodeData(val) {
-                this.$http('GET', `/identity/sysDistrict/${val}tree`, false).then((data) => {
-                    return data
+            handleDate(){
+                this.columns.forEach(item => {
+                    if (item.name == "birth" || item.name == "graduationTime" || item.name == "workTime") {
+                        item.formatter = (row, column, value) => {
+                            return new Date(value).Format("yyyy-MM-dd");
+                        }
+                    }
+                })
+            },
+            handelOrg(){
+                //层级组织请求
+                this.$http('GET',`identity/sysDistrict/${this.user.districtId}alltree`,false).then( data => {
+                    this.districtList = data[0].children;
+                    this.handleOrgLeaf(this.districtList);
+                    this.formColumns.filter(item => item.name === 'districtId')[0].options = this.districtList;
+                    if(this.userAuthority == 3){
+                        this.formColumns.filter(item => item.name === 'districtId')[0].options = [{label:this.user.organizationName,leaf:true,value:this.user.districtId}]
+                    }
+                });
+            },
+            //处理村级组织children为空的情况
+            handleOrgLeaf(districtList){
+                districtList.forEach(item => {
+                    if( this.userAuthority == 2){
+                        delete item.children;
+                    }else{
+                        item.children.forEach(subitem => {
+                            delete subitem.children;
+                        })
+                    }
                 })
             },
             selValue(val){
-                this.queryForm[1].value = val[1]
+                this.queryForm[1].value = val[val.length-1];
             },
-            selValueCun(val){
-                this.queryForm[1].value = val[0]
-
+            handleAuthority(){
+                this.queryForm[1].value = this.user.districtId;
+                if(this.user.sysDistrict.districtLevel == 3){
+                    this.userAuthority = 3;
+                }else  if(this.user.sysDistrict.districtLevel == 2){
+                    this.userAuthority = 2;
+                }else{
+                    this.userAuthority = 1;
+                }
             }
         },
         components: {
             CommonCRUD
         },
-        mounted() {
+        created() {
+            this.user = JSON.parse(sessionStorage.getItem('userInfo'));
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns = this.$store.state.classInfo.properties;
-            this.columns.forEach(item => {
-                if (item.name == "birth" || item.name == "graduationTime" || item.name == "workTime") {
-                    item.formatter = (row, column, value) => {
-                        return new Date(value).Format("yyyy-MM-dd");
-                    }
-                }
-            })
-        },
-        created() {
-            let user = JSON.parse(sessionStorage.getItem('userInfo'));
-            if (user.sysDistrict.districtLevel == 3) {
-                this.userAuthority = 3
-            } else if (user.sysDistrict.districtLevel == 2) {
-                this.userAuthority = 2
-            } else {
-                this.userAuthority = 1
-            }
+            this.handleAuthority();
+            this.handleDate();
+            this.handelOrg();
         }
     }
 </script>

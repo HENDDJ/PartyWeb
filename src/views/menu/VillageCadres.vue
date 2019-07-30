@@ -7,10 +7,8 @@
                     <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns" :queryFormColumns="cadreQuery">
                         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                             <label style="font-size: 14px;width: 75px">所属组织</label>
-                            <el-cascader :props="propsOne" v-if="userAuthority === 1" placeholder="选择镇名" size="mini"
+                            <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
                                          style="margin-right: -28px;" @change="selValue"></el-cascader>
-                            <el-cascader :props="propsTwo" v-if="userAuthority === 2" placeholder="选择村名" size="mini"
-                                         style="margin-right: -28px;" @change="selValueCun"></el-cascader>
                         </template>
                     </CommonCRUD>
                 </div>
@@ -21,10 +19,8 @@
                     <CommonCRUD :columns="positionColumns" api-root="identity/cadrePosition" :formColumns="positionFormColumns" :queryFormColumns="positionQuery">
                         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                             <label style="font-size: 14px;width: 75px">所属组织</label>
-                            <el-cascader :props="propsOne" v-if="userAuthority === 1" placeholder="选择镇名" size="mini"
+                            <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
                                          style="margin-right: -28px;" @change="selValue"></el-cascader>
-                            <el-cascader :props="propsTwo" v-if="userAuthority === 2" placeholder="选择村名" size="mini"
-                                         style="margin-right: -28px;" @change="selValueCun"></el-cascader>
                         </template>
                     </CommonCRUD>
                 </div>
@@ -42,9 +38,9 @@
         data(){
             return {
                 colorx:'success',
-                zhenList:[],//所有镇级
                 cadreColumns:[],//村干部列表
                 cadreformColumns:[],//村干部表单
+                user:{},
                 //村干部查询条件
                 cadreQuery:[
                     {
@@ -124,8 +120,8 @@
                         name: 'districtId',
                         des: '所属组织',
                         type: 'cascader',
-                        required:'true',
-                        typeCheck:'blur',
+                        required: "true",
+                        triggerCheck: "blur",
                         options: '',
                     },
                     {
@@ -149,72 +145,71 @@
                 villageCadreList:[],//干部人员列表
                 propsOne: {
                     lazy: true,
-                    lazyLoad: (node, resolve) => {
-                        if (node.level == 0) {
-                            let nodes = []
-                            this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
-                                data.forEach(item => {
-                                    nodes.push({label: item.label, value: item.id, leaf: item.leaf})
+                    lazyLoad:(node, resolve)=>{
+                        if(this.userAuthority ==1){
+                            if(node.level==0){
+                                let nodes = [];
+                                this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
+                                    data.forEach(item=>{
+                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                    });
+                                    resolve(nodes);
                                 })
-                                resolve(nodes);
-                            })
-
-                        } else {
-                            let nodes = []
-                            this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
-                                data.forEach(item => {
-                                    nodes.push({label: item.label, value: item.id, leaf: item.leaf})
+                            }else {
+                                let nodes = [];
+                                this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
+                                    data.forEach(item=>{
+                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                    });
+                                    resolve(nodes);
                                 })
-                                resolve(nodes);
-                            })
+                            }
                         }
-
-                    }
-                },
-                propsTwo: {
-                    lazy: true,
-                    lazyLoad: (node, resolve) => {
-                        if (node.level == 0) {
-                            let nodes = []
-                            let userId = JSON.parse(sessionStorage.getItem('userInfo')).districtId
-                            this.$http('GET', `/identity/sysDistrict/${userId}tree`, false).then((data) => {
-                                data.forEach(item => {
-                                    nodes.push({label: item.label, value: item.id, leaf: item.leaf})
+                        if(this.userAuthority==2){
+                            if(node.level==0){
+                                let nodes = [];
+                                this.$http('GET', `/identity/sysDistrict/${this.user.districtId}tree`, false).then((data) => {
+                                    data.forEach(item=>{
+                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                    });
+                                    resolve(nodes);
                                 })
-                                resolve(nodes);
-                            })
-
+                            }
                         }
                     }
                 },
-
                 userAuthority: 1,
             }
         },
         methods:{
             handelOrg(){
-                //层级组织请求
-                this.$http('GET',`identity/sysDistrict/${'01'}alltree`,false).then( data => {
+                this.$http('GET',`identity/sysDistrict/${this.user.districtId}alltree`,false).then( data => {
                     this.districtList = data[0].children;
                     this.handleOrgLeaf(this.districtList);
-                    this.positionFormColumns.filter(item => item.name === 'districtId')[0].options= this.districtList;
+                    this.positionFormColumns.filter(item => item.name === 'districtId')[0].options = this.districtList;
                     this.cadreFormColumns.filter(item => item.name === 'districtId')[0].options = this.districtList;
+                    if(this.userAuthority == 3){
+                        this.positionFormColumns.filter(item => item.name === 'districtId')[0].options = [{label:this.user.organizationName,leaf:true,value:this.user.districtId}];
+                        this.cadreFormColumns.filter(item => item.name === 'districtId')[0].options = [{label:this.user.organizationName,leaf:true,value:this.user.districtId}];
+                    }
                 });
+            },
+            //处理村级组织children为空的情况
+            handleOrgLeaf(districtList){
+                districtList.forEach(item => {
+                    if( this.userAuthority == 2){
+                        delete item.children;
+                    }else{
+                        item.children.forEach(subitem => {
+                            delete subitem.children;
+                        })
+                    }
+                })
             },
             handleSelect(){
                 this.colorx = 'danger';
-                //镇级组织
-                // this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
-                //     data.forEach( item => {
-                //         this.zhenList.push( {value:item.districtId , label:item.districtName});
-                //     });
-                //     this.positionQuery[1].options = this.zhenList;
-                // });
-                //任职人员
                 this.positionQuery[0].value = '';
-
                 this.positionQuery[1].value = '';
-
                 this.$http('POST',`identity/villageCadres/list`,false).then(data => {
                     this.villageCadreList = data;
                     this.positionFormColumns.filter( item => item.name === 'cadreId')[0].options = data.map(item => { return {value: item.id, label: item.name}});
@@ -222,43 +217,30 @@
                 //岗位显示中文
                 this.positionFormColumns.filter(item => item.name === 'post')[0].options = LookUp['Post'];
             },
-
-            //处理村级组织children为空的情况
-            handleOrgLeaf(districtList){
-                districtList.forEach(item => {
-                    item.children.forEach(subitem => {
-                        delete subitem.children;
-                    })
-                })
-            },
             selValue(val){
-                // this.queryForm[1].value = val[1]
-                this.positionQuery[1].value = val[1]
-                this.cadreQuery[1].value = val[1]
+                this.positionQuery[1].value = val[val.length-1];
+                this.cadreQuery[1].value = val[val.length-1];
             },
-            selValueCun(val){
-                // this.queryForm[1].value = val[0]
-                this.positionQuery[1].value = val[0]
-                this.cadreQuery[1].value = val[0]
-
+            handleAuthority(){
+                this.cadreQuery[1].value = this.user.districtId;
+                this.positionQuery[1].value = this.user.districtId;
+                if (this.user.sysDistrict.districtLevel == 3) {
+                    this.userAuthority = 3;
+                } else if (this.user.sysDistrict.districtLevel == 2) {
+                    this.userAuthority = 2;
+                } else {
+                    this.userAuthority = 1;
+                }
             }
         },
         components: {
             CommonCRUD
         },
         created(){
+            this.user = JSON.parse(sessionStorage.getItem('userInfo'));
             this.cadreColumns = this.$store.state.classInfo.properties;
             this.cadreFormColumns =this.$store.state.classInfo.properties;
-
-            let user = JSON.parse(sessionStorage.getItem('userInfo'));
-            if (user.sysDistrict.districtLevel == 3) {
-                this.userAuthority = 3
-            } else if (user.sysDistrict.districtLevel == 2) {
-                this.userAuthority = 2
-            } else {
-                this.userAuthority = 1
-            }
-
+            this.handleAuthority();
             this.handelOrg();
             tansfer(this.positionColumns);
             tansfer(this.cadreFormColumns);

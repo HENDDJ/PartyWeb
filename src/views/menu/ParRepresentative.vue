@@ -18,10 +18,8 @@
             </template>
             <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                 <label style="font-size: 14px;width: 75px">所属组织</label>
-                <el-cascader :props="propsOne" v-if="userAuthority === 1" placeholder="选择镇名" size="mini"
+                <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
                              style="margin-right: -28px;" @change="selValue"></el-cascader>
-                <el-cascader :props="propsTwo" v-if="userAuthority === 2" placeholder="选择村名" size="mini"
-                             style="margin-right: -28px;" @change="selValueCun"></el-cascader>
             </template>
         </CommonCRUD>
         <!--新增、编辑、查看-->
@@ -49,6 +47,9 @@
                 </el-form-item>
                 <el-form-item label="入党时间">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.joinDate" disabled></el-date-picker>
+                </el-form-item>
+                <el-form-item label="所属组织">
+                    <el-input v-model="form.districtName" disabled></el-input>
                 </el-form-item>
                 <el-form-item label="学历">
                     <el-input v-model="form.education" disabled></el-input>
@@ -100,6 +101,8 @@
                     birth:'',
                     joinDate:'',
                     education:'',
+                    districtId:'',
+                    districtName:'',
                     talent:'',
                     resume:'',
                     performance:'',
@@ -117,49 +120,51 @@
                         type: 'string',
                         value: '',
                         visible: true,
-                    }
+                    },
+                    {
+                        des: '组织',
+                        name: 'districtId',
+                        type: 'string',
+                        value: '',
+                        visible: false,
+                    },
                 ],
+                user:{},
                 propsOne: {
                     lazy: true,
                     lazyLoad:(node, resolve)=>{
-                        if(node.level==0){
-                            let nodes = []
-                            this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
-                                data.forEach(item=>{
-                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                        if(this.userAuthority ==1){
+                            if(node.level==0){
+                                let nodes = [];
+                                this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
+                                    data.forEach(item=>{
+                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                    });
+                                    resolve(nodes);
                                 })
-                                resolve(nodes);
-                            })
-
-                        }else {
-                            let nodes = []
-                            this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
-                                data.forEach(item=>{
-                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                            }else {
+                                let nodes = [];
+                                this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
+                                    data.forEach(item=>{
+                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                    });
+                                    resolve(nodes);
                                 })
-                                resolve(nodes);
-                            })
+                            }
                         }
-
-                    }
-                },
-                propsTwo: {
-                    lazy: true,
-                    lazyLoad:(node, resolve)=>{
-                        if(node.level==0){
-                            let nodes = []
-                            let userId = JSON.parse(sessionStorage.getItem('userInfo')).districtId
-                            this.$http('GET', `/identity/sysDistrict/${userId}tree`, false).then((data) => {
-                                data.forEach(item=>{
-                                    nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                        if(this.userAuthority==2){
+                            if(node.level==0){
+                                let nodes = [];
+                                this.$http('GET', `/identity/sysDistrict/${this.user.districtId}tree`, false).then((data) => {
+                                    data.forEach(item=>{
+                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
+                                    });
+                                    resolve(nodes);
                                 })
-                                resolve(nodes);
-                            })
-
+                            }
                         }
                     }
                 },
-
                 userAuthority:1
             }
         },
@@ -171,6 +176,8 @@
                         this.form.sex = data.sex;
                         this.form.birth = data.birth;
                         this.form.education = data.education;
+                        this.form.districtId = data.districtId;
+                        this.form.districtName = data.districtName;
                     })
                 }
             },
@@ -257,11 +264,6 @@
                     })
                     .catch(_ => {});
             },
-            handleSelect(){
-                this.$http('POST',`identity/parMember/list` ,false).then(data => {
-                    this.partyMemberList = data;
-                });
-            },
             initForm(){
                 this.form={
                     partyMemberId:'',
@@ -270,6 +272,8 @@
                         birth:'',
                         joinDate:'',
                         education:'',
+                        districtId:'',
+                        districtName:'',
                         talent:'',
                         resume:'',
                         performance:'',
@@ -280,30 +284,34 @@
                 }
             },
             selValue(val){
-                // this.queryForm[1].value = val[1]
+                this.queryForm[1].value = val[val.length-1];
             },
-            selValueCun(val){
-                // this.queryForm[1].value = val[0]
-
+            handleAuthority(){
+                this.queryForm[1].value = this.user.districtId;
+                if(this.user.sysDistrict.districtLevel == 3){
+                    this.userAuthority = 3;
+                }else  if(this.user.sysDistrict.districtLevel == 2){
+                    this.userAuthority = 2;
+                }else{
+                    this.userAuthority = 1;
+                }
+            },
+            handleSelect(){
+                this.$http('POST',`identity/parMember/list` ,{districtId:this.user.districtId},false).then(data => {
+                    this.partyMemberList = data;
+                });
             }
         },
         components: {
             CommonCRUD
         },
         created(){
+            this.user = JSON.parse(sessionStorage.getItem('userInfo'));
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns =this.$store.state.classInfo.properties;
-            let user = JSON.parse(sessionStorage.getItem('userInfo'))
-            if(user.sysDistrict.districtLevel == 3){
-                this.userAuthority = 3
-            }else  if(user.sysDistrict.districtLevel == 2){
-                this.userAuthority = 2
-            }else{
-                this.userAuthority = 1
-            }
-            this.handleSelect();
             this.initForm();
-          //  tansfer(this.columns);
+            this.handleAuthority();
+            this.handleSelect();
         }
     }
 </script>

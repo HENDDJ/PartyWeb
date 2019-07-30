@@ -15,7 +15,8 @@ export default new Vuex.Store({
         projectId: '',
         projectName: '',
         routeIndex:'',
-        isCollapse: false
+        isCollapse: false,
+        checkNumber:0,
     },
     mutations: {
         getMenu(state, data) {
@@ -40,6 +41,9 @@ export default new Vuex.Store({
             } else {
                 document.getElementsByClassName('side-position')[0].style.width='220px';
             }
+        },
+        getCheckNumber(state,data){
+            state.checkNumber = data;
         }
 
     }

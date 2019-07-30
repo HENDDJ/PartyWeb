@@ -20,7 +20,7 @@
                                 <img v-show="activeIndex === (item.path+'/'+subItem.path)" :src="`/static/menu/an_active/${subItem.meta.icon}.png`" alt="" class="imgStyle">
                                 <img v-show="activeIndex !== (item.path+'/'+subItem.path)"  :src="`/static/menu/${subItem.meta.icon}.png`" alt="" class="imgStyle">
                                 &emsp;<span slot="title">{{subItem.meta && subItem.meta.title}}
-                                <el-badge style="margin-left: 25px;margin-top: -6px" :value="5" v-if="subItem.meta.title=='活动审核'"/></span>
+                                <el-badge style="margin-left: 25px;margin-top: -6px" :value="$store.state.checkNumber" v-if="subItem.meta.title=='活动审核'&&$store.state.checkNumber!=0"/></span>
                             </div>
                         </div>
                     </el-menu-item>
@@ -44,7 +44,7 @@
         name: 'sidebar',
         data() {
             return {
-                activeIndex: ''
+                activeIndex: '',
             }
         },
         computed: {
@@ -61,7 +61,17 @@
         methods: {
             changeActiveIndex(index) {
                 this.activeIndex = index;
-            }
+            },
+        /*    handleCheckNumber(){
+                this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
+                   this.checkNumber = data;
+                });
+            }*/
+        },
+        created() {
+            this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
+                this.$store.commit("getCheckNumber",data);
+            });
         }
     }
 </script>

@@ -8,6 +8,11 @@
             class="top_bar_content">
             <div slot="title">
                 <div class="header-title"></div>
+                <div class="three_level">
+                    <template v-if="user.roleCode === 'CITY_LEADER'">市级平台</template>
+                    <template v-else-if="user.roleCode === 'TOWN_REVIEWER'">镇级平台</template>
+                    <template v-else-if="user.roleCode === 'COUNTRY_SIDE_ACTOR'">村级平台</template>
+                </div>
             </div>
             <el-tooltip effect="dark" content="搜索" placement="bottom">
                 <div class="data_vis" @click="toggleSearch">
@@ -389,44 +394,41 @@
         background: url("/static/header/city_bg.png") no-repeat;
     }
 
-    .cun_bg .header-title {
-        width: calc(911 * 100vw/1920 * 0.9);
-        height: calc(52 * 100vw/1920 * 0.9);
+    .top_bar .header-title {
+        width: calc(1083 * 100vw/1920 * 0.75);
+        height: calc(90 * 100vw/1920 * 0.75);
         min-width: 683px;
         min-height: 39px;
-        background: url("/static/header/cun.png") no-repeat;
+        background: url("/static/header/title.png") no-repeat;
         background-size: 100% 100%;
         position: relative;
         left: 25px;
-    }
-    .zhen_bg .header-title {
-        width: calc(911 * 100vw/1920 * 0.9);
-        height: calc(52 * 100vw/1920 * 0.9);
-        min-width: 683px;
-        min-height: 39px;
-        background: url("/static/header/zhen.png") no-repeat;
-        background-size: 100% 100%;
-        position: relative;
-        left: 25px;
-    }
-    .city_bg .header-title {
-        width: calc(911 * 100vw/1920 * 0.9);
-        height: calc(52 * 100vw/1920 * 0.9);
-        min-width: 683px;
-        min-height: 39px;
-        background: url("/static/header/city.png") no-repeat;
-        background-size: 100% 100%;
-        position: relative;
-        left: 25px;
+        display: inline-block;
+        vertical-align: bottom;
     }
     .top_bar {
         background-size: 100% 100%;
         width: calc(1920 * 100vw/1920);
+        overflow: hidden;
     }
     .top_bar_content {
         height: calc(70 * 100vw/1920);
         min-height: 50px;
         font-size: 16px !important;
+    }
+    .three_level {
+        display: inline-block;
+        height: calc(90 * 100vw/1920 * 0.75);
+        padding-left: 15px;
+        font-size: 26px;
+        line-height: 80px;
+        color: #f4e55b;
+        vertical-align: bottom;
+        background-image:-webkit-linear-gradient(bottom, #fdca34,yellow);
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+        font-weight: bold;
+        font-family: '楷体' !important;
     }
     .vs-navbar{
         z-index: 99 !important;

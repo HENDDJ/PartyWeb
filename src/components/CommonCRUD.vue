@@ -451,4 +451,7 @@
     .common-textarea .el-textarea__inner {
         width: 585px !important;
     }
+    #mceu_47 {
+        width: calc(100% - 1px) !important;
+    }
 </style>

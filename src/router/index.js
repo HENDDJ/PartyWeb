@@ -70,16 +70,6 @@ const router = new Router({
             }]
         },
         {
-            path: '/statistics',
-            name: 'Statistics',
-            component: () => import('@/layout/Layout'),
-            children: [{
-                path: '/',
-                name: 'Statistics',
-                component: () => import('@/views/menu/Statistics')
-            }]
-        },
-        {
             path: '/cloud',
             name: 'Cloud',
             component: Cloud

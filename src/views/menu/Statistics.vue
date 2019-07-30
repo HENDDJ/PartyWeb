@@ -35,20 +35,20 @@
                     </tr>
                 </table>
                 <table class="tableContent">
-                   <tr>
-                       <td v-for="item in activityList.title">
-                           <button type="text" >{{item}}</button>
-                       </td>
-                   </tr>
-                   <tr v-for="(value,key) in activityList"  v-if="key!='title'">
-                       <td class="content" v-for="(index,item) in value" style="background-color: #39c667"v-if="index.status=='2'" >
-                           <div @click="showPictures(index)">已完成</div>
-                       </td>
-                       <td class="content" v-for="(index,item) in value"  style="background-color: #DC143C;"  v-if="index.status!='2'">
-                          未完成
-                       </td>
-                   </tr>
-               </table>
+                    <tr>
+                        <td v-for="item in activityList.title">
+                            <button type="text" >{{item}}</button>
+                        </td>
+                    </tr>
+                    <tr v-for="(value,key) in activityList"  v-if="key!='title'">
+                        <td class="content" v-for="(index,item) in value" style="background-color: #39c667"v-if="index.status=='2'" >
+                            <div @click="showPictures(index)">已完成</div>
+                        </td>
+                        <td class="content" v-for="(index,item) in value"  style="background-color: #DC143C;"  v-if="index.status!='2'">
+                            未完成
+                        </td>
+                    </tr>
+                </table>
             </div>
             <div class="pictureshow" style="border: 1px #d8caca80 solid" >
                 <p class="titleStyle">{{countryName+"活动执行截图"}}</p><br/>
@@ -56,7 +56,11 @@
                 <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
                 <div v-if="pictureShow">
                     <el-row class="detail-row" >
-                        <el-col :span="2" v-if="TvPic.length === 0"><icon name="tv" scale="3" style="vertical-align: sub"></icon></el-col>
+                        <div v-if="TvPic.length != 0" class="detail-time">
+                            <p>{{"时间："+new Date(TvPic[TvPic.length-1].timestamp).Format('yyyy-MM-dd HH:mm:ss')+" --  "+new Date(TvPic[0].timestamp).Format('yyyy-MM-dd HH:mm:ss')}}</p>
+                            <p style="margin-bottom: 10px">{{"时长："+ meetDuration}}</p>
+                        </div>
+                        <el-col :span="2" v-if="TvPic.length === 0" ><icon name="tv" scale="3" style="vertical-align: sub;margin-left: 8px;"></icon></el-col>
                         <el-col :span="20" v-if="TvPic.length === 0" style="color: rgba(37, 37, 37, 0.51);padding-left: 40px;text-align: left;">
                             暂无截图记录！
                         </el-col>
@@ -66,20 +70,20 @@
                                     <el-timeline-item
                                         v-for="(activity, index) in TvPic"
                                         :key="index"
-                                        :timestamp="activity.timestamp"
+                                        :timestamp="new  Date(activity.timestamp).Format('yyyy-MM-dd HH:mm:ss')"
                                         placement="top">
                                         <div style="margin-left: -98px;float: left; margin-top: -30px;"><icon name="tv" scale="3" style="vertical-align: sub"></icon></div>
                                         <img
                                             :src="TvPicFull[index]"
                                             :key="index"
-                                            style="width: 270%">
+                                            style="width: 280%">
                                     </el-timeline-item>
                                 </el-timeline>
                             </viewer>
                         </el-col>
                     </el-row>
-                    <el-row class="detail-row" style="padding-bottom: 20px;">
-                        <el-col :span="2" v-if="PhonePic.length === 0"><icon name="mobile" scale="3" style="vertical-align: sub"></icon></el-col>
+                    <el-row class="detail-row" style="padding-bottom: 20px;margin-top: 20px">
+                        <el-col :span="2" v-if="PhonePic.length === 0"><icon name="mobile" scale="3" style="vertical-align: sub;margin-left: 11px;"></icon></el-col>
                         <el-col :span="20" v-if="PhonePic.length === 0" style="color: rgba(37, 37, 37, 0.51);padding-left: 40px;text-align: left;">
                             暂无截图记录！
                         </el-col>
@@ -89,20 +93,19 @@
                                     <el-timeline-item
                                         v-for="(activity, index) in PhonePic"
                                         :key="index"
-                                        :timestamp="activity.timestamp"
+                                        :timestamp="new Date(activity.timestamp).Format('yyyy-MM-dd HH:mm:ss')"
                                         placement="top">
-                                        <div style="margin-left: -98px;float: left; margin-top: -30px;"><icon name="mobile" scale="3" style="vertical-align: sub"></icon></div>
+                                        <div style="margin-left: -97px;float: left; margin-top: -30px;"><icon name="mobile" scale="3" style="vertical-align: sub"></icon></div>
                                         <img
                                             :src="PhonePicFull[index]"
                                             :key="index"
-                                            style="width: 270%">
+                                            style="width: 280%">
                                     </el-timeline-item>
                                 </el-timeline>
                             </viewer>
                         </el-col>
                     </el-row>
                 </div>
-                <!--  <PictureShot :picData="picQuery" v-if="pictureShow" ></PictureShot>-->
             </div>
         </div>
     </section>
@@ -128,6 +131,7 @@
                 TvPicFull:[],
                 PhonePic:[],
                 PhonePicFull:[],
+                meetDuration:'',
             }
         },
         methods:{
@@ -178,7 +182,7 @@
                 this.PhonePicFull = [];
                 this.TvPicFull = [];
                 let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
-                let form = {organizationId:item.districtId,studyContent:item.activityId}
+                let form = {organizationId:item.organizationId,studyContent:item.activityId}
                 this.$http("Post",path,form,false).then(data=>{
                     data.content.forEach(item=>{
                         let formItem = {}
@@ -186,7 +190,10 @@
                         formItem.imgurl = item.imageURL;
                         this.TvPic.push(formItem);
                         this.TvPicFull.push(this.imgTF(item.imageURL));
-                    })
+                    });
+                    if(data.content.length>0){
+                        this.handleTime(data.content[data.content.length-1].createTime,data.content[0].createTime);
+                    }
                 }).catch(()=>{
                     this.$message({
                         type: 'warning',
@@ -262,12 +269,40 @@
             },
             print(){
                 let page = document.getElementsByClassName("contentDiv")[0];
-                console.log(page)
                 let newStr = page.innerHTML;
-                let oldStr = document.body.innerHTML;
-                document.body.innerHTML = newStr;
-                window.print();
-                document.body.innerHTML = oldStr;
+                let styleCollection = document.getElementsByTagName("style");
+                let styleStr = Array.from(styleCollection).map(item => item.innerHTML).join(" ");
+                let newWin = window.open(''); //新开空白标签页
+                newWin.focus(); //获取焦点
+                newWin.document.body.innerHTML = newStr +"<style>" +styleStr+ "</style>";
+                newWin.print();
+            },
+            handleTime (time1,time2) {
+                let start_time = Date.parse(new Date(time1));//开始时间的时间戳
+                let end_time = Date.parse(new Date(time2));//结束时间的时间戳
+                if (start_time>end_time) {
+                    //  截止时间已过
+                    return false
+                }else {
+                    //计算相差天数
+                    let time_dis = end_time - start_time;
+                    /*   var days=Math.floor(time_dis/(24*3600*1000));
+                       //计算出小时数
+                       var leave1=time_dis%(24*3600*1000);//计算天数后剩余的毫秒数*/
+                    let hours = Math.floor(time_dis/(3600*1000));
+                    //计算相差分钟数
+                    let leave1 =time_dis%(3600*1000);//计算小时数后剩余的毫秒数
+                    let minutes=Math.floor(leave1/(60*1000));
+                    //计算相差秒数
+                    /*   var leave3=leave2%(60*1000);//计算小时数后剩余的毫秒数
+                       var second = leave3/1000;*/
+                    if(hours>0){
+                        this.meetDuration = hours+"小时"+minutes+"分钟";
+                    }else{
+                        this.meetDuration = minutes+"分钟";
+                    }
+
+                }
             }
         },
         created() {
@@ -331,7 +366,7 @@
         display: inline-block;
         vertical-align: top;
         margin-top: -3px;
-        margin-left: -20px;
+        margin-left: -5px;
     }
     .tableCol td{
         height: 100px;
@@ -345,9 +380,10 @@
         line-height:25px;
         font-size: 12px!important;
         height: 25px!important;
+        text-align: center;
     }
     .tableContent{
-        width: calc(100% - 110px);
+        width: calc(100% - 100px);
         display: inline-block;
         overflow: scroll;
         text-align: center;
@@ -376,6 +412,13 @@
         line-height: 45px;
         font-size: 20px;
         font-weight: bold;
+    }
+    .detail-time p{
+        text-align: left;
+        font-size: 14px;
+        font-weight: bold;
+        margin-left: 15px;
+        line-height: 30px;
     }
 </style>
 <style>

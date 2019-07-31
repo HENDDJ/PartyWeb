@@ -9,7 +9,7 @@
             <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                 <label style="font-size: 14px;width: 75px">所属组织</label>
                 <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
-                             style="margin-right: -28px;" @change="selValue"></el-cascader>
+                             style="margin-right: -28px;" @change="selValue" clearable></el-cascader>
             </template>
         </CommonCRUD>
     </section>
@@ -91,7 +91,11 @@
                 window.open(row.enclosure.split("&")[0],'_self')
             },
             selValue(val){
-                this.queryForm[1].value = val[val.length-1]
+                if(val.length>0){
+                    this.queryForm[1].value = val[val.length-1];
+                }else{
+                    this.queryForm[1].value = this.user.districtId;
+                }
             },
             handleAuthority(){
                 this.queryForm[1].value = this.user.districtId;

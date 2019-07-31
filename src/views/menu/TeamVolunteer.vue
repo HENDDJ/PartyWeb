@@ -23,7 +23,7 @@
                         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                             <label style="font-size: 14px;width: 75px">所属组织</label>
                             <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
-                                         style="margin-right: -28px;" @change="selValue"></el-cascader>
+                                         style="margin-right: -28px;" @change="selValue" clearable></el-cascader>
                         </template>
                     </CommonCRUD>
                 </div>
@@ -34,7 +34,7 @@
                         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                             <label style="font-size: 14px;width: 75px">所属组织</label>
                             <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
-                                         style="margin-right: -28px;" @change="selValue"></el-cascader>
+                                         style="margin-right: -28px;" @change="selValue" clearable></el-cascader>
                         </template>
                     </CommonCRUD>
                 </div>
@@ -258,6 +258,8 @@
                         name: 'districtId',
                         des: '所属组织',
                         type: 'cascader',
+                        required: "true",
+                        triggerCheck: "blur",
                         options: '',
                     },
                     {
@@ -493,8 +495,13 @@
                 };
             },
             selValue(val){
-                this.volunteerQuery[1].value = val[val.length-1];
-                this.teamQuery[1].value = val[val.length-1];
+                if(val.length>0){
+                    this.volunteerQuery[1].value = val[val.length-1];
+                    this.teamQuery[1].value = val[val.length-1];
+                }else{
+                    this.volunteerQuery[1].value = this.user.districtId;
+                    this.teamQuery[1].value = this.user.districtId;
+                }
             },
             handelOrg(){
                 //层级组织请求

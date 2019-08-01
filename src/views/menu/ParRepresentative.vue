@@ -32,8 +32,8 @@
             :modal-append-to-body='false'
             :append-to-body="true"
             :before-close="handleClose">
-            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="170px" >
-                <el-form-item label="姓名">
+            <el-form :inline="true" :model="form" :rules="rules"  ref="form" class="demo-form-inline" label-width="170px" >
+                <el-form-item label="姓名" prop="partyMemberId">
                     <el-select v-model="form.partyMemberId" placeholder="请选择" filterable :disabled="disabled" @change="handleName()">
                         <el-option v-for="item in partyMemberList" :key="item.id" :label="item.name" :value="item.id" >
                         </el-option>
@@ -110,6 +110,11 @@
                     rewardPunish:'',
                     opinion:'',
                     remark:''
+                },
+                rules: {
+                    partyMemberId: [
+                        { required: true, message: '请选择人员', trigger: 'change' }
+                    ],
                 },
                 submitLoading:false,
                 title:'',
@@ -229,28 +234,37 @@
                     .catch(_ => {});
             },
             submit (form) {
-                this.submitLoading = true;
-                //新增
-                if(form.id==null){
-                    this.$http('POST',`identity/parRepresentative/`,form).then(() => {
-                        this.submitLoading = false;
-                        this.dialogVisible = false;
-                        this.$refs.table.refreshTableData();
-                    });
-                }
-                //编辑
-                if((form.id!=null)&&(this.disabled===false)){
-                    this.$http('PUT', `identity/parRepresentative/${form.id}id`,form).then(() =>{
-                        this.submitLoading = false;
-                        this.dialogVisible = false;
-                        this.$refs.table.refreshTableData();
-                       this.initForm();
-                    });
-                }else{//查看
-                    this.submitLoading = false;
-                    this.dialogVisible = false;
-                    this.initForm();
-                }
+                this.$refs.form.validate((valid) => {
+                    if (valid) {
+                        this.submitLoading = true;
+                        //新增
+                        if(form.id==null){
+                            this.$http('POST',`identity/parRepresentative/`,form).then(() => {
+                                this.submitLoading = false;
+                                this.dialogVisible = false;
+                                this.$refs.table.refreshTableData();
+                            });
+                        }
+                        //编辑
+                        if((form.id!=null)&&(this.disabled===false)){
+                            this.$http('PUT', `identity/parRepresentative/${form.id}id`,form).then(() =>{
+                                this.submitLoading = false;
+                                this.dialogVisible = false;
+                                this.$refs.table.refreshTableData();
+                                this.initForm();
+                            });
+                        }else{//查看
+                            this.submitLoading = false;
+                            this.dialogVisible = false;
+                            this.initForm();
+                        }
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+
+
             },
             //关闭dialog
             handleClose (done) {

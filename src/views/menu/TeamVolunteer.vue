@@ -50,8 +50,8 @@
             :modal-append-to-body='false'
             :append-to-body="true"
             :before-close="handleClose">
-            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="170px" >
-                <el-form-item label="姓名">
+            <el-form :inline="true" :model="form" :rules="rules" ref="form" class="demo-form-inline" label-width="170px" >
+                <el-form-item label="姓名" prop="partyMemberId">
                     <el-select v-model="form.partyMemberId" placeholder="请选择" filterable :disabled="disabled" @change="handleName()">
                         <el-option v-for="item in partyMemberList" :key="item.id" :label="item.name" :value="item.id" >
                         </el-option>
@@ -240,12 +240,16 @@
                     {
                         name: 'code',
                         des: '编号',
-                        type: 'string'
+                        type: 'string',
+                        required: 'true',
+                        triggerCheck: 'blur',
                     },
                     {
                         name: 'name',
                         des: '名称',
-                        type: 'string'
+                        type: 'string',
+                        required: 'true',
+                        triggerCheck: 'blur',
                     },
                     {
                         name: 'partyBranchId',
@@ -258,8 +262,8 @@
                         name: 'districtId',
                         des: '所属组织',
                         type: 'cascader',
-                        required: "true",
-                        triggerCheck: "blur",
+                        required: 'true',
+                        triggerCheck: 'blur',
                         options: '',
                     },
                     {
@@ -362,6 +366,11 @@
                     }
                 },
                 userAuthority: 1,
+                rules: {
+                    partyMemberId : [
+                        { required: true, message: '请选择人员', triggerCheck: blur }
+                    ],
+                }
             }
         },
         methods:{
@@ -430,36 +439,42 @@
                     .catch(_ => {});
             },
             submit (form) {
-                this.submitLoading = true;
-                //复选框内容转换为字符类型
-                if(this.checkBoxList){
-                    form.category = this.checkBoxList.join(",");
-                }
-                //新增
-                if(form.id==null){
-                    this.$http('POST',`identity/volunteer/`,form).then(() => {
-                        this.submitLoading = false;
-                        this.dialogVisible = false;
-                        this.$refs.table.refreshTableData();
-                        this.initForm();
-                        this.checkBoxList=[];
-                    });
-                }
-                //编辑
-                if((form.id!=null)&&(this.disabled===false)){
-                    this.$http('PUT', `identity/volunteer/${form.id}id`,form).then(() =>{
-                        this.submitLoading = false;
-                        this.dialogVisible = false;
-                        this.$refs.table.refreshTableData();
-                        this.initForm();
-                        this.checkBoxList=[];
-                    });
-                }else{//查看
-                    this.submitLoading = false;
-                    this.dialogVisible = false;
-                    this.initForm();
-                    this.checkBoxList=[];
-                }
+                this.$refs.form.validate((valid) => {
+                    if (valid) {
+                        this.submitLoading = true;
+                        //复选框内容转换为字符类型
+                        if(this.checkBoxList){
+                            form.category = this.checkBoxList.join(",");
+                        }
+                        //新增
+                        if(form.id==null){
+                            this.$http('POST',`identity/volunteer/`,form).then(() => {
+                                this.submitLoading = false;
+                                this.dialogVisible = false;
+                                this.$refs.table.refreshTableData();
+                                this.initForm();
+                                this.checkBoxList=[];
+                            });
+                        }
+                        //编辑
+                        if((form.id!=null)&&(this.disabled===false)){
+                            this.$http('PUT', `identity/volunteer/${form.id}id`,form).then(() =>{
+                                this.submitLoading = false;
+                                this.dialogVisible = false;
+                                this.$refs.table.refreshTableData();
+                                this.initForm();
+                                this.checkBoxList=[];
+                            });
+                        }else{//查看
+                            this.submitLoading = false;
+                            this.dialogVisible = false;
+                            this.initForm();
+                            this.checkBoxList=[];
+                        }
+                    } else {
+                        return false;
+                    }
+                });
             },
             //关闭dialog
             handleClose (done) {

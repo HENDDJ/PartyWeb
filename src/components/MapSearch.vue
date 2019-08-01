@@ -1,7 +1,7 @@
 <template>
     <div class="search-container">
         <el-input placeholder="搜索位置、公交站、地铁站" v-model="queryValue" class="input-with-select">
-            <img slot="prepend" src="../../static/img/logo.png" alt="" style="height: 36px;">
+           <!-- <img slot="prepend" src="../../static/img/logo.png" alt="" style="height: 36px;">-->
             <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
         </el-input>
         <div id="r-result" style="text-align: left;max-height: 50vh;overflow: scroll;background-color: white;overflow-x: hidden"></div>
@@ -38,7 +38,7 @@
 
 <style scoped>
     .search-container {
-        width: 300px;
+        width: 255px;
         position: absolute;
         z-index: 10;
     }

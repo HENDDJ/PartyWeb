@@ -1,8 +1,33 @@
 <template>
-    <div class="activity-release">
+    <div>
+    <div class="topCard">
+        <el-card style="height:100%;text-align: left" class="titleCard">
+           <p style="color: white;font-size: 20px;margin-top:-5px;">任务发布</p>
+            <a style="color: hsla(0,0%,100%,.62);;margin-top:6px;position: absolute;font-size: 14px;">完成任务基本信息</a>
+        </el-card>
+    </div>
+
+        <div class="topCardRight">
+            <el-card style="height:100%;text-align: left" class="titleCard">
+                <p style="color: white;font-size: 20px;margin-top:-5px;">已发布任务</p>
+                <a style="color: hsla(0,0%,100%,.62);;margin-top:6px;position: absolute;font-size: 14px;">详细信息请到活动管理</a>
+            </el-card>
+        </div>
+
+        <div class="activity-release">
+        <el-card>
         <div>
             <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" align="left"
                      label-width="170px" id="labelOne" :rules="rules">
+                <el-row>
+                    <div>&nbsp;</div>
+                </el-row>
+                <el-row>
+                    <div>&nbsp;</div>
+                </el-row>
+                <el-row>
+                    <div>&nbsp;</div>
+                </el-row>
                 <el-row>
                     <div>&nbsp;</div>
                 </el-row>
@@ -16,10 +41,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-col :span="20">
-                    <vs-divider border-style="dashed"></vs-divider>
-                    <br>
-                </el-col>
+
                 <el-row>
                     <el-col :span="11">
                         <el-form-item label="任务名称" prop="title">
@@ -56,9 +78,11 @@
                                               @getValue="form.fileUrls = $event"></CommonFileUpload>
                         </el-form-item>
                     </el-col>
-                    <el-col :span="10">
+                </el-row>
+                <el-row>
+                    <el-col>
                         <el-form-item label="工作要求" prop="context">
-                            <el-input v-model="form.context" type="textarea" style="width:200px" :disabled=disabled :rows="4"></el-input>
+                            <el-input v-model="form.context" type="textarea" style="width:340px" :disabled=disabled :rows="4"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -95,12 +119,14 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
+                <el-row style="margin-top: -52px;text-align: right;">
+                    <el-col :span="10"><div>&nbsp;</div>
+                    </el-col>
                     <el-col :span="11">
                         <br>
                         <el-form-item label=" ">
-                            <el-button type="primary" @click="submit('form')">发 布</el-button>
-                            <el-button type="warning" @click="reWrite()">重 置</el-button>
+                            <el-button type="primary" @click="submit('form')" size="large"><icon name="release" scale="2" style="margin-left: 0px;position:relative;vertical-align: middle"></icon> <a style="display: inline-block">发 布</a></el-button>
+                            <el-button type="warning" @click="reWrite()" size="large"><icon name="reWrite" scale="2" style="margin-left: 0px;position:relative;vertical-align: middle"></icon> <a style="display: inline-block">重 置</a></el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -112,8 +138,22 @@
                 <div></div>
             </div>
         </div>
-    </div>
+    </el-card>
 
+    </div>
+        <div class="messageRight">
+            <el-card style="height: 100%">
+                <div class="inner-container" style="width: 90%;height:90%;margin-top:50px;text-align: left">
+                    <p>123</p>
+                    <p>123</p>
+                    <p>123</p>
+                    <p>123</p>
+                </div>
+            </el-card>
+        </div>
+
+
+    </div>
 </template>
 
 <script>
@@ -381,7 +421,10 @@
         transform: translateX(-50%);
     }
     .activity-release {
-        width: 70%;
+        width: 69%;
+        position: relative;
+        margin: -142px 2%;
+        z-index: 0;
     }
     .activity-release .file-upload {
         width: 200px !important;
@@ -396,6 +439,55 @@
     @media screen and (max-width: 1430px){
         .activity-release {
             width: 100%;
+        }
+    }
+    .topCard{
+        width: 65%;
+        margin:0px 4%;
+        height: 80px;
+        position: relative;
+        z-index: 10;
+    }
+    .topCard .titleCard{
+        background: linear-gradient(60deg,#66aabb,#43a047);
+        box-shadow: 0 12px 20px -10px rgba(76,175,80,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(76,175,80,.2);
+    }
+    .topCardRight{
+        width: 23%;
+        top: -80px;
+        right: -450px;
+        height: 80px;
+        position: relative;
+        display:inline-block;
+        z-index: 10;
+    }
+    .topCardRight .titleCard{
+        background: linear-gradient(60deg,#66aabb,#43a047);
+        box-shadow: 0 12px 20px -10px rgba(76,175,80,.28), 0 4px 20px 0 rgba(0,0,0,.12), 0 7px 8px -5px rgba(76,175,80,.2);
+    }
+    .messageRight{
+        width: 25%;
+        height: 480px;
+        top: -403px;;
+        right: -450px;
+        display:inline-block;
+
+        position: relative;
+        z-index: 0;
+    }
+    .inner-container {
+        animation: myMove 10s linear infinite;
+        animation-fill-mode: forwards;
+    }
+    /*文字无缝滚动*/
+    @keyframes myMove {
+        0% {
+            transform: translateY(0);
+        }
+
+
+        100% {
+            transform: translateY(-250px);
         }
     }
 </style>

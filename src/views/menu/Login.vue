@@ -248,7 +248,7 @@ export default {
         .login-form1 {
             position: absolute;
             line-height: calc(60 * 100vh/1080);
-            left: calc(785 * 100vw/1920);
+            left: calc(50vw - 237px);
             top: calc(400 * 100vh/1080);
             width:  474px;
             height: 270px;

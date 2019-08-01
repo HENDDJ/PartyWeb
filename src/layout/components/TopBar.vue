@@ -43,7 +43,6 @@
                     <vs-sidebar-item index="1" icon="question_answer" v-if="this.user.roleCode=='DEVELOPER'||this.user.roleCode=='CITY_LEADER'" @click="openLogDia()">
                         操作日志
                     </vs-sidebar-item>
-
                     <vs-sidebar-item index="2" icon="gavel" @click.native="resetPassword">
                         密码重置
                     </vs-sidebar-item>
@@ -116,7 +115,7 @@
                 </el-pagination>
             </el-dialog>
             <vs-navbar-item index="3">
-                <a href="/#/login"><icon name="exit" scale="2" style="vertical-align: sub"></icon>&nbsp;&nbsp;退出</a>
+                <a ><icon name="exit" scale="2" style="vertical-align: sub" @click.native="logOut"></icon>&nbsp;&nbsp;退出</a>
             </vs-navbar-item>
         </vs-navbar>
     </div>

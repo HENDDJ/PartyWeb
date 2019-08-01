@@ -109,11 +109,15 @@
                     {
                         name: 'name',
                         des: '名称',
+                        required: "true",
+                        triggerCheck: "blur",
                         type: 'string',
                     },
                     {
                         name: 'post',
                         des: '职位',
+                        required: "true",
+                        triggerCheck: "blur",
                         type: 'select',
                     },
                     {

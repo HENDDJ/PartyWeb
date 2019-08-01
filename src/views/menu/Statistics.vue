@@ -119,13 +119,14 @@
             return{
                 activityList:'',
                 year:'',
-                districtId:'01',
+                user:{},
+                districtId:'',
                 districtList:[],
                 organizationId: '',
                 activityId: '',
                 pictureShow:false,
                 countryName:'',
-                toneName:'句容市委',
+                toneName:'',
                 tipShow:true,
                 TvPic: [],
                 TvPicFull:[],
@@ -138,6 +139,10 @@
             loadTables(){
                 if(!this.year){
                     this.year=new Date();
+                }
+                if(!this.districtId){
+                    this.districtId = this.user.districtId;
+                    this.toneName = this.user.organizationName;
                 }
                 this.toneName = this.districtList.filter( item => item.value==this.districtId)[0].label;
                 this.$http('post',`identity/parActivity/list/completion?year=${new Date(this.year).Format("yyyy")}&districtId=${this.districtId}`,false).then( data => {
@@ -154,7 +159,6 @@
                     this.districtList.push({value:'01',label:'句容市委'});
                     this.loadTables();
                 })
-
             },
             showPictures(item){
                 this.tipShow = false;
@@ -185,7 +189,7 @@
                 let form = {organizationId:item.organizationId,studyContent:item.activityId}
                 this.$http("Post",path,form,false).then(data=>{
                     data.forEach(item=>{
-                        let formItem = {}
+                        let formItem = {};
                         formItem.timestamp =item.createTime;
                         formItem.imgurl = item.imageURL;
                         this.TvPic.push(formItem);
@@ -256,15 +260,15 @@
                     if(imgUrl[0] === '.'){
                         return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
                     }else {
-                        let time1 = item.time.toString().split("T")[0]
-                        let time2 =  Number(time1.split("-")[0])
-                        let time3 = Number(time1.split("-")[1])
-                        let time4 = Number(time1.split("-")[2])
-                        let time5 = time3.toString()+time4.toString()
+                        let time1 = item.time.toString().split("T")[0];
+                        let time2 =  Number(time1.split("-")[0]);
+                        let time3 = Number(time1.split("-")[1]);
+                        let time4 = Number(time1.split("-")[2]);
+                        let time5 = time3.toString()+time4.toString();
                         return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${imgUrl}`
                     }
                 }else {
-                    return item.imageUrl
+                    return item.imageUrl;
                 }
             },
             print(){
@@ -301,11 +305,11 @@
                     }else{
                         this.meetDuration = minutes+"分钟";
                     }
-
                 }
             }
         },
         created() {
+            this.user = JSON.parse(sessionStorage.getItem("userInfo"));
             this.showDistrictList();
         }
     }

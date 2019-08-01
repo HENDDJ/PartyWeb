@@ -115,7 +115,7 @@
                 </el-pagination>
             </el-dialog>
             <vs-navbar-item index="3">
-                <a ><icon name="exit" scale="2" style="vertical-align: sub" @click.native="logOut"></icon>&nbsp;&nbsp;退出</a>
+                <a @click="logOut"><icon name="exit" scale="2" style="vertical-align: sub"></icon>&nbsp;&nbsp;退出</a>
             </vs-navbar-item>
         </vs-navbar>
     </div>

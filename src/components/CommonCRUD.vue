@@ -4,14 +4,14 @@
             <el-form :inline="true" :model="queryForm" ref="form" class="demo-form-inline" label-width="75px">
                 <slot name="query"></slot>
                 <el-form-item v-for="item in queryFormColumns" v-if="item.visible" :key="item.des" :label="item.type === 'checkbox' ? '' : item.des">
-                    <el-input v-model="queryForm[item.name]" v-if="item.type === 'string'"></el-input>
-                    <el-select v-model="queryForm[item.name]" v-else-if="item.type === 'select'">
+                    <el-input v-model="queryForm[item.name]" v-if="item.type === 'string'" clearable></el-input>
+                    <el-select v-model="queryForm[item.name]" v-else-if="item.type === 'select'" clearable>
                         <el-option v-for="opItem in item.options" filterable :value="opItem.value" :label="opItem.label" :key="opItem.value" ></el-option>
                     </el-select>
                     <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'"
                                  :options="item.options"  @change="handleChange" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf'}">
                     </el-cascader>
-                    <el-radio-group v-if="item.type === 'radio'" v-model="queryForm[item.name]" >
+                    <el-radio-group v-if="item.type === 'radio'" v-model="queryForm[item.name]"  clearable>
                         <el-radio :label="1">是</el-radio>
                         <el-radio :label="0">否</el-radio>
                     </el-radio-group>
@@ -20,6 +20,7 @@
                                     type="date"
                                     placeholder="选择日期"
                                     value-format="yyyy-MM-dd"
+                                    clearable
                                     >
                     </el-date-picker>
                     <el-date-picker v-if="item.type === 'datetime'"
@@ -27,10 +28,12 @@
                                     type="datetime"
                                     value-format="yyyy-MM-ddTHH:mm:ss"
                                     placeholder="选择日期"
+                                    clearable
                                     >
                     </el-date-picker>
                     <el-checkbox v-if="item.type === 'checkbox'"
                                  v-model="queryForm[item.name]"
+                                 clearable
                     :label="item.des" border size="mini" true-label="true" false-label="false">
                     </el-checkbox>
                 </el-form-item>
@@ -84,7 +87,8 @@
                 <el-select v-model="form[item.name]" v-else-if="item.type === 'select'" filterable :disabled="item.disabled || disabled">
                     <el-option v-for="opItem in item.options" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
                 </el-select>
-                <el-cascader v-model="form[item.name]" v-else-if="item.type === 'cascader'" :disabled="item.disabled || disabled"
+                <!--层级clearable属性只用于绑定值为districtId-->
+                <el-cascader v-model="form[item.name]" v-else-if="item.type === 'cascader'" :disabled="item.disabled || disabled" clearable
                              :options="item.options"  @change="handleChange" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf'}">
                 </el-cascader>
                 <el-radio-group v-if="item.type === 'radio'" v-model="form[item.name]" :disabled="item.disabled || disabled" style="width: 178px" >
@@ -365,7 +369,9 @@
             handleChange(value) {
                 //组织层级只传村级id
                 if(this.form.districtId){
-                    this.form.districtId = value[1];
+                    this.form.districtId = value[value.length-1];
+                }else{
+                    this.form.districtId = '';
                 }
             }
         },

@@ -20,7 +20,7 @@
         </div>
         <div style="margin-top:30px;">
             <div class="contentDiv" style="border: 1px #d8caca80 solid" >
-                <p class="titleStyle">{{toneName+"活动完成情况一览表"}}</p>
+                <p class="titleContent">{{toneName+"活动完成情况一览表"}}</p>
                 <table class="tableCol" >
                     <tr>
                         <td>
@@ -51,7 +51,7 @@
                 </table>
             </div>
             <div class="pictureshow" style="border: 1px #d8caca80 solid" >
-                <p class="titleStyle">{{countryName+"活动执行截图"}}</p><br/>
+                <p class="titleContent">{{countryName+"活动执行截图"}}</p><br/>
                 <div v-if="tipShow">请选择需要查看的任务记录！</div>
                 <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
                 <div v-if="pictureShow">
@@ -181,26 +181,26 @@
                 this.PhonePic = [];
                 this.PhonePicFull = [];
                 this.TvPicFull = [];
-                let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
+                let path = `/identity/parPictureInfro/list?sort=CreateTime,desc`;
                 let form = {organizationId:item.organizationId,studyContent:item.activityId}
                 this.$http("Post",path,form,false).then(data=>{
-                    data.content.forEach(item=>{
+                    data.forEach(item=>{
                         let formItem = {}
                         formItem.timestamp =item.createTime;
                         formItem.imgurl = item.imageURL;
                         this.TvPic.push(formItem);
                         this.TvPicFull.push(this.imgTF(item.imageURL));
                     });
-                    if(data.content.length>0){
-                        this.handleTime(data.content[data.content.length-1].createTime,data.content[0].createTime);
+                    if(data.length>0){
+                        this.handleTime(data[data.length-1].createTime,data[0].createTime);
                     }
-                }).catch(()=>{
+                }).catch((res)=>{
                     this.$message({
                         type: 'warning',
-                        message: '电视截图拉取失败'
+                        message: '电视截图拉取失败'+res
                     })
                 });
-                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=6&sort=time,desc`;
+                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=30&sort=time,desc`;
                 let phoneForm = {userId:item.organizationId,snId:item.activityId}
                 this.$http("Post",phonePath,phoneForm,false).then((data)=>{
                     if (!data.content[0]) {
@@ -407,7 +407,7 @@
     .tableContent .content :hover{
         cursor: pointer;
     }
-    .titleStyle{
+   .titleContent{
         border-bottom: 1px #d8caca80 solid;
         line-height: 45px;
         font-size: 20px;

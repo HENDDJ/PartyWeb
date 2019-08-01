@@ -1011,13 +1011,11 @@
                 let timeAll = []
                 this.$http("Post",path,form,false).then(data=>{
                     data.content.forEach((item,index)=>{
-                        if(index<6){
-                            let formItem = {};
-                            formItem.timestamp =item.createTime;
-                            formItem.imgurl = item.imageURL;
-                            this.Pic.push(formItem);
-                            this.PicFull.push(this.imgTF(item.imageURL));
-                        }
+                        let formItem = {};
+                        formItem.timestamp =item.createTime;
+                        formItem.imgurl = item.imageURL;
+                        this.Pic.push(formItem);
+                        this.PicFull.push(this.imgTF(item.imageURL));
                         timeAll.push(item.createTime)
 
                     });
@@ -1041,7 +1039,7 @@
                 this.picLoading = true;
                 this.Pic = [];
                 this.PicFull = [];
-                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=6&sort=time,desc`;
+                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=500&sort=time,desc`;
                 let phoneForm = {userId:item.districtId,snId:item.activityId};
                 this.$http("Post",phonePath,phoneForm,false).then((data)=>{
                     if (!data.content[0]) {

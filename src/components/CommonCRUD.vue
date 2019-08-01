@@ -8,8 +8,8 @@
                     <el-select v-model="queryForm[item.name]" v-else-if="item.type === 'select'" clearable>
                         <el-option v-for="opItem in item.options" filterable :value="opItem.value" :label="opItem.label" :key="opItem.value" ></el-option>
                     </el-select>
-                    <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'"
-                                 :options="item.options"  @change="handleChange" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf'}">
+                    <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'" clearable
+                                 :options="item.options"  @change="handleChange" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf',checkStrictly:true}">
                     </el-cascader>
                     <el-radio-group v-if="item.type === 'radio'" v-model="queryForm[item.name]"  clearable>
                         <el-radio :label="1">是</el-radio>
@@ -367,11 +367,13 @@
                 this.loadTableData(path);
             },
             handleChange(value) {
-                //组织层级只传村级id
-                if(this.form.districtId){
-                    this.form.districtId = value[value.length-1];
-                }else{
-                    this.form.districtId = '';
+                if (value.length>0) {
+                    this.form.districtId = value[value.length - 1];
+                    this.queryFormColumns.filter(item => item.name == 'districtId')[0].value = value[value.length - 1];
+                } else {
+                    this.form.districtId = JSON.parse(sessionStorage.getItem('userInfo')).districtId;
+                    this.queryFormColumns.filter(item => item.name == 'districtId')[0].value =  JSON.parse(sessionStorage.getItem('userInfo')).districtId;
+                    console.log(JSON.parse(sessionStorage.getItem('userInfo')).districtId,"jjj");
                 }
             }
         },

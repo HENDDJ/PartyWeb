@@ -2,9 +2,10 @@
     <section>
         <CommonCRUD :columns="columns" api-root="identity/reserve" :formColumns="formColumns" :queryFormColumns="queryForm">
             <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
-                <label style="font-size: 14px;width: 75px">所属组织</label>
-                <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
-                             style="margin-right: -28px;" @change="selValue" clearable></el-cascader>
+                <el-form-item label="所属组织">
+                    <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
+                                 style="margin-right: -28px;" @change="selValue" clearable></el-cascader>
+                </el-form-item>
             </template>
         </CommonCRUD>
     </section>
@@ -38,6 +39,7 @@
                 user:{},
                 propsOne: {
                     lazy: true,
+                    checkStrictly:true,
                     lazyLoad:(node, resolve)=>{
                         if(this.userAuthority ==1){
                             if(node.level==0){
@@ -76,6 +78,7 @@
         },
         methods:{
             selValue(val){
+                console.log(val)
                 if(val.length>0){
                     this.queryForm[1].value = val[val.length-1];
                 }else{
@@ -88,6 +91,7 @@
                     this.districtList = data[0].children;
                     this.handleOrgLeaf(this.districtList);
                     this.formColumns.filter(item => item.name === 'districtId')[0].options = this.districtList;
+                    this.queryForm[1].options =  this.districtList;
                     if(this.userAuthority == 3){
                         this.formColumns.filter(item => item.name === 'districtId')[0].options = [{label:this.user.organizationName,leaf:true,value:this.user.districtId}]
                     }

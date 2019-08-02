@@ -1,21 +1,13 @@
 <template>
-    <div>
-        <div class="topCard">
-            <el-card style="height:100%;text-align: left" class="titleCard">
-                <p style="color: white;font-size: 20px;margin-top:-5px;">任务发布</p>
-                <a style="color: hsla(0,0%,100%,.62);;margin-top:6px;position: absolute;font-size: 14px;">完成任务基本信息</a>
-            </el-card>
-        </div>
-
-        <div class="topCardRight">
-            <el-card style="height:100%;text-align: left" class="titleCard">
-                <p style="color: white;font-size: 20px;margin-top:-5px;">已发布任务</p>
-                <a style="color: hsla(0,0%,100%,.62);;margin-top:6px;position: absolute;font-size: 14px;">详细信息请到活动管理</a>
-            </el-card>
-        </div>
-
+    <div style="display: flex">
         <div class="activity-release">
-            <el-card>
+            <div class="topCard">
+                <el-card style="height:100%;text-align: left" class="titleCard">
+                    <p style="color: white;font-size: 20px;margin-top:-5px;">任务发布</p>
+                    <a style="color: hsla(0,0%,100%,.62);;margin-top:6px;position: absolute;font-size: 14px;">完成任务基本信息</a>
+                </el-card>
+            </div>
+            <el-card style="margin-top: -50px;min-height: 700px;">
                 <div>
                     <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" align="left"
                              label-width="170px" id="labelOne" :rules="rules">
@@ -31,7 +23,7 @@
                         <el-row>
                             <div>&nbsp;</div>
                         </el-row>
-                        <el-row>
+                        <el-row style="margin: 10px 0">
                             <el-col :span="10">
                                 <el-form-item label="任务分类" prop="taskType">
                                     <vs-radio color="success" v-model="form.taskType" vs-value="Party">党建任务</vs-radio>
@@ -44,7 +36,7 @@
                             </el-col>
                         </el-row>
 
-                        <el-row>
+                        <el-row style="margin: 10px 0">
                             <el-col :span="11">
                                 <el-form-item label="任务名称" prop="title">
                                     <el-input v-model="form.title" :disabled=disabled></el-input>
@@ -56,7 +48,7 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-row>
+                        <el-row style="margin: 10px 0">
                             <el-col :span="11">
                                 <el-form-item label="截止时间" prop="monVal">
                                     <el-date-picker
@@ -73,7 +65,7 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-row>
+                        <el-row style="margin: 10px 0">
                             <el-col :span="11">
                                 <el-form-item label="上传文件" prop="fileUrls">
                                     <CommonFileUpload :value="form.fileUrls"
@@ -81,7 +73,7 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-row>
+                        <el-row style="margin: 10px 0">
                             <el-col>
                                 <el-form-item label="工作要求" prop="context">
                                     <el-input v-model="form.context" type="textarea" style="width:340px"
@@ -89,7 +81,7 @@
                                 </el-form-item>
                             </el-col>
                         </el-row>
-                        <el-row>
+                        <el-row style="margin: 10px 0">
                             <el-col :span="11">
                                 <!--<el-form-item label="任务对象" prop="taskObject">-->
                                 <!--<el-tree-->
@@ -109,7 +101,7 @@
                             </el-col>
                         </el-row>
 
-                        <el-row>
+                        <el-row style="margin: 10px 0">
                             <el-col :span="20">
                                 <el-form-item label="上传视频" prop="video" v-if="addVideo">
                                     <el-transfer
@@ -126,7 +118,7 @@
                             <el-col :span="10">
                                 <div>&nbsp;</div>
                             </el-col>
-                            <el-col :span="11">
+                            <el-col :span="11" style="margin-top: 40px">
                                 <br>
                                 <el-form-item label=" ">
                                     <el-button type="primary" @click="submit('form')" size="large">
@@ -155,9 +147,14 @@
 
         </div>
         <div class="messageRight">
-            <el-card style="height: 100%">
-                <div style="width: 100%;height:90%;margin-top:50px;text-align: left">
-                    <div class="inner-container" style="width: 100%">
+            <div class="topCardRight">
+                <el-card style="height:100%;text-align: left" class="titleCard">
+                    <p style="color: white;font-size: 20px;margin-top:-5px;">已发布任务</p>
+                    <a style="color: hsla(0,0%,100%,.62);;margin-top:6px;position: absolute;font-size: 14px;">详细信息请到活动管理</a>
+                </el-card>
+            </div>
+            <el-card style="height: 500px; margin-top: -50px;padding:50px 0;text-align: left;overflow: hidden">
+                <div class="inner-container" style="width: 100%">
                         <div style="background-color: #ecf5ff;;border-radius: 4px;width: 100%;padding: 5px 0 5px 3px;margin-bottom: 8px" v-for="item in actiityList">
                             <el-tooltip :content="item.title" placement="left" v-if="item.title.length>=14">
                                 <p style="font-size: 18px;padding: 5px 0 5px 3px">{{item.title.substring(0,13)}}...</p>
@@ -187,13 +184,8 @@
                             </a>
                         </div>
                     </div>
-
-                </div>
-
             </el-card>
         </div>
-
-
     </div>
 </template>
 
@@ -204,9 +196,7 @@
         name: "ParActivityRelease",
         data() {
             let validatePass = (rule, value, callback) => {
-                console.log(value)
                 if (!value.countryside && !value.office) {
-                    console.log(123)
                     callback(new Error('请选择对象'));
                 } else {
                     callback();
@@ -483,10 +473,10 @@
     }
 
     .activity-release {
-        width: 69%;
+        flex: 2;
         position: relative;
-        margin: -142px 2%;
         z-index: 0;
+        margin-right: 30px;
     }
 
     .activity-release .file-upload {
@@ -508,8 +498,8 @@
     }
 
     .topCard {
-        width: 65%;
-        margin: 0px 4%;
+        width: 95%;
+        margin: 0 auto;
         height: 80px;
         position: relative;
         z-index: 10;
@@ -521,9 +511,7 @@
     }
 
     .topCardRight {
-        width: 23%;
-        top: -80px;
-        right: -450px;
+        width: 90%;
         height: 80px;
         position: relative;
         display: inline-block;
@@ -536,16 +524,17 @@
     }
 
     .messageRight {
-        width: 25%;
+        flex: 1;
+        margin-right: 30px;
         height: 480px;
-        top: -403px;;
-        right: -450px;
         display: inline-block;
-
         position: relative;
         z-index: 0;
     }
-
+    .messageRight .el-card__body {
+        overflow: hidden !important;
+        padding-bottom: 50px;
+    }
     .inner-container {
     animation: myMove 160s linear infinite;
     animation-fill-mode: forwards;

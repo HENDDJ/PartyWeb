@@ -915,7 +915,7 @@
         filter: blur(10px);
         z-index: -1;
     }
-    .filter-display {
+    .dashboard .filter-display {
         filter: blur(2px);
         clear: both;
         width: 100%;

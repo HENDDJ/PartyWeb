@@ -1,42 +1,43 @@
 <template>
     <div>
-        <div style="text-align: left">
-            <span style="display:inline-block;margin-left: 10px">年份：</span>
-            <vs-select
-                class="selectExample"
-                style="display: inline-block;margin-left: -5px"
-                label=""
-                v-model="chooseYear"
-                width="120px"
-                @change="selectYear"
-            >
-                <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in yearOptions"/>
-            </vs-select>
-
-            <span style="display: inline-block;margin-left: 50px" v-if="regionOptionsShow">区域：</span>
-            <vs-select
-                v-if="regionOptionsShow"
-                class="selectExample"
-                style="display: inline-block;margin-left: -5px"
-                label=""
-                v-model="chooseRegion"
-                width="120px"
-                @change="selectRegion"
-            >
-                <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in regionOptions"/>
-            </vs-select>
-
-        </div>
         <div class="blockData">
+            <div style="text-align: left">
+                <span style="display:inline-block;margin-left: 10px">年份：</span>
+                <vs-select
+                    class="selectExample"
+                    style="display: inline-block;margin-left: -5px"
+                    label=""
+                    v-model="chooseYear"
+                    width="120px"
+                    @change="selectYear"
+                >
+                    <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in yearOptions"/>
+                </vs-select>
+
+                <span style="display: inline-block;margin-left: 50px" v-if="regionOptionsShow">区域：</span>
+                <vs-select
+                    v-if="regionOptionsShow"
+                    class="selectExample"
+                    style="display: inline-block;margin-left: -5px"
+                    label=""
+                    v-model="chooseRegion"
+                    width="120px"
+                    @change="selectRegion"
+                >
+                    <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in regionOptions"/>
+                </vs-select>
+
+            </div>
+
             <div v-for="item in arrangedData" class="blockZhen">
                 <div class="blockZhenItem">
                     <div class="itemUp">{{item.town}}</div>
                     <div class="itemDown">
-                        <a>{{item.cun[0].townExam}}
+                        <a>{{item.cun[0].townExam}}分
                             <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 15px">({{item.cun[0].townScore|percent}}%)</span>
                             <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 15px">({{item.cun[0].townScore|percent}}%)</span>
                             <span v-else-if="item.cun[0].townScore<0.8" style="color:#bce423;font-size: 15px">({{item.cun[0].townScore|percent}}%)</span>
-                            <span v-else style="color:#57ff53;font-size: 15px">({{item.cun[0].townScore|percent}}%)</span>
+                            <span v-else style="color:#1bc821;font-size: 15px">({{item.cun[0].townScore|percent}}%)</span>
                             </a>
                     </div>
                 </div>
@@ -45,11 +46,11 @@
                         <div class="blockCunItem">
                             <div class="itemUp">{{val.cun}}</div>
                             <div class="itemDown">
-                                <a>{{val.exam}}
+                                <a>{{val.exam}}分
                                     <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 15px">({{val.score|percent}}%)</span>
                                     <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 15px">({{val.score|percent}}%)</span>
                                     <span v-else-if="item.cun[0].townScore<0.8" style="color:#bce423;font-size: 15px">({{val.score|percent}}%)</span>
-                                    <span v-else style="color:#57ff53;font-size: 15px">({{val.score|percent}}%)</span>
+                                    <span v-else style="color:#1bc821;font-size: 15px">({{val.score|percent}}%)</span>
                                 </a>
                             </div>
                         </div>
@@ -159,24 +160,22 @@
 </style>
 <style>
     .blockData {
-        width: 95%;
-        margin: auto;
-        margin-top: 10px;
+        width: 97%;
+        margin: 10px auto auto;
     }
 
     .blockZhen {
         display: flex;
-        flex-wrap: wrap;
         margin-top: 10px;
+        flex-direction:row
     }
 
     .blockZhenItem {
         margin-left: 10px;
         margin-right: 20px;
-        width: 90px;
         height: 60px;
         border: 1px solid black;
-        margin-top: 15px;
+        margin-top: 20px;
         border-radius: 4px;
         box-shadow: 0 4px 25px 0 rgba(0, 0, 0, .2);
         transition: all .3s ease;
@@ -189,15 +188,14 @@
         margin-left: 10px;
         display: flex;
         flex-wrap: wrap;
-        width: 935px;
     }
 
     .blockCunItem {
-        margin-left: 10px;
-        width: 90px;
+        margin-left: 15px;
+        width: 110px;
         height: 60px;
         border: 1px solid black;
-        margin-top: 15px;
+        margin-top: 20px;
         border-radius: 4px;
         box-shadow: 0 3px 14px 0 rgba(0, 0, 0, .2);
         transition: all .3s ease;
@@ -216,6 +214,10 @@
         color: white;
         border-top-left-radius:4px;
         border-top-right-radius:4px;
+    }
+
+    .blockZhenItem .itemUp {
+        width: 130px;
     }
 
     .itemDown {

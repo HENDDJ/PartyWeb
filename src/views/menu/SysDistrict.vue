@@ -13,7 +13,7 @@
                 <el-button type="primary" plain @click="add()" class="self-add self-btn">&nbsp;</el-button>
                 <el-button type="success" plain class="self-btn self-edit" @click="edit()">&nbsp;</el-button>
                 <el-button type="success" plain class="self-btn self-look" @click="look()">&nbsp;</el-button>
-                <el-button type="danger" plain @click="del()" class="self-del self-btn">&nbsp;</el-button>
+                <el-button type="danger" plain @click="del()" v-if="false" class="self-del self-btn">&nbsp;</el-button>
             </template>
         </CommonCRUD>
 
@@ -27,8 +27,13 @@
             :append-to-body="true"
             :before-close="handleClose">
             <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="170px">
+                <el-form-item label="组织类别">
+                    <el-select v-model="form.districtType" :disabled="formDisabled">
+                        <el-option v-for="opItem in districtTypeList" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="上级组织">
-                    <el-select v-model="form.attachTo" :disabled="disabled">
+                    <el-select v-model="form.attachTo" :disabled="formDisabled">
                         <el-option
                             v-for="(value, key) in parentList"
                             :key="key"
@@ -36,9 +41,6 @@
                             :value="key">
                         </el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="组织id">
-                    <el-input v-model="form.districtId" :disabled="disabled"></el-input>
                 </el-form-item>
                 <el-form-item label="组织名称">
                     <el-input v-model="form.districtName" :disabled="disabled"></el-input>
@@ -55,6 +57,7 @@
 <script>
     import { tansfer} from "../../lookup/transfer";
     import CommonCRUD from '@/components/CommonCRUD';
+    import LookUp from '@/lookup';
     export default {
         name: "SysDistrict",
         data() {
@@ -66,8 +69,10 @@
                 loading: false,
                 title:'',
                 disabled: false,
+                formDisabled:false,
                 submitLoading: false,
                 zhenList:[],
+                districtTypeList:[],
                 sortQuery:[
                     {
                         name:'createdAt',
@@ -96,6 +101,7 @@
                 this.title = "新增";
                 this.dialogVisible = true;
                 this.disabled = false;
+                this.formDisabled = false;
                 this.form={};
             },
             edit(){
@@ -103,6 +109,7 @@
                     this.title = "编辑";
                     this.dialogVisible = true;
                     this.disabled = false;
+                    this.formDisabled = true;
                     this.form = Object.assign({},this.$refs.table.selected[0]);
                 }
 
@@ -112,6 +119,7 @@
                     this.title = "查看";
                     this.dialogVisible = true;
                     this.disabled = true;
+                    this.formDisabled = true;
                     this.form =  Object.assign({},this.$refs.table.selected[0]);
                 }
             },
@@ -133,13 +141,13 @@
                 //新增
                 if(form.id==null){
                     //通过上级组织的长度给组织类型赋值（上级组织长度分为2、4）
-                   let length = form.attachTo.length;
+                /*   let length = form.attachTo.length;
                    if(length === 2){
                        form.districtLevel = 2;
                    }
                     if(length === 4){
                         form.districtLevel = 3;
-                    }
+                    }*/
                     this.$http('POST',`/identity/sysDistrict/`,form).then(() => {
                         this.submitLoading = false;
                         this.dialogVisible = false;
@@ -150,13 +158,13 @@
                 //编辑
                 if((form.id!=null)&&(this.disabled===false)){
                     //通过上级组织的长度给组织类型赋值（上级组织长度分为2、4）
-                    let length = form.attachTo.length;
+                   /* let length = form.attachTo.length;
                     if(length === 2){
                         form.districtLevel = 2;
                     }
                     if(length === 4){
                         form.districtLevel = 3;
-                    }
+                    }*/
                     this.$http('PUT', `identity/sysDistrict/${form.id}id`,form).then(() =>{
                         this.submitLoading = false;
                         this.dialogVisible = false;
@@ -176,6 +184,7 @@
                         this.from = {};
                         this.$refs['form'].resetFields();
                         this.disabled = false;
+                        this.formDisabled = false;
                         this.dialogVisible = false;
                         done();
                     })
@@ -185,7 +194,8 @@
             showParentList() {
                 this.$http('POST',`identity/sysDistrict/listSome` ,false).then(data => {
                     this.parentList = data;
-                })
+                });
+                this.districtTypeList =  LookUp['DistrictType'];
             },
             //查询框下拉项
             showZhenList(){

@@ -135,4 +135,14 @@ export default {
             label :'村级组织'
         },
     ],
+    'DistrictType': [
+        {
+            value :'Party',
+            label :'基层'
+        },
+        {
+            value :'Office',
+            label :'机关'
+        }
+    ],
 }

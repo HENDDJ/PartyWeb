@@ -26,27 +26,27 @@
             :modal-append-to-body='false'
             :append-to-body="true"
             :before-close="handleClose">
-            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="170px">
-                <el-form-item label="组织类别">
+            <el-form :inline="true" :model="form"  :rules="rules" ref="form" class="demo-form-inline" label-width="170px">
+                <el-form-item label="组织类别"  prop="districtType">
                     <el-select v-model="form.districtType" :disabled="formDisabled">
                         <el-option v-for="opItem in districtTypeList" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="上级组织">
+                <el-form-item label="上级组织"  prop="attachTo">
                     <el-select v-model="form.attachTo" :disabled="formDisabled">
                         <el-option
-                            v-for="(value, key) in parentList"
-                            :key="key"
-                            :label="value"
-                            :value="key">
+                            v-for="option in zhenList"
+                            :key="option.value"
+                            :label="option.label"
+                            :value="option.value">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="组织名称">
+                <el-form-item label="组织名称" prop="districtName">
                     <el-input v-model="form.districtName" :disabled="disabled"></el-input>
                 </el-form-item>
             </el-form>
-            <div slot="footer" class="dialog-footer">
+            <div slot="footer" class="dialog-footer footer-position">
                 <el-button type="primary" :loading="submitLoading" @click="submit(form)">确 认</el-button>
                 <el-button @click="handleClose">取 消</el-button>
             </div>
@@ -63,7 +63,7 @@
         data() {
             return {
                 columns:[],
-                parentList:[],
+           /*     parentList:[],*/
                 form:{},
                 dialogVisible: false,
                 loading: false,
@@ -73,6 +73,17 @@
                 submitLoading: false,
                 zhenList:[],
                 districtTypeList:[],
+                rules: {
+                    districtType: [
+                        { required: true, message: '请选择类别', trigger: 'change' }
+                    ],
+                    attachTo: [
+                        { required: true, message: '请选择上级组织', trigger: 'change' }
+                    ],
+                    districtName: [
+                        { required: true, message: '请输入组织名称', trigger: 'blur'}
+                    ],
+                },
                 sortQuery:[
                     {
                         name:'createdAt',
@@ -132,50 +143,44 @@
                         console.log(this.$refs.table.selected[0].id);
                         this.$http("DELETE", `identity/sysDistrict/${this.$refs.table.selected[0].id}id`).then(_ => {
                             this.$refs.table.refreshTableData();
+                            this.showZhenList();
                         });
                     })
                     .catch(_ => {});
             },
             submit (form) {
-                this.submitLoading = true;
-                //新增
-                if(form.id==null){
-                    //通过上级组织的长度给组织类型赋值（上级组织长度分为2、4）
-                /*   let length = form.attachTo.length;
-                   if(length === 2){
-                       form.districtLevel = 2;
-                   }
-                    if(length === 4){
-                        form.districtLevel = 3;
-                    }*/
-                    this.$http('POST',`/identity/sysDistrict/`,form).then(() => {
-                        this.submitLoading = false;
-                        this.dialogVisible = false;
-                        this.$refs.table.refreshTableData();
-                        this.form ={};
-                    });
-                }
-                //编辑
-                if((form.id!=null)&&(this.disabled===false)){
-                    //通过上级组织的长度给组织类型赋值（上级组织长度分为2、4）
-                   /* let length = form.attachTo.length;
-                    if(length === 2){
-                        form.districtLevel = 2;
+                this.$refs.form.validate((valid) => {
+                    if (valid) {
+                        this.submitLoading = true;
+                        //新增
+                        if (form.id == null) {
+                            this.$http('POST', `/identity/sysDistrict/`, form).then(() => {
+                                this.submitLoading = false;
+                                this.dialogVisible = false;
+                                this.$refs.table.refreshTableData();
+                                this.form = {};
+                                this.showZhenList();
+                            });
+                        }
+                        //编辑
+                        if ((form.id != null) && (this.disabled === false)) {
+                            this.$http('PUT', `identity/sysDistrict/${form.id}id`, form).then(() => {
+                                this.submitLoading = false;
+                                this.dialogVisible = false;
+                                this.$refs.table.refreshTableData();
+                                this.form = {};
+                                this.showZhenList();
+                            });
+                        } else {//查看
+                            this.submitLoading = false;
+                            this.dialogVisible = false;
+                            this.form = {};
+                        }
+                    } else {
+                        console.log('error submit!!');
+                        return false;
                     }
-                    if(length === 4){
-                        form.districtLevel = 3;
-                    }*/
-                    this.$http('PUT', `identity/sysDistrict/${form.id}id`,form).then(() =>{
-                        this.submitLoading = false;
-                        this.dialogVisible = false;
-                        this.$refs.table.refreshTableData();
-                        this.form={};
-                    });
-                }else{//查看
-                    this.submitLoading = false;
-                    this.dialogVisible = false;
-                    this.form={};
-                }
+                });
             },
             //关闭确认dialog
             handleClose (done) {
@@ -190,22 +195,25 @@
                     })
                     .catch(_ => {});
             },
-            //form表单上级组织下拉项
+         /*   //form表单上级组织下拉项
             showParentList() {
-                this.$http('POST',`identity/sysDistrict/listSome` ,false).then(data => {
+               /!* this.$http('POST',`identity/sysDistrict/listSome` ,false).then(data => {
                     this.parentList = data;
                 });
                 this.districtTypeList =  LookUp['DistrictType'];
-            },
+                this.queryColumns[0].options = this.parentList;*!/
+            },*/
             //查询框下拉项
             showZhenList(){
                 //镇级组织
+                this.zhenList = [];
                 this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
                     data.forEach( item => {
                         this.zhenList.push( {value:item.districtId , label:item.districtName});
                     });
                     this.zhenList.push({value:'01',label:'句容市委'});
                     this.queryColumns[0].options = this.zhenList;
+                    this.districtTypeList =  LookUp['DistrictType'];
                 })
             }
 
@@ -216,7 +224,7 @@
         created() {
             this.columns = this.$store.state.classInfo.properties;
             tansfer(this.columns);
-            this.showParentList();
+          /*  this.showParentList();*/
             this.showZhenList();
         }
     }

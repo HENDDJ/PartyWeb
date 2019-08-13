@@ -23,7 +23,7 @@
                 check-strictly
                 show-checkbox>
             </el-tree>
-            <div slot="footer" class="dialog-footer">
+            <div slot="footer" class="dialog-footer footer-position">
                 <el-button type="primary" @click="sumbit">提 交</el-button>
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
             </div>

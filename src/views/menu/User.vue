@@ -1,5 +1,5 @@
 <template>
-    <CommonCRUD ref="table" :columns="columns" apiRoot="/identity/sysUser" :formColumns="formColumns"  :queryFormColumns="queryColumns">
+    <CommonCRUD ref="table" :columns="columns" apiRoot="/identity/sysUser" :formColumns="formColumns"  :queryFormColumns="queryColumns" :sortColumns="sortColumns">
         <template slot="header-btn" slot-scope="slotProps">
             <el-button type="primary" v-if="resetPsw" plain  @click="resetPassword(slotProps.selected)" >重置密码</el-button>
         </template>
@@ -31,6 +31,12 @@
                         visible: false,
                         options: '',
                     },
+                ],
+                sortColumns: [
+                    {
+                        name: 'createdAt',
+                        type: 'desc'
+                    }
                 ]
             }
         },
@@ -94,7 +100,7 @@
             this.columns.forEach(item => {
                 if (item.name == "lastTime") {
                     item.formatter=(row, column, value) => {
-                        return new Date(value).Format("yyyy-MM-dd HH:mm:ss");
+                        return value ? new Date(value).Format("yyyy-MM-dd HH:mm:ss"):'还未登录';
                     }
                 }
             })

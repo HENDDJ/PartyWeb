@@ -21,15 +21,15 @@
             v-if="dialogVisible"
             :title="title"
             :visible.sync="dialogVisible"
-            width="60%"
+            width="880px"
             align="left"
             :modal-append-to-body='false'
             :append-to-body="true"
             :before-close="handleClose">
-            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="100px">
+            <el-form :inline="true" :model="form"  ref="form" class="demo-form-inline" label-width="170px" >
                 <el-form-item label="组织">
-                    <el-select v-model="form.name"  filterable :disabled="disabled" @change="handleId()">
-                        <el-option v-for="opItem in districtList" :value="opItem.label" :label="opItem.label" :key="opItem.value"></el-option>
+                    <el-select v-model="form.organizationId"  filterable :disabled="disabled" @change="handleId(form)">
+                        <el-option v-for="opItem in districtList" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="IP通道地址">
@@ -42,7 +42,7 @@
                     <el-input v-model="form.remark" :disabled="disabled"></el-input>
                 </el-form-item>
             </el-form>
-            <div slot="footer" class="dialog-footer">
+            <div slot="footer" class="dialog-footer footer-position">
                 <el-button type="primary" :loading="submitLoading" @click="submit(form)">确 认</el-button>
                 <el-button @click="handleClose">取 消</el-button>
             </div>
@@ -166,10 +166,10 @@
                     })
                 })
             },
-            handleId(){
+            handleId(form){
                 this.districtList.filter(item => {
-                    if(item.label ===this.form.name){
-                        this.form.organizationId = item.value;
+                    if(item.value ===  form.organizationId){
+                        this.form.name = item.label;
                     }
                 })
             },

@@ -63,7 +63,7 @@
                     </el-tree>
                 </el-form-item>
             </el-form>
-            <div slot="footer" class="dialog-footer">
+            <div slot="footer" class="dialog-footer footer-position">
                 <el-button type="primary" :loading="submitLoading" @click="submit(form)">确 认</el-button>
                 <el-button @click="handleClose">取 消</el-button>
             </div>

@@ -4,17 +4,17 @@
             <br>
             <el-row :gutter="30" type="flex" justify="space-between" style="height: 145px;padding: 0 6px">
                 <el-col :span="5">
-                    <vs-card class="card-sat"  style="height: 125px;background-color: transparent;color: #f2f2f2">
+                    <vs-card class="card-sat"  style="height: 125px;">
                         <div style="display: flex;">
                             <div style="flex: 2;text-align: left;">
-                                <p style="line-height: 34px;font-weight: bold">党员总人数</p>
-                                <p style="font-size: 32px;font-weight: bold">
+                                <p class="top_label">党员总人数</p>
+                                <p class="top_value">
                                     <template>
                                         <CountTo :startVal="0" :endVal="18856" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
-                            <div style="flex: 1;text-align: center">
+                            <div style="flex: 1;text-align: center; color: #448ff9">
                                 <template>
                                     <icon name="user" scale="9"></icon>
                                 </template>
@@ -24,17 +24,17 @@
                     <div class="card-sat filter-display"></div>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px; background-color: transparent;color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px;color: #444">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
-                                <p style="line-height: 34px;font-weight: bold">下属组织数</p>
-                                <p style="font-size: 32px;font-weight: bold">
+                                <p class="top_label">下属组织数</p>
+                                <p class="top_value">
                                     <template>
                                         <CountTo :startVal="0" :endVal="200" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
-                            <div style="flex: 1;text-align: center">
+                            <div style="flex: 1;text-align: center; color: #448ff9">
                                 <template>
                                     <icon name="org" scale="8.5"></icon>
                                 </template>
@@ -44,17 +44,17 @@
                     <div class="card-sat filter-display"></div>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px;  background-color: transparent;color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px;">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
-                                <p style="line-height: 34px;font-weight: bold">下属阵地数</p>
-                                <p style="font-size: 32px;font-weight: bold">
+                                <p class="top_label">下属阵地数</p>
+                                <p class="top_value">
                                     <template>
                                         <CountTo :startVal="0" :endVal="positionNumber" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
-                            <div style="flex: 1;text-align: center">
+                            <div style="flex: 1;text-align: center; color: #448ff9">
                                 <template>
                                     <icon name="zhendi" scale="7.5"></icon>
                                 </template>
@@ -64,17 +64,17 @@
                     <div class="card-sat filter-display"></div>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px;background-color: transparent;color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px;color: #444">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
-                                <p style="line-height: 34px;font-weight: bold">下属村干部</p>
-                                <p style="font-size: 32px;font-weight: bold">
+                                <p class="top_label">下属村干部</p>
+                                <p class="top_value">
                                     <template>
                                         <CountTo :startVal="0" :endVal="villageCadresNumber" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
-                            <div style="flex: 1;text-align: center">
+                            <div style="flex: 1;text-align: center;color: #448ff9">
                                 <template>
                                     <icon name="ganbu" scale="8.1"></icon>
                                 </template>
@@ -84,17 +84,17 @@
                     <div class="card-sat filter-display"></div>
                 </el-col>
                 <el-col :span="5">
-                    <vs-card class="card-sat" style="height: 125px; background-color: transparent;color: #f2f2f2">
+                    <vs-card class="card-sat" style="height: 125px;color: #444">
                         <div style="display: flex">
                             <div style="flex: 2;text-align: left;">
-                                <p style="line-height: 34px;font-weight: bold">下属村书记</p>
-                                <p style="font-size: 36px;font-weight: bold">
+                                <p class="top_label">下属村书记</p>
+                                <p class="top_value">
                                     <template>
                                         <CountTo :startVal="0" :endVal="villageSecretaryNumber" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
-                            <div style="flex: 1;text-align: center">
+                            <div style="flex: 1;text-align: center; color: #448ff9">
                                 <template>
                                     <icon name="leader" scale="7.6"></icon>
                                 </template>
@@ -152,7 +152,7 @@
                                     </div>
                                     <div style="display: inline-block;font-size: 36px;">
                                         <template>
-                                            <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1300"></CountTo>
+                                            <CountTo :startVal="0" :endVal="0" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
                                             当日阵地总人流量
@@ -166,7 +166,7 @@
                                     </div>
                                     <div style="display: inline-block;font-size: 36px;">
                                         <template>
-                                            <CountTo :startVal="0" suffix="%" :decimals="1" :endVal="activityCompleteRate" :duration="1300"></CountTo>
+                                            <CountTo :startVal="0" suffix="%" :decimals="1" :endVal="0" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
                                             阵地平均人流量
@@ -195,7 +195,7 @@
                 <div class="content-right">
                     <swiper :options="swiperOption" ref="mySwiper">
                         <swiper-slide v-for="(item,index) in currentActivityList" :key="item.id">
-                            <vs-card class="card-sat my-swiper" style="height: 668px;">
+                            <vs-card class="card-sat my-swiper" style="height: 685px;">
                                 <h4 slot="header" style="vertical-align: bottom;text-align: left">
                                     执行中的活动（{{index + 1}}）
                                 </h4>
@@ -461,7 +461,7 @@
         methods:{
             //统计总数
             totalStatistics(){
-                this.$http("POST",`identity/centralConsole/statistics`,false).then( data => {
+                this.$http("POST",`identity/centralConsole/statistics/year${new Date().getFullYear()}`,false).then( data => {
                     this.activityPerformNumber = data.activityPerformNumber;
                     this.villageCadresNumber = data.villageCadresNumber;
                     this.positionNumber =data.positionNumber;
@@ -762,7 +762,7 @@
         transition: all .5s;
     }
     .con-vs-card:hover div>p:nth-child(2) {
-        color: #fffa49;
+        color: #d9d53e;
     }
     .card-sat {
         padding: 20px 30px;
@@ -903,7 +903,7 @@
     .progress-content {
         font-size: 14px;
         color: #aeaeae;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
     }
     #countOne .con-vs-card{
         overflow: hidden;
@@ -927,5 +927,15 @@
         transition: all .5s;
         border-radius: 10px;
         background:linear-gradient(to right, #cb2d3e, #ef473a);
+    }
+    .top_label {
+        line-height: 34px;
+        font-weight: bold;
+        color: #666
+    }
+    .top_value {
+        font-size: 32px;
+        font-weight: 400;
+        color: #333
     }
 </style>

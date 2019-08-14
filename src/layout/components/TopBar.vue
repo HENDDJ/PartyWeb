@@ -43,8 +43,7 @@
                     <vs-sidebar-item index="1" icon="question_answer" v-if="this.user.roleCode=='DEVELOPER'||this.user.roleCode=='CITY_LEADER'" @click="openLogDia()">
                         操作日志
                     </vs-sidebar-item>
-                    <vs-sidebar-item index="2" icon="gavel" @click.native="resetPassword">
-                        密码重置
+                    <vs-sidebar-item index="2" icon="gavel" @click="openResetDia()">密码重置
                     </vs-sidebar-item>
                     <vs-divider style="font-size: 14px;font-weight: 600;color: #1f74ff" color="primary" position="left">
                         账号信息
@@ -81,6 +80,16 @@
                     <span slot="footer" class="dialog-footer">
                         <el-button @click="closeDia">取 消</el-button>
                         <el-button type="primary" :loading="submitLoad" @click="editPsw(form)">确 定</el-button>
+                    </span>
+                </el-dialog>
+                <el-dialog title="重置密码提示" :visible.sync="resetDia" width="20%"  height="100px" append-to-body :before-close="closeResetDia">
+                    <div class="el-message-box__content">
+                        <div class="el-message-box__status el-icon-warning"></div>
+                        <div class="el-message-box__message"><spna style="font-size: 16px">此操作将重置密码, 是否继续?</spna></div>
+                    </div>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="closeResetDia">取 消</el-button>
+                        <el-button type="primary" :loading="submitLoad" @click="resetPassword()">确 定</el-button>
                     </span>
                 </el-dialog>
             </vs-navbar-item>
@@ -136,6 +145,7 @@
                     checkPsw:'',
                 },
                 pswDia:false,//修改密码弹框
+                resetDia:false,//重置密码弹框
                 submitLoad:false,
                 waitCheckNumber:0,//待处理数量
                 pageable:{
@@ -264,7 +274,6 @@
                 this.$nextTick( ()=>{
                     this.$refs.table.refreshTableData();
                 });
-
             },
             //关闭操作日志dia
             closeLogDia(){
@@ -277,6 +286,14 @@
                 this.pswDia = false;
                 this.active = true;
                 this.initForm();
+            },
+            openResetDia(){
+                this.resetDia = true;
+                this.active = false;
+            },
+            closeResetDia(){
+                this.resetDia = false;
+                this.active = true;
             },
             initForm(){
                 this.form={
@@ -377,6 +394,8 @@
             let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
             this.user = userInfo;
             this.handleMessageNumber();
+            console.log(this.active,"123213");
+            console.log(this.resetVisible,"444555")
          //   this.user.organizationName = userInfo.districtName;
         }
     }

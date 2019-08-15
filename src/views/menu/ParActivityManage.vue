@@ -393,8 +393,8 @@
                     <el-col :span="16">
                         <h3 style="text-align: center;line-height: 1.1">{{picTitle}}</h3>
                         <div style="width: 100%">
-                        <h4 style="text-align: left;line-height: 2;display: inline-block" v-if="timeLines[0] || timeLines[1] ">会议时间：<a style="font-weight: 100;color: #909399">{{timeLines[1]|dateServer}} — {{timeLines[0]|dateServer}}</a></h4>
-                        <h4 style="text-align: right;line-height: 2;display: inline-block;margin-left: 12%" v-if="timeLines[0] && timeLines[1] ">时长：<a style="font-weight: 100;color: #909399">{{timeLength}}</a></h4>
+                        <h4 style="text-align: left;line-height: 2;display: inline-block" v-if="timeLines[0] || timeLines[1] ">会议时间：<a style="font-weight: 100;color: #73767c">{{timeLines[1]|dateServer}} — {{timeLines[0]|dateServer}}</a></h4>
+                        <h4 style="text-align: right;line-height: 2;display: inline-block;margin-left: 12%" v-if="timeLines[0] && timeLines[1] ">时长：<a style="font-weight: 100;color: #73767c">{{timeLength}}</a></h4>
                         </div>
                         <viewer :images="PicFull">
                             <el-timeline
@@ -1074,8 +1074,9 @@
                         formItem.imgurl = data.content[i].imageUrl;
                         this.Pic.push(formItem);
                         this.PicFull.push(this.imgTFPhone(item));
-                        this.picLoading = false;
                     })
+                    this.picLoading = false;
+
                 }).catch(()=>{
                     this.$message({
                         type: 'error',

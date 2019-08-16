@@ -413,8 +413,8 @@
     }
 
     .top_bar .header-title {
-        width: calc(1083 * 100vw/1920 * 0.75);
-        height: calc(90 * 100vw/1920 * 0.75);
+        width: calc(950 * 100vw/1920 * 0.85);
+        height: calc(90 * 100vw/1920 * 0.85);
         min-width: 683px;
         min-height: 39px;
         background: url("/static/header/title.png") no-repeat;

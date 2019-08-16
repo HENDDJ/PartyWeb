@@ -1,7 +1,7 @@
 <template>
     <div id="login" class="login-container">
-        <el-switch v-model="versionSwitch" active-text="老版" inactive-text="新版" active-value=false  inactive-value=true active-color="#ff4949"  inactive-color="#13ce66" class="switchPosition" @change="handleValue()"></el-switch>
-        <div class="filter-display" v-if="versionSwitch==='true'">
+        <el-switch v-model="versionSwitch"  active-value=false  inactive-value=true inactive-color="#ff4949"  active-color="#7bb0ea" class="switchPosition" @change="handleValue()"></el-switch>
+        <div class="filter-display" v-if="versionSwitch==='false'">
         <div class="login-title"></div>
         <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" >
             <el-form-item prop="userName">
@@ -25,7 +25,7 @@
             <vs-button ref="loadableButton"  id="button-with-loading" class="vs-con-loading__container login-btn" type="gradient" vslor="primary" @click.native.prevent="handleLogin" @keyup.enter.prevent="handleLogin">{{btnText}}</vs-button>
         </el-form>
         </div>
-        <div class="filter-display1" v-if="versionSwitch==='false'">
+        <div class="filter-display1" v-if="versionSwitch==='true'">
             <el-form  class="login-form1" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm">
                 <div class="login-form2">
                     <el-form-item label="用户名" >

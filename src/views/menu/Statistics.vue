@@ -1,24 +1,35 @@
 <template>
     <section>
-        <div style="text-align: left">
-            <el-date-picker
-                size="medium"
-                v-model="year"
-                align="right"
-                type="year"
-                placeholder="选择年" @change="loadTables()">
-            </el-date-picker>
-            <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="medium">
-                <el-option
-                    v-for="item in districtList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                </el-option>
-            </el-select>
-            <el-button type="primary" icon="el-icon-printer" size="small" @click="print()">打印</el-button>
+        <div>
+            <el-popover
+                placement="left"
+                width="600"
+                trigger="manual"
+                v-model="queryVisible">
+                <div style="text-align: left">
+                    <el-date-picker
+                        size="medium"
+                        v-model="year"
+                        align="right"
+                        type="year"
+                        placeholder="选择年" @change="loadTables()">
+                    </el-date-picker>
+                    <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="medium">
+                        <el-option
+                            v-for="item in districtList"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-button type="primary" icon="el-icon-printer" size="small" @click="print()">打印</el-button>
+                </div>
+                <el-button slot="reference" @click="queryVisible = !queryVisible" style="position: absolute;right: -30px;top: 50px;">操作</el-button>
+            </el-popover>
+            <el-button  @click="controlPicture(!pictureCollapse)" style="position: absolute;right: -30px;top: 80px;">截图</el-button>
         </div>
-        <div style="margin-top:30px;">
+
+        <div class='wholeContent' >
             <div class="contentDiv" style="border: 1px #d8caca80 solid" >
                 <p class="titleContent">{{toneName+"活动完成情况一览表"}}</p>
                 <table class="tableCol" >
@@ -49,7 +60,7 @@
                     </tr>
                 </table>
             </div>
-            <div class="pictureshow" style="border: 1px #d8caca80 solid" >
+            <div class="pictureshow" style="border: 1px #d8caca80 solid" v-if="pictureVisible">
                 <p class="titleContent">{{countryName+"活动执行截图"}}</p><br/>
                 <div v-if="tipShow">请选择需要查看的任务记录！</div>
                 <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
@@ -132,6 +143,9 @@
                 PhonePic:[],
                 PhonePicFull:[],
                 meetDuration:'',
+                pictureCollapse:false,
+                pictureVisible:false,
+                queryVisible:false,
             }
         },
         methods:{
@@ -160,24 +174,28 @@
                 })
             },
             showPictures(item){
-                this.tipShow = false;
-                this.pictureShow=false;
-                this.$vs.loading({
-                    container: '#div-with-loading',
-                    scale: 0.9
-                })
-                this.countryName = item.districtName;
-                this.organizationId = item.organizationId;
-                this.activityId = item.activityId;
-                this.details(item);
-                this.$nextTick( () => {
-                    setTimeout( ()=> {
-                        this.$vs.loading.close('#div-with-loading > .con-vs-loading');
-                        this.$nextTick( ()=>{
-                            this.pictureShow = true;
-                        })
-                    }, 1000);
-                })
+                this.controlPicture(true);
+                this.$nextTick(()=>{
+                    this.tipShow = false;
+                    this.pictureShow=false;
+                    this.$vs.loading({
+                        container: '#div-with-loading',
+                        scale: 0.9
+                    })
+                    this.countryName = item.districtName;
+                    this.organizationId = item.organizationId;
+                    this.activityId = item.activityId;
+                    this.details(item);
+                    this.$nextTick( () => {
+                        setTimeout( ()=> {
+                            this.$vs.loading.close('#div-with-loading > .con-vs-loading');
+                            this.$nextTick( ()=>{
+                                this.pictureShow = true;
+                            })
+                        }, 1000);
+                    })
+                });
+
             },
             details(item){
                 this.TvPic = [];
@@ -305,6 +323,23 @@
                         this.meetDuration = minutes+"分钟";
                     }
                 }
+            },
+            controlPicture(value){
+                if(value){
+                    this.pictureVisible = true;
+                    document.getElementsByClassName('contentDiv')[0].style.width= '68%';
+                    document.getElementsByClassName("contentDiv")[0].style.marginLeft='-25px';
+                    document.getElementsByClassName("wholeContent")[0].style.width='100%';
+                    this.pictureCollapse = value;
+                }else{
+                    this.pictureVisible = false;
+                    document.getElementsByClassName('contentDiv')[0].style.width= '100%';
+                    document.getElementsByClassName("contentDiv")[0].style.marginLeft='0';
+                    document.getElementsByClassName("wholeContent")[0].style.width='98%';
+                    this.pictureCollapse = value;
+
+                }
+
             }
         },
         created() {
@@ -360,9 +395,8 @@
     .contentDiv{
         overflow-x: auto;
         text-align:center;
-        width: 68%;
+        width: 100%;
         display: inline-block;
-        margin-left: -25px;
     }
     .tableCol{
         width:100px;
@@ -422,6 +456,10 @@
         font-weight: bold;
         margin-left: 15px;
         line-height: 30px;
+    }
+    .wholeContent{
+        margin-top:10px;
+        width: 99%;
     }
 </style>
 <style>

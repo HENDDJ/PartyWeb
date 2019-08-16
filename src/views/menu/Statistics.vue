@@ -41,11 +41,10 @@
                         </td>
                     </tr>
                     <tr v-for="(value,key) in activityList"  v-if="key!='title'">
-                        <td class="content" v-for="(index,item) in value" style="background-color: #39c667"v-if="index.status=='2'" >
-                            <div @click="showPictures(index)">已完成</div>
-                        </td>
-                        <td class="content" v-for="(index,item) in value"  style="background-color: #DC143C;"  v-if="index.status!='2'">
-                            未完成
+                        <td class="content" v-for="(index,item) in value"  >
+                            <div style="background-color: #39c667;line-height: 25px;height: 25px;" v-if="index.status=='2'" @click="showPictures(index)">已完成</div>
+                            <div style="background-color: #DC143C;line-height: 25px;height: 25px;"  v-else-if="index.status!='2' && (index.objectId !== null)" >未完成</div>
+                            <div style="background-color: #DC7F51;line-height: 25px;height: 25px;"  v-else-if="index.status== null && (index.objectId === null)">未指派</div>
                         </td>
                     </tr>
                 </table>

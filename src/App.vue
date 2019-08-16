@@ -78,7 +78,7 @@
         font-size: 1.25em;
     }
     .el-dialog {
-        border-radius: 8px;
+        border-radius: 8px!important;
         animation: an-dialog .5s;
         min-height: 180px;
     }

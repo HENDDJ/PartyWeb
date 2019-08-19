@@ -33,7 +33,7 @@
             <el-tooltip effect="dark" content="可视化大屏" placement="bottom">
                 <a href="#/cloudRoot" class="data_vis" target="_blank">&nbsp;&nbsp;&nbsp;<icon name="data_vis" scale="1.85"></icon>&nbsp;&nbsp;</a>
             </el-tooltip>
-            <vs-navbar-item index="1">
+            <vs-navbar-item index="1" class="navOne">
                 <a href="#" @click="active=true"><i class="el-icon-user-solid"></i>&nbsp;&nbsp;{{user.name}}</a>
                 <vs-sidebar position-right  parent="body" color="primary" class="sidebarx" spacer v-model="active">
                     <div class="header-sidebar" slot="header">
@@ -45,6 +45,7 @@
                     </vs-sidebar-item>
                     <vs-sidebar-item index="2" icon="gavel" @click="openResetDia()">密码重置
                     </vs-sidebar-item>
+                    <vs-sidebar-item icon="edit" type="flat" @click="pswDia=true;active=false">修改密码</vs-sidebar-item>
                     <vs-divider style="font-size: 14px;font-weight: 600;color: #1f74ff" color="primary" position="left">
                         账号信息
                     </vs-divider>
@@ -61,7 +62,6 @@
                     <p>{{user.introduction}}</p><br/>
 
                     <div class="footer-sidebar" slot="footer">
-                        <vs-button icon="edit" color="warning" type="flat" @click="pswDia=true;active=false">修改密码</vs-button>
                         <vs-button icon="reply" color="danger" type="flat" @click="logOut">切换账号</vs-button>
                     </div>
                 </vs-sidebar>
@@ -82,15 +82,30 @@
                         <el-button type="primary" :loading="submitLoad" @click="editPsw(form)">确 定</el-button>
                     </span>
                 </el-dialog>
-                <el-dialog title="重置密码提示" :visible.sync="resetDia" width="20%"  height="100px" append-to-body :before-close="closeResetDia">
+                <el-dialog title="重置密码提示" :visible.sync="resetDia" width="25%"  height="100px" append-to-body :before-close="closeResetDia">
+                    <div style="width: 200%" :class="{'oneStep':isLeft,'twoStep':isRight}">
+                    <div style="width: 48%;display: inline-block">
                     <div class="el-message-box__content">
                         <div class="el-message-box__status el-icon-warning"></div>
-                        <div class="el-message-box__message"><spna style="font-size: 16px">此操作将重置密码, 是否继续?</spna></div>
+                        <div class="el-message-box__message"><span style="font-size: 16px">此操作将重置密码, 是否继续?</span></div>
                     </div>
-                    <span slot="footer" class="dialog-footer">
+                    <div   style="margin-left: 61%;margin-top: 20px">
+                        <el-button @click="closeResetDia">取 消</el-button>
+                        <el-button type="primary" :loading="submitLoad" @click="isLeft=false;isRight=true">下一步</el-button>
+                    </div>
+                    </div>
+                    <div style="width: 48%;display: inline-block">
+                        <el-form label-width="100px">
+                            <el-form-item label="原密码" >
+                                <el-input v-model="originalPassword" type="password"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div   style="margin-left: 61%;margin-top: 20px">
                         <el-button @click="closeResetDia">取 消</el-button>
                         <el-button type="primary" :loading="submitLoad" @click="resetPassword()">确 定</el-button>
-                    </span>
+                        </div>
+                    </div>
+                    </div>
                 </el-dialog>
             </vs-navbar-item>
             <vs-navbar-item index="2">
@@ -132,6 +147,7 @@
 
 <script>
     import CommonCRUD from '@/components/CommonCRUD';
+    import md5 from '@/utils/md5';
     export default {
         name: "TopBar",
         data() {
@@ -192,6 +208,9 @@
                         visible: true,
                     },
                 ],
+                originalPassword:'',
+                isLeft:true,
+                isRight:false
             }
         },
         computed: {
@@ -219,18 +238,43 @@
             },
             //密码重置
             resetPassword(){
-                this.$http('GET',`identity/sysUser/${this.user.id}id`,false).then( data => {
-                    let resetUser = data;
-                    resetUser.password =null;
-                    this.$http('PUT',`identity/sysUser/${this.user.id}id`,resetUser,false).then( () => {
-                        this.active = false;
+                this.isLeft=false;
+                this.isRight=true
+                let userName = sessionStorage.getItem("user")
+                if(this.originalPassword == ''){
+                    this.$message({
+                        message:'原密码输入错误',
+                        type:'warning'
+                    })
+                    return
+                }
+                this.$http('POST', `/identity/sysUser/list`, {userName:userName,password:md5.hex_md5(this.originalPassword)}).then(data01=>{
+                    if(data01.length == 0){
                         this.$message({
-                            message: '密码重置成功，请重新登录',
-                            type: 'success'
-                        });
-                        setTimeout(this.logOut,3000);
+                            message:'原密码输入错误',
+                            type:'warning'
+                        })
+                        return null;
+                    }
+                    this.$http('GET',`identity/sysUser/${this.user.id}id`,false).then( data => {
+                        let resetUser = data;
+                        resetUser.password =null;
+                        this.$http('PUT',`identity/sysUser/${this.user.id}id`,resetUser,false).then( () => {
+                            this.active = false;
+                            this.$message({
+                                message: '密码重置成功，请重新登录',
+                                type: 'success'
+                            });
+                            setTimeout(this.logOut,3000);
+                        })
+                    })
+                }).catch((err)=>{
+                    this.$message({
+                        message:'网络错误',
+                        type:'warning'
                     })
                 })
+
             },
             //修改密码
             editPsw(form){
@@ -294,6 +338,8 @@
             closeResetDia(){
                 this.resetDia = false;
                 this.active = true;
+                this.isLeft=false;
+                this.isRight=true
             },
             initForm(){
                 this.form={
@@ -535,5 +581,16 @@
     }
     .vs-con-items i {
         font-size: 19px !important;
+    }
+    .oneStep{
+        transition: 0.8s;
+        margin-left: 0px;
+    }
+    .twoStep{
+        transition: 0.8s;
+        margin-left: -99%;
+    }
+     .el-dialog__body{
+        overflow: hidden;
     }
 </style>

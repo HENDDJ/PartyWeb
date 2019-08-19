@@ -34,23 +34,23 @@
                     <div class="itemUp">{{item.town}}</div>
                     <div class="itemDown">
                         <a>{{item.cun[0].townExam}}分
-                            <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 15px">({{item.cun[0].townScore|percent}}%)</span>
-                            <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 15px">({{item.cun[0].townScore|percent}}%)</span>
-                            <span v-else-if="item.cun[0].townScore<0.8" style="color:#bce423;font-size: 15px">({{item.cun[0].townScore|percent}}%)</span>
-                            <span v-else style="color:#1bc821;font-size: 15px">({{item.cun[0].townScore|percent}}%)</span>
+                            <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 17px">({{item.cun[0].score|percent}}%)</span>
+                            <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 17px">({{item.cun[0].score|percent}}%)</span>
+                            <span v-else-if="item.cun[0].townScore<0.8" style="color:rgba(78,103,179,0.7);font-size: 17px">({{item.cun[0].score|percent}}%)</span>
+                            <span v-else style="color:#1bc821;font-size: 17px">({{item.cun[0].score|percent}}%)</span>
                             </a>
                     </div>
                 </div>
                 <div class="blockCunList">
                     <template v-for="(val,index) in item.cun">
-                        <div class="blockCunItem">
+                        <div class="blockCunItem" @click="showDialog(val.cun)">
                             <div class="itemUp">{{val.cun}}</div>
                             <div class="itemDown">
                                 <a>{{val.exam}}分
-                                    <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 15px">({{val.score|percent}}%)</span>
-                                    <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 15px">({{val.score|percent}}%)</span>
-                                    <span v-else-if="item.cun[0].townScore<0.8" style="color:#bce423;font-size: 15px">({{val.score|percent}}%)</span>
-                                    <span v-else style="color:#1bc821;font-size: 15px">({{val.score|percent}}%)</span>
+                                    <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 17px">({{val.score|percent}}%)</span>
+                                    <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 17px">({{val.score|percent}}%)</span>
+                                    <span v-else-if="item.cun[0].townScore<0.8" style="color:rgba(78,103,179,0.7);font-size: 17px">({{val.score|percent}}%)</span>
+                                    <span v-else style="color:#1bc821;font-size: 17px">({{val.score|percent}}%)</span>
                                 </a>
                             </div>
                         </div>
@@ -58,12 +58,51 @@
                 </div>
             </div>
         </div>
+
+        <el-dialog
+            title="完成情况"
+            width="880px"
+            :visible.sync="diaShow"
+            align="left"
+            :append-to-body="true"
+            >
+            <vs-list class="esStyle">
+                <vs-list-header icon="offline_pin" title="已完成" style="font-size: 20px"></vs-list-header>
+                <vs-list-item>
+                    <div style="margin-left: 0px" v-for="item in detailOk">
+                        <vs-chip>
+                            {{item.title}}
+                        </vs-chip></div>
+                </vs-list-item>
+            </vs-list>
+            <vs-list class="esStyle">
+                <vs-list-header icon="hourglass_full" title="待审核" style="font-size: 20px;color: #fabe49"></vs-list-header>
+                <vs-list-item>
+                    <div style="margin-left: 0px" v-for="item in detailWait">
+                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="#24c1a0">
+                           {{item.title}}
+                        </vs-chip></div>
+                </vs-list-item>
+            </vs-list>
+            <vs-list class="esStyle">
+                <vs-list-header icon="info" title="未完成" style="font-size: 20px;color: #b94a48"></vs-list-header>
+                <vs-list-item>
+                    <div style="margin-left: 0px" v-for="item in detailNot">
+                        <vs-chip>
+                            {{item.title}}
+                        </vs-chip></div>
+                </vs-list-item>
+            </vs-list>
+        </el-dialog>
     </div>
+
 </template>
 
 <script>
+    import Layout from "@/layout/Layout";
     export default {
         name: "ExaminationScoreNext",
+        components: {Layout},
         data() {
             return {
                 yearOptions: [],
@@ -73,6 +112,10 @@
                 regionOptionsShow: true,
                 noRepeatTown: [],
                 arrangedData: [],
+                diaShow:false,
+                detailNot:[],
+                detailOk:[],
+                detailWait:[]
 
             }
         },
@@ -120,6 +163,20 @@
                         this.arrangedData.push(list)
                     })
                 })
+            },
+            showDialog(val){
+               this.$http('Post','identity/parActivityObject/examScoreDetail?districtName='+val+"&year="+this.chooseYear).then((data)=>{
+                   data.forEach(item=>{
+                       if(item.sta == 2){
+                           this.detailOk.push(item)
+                       }else if(item.sta == 1){
+                           this.detailWait.push(item)
+                       }else {
+                           this.detailNot.push(item)
+                       }
+                   })
+               })
+                this.diaShow = true
             }
         },
         created() {
@@ -173,7 +230,7 @@
     .blockZhenItem {
         margin-left: 10px;
         margin-right: 20px;
-        height: 60px;
+        height: 80px;
         border: 1px solid black;
         margin-top: 20px;
         border-radius: 4px;
@@ -192,8 +249,8 @@
 
     .blockCunItem {
         margin-left: 15px;
-        width: 110px;
-        height: 60px;
+        width: 125px;
+        height: 80px;
         border: 1px solid black;
         margin-top: 20px;
         border-radius: 4px;
@@ -202,18 +259,20 @@
     }
     .blockCunItem:hover{
         box-shadow: 0 0 5px 0 rgba(0,0,0,.1);
+        cursor: pointer;
     }
 
     .itemUp {
         width: 101%;
         margin-left: -0.5px;
-        height: 50%;
+        height: 40%;
         background: #640064;
         background-image: linear-gradient(30deg,rgba(var(--vs-primary),1),rgba(var(--vs-primary),.5))!important;
         font-size: 17px;
         color: white;
         border-top-left-radius:4px;
         border-top-right-radius:4px;
+        line-height: 32px;
     }
 
     .blockZhenItem .itemUp {
@@ -223,14 +282,20 @@
     .itemDown {
         width: 100%;
         height: 50%;
-        font-size: 16px;
+        font-size: 20px;
         border-top-left-radius:4px;
         border-top-right-radius:4px;
+        line-height: 40px;
+        color:red;
     }
 
     .itemDown a {
         position: relative;
         vertical-align: middle;
         top: 3px;
+    }
+    .esStyle .vs-list--slot {
+       margin-left: 15px;
+        width:90%;
     }
 </style>

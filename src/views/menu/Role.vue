@@ -3,7 +3,7 @@
         <CommonCRUD :columns="$store.state.classInfo.properties" apiRoot="/identity/role"
                     :formColumns="formColumns">
             <template slot="header-btn" slot-scope="slotProps">
-                <el-button type="info" plain @click="authorizationConfig(slotProps.selected)">权限配置</el-button>
+                <el-button class="slot-btn" type="info" plain @click="authorizationConfig(slotProps.selected)">权限配置</el-button>
             </template>
         </CommonCRUD>
         <el-dialog

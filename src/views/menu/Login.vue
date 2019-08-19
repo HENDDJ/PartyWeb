@@ -31,7 +31,7 @@
                     <el-form-item label="用户名" >
                         <el-input name="code" size="medium " type="text" v-model="loginForm.userName" autoComplete="on" placeholder="请输入用户名"></el-input>
                     </el-form-item>
-                    <el-form-item label=" 密 码 ">
+                    <el-form-item :label="pwdLabel">
                         <el-input  name="password" size="medium " :type="passwordType" @keyup.enter.prevent="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="请输入密码"></el-input>
                     </el-form-item>
                 </div>
@@ -67,7 +67,8 @@ export default {
             passwordType: 'password',
             loading: false,
             showDialog: false,
-            btnText: '登' + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + '录'
+            btnText: '登' + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + '录',
+            pwdLabel: '密' + '\xa0\xa0\xa0' + '码'
         };
     },
     methods: {
@@ -147,11 +148,11 @@ export default {
             z-index: 11;
         }
         .switchPosition{
-            width: 150px;
+            width: 50px;
             height: 30px;
             position: fixed;
-            right: 100px;
-            top: 50px;
+            right: 15px;
+            top: 20px;
             z-index: 12;
         }
         .login-form  .el-input {
@@ -255,14 +256,14 @@ export default {
             min-width: 200px;
             /*padding: 35px 35px 15px 35px;*/
             z-index: 22;
-            /*     transform: scale(1.2);*/
+            transform: scale(1.1);
             background:url("../../../static/img/login/bgk.png");
             /* border-radius: 5px;
              box-shadow: 0 4px 14px 0 rgba(0,0,0,.5)*/
         }
         .login-form2{
             margin-left:150px;
-            margin-top: 50px;
+            margin-top: 60px;
             width:295px;
             height: 150px;
         }
@@ -357,8 +358,9 @@ export default {
         width:100px !important;
         height:40px ;
         margin-bottom: 20px;
-        background-color: #e75f5a;
-        font-size: 14px;
+         background: transparent linear-gradient(0deg, rgba(213, 95, 90, 1), rgba(213, 95, 90, 0.7)) !important;
+         font-size: 14px;
+         font-weight: bold;
         color: white;
     }
 </style>

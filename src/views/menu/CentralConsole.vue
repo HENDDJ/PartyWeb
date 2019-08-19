@@ -125,7 +125,7 @@
                                             <CountTo :startVal="0" :endVal="activityPerformNumber" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
-                                            活动执行次数
+                                            基本活动执行总次数
                                         </p>
                                     </div>
                                 </div>
@@ -138,7 +138,7 @@
                                             <CountTo :startVal="0" suffix="%" :decimals="1" :endVal="activityCompleteRate" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
-                                            活动完成率
+                                            基本活动完成率
                                         </p>
                                     </div>
                                 </div>
@@ -155,7 +155,7 @@
                                             <CountTo :startVal="0" :endVal="0" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
-                                            当日阵地总人流量
+                                            基本阵地当日总人流量
 
                                         </p>
                                     </div>
@@ -169,7 +169,7 @@
                                             <CountTo :startVal="0" suffix="%" :decimals="1" :endVal="0" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
-                                            阵地平均人流量
+                                            基本阵地平均人流量
                                         </p>
                                     </div>
                                 </div>
@@ -885,7 +885,7 @@
         background: white;
     }
     .content-unit {
-        width: 200px;
+        width: 230px;
         margin: 40px auto;
     }
     .detail-row {

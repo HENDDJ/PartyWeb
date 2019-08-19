@@ -1,7 +1,7 @@
 <template>
     <CommonCRUD ref="table" :columns="columns" apiRoot="/identity/sysUser" :formColumns="formColumns"  :queryFormColumns="queryColumns" :sortColumns="sortColumns">
         <template slot="header-btn" slot-scope="slotProps">
-            <el-button type="primary" v-if="resetPsw" plain  @click="resetPassword(slotProps.selected)" >重置密码</el-button>
+            <el-button class="slot-btn" type="primary" v-if="resetPsw" plain  @click="resetPassword(slotProps.selected)" >重置密码</el-button>
         </template>
     </CommonCRUD>
 </template>

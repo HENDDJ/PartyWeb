@@ -101,6 +101,13 @@
     .con-vs-radio {
         display: inline-flex!important;
     }
+    .el-table {
+        font-size: 14px !important;
+    }
+    .slot-btn {
+        transform: scale(1.15);
+        margin-left: 14px !important
+    }
 </style>
 <style lang="stylus">
     :root {

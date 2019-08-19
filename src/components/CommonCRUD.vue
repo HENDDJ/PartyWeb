@@ -432,8 +432,10 @@
         width: 56px !important;
         height: 28px !important;
         border-radius: 5px !important;
+        transform: scale(1.1);
     }
     .self-add {
+        margin-left: 3px;
         background: url('../../static/img/add.png') !important;
         background-size: cover !important;
     }

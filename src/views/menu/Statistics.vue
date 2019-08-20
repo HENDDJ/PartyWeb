@@ -181,6 +181,9 @@
             showDistrictList(){
                 this.districtList = [];
                 this.districtId ='';
+                if(!this.districtType){
+                    this.districtType = this.user.sysDistrict.districtType;
+                }
                 //镇级组织
                 this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2,districtType: this.districtType},false).then(data => {
                     data.forEach( item => {

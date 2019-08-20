@@ -1046,35 +1046,21 @@
                         this.picLoading = false;
                         return;
                     }
-                    let i = 0
-                    for(let j = 0;j<data.content.length;j++){
-                        if(data.content[j].imageUrl){
-                            i = j
-                            break;
-                            return;
-                        }
-                        else if(data.content.length -1 == j){
-                            break;
+                    if (data.content.length && data.content.length > 0) {
+                        for (let i = 0; i < data.content.length; i++) {
 
-                            return;
-                        }
-                            else {
-                                continue;
+                            if (data.content[i].imageUrl) {
+                                console.log(data.content[i].imageUrl)
+                                data.content[i].imageUrl.forEach((item) => {
+                                    item.time = data.content[i].time;
+                                    let formItem = {};
+                                    formItem.timestamp = data.content[i].time;
+                                    formItem.imgurl = data.content[i].imageUrl;
+                                    this.Pic.push(formItem);
+                                    this.PicFull.push(this.imgTFPhone(item));
+                                });
                             }
-
-
-                    }
-                    if(!data.content[i].imageUrl){
-                        return;
-                    }
-                    data.content[i].imageUrl.forEach((item)=>{
-                        item.time = data.content[i].time;
-                        let formItem = {};
-                        formItem.timestamp =data.content[i].time;
-                        formItem.imgurl = data.content[i].imageUrl;
-                        this.Pic.push(formItem);
-                        this.PicFull.push(this.imgTFPhone(item));
-                    })
+                        }}
                     this.picLoading = false;
 
                 }).catch(()=>{

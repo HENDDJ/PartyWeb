@@ -224,39 +224,20 @@
                 let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=30&sort=time,desc`;
                 let phoneForm = {userId:item.organizationId,snId:item.activityId}
                 this.$http("Post",phonePath,phoneForm,false).then((data)=>{
-                    if (!data.content[0]) {
-                        return;
-                    }
-                    let i = 0
-                    for(let j = 0;j<data.content.length;j++){
-                        if(data.content[j].imageUrl){
-                            i = j
-                            break;
-
-                            return;
-                        }
-                        else if(data.content.length -1 == j){
-                            break;
-
-                            return;
-                        }
-                            else {
-                                continue;
-
-                        }
-
-                    }
-                    if(!data.content[i].imageUrl){
-                        return;
-                    }
-                    data.content[i].imageUrl.forEach((item)=>{
-                        item.time = data.content[i].time;
-                        let formItem = {};
-                        formItem.timestamp =data.content[i].time;
-                        formItem.imgurl = data.content[i].imageUrl;
-                        this.PhonePic.push(formItem);
-                        this.PhonePicFull.push(this.imgTFPhone(item));
-                    })
+                    if (data.content.length && data.content.length > 0) {
+                        for (let i = 0; i < data.content.length; i++) {
+                            if (data.content[i].imageUrl) {
+                                console.log(data.content[i].imageUrl)
+                                data.content[i].imageUrl.forEach((item) => {
+                                    item.time = data.content[i].time;
+                                    let formItem = {};
+                                    formItem.timestamp = data.content[i].time;
+                                    formItem.imgurl = data.content[i].imageUrl;
+                                    this.PhonePic.push(formItem);
+                                    this.PhonePicFull.push(this.imgTFPhone(item));
+                                });
+                            }
+                        }}
                 }).catch((res)=>{
                     this.$message({
                         type: 'error',

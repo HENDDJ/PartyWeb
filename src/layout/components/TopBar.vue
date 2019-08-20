@@ -68,19 +68,34 @@
                 <el-dialog title="操作日志" :visible.sync="logDia" append-to-body :before-close="closeLogDia">
                     <CommonCRUD ref="table"  :columns="logColumns" api-root="/identity/sysLog"  :queryFormColumns="logQueryColumns" :sortColumns="logSortColumns" :addBtnVis=false :editBtnVis=false :lookBtnVis = false :delBtnVis=false></CommonCRUD>
                 </el-dialog>
-                <el-dialog title="修改密码" :visible.sync="pswDia" width="20%"  append-to-body :before-close="closeDia">
-                    <el-form ref="form" :model="form" label-width="100px">
-                        <el-form-item label="新密码" >
-                            <el-input v-model="form.password" type="password"></el-input>
-                        </el-form-item>
-                        <el-form-item label="确认密码" type="password">
-                            <el-input v-model="form.checkPsw" type="password"></el-input>
-                        </el-form-item>
-                    </el-form>
-                    <span slot="footer" class="dialog-footer">
-                        <el-button @click="closeDia">取 消</el-button>
-                        <el-button type="primary" :loading="submitLoad" @click="editPsw(form)">确 定</el-button>
-                    </span>
+                <el-dialog title="修改密码" :visible.sync="pswDia" width="25%"  append-to-body :before-close="closeDia">
+                    <div style="width: 200%" :class="{'oneStep':modifyLeft,'twoStep':modifyRight}">
+                    <div style="width: 48%;display: inline-block;vertical-align: top; padding-top: 10px;">
+                        <el-form label-width="100px">
+                            <el-form-item label="原密码" >
+                                <el-input v-model="originalPassword" type="password"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div  style="margin-left: 61%;margin-top: 30px">
+                            <el-button @click="closeDia">取 消</el-button>
+                            <el-button type="primary" :loading="submitLoad" @click="editNext">下一步</el-button>
+                        </div>
+                    </div>
+                    <div style="width: 48%;display: inline-block">
+                        <el-form ref="form" :model="form" label-width="100px">
+                            <el-form-item label="新密码" >
+                                <el-input v-model="form.password" type="password"></el-input>
+                            </el-form-item>
+                            <el-form-item label="确认密码" type="password">
+                                <el-input v-model="form.checkPsw" type="password"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div   style="margin-left: 61%;margin-top: 20px">
+                            <el-button @click="closeDia">取 消</el-button>
+                            <el-button type="primary" :loading="submitLoad" @click="editPsw(form)">确 定</el-button>
+                        </div>
+                    </div>
+                    </div>
                 </el-dialog>
                 <el-dialog title="重置密码提示" :visible.sync="resetDia" width="25%"  height="100px" append-to-body :before-close="closeResetDia">
                     <div style="width: 200%" :class="{'oneStep':isLeft,'twoStep':isRight}">
@@ -209,8 +224,12 @@
                     },
                 ],
                 originalPassword:'',
+                //重置密码滚动
                 isLeft:true,
-                isRight:false
+                isRight:false,
+                //修改密码滚动
+                modifyLeft:true,
+                modifyRight:false
             }
         },
         computed: {
@@ -276,6 +295,28 @@
                 })
 
             },
+            //修改密码验证
+            editNext(){
+                let userName = sessionStorage.getItem("user")
+                if(this.originalPassword == ''){
+                    this.$message({
+                        message:'原密码输入错误',
+                        type:'warning'
+                    })
+                    return
+                }
+                this.$http('POST', `/identity/sysUser/list`, {userName:userName,password:md5.hex_md5(this.originalPassword)}).then(data01=>{
+                        if(data01.length == 0){
+                            this.$message({
+                                message:'原密码输入错误',
+                                type:'warning'
+                            })
+                            return null;
+                        }
+                        this.modifyLeft=false;
+                        this.modifyRight=true
+                })
+            },
             //修改密码
             editPsw(form){
                 if(form.password&&(form.checkPsw)){
@@ -327,8 +368,11 @@
                 this.$refs.table.pageable.pageSize = 10;
             },
             closeDia() {
+                this.modifyLeft = true
+                this.modifyRight = false
                 this.pswDia = false;
                 this.active = true;
+                this.originalPassword = ''
                 this.initForm();
             },
             openResetDia(){
@@ -340,6 +384,7 @@
                 this.active = true;
                 this.isLeft=false;
                 this.isRight=true
+                this.originalPassword = ''
             },
             initForm(){
                 this.form={

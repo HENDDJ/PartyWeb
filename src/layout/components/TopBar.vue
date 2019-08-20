@@ -511,7 +511,7 @@
         background: url("/static/header/title.png") no-repeat;
         background-size: 100% 100%;
         position: relative;
-        left: 25px;
+        left: 6px;
         display: inline-block;
         vertical-align: bottom;
     }

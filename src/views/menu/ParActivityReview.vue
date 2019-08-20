@@ -88,7 +88,7 @@
                                             <el-timeline-item
                                                 v-for="(activity, index) in TvPic"
                                                 :key="index"
-                                                :timestamp="activity.timestamp"
+                                                :timestamp="activity.timestamp|dateFormat"
                                                 placement="top"
                                                 v-if="index<2">
                                                 <img
@@ -117,7 +117,7 @@
                                             <el-timeline-item
                                                 v-for="(activity, index) in PhonePic"
                                                 :key="index"
-                                                :timestamp="activity.timestamp"
+                                                :timestamp="activity.timestamp|dateFormat"
                                                 placement="top"
                                                 v-if="index<2">
                                                 <img
@@ -180,7 +180,7 @@
                         <el-timeline-item
                             v-for="(activity, index) in TvPic"
                             :key="index"
-                            :timestamp="activity.timestamp"
+                            :timestamp="activity.timestamp|dateFormat"
                             placement="top">
                             <img
                                 :src="TvPicFull[index]"
@@ -214,7 +214,7 @@
                             <el-timeline-item
                                 v-for="(activity, index) in PhonePic"
                                 :key="index"
-                                :timestamp="activity.timestamp"
+                                :timestamp="activity.timestamp|dateFormat"
                                 placement="top">
                                 <img :src="PhonePicFull[index]"
                                     :key="index"
@@ -309,9 +309,9 @@
                 this.PhonePic = [];
                 this.PhonePicFull = [];
                 this.TvPicFull = [];
-                let path = `/identity/parPictureInfro/page?page=0&size=6&sort=CreateTime,desc`;
+                let path = `/identity/parPictureInfro/page?page=0&size=100&sort=CreateTime,desc`;
                 let form = {organizationId:item.districtId,studyContent:item.activityId};
-                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=6&sort=time,desc`;
+                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=100&sort=time,desc`;
                 let phoneForm = {userId:item.districtId,snId:item.activityId};
                 this.$http("Post",path,form,false).then(data=>{
                     data.content.forEach(item=>{
@@ -324,37 +324,21 @@
                     //拉取手机端截图
                     this.$http("Post",phonePath,phoneForm,false).then((data)=>{
                         if (data.content.length && data.content.length > 0) {
-                            let i = 0
-                            for(let j = 0;j<data.content.length;j++){
-                                if(data.content[j].imageUrl){
-                                    i = j
-                                    break;
+                            for (let i = 0; i < data.content.length; i++) {
 
-                                    return;
-                                }
-                                else if(data.content.length -1 == j){
-                                    break;
-
-                                    return;
-                                }
-                                    else {
-                                        continue;
-
-                                }
-
+                            if (data.content[i].imageUrl) {
+                                console.log(data.content[i].imageUrl)
+                                data.content[i].imageUrl.forEach((item) => {
+                                    item.time = data.content[i].time;
+                                    let formItem = {};
+                                    formItem.timestamp = data.content[i].time;
+                                    formItem.imgurl = data.content[i].imageUrl;
+                                    this.PhonePic.push(formItem);
+                                    this.PhonePicFull.push(this.imgTFPhone(item));
+                                });
                             }
-                            if(!data.content[i].imageUrl){
-                                return;
-                            }
-                            data.content[i].imageUrl.forEach((item)=>{
-                                item.time = data.content[i].time;
-                                let formItem = {};
-                                formItem.timestamp =data.content[i].time;
-                                formItem.imgurl = data.content[i].imageUrl;
-                                this.PhonePic.push(formItem);
-                                this.PhonePicFull.push(this.imgTFPhone(item));
-                            });
-                        }
+                        }}
+
                         this.activityDetailLoading = true;
                     });
                 }).catch(()=>{
@@ -492,6 +476,11 @@
         created() {
                  let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                 this.loadTableData(path)
+        },
+        filters:{
+            dateFormat(val){
+                return val.split("T")[0]+" "+val.split("T")[1]
+            }
         }
     }
 </script>

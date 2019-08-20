@@ -1,14 +1,42 @@
 <template>
+    <div>
     <CommonCRUD ref="table" :columns="columns" apiRoot="/identity/sysUser" :formColumns="formColumns"  :queryFormColumns="queryColumns" :sortColumns="sortColumns">
         <template slot="header-btn" slot-scope="slotProps">
-            <el-button class="slot-btn" type="primary" v-if="resetPsw" plain  @click="resetPassword(slotProps.selected)" >重置密码</el-button>
+            <el-button class="slot-btn" type="primary" v-if="resetPsw" plain  @click="showDia(slotProps.selected)" >重置密码</el-button>
         </template>
     </CommonCRUD>
+        <el-dialog title="重置密码提示" :visible.sync="resetDia" width="25%"  height="100px" append-to-body :before-close="closeResetDia">
+            <div style="width: 200%" :class="{'oneStep':isLeft,'twoStep':isRight}">
+                <div style="width: 48%;display: inline-block">
+                    <div class="el-message-box__content">
+                        <div class="el-message-box__status el-icon-warning"></div>
+                        <div class="el-message-box__message"><span style="font-size: 16px">此操作将重置密码, 是否继续?</span></div>
+                    </div>
+                    <div   style="margin-left: 61%;margin-top: 20px">
+                        <el-button @click="closeResetDia">取 消</el-button>
+                        <el-button type="primary" :loading="submitLoad" @click="isLeft=false;isRight=true">下一步</el-button>
+                    </div>
+                </div>
+                <div style="width: 48%;display: inline-block">
+                    <el-form label-width="100px">
+                        <el-form-item label="原密码" >
+                            <el-input v-model="originalPassword" type="password"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div   style="margin-left: 61%;margin-top: 20px">
+                        <el-button @click="closeResetDia">取 消</el-button>
+                        <el-button type="primary" :loading="submitLoad" @click="resetPassword()">确 定</el-button>
+                    </div>
+                </div>
+            </div>
+        </el-dialog>
+    </div>
 </template>
 
 <script>
     import CommonCRUD from '@/components/CommonCRUD';
     import UserStrcutre from '../data/UserStrcutre';
+    import md5 from '@/utils/md5';
     export default {
         name: "User",
         data() {
@@ -37,7 +65,12 @@
                         name: 'createdAt',
                         type: 'desc'
                     }
-                ]
+                ],
+                isLeft:true,
+                isRight:false,
+                chooseData:{},
+                resetDia:false,
+                originalPassword:""
             }
         },
         methods: {
@@ -70,7 +103,7 @@
                 }
 
             },
-            resetPassword(data){
+                showDia(data){
                 if (data.length !== 1) {
                     this.$message({
                         type: 'warning',
@@ -85,13 +118,44 @@
                     });
                     return;
                 }
-                data[0].password = null;
-                this.$http('PUT',`identity/sysUser/${data[0].id}id`,data[0],false).then( () => {
+                this.chooseData = data[0]
+                    this.resetDia = true
+
+            },
+            closeResetDia(){
+                this.isLeft=true;
+                this.isRight=false;
+                this.resetDia = false
+            },
+            resetPassword(){
+
+                let userName = sessionStorage.getItem("user")
+                if(this.originalPassword == ''){
                     this.$message({
-                        message: '密码重置成功',
-                        type: 'success'
-                    });
-                    this.$refs.table.refreshTableData();
+                        message:'原密码输入错误',
+                        type:'warning'
+                    })
+                    return
+                }
+                this.$http('POST', `/identity/sysUser/list`, {userName:userName,password:md5.hex_md5(this.originalPassword)}).then(data01=> {
+                    if (data01.length == 0) {
+                        this.$message({
+                            message: '原密码输入错误',
+                            type: 'warning'
+                        })
+                        return null;
+                    }
+                    this.chooseData.password = null;
+                    this.$http('PUT', `identity/sysUser/${this.chooseData.id}id`, this.chooseData, false).then(() => {
+                        this.$message({
+                            message: '密码重置成功',
+                            type: 'success'
+                        });
+                        this.resetDia = false
+                        this.isLeft=true;
+                        this.isRight=false
+                        this.$refs.table.refreshTableData();
+                    })
                 })
             }
         },
@@ -111,6 +175,13 @@
     }
 </script>
 
-<style scoped>
-
+<style>
+    .oneStep{
+        transition: 0.8s;
+        margin-left: 0px;
+    }
+    .twoStep{
+        transition: 0.8s;
+        margin-left: -99%;
+    }
 </style>

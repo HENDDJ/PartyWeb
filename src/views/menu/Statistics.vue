@@ -1,33 +1,27 @@
 <template>
     <section>
+        <div style="position: absolute;right: 0;top: 6px;">
+            <el-date-picker
+                size="mini"
+                v-model="year"
+                align="right"
+                type="year"
+                placeholder="选择年" @change="loadTables()">
+            </el-date-picker>
+            <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="mini">
+                <el-option
+                    v-for="item in districtList"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                </el-option>
+            </el-select>
+            <el-checkbox-group @change="handleCheckGroup" v-model="fakeValue" :max="1" style="display: inline-block;position: relative;top: -4px;">
+                <el-checkbox-button v-for="item in options" :label="item.value" :key="item.label + item.value">{{item.label}}</el-checkbox-button>
+            </el-checkbox-group>
+            <el-button style="padding: 4px 10px;position: relative;top: 2px;" type="primary" icon="el-icon-printer" size="mini" @click="print()">打印</el-button>
+        </div>
         <div>
-            <el-popover
-                placement="left"
-                width="600"
-                trigger="manual"
-                v-model="queryVisible">
-                <div style="text-align: left">
-                    <el-date-picker
-                        size="medium"
-                        v-model="year"
-                        align="right"
-                        type="year"
-                        placeholder="选择年" @change="loadTables()">
-                    </el-date-picker>
-                    <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="medium">
-                        <el-option
-                            v-for="item in districtList"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
-                    <el-button type="primary" icon="el-icon-printer" size="small" @click="print()">打印</el-button>
-                    <el-button type="primary" icon="el-icon-printer" size="small" @click="queryTable('1','Party')">农村</el-button>
-                    <el-button type="primary" icon="el-icon-printer" size="small" @click="queryTable('2','Office')">机关</el-button>
-                </div>
-                <el-button slot="reference" @click="queryVisible = !queryVisible" style="position: absolute;right: -30px;top: 50px;">操作</el-button>
-            </el-popover>
             <el-button  @click="controlPicture(!pictureCollapse)" style="position: absolute;right: -30px;top: 80px;">截图</el-button>
         </div>
 
@@ -48,6 +42,10 @@
                     </div>
                     <div class="result-table">
                         <div class="activity-label" id="activity-label-key">
+                            <div style="position: absolute;right: 5px;top:70px;">
+                                <el-button @click="scrollTo('left')" type="text" icon="el-icon-caret-left"></el-button>
+                                <el-button @click="scrollTo('right')" style="margin-left: -10px" type="text" icon="el-icon-caret-right"></el-button>
+                            </div>
                             <table class="tableContent" >
                                 <tr>
                                     <td v-for="item in activityList.title">
@@ -56,7 +54,7 @@
                                 </tr>
                             </table>
                         </div>
-                        <table class="tableContent" style="margin-top: -7px;overflow: scroll;max-height: 650px;" @scroll="handleScroll">
+                        <table id="result-table-content" class="tableContent" style="margin-top: -7px;overflow: scroll;max-height: 650px;" @scroll="handleScroll">
                             <tr v-for="(value,key) in activityList"  v-if="key!='title'">
                                 <td class="content" v-for="(index,item) in value"  >
                                     <div style="background-color: #39c667;line-height: 25px;height: 25px;" v-if="index.status=='2'" @click="showPictures(index)">已完成</div>
@@ -68,7 +66,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pictureshow" style="border: 1px #d8caca80 solid" v-if="pictureVisible">
+            <div class="pictureshow" style="border: 1px #d8caca80 solid" v-show="pictureVisible">
                 <p class="titleContent">{{countryName+"活动执行截图"}}</p><br/>
                 <div v-if="tipShow">请选择需要查看的任务记录！</div>
                 <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
@@ -154,8 +152,19 @@
                 pictureCollapse:false,
                 pictureVisible:false,
                 queryVisible:false,
-                objectType:'',
+                objectType: '',
                 districtType:'',
+                options: [
+                    {
+                        value: 1,
+                        label: '农村'
+                    },
+                    {
+                        value: 2,
+                        label: '机关'
+                    }
+                ],
+                fakeValue: [1]
             }
         },
         methods:{
@@ -176,7 +185,7 @@
                     this.districtType = this.user.sysDistrict.districtType;
                 }
                 if(!this.objectType){
-                    this.objectType = this.user.sysDistrict.districtType=='Party'?'1':'2';
+                    this.objectType = this.user.sysDistrict.districtType=='Party' ? '1':'2';
                 }
                 this.toneName = this.districtList.filter( item => item.value==this.districtId)[0].label;
                 this.$http('post',`identity/parActivity/list/completion?year=${new Date(this.year).Format("yyyy")}&districtId=${this.districtId}&objectType=${this.objectType}&districtType=${this.districtType}`,false).then( data => {
@@ -355,7 +364,7 @@
                     this.pictureVisible = false;
                     document.getElementsByClassName('contentDiv')[0].style.width= '100%';
                     document.getElementsByClassName("contentDiv")[0].style.marginLeft='0';
-                    document.getElementsByClassName("wholeContent")[0].style.width='98%';
+                    document.getElementsByClassName("wholeContent")[0].style.width='99%';
                     this.pictureCollapse = value;
 
                 }
@@ -364,6 +373,28 @@
             handleScroll(e) {
                 document.getElementById('activity-label-key').scrollLeft = e.target.scrollLeft;
                 document.getElementById('org-label-key').scrollTop = e.target.scrollTop;
+            },
+            scrollTo(type) {
+                if (type === 'left') {
+                    document.getElementById('result-table-content').scrollLeft -= 400;
+                    document.getElementById('activity-label-key').scrollLeft -= 400;
+
+                } else {
+                    document.getElementById('result-table-content').scrollLeft += 400;
+                    document.getElementById('activity-label-key').scrollLeft += 400;
+                }
+            },
+            handleCheckGroup(value) {
+                if (value.length === 0) {
+                    return;
+                }
+                if (value[0] === 1) {
+                    this.queryTable('1', 'Party');
+                } else if (value[0] === 2) {
+                    this.queryTable('2', 'Office')
+                } else {
+                    console.log('类型错误')
+                }
             }
         },
         created() {
@@ -392,6 +423,7 @@
     .result-table {
         width: calc(100% - 100px);
         overflow-x: scroll;
+        position: relative;
     }
 
     .tableline::before{

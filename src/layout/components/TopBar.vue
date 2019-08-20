@@ -305,7 +305,7 @@
                     })
                     return
                 }
-                this.$http('POST', `/identity/sysUser/list`, {userName:userName,password:md5.hex_md5(this.originalPassword)}).then(data01=>{
+                this.$http('POST', `/identity/sysUser/list`, {userName:userName,password:md5.hex_md5(this.originalPassword)}, false).then(data01=>{
                         if(data01.length == 0){
                             this.$message({
                                 message:'原密码输入错误',

@@ -352,15 +352,14 @@ export default {
         font-size: 18px;
         color: #b4d6ff;
     }
-     .login-btn1 {
-        /*  background: url("/static/img/login/loginbtn1.png");*/
+    .login-form1 .vs-button-primary.vs-button-gradient {
+        background: transparent linear-gradient(0deg, rgba(213, 95, 90, 1), rgba(213, 95, 90, 0.7)) !important;
         background-size: cover;
         width:100px !important;
         height:40px ;
         margin-bottom: 20px;
-         background: transparent linear-gradient(0deg, rgba(213, 95, 90, 1), rgba(213, 95, 90, 0.7)) !important;
-         font-size: 14px;
-         font-weight: bold;
+        font-size: 14px;
+        font-weight: bold;
         color: white;
     }
 </style>

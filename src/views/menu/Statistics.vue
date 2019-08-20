@@ -23,6 +23,8 @@
                         </el-option>
                     </el-select>
                     <el-button type="primary" icon="el-icon-printer" size="small" @click="print()">打印</el-button>
+                    <el-button type="primary" icon="el-icon-printer" size="small" @click="queryTable('1','Party')">农村</el-button>
+                    <el-button type="primary" icon="el-icon-printer" size="small" @click="queryTable('2','Office')">机关</el-button>
                 </div>
                 <el-button slot="reference" @click="queryVisible = !queryVisible" style="position: absolute;right: -30px;top: 50px;">操作</el-button>
             </el-popover>
@@ -146,9 +148,16 @@
                 pictureCollapse:false,
                 pictureVisible:false,
                 queryVisible:false,
+                objectType:'',
+                districtType:'',
             }
         },
         methods:{
+            queryTable(objectType,districtType){
+                this.objectType = objectType;
+                this.districtType = districtType;
+                this.showDistrictList();
+            },
             loadTables(){
                 if(!this.year){
                     this.year=new Date();
@@ -157,15 +166,23 @@
                     this.districtId = this.user.districtId;
                     this.toneName = this.user.organizationName;
                 }
+                if(!this.districtType){
+                    this.districtType = this.user.sysDistrict.districtType;
+                }
+                if(!this.objectType){
+                    this.objectType = this.user.sysDistrict.districtType=='Party'?'1':'2';
+                }
                 this.toneName = this.districtList.filter( item => item.value==this.districtId)[0].label;
-                this.$http('post',`identity/parActivity/list/completion?year=${new Date(this.year).Format("yyyy")}&districtId=${this.districtId}`,false).then( data => {
+                this.$http('post',`identity/parActivity/list/completion?year=${new Date(this.year).Format("yyyy")}&districtId=${this.districtId}&objectType=${this.objectType}&districtType=${this.districtType}`,false).then( data => {
                     this.activityList = data;
                 });
             },
             //查询框下拉项
             showDistrictList(){
+                this.districtList = [];
+                this.districtId ='';
                 //镇级组织
-                this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
+                this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2,districtType: this.districtType},false).then(data => {
                     data.forEach( item => {
                         this.districtList.push( {value:item.districtId , label:item.districtName});
                     });
@@ -227,24 +244,18 @@
                     if (!data.content[0]) {
                         return;
                     }
-                    let i = 0
+                    let i = 0;
                     for(let j = 0;j<data.content.length;j++){
                         if(data.content[j].imageUrl){
-                            i = j
+                            i = j;
                             break;
-
                             return;
-                        }
-                        else if(data.content.length -1 == j){
+                        }else if(data.content.length -1 == j){
                             break;
-
                             return;
+                        }else {
+                            continue;
                         }
-                            else {
-                                continue;
-
-                        }
-
                     }
                     if(!data.content[i].imageUrl){
                         return;

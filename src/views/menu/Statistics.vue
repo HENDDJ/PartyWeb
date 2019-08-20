@@ -34,7 +34,7 @@
                             <p style="line-height: 50px; text-align: right;padding-right: 10px;">任务</p>
                             <p style="line-height: 50px; text-align: left;padding-left: 10px;">村名</p>
                         </div>
-                        <table id="org-label-key" style="overflow-x: scroll;overflow-y: hidden;max-height: 650px;margin-top: 1px;" class="tableCol">
+                        <table id="org-label-key" style="overflow-x: scroll;overflow-y: hidden;max-height: 620px;margin-top: 1px;" class="tableCol">
                             <tr v-for="(value,key) in activityList" v-if="key!='title'">
                                 <td class="tableColContent"> {{key}}</td>
                             </tr>
@@ -54,7 +54,7 @@
                                 </tr>
                             </table>
                         </div>
-                        <table id="result-table-content" class="tableContent" style="margin-top: -7px;overflow: scroll;max-height: 650px;" @scroll="handleScroll">
+                        <table id="result-table-content" class="tableContent" style="margin-top: -7px;overflow: scroll;max-height: 620px;" @scroll="handleScroll">
                             <tr v-for="(value,key) in activityList"  v-if="key!='title'">
                                 <td class="content" v-for="(index,item) in value"  >
                                     <div style="background-color: #39c667;line-height: 25px;height: 25px;" v-if="index.status=='2'" @click="showPictures(index)">已完成</div>

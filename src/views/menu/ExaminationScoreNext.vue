@@ -70,7 +70,7 @@
                 <vs-list-header icon="offline_pin" title="已完成" style="font-size: 20px"></vs-list-header>
                 <vs-list-item>
                     <div style="margin-left: 0px" v-for="item in detailOk">
-                        <vs-chip>
+                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="#24c1a0">
                             {{item.title}}
                         </vs-chip></div>
                 </vs-list-item>
@@ -79,7 +79,7 @@
                 <vs-list-header icon="hourglass_full" title="待审核" style="font-size: 20px;color: #fabe49"></vs-list-header>
                 <vs-list-item>
                     <div style="margin-left: 0px" v-for="item in detailWait">
-                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="#24c1a0">
+                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="rgb(173, 159, 92)">
                            {{item.title}}
                         </vs-chip></div>
                 </vs-list-item>
@@ -88,7 +88,7 @@
                 <vs-list-header icon="info" title="未完成" style="font-size: 20px;color: #b94a48"></vs-list-header>
                 <vs-list-item>
                     <div style="margin-left: 0px" v-for="item in detailNot">
-                        <vs-chip>
+                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="rgb(199, 89, 47)">
                             {{item.title}}
                         </vs-chip></div>
                 </vs-list-item>
@@ -166,6 +166,9 @@
             },
             showDialog(val){
                this.$http('Post','identity/parActivityObject/examScoreDetail?districtName='+val+"&year="+this.chooseYear).then((data)=>{
+                   this.detailOk = []
+                   this.detailWait = []
+                   this.detailNot = []
                    data.forEach(item=>{
                        if(item.sta == 2){
                            this.detailOk.push(item)

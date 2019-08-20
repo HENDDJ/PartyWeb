@@ -62,11 +62,24 @@
             changeActiveIndex(index) {
                 this.activeIndex = index;
             },
+            changeMenuBg(){
+                let user = JSON.parse(sessionStorage.getItem("userInfo"));
+                if(user.roleCode === 'CITY_LEADER'){
+                    document.getElementsByClassName("el-menu-personal")[0].style.background = "url('/static/img/menushi.png')";
+                }else if(user.roleCode === 'TOWN_REVIEWER') {
+                    document.getElementsByClassName("el-menu-personal")[0].style.background="url('/static/img/menuzhen.png')";
+                }else{
+                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/menucun.png')";
+                }
+            }
         /*    handleCheckNumber(){
                 this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
                    this.checkNumber = data;
                 });
             }*/
+        },
+        mounted(){
+            this.changeMenuBg();
         },
         created() {
             this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
@@ -85,8 +98,8 @@
     .el-menu-personal {
         height: 100%;
         text-align: left;
-        background: url("/static/img/menu2.png");
-        background-size: cover;
+        background: url("/static/img/menucun.png");
+        background-size: 100% 100% !important;
     }
     .el-menu-personal  .el-badge__content{
         background-color: #e6a23c;

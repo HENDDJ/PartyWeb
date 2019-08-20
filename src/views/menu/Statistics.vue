@@ -32,33 +32,39 @@
         <div class='wholeContent' >
             <div class="contentDiv" style="border: 1px #d8caca80 solid" >
                 <p class="titleContent">{{toneName+"活动完成情况一览表"}}</p>
-                <table class="tableCol" >
-                    <tr>
-                        <td>
-                            <div class="tableline">
-                                <p style="line-height: 50px; text-align: right;padding-right: 10px;">任务</p>
-                                <p style="line-height: 50px; text-align: left;padding-left: 10px;">村名</p>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr v-for="(value,key) in activityList" v-if="key!='title'">
-                        <td class="tableColContent"> {{key}}</td>
-                    </tr>
-                </table>
-                <table class="tableContent">
-                    <tr>
-                        <td v-for="item in activityList.title">
-                            <button type="text" >{{item}}</button>
-                        </td>
-                    </tr>
-                    <tr v-for="(value,key) in activityList"  v-if="key!='title'">
-                        <td class="content" v-for="(index,item) in value"  >
-                            <div style="background-color: #39c667;line-height: 25px;height: 25px;" v-if="index.status=='2'" @click="showPictures(index)">已完成</div>
-                            <div style="background-color: #DC143C;line-height: 25px;height: 25px;"  v-else-if="index.status!='2' && (index.objectId !== null)" >未完成</div>
-                            <div style="background-color: #DC7F51;line-height: 25px;height: 25px;"  v-else-if="index.status== null && (index.objectId === null)">未指派</div>
-                        </td>
-                    </tr>
-                </table>
+                <div style="display: flex">
+                    <div>
+                        <div class="tableline">
+                            <p style="line-height: 50px; text-align: right;padding-right: 10px;">任务</p>
+                            <p style="line-height: 50px; text-align: left;padding-left: 10px;">村名</p>
+                        </div>
+                        <table id="org-label-key" style="overflow-x: scroll;overflow-y: hidden;max-height: 650px;margin-top: 1px;" class="tableCol">
+                            <tr v-for="(value,key) in activityList" v-if="key!='title'">
+                                <td class="tableColContent"> {{key}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="result-table">
+                        <div class="activity-label" id="activity-label-key">
+                            <table class="tableContent" >
+                                <tr>
+                                    <td v-for="item in activityList.title">
+                                        <button type="text" >{{item}}</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <table class="tableContent" style="margin-top: -7px;overflow: scroll;max-height: 650px;" @scroll="handleScroll">
+                            <tr v-for="(value,key) in activityList"  v-if="key!='title'">
+                                <td class="content" v-for="(index,item) in value"  >
+                                    <div style="background-color: #39c667;line-height: 25px;height: 25px;" v-if="index.status=='2'" @click="showPictures(index)">已完成</div>
+                                    <div style="background-color: #DC143C;line-height: 25px;height: 25px;"  v-else-if="index.status!='2' && (index.objectId !== null)" >未完成</div>
+                                    <div style="background-color: #DC7F51;line-height: 25px;height: 25px;"  v-else-if="index.status== null && (index.objectId === null)">未指派</div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
             </div>
             <div class="pictureshow" style="border: 1px #d8caca80 solid" v-if="pictureVisible">
                 <p class="titleContent">{{countryName+"活动执行截图"}}</p><br/>
@@ -340,6 +346,10 @@
 
                 }
 
+            },
+            handleScroll(e) {
+                document.getElementById('activity-label-key').scrollLeft = e.target.scrollLeft;
+                document.getElementById('org-label-key').scrollTop = e.target.scrollTop;
             }
         },
         created() {
@@ -363,6 +373,11 @@
         height:100px;
         box-sizing:border-box;
         border:1px solid #d8caca80;
+    }
+
+    .result-table {
+        width: calc(100% - 100px);
+        overflow-x: scroll;
     }
 
     .tableline::before{
@@ -399,7 +414,7 @@
         display: inline-block;
     }
     .tableCol{
-        width:100px;
+        width:106px;
         display: inline-block;
         vertical-align: top;
         margin-top: -3px;
@@ -419,10 +434,12 @@
         height: 25px!important;
         text-align: center;
     }
+    .tableCol::-webkit-scrollbar {
+        width: 0;
+    }
     .tableContent{
-        width: calc(100% - 100px);
+        width: 100%;
         display: inline-block;
-        overflow: scroll;
         text-align: center;
         margin-top: -3px;
     }
@@ -434,6 +451,10 @@
         border-radius:4px;
         background-color: #F4F4F4;
         font-size: 14px;
+    }
+    .tableContent > tr > td > div{
+        height: 25px;
+        width: 100px;
     }
     .tableContent .content{
         width: 100px;
@@ -458,12 +479,18 @@
         line-height: 30px;
     }
     .wholeContent{
-        margin-top:10px;
         width: 99%;
     }
 </style>
 <style>
     .pictureshow .con-vs-loading{
         background: transparent!important;
+    }
+    .activity-label {
+        width: calc(100% - 5px);
+        overflow-x: hidden;
+    }
+    .activity-label::-webkit-scrollbar {
+        width: 0;
     }
 </style>

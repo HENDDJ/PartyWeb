@@ -112,7 +112,7 @@
 <style lang="stylus">
     :root {
         --vs-primary:31,116,255;--vs-danger:255,71,87;--vs-success:70,201,58;--vs-dark:30,30,30;--vs-warning:255,186,0;--vs-light:245,245,245;
-        --vs-menu:31,12,123;
+        --vs-menu: 233, 95, 90;
     }
     .el-dialog__title {
         padding-left: 7px!important

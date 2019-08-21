@@ -62,11 +62,28 @@
             changeActiveIndex(index) {
                 this.activeIndex = index;
             },
+            changeMenuBg(){
+                let user = JSON.parse(sessionStorage.getItem("userInfo"));
+                if(user.roleCode === 'CITY_LEADER'){
+                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage = "url('/static/img/menushi.png')";
+                }else if(user.roleCode === 'TOWN_REVIEWER') {
+                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/menuzhen.png')";
+                }else{
+                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/menucun.png')";
+                }
+                document.getElementsByClassName("el-menu-personal")[0].style.backgroundSize= `100% ${document.body.clientHeight - 70}px`
+            }
         /*    handleCheckNumber(){
                 this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
                    this.checkNumber = data;
                 });
             }*/
+        },
+        mounted(){
+            this.changeMenuBg();
+            window.onresize = () => {
+                document.getElementsByClassName("el-menu-personal")[0].style.backgroundSize= `100% ${document.body.clientHeight - 70}px`
+            }
         },
         created() {
             this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
@@ -85,8 +102,7 @@
     .el-menu-personal {
         height: 100%;
         text-align: left;
-        background: url("/static/img/menu2.png");
-        background-size: cover;
+        background-repeat: no-repeat;
     }
     .el-menu-personal  .el-badge__content{
         background-color: #e6a23c;

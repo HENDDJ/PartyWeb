@@ -1,5 +1,14 @@
 <template>
+    <div>
+    <div class="el-loading" v-if="isVisible">
+        <div class="load">
+            <a style="color: #409EFF">数据上传中，请稍后</a>
+            <Spinner name="line-scale-pulse-out-rapid" color="#7cff66"/>
+            <div></div>
+        </div>
+    </div>
     <div style="display: flex">
+
         <div class="activity-release">
             <div class="topCard">
                 <el-card style="height:100%;text-align: left" class="titleCard">
@@ -136,13 +145,6 @@
                         </el-row>
                     </el-form>
                 </div>
-                <div class="el-loading" v-if="isVisible">
-                    <div class="load">
-                        <a style="color: #409EFF">数据上传中，请稍后</a>
-                        <Spinner name="line-scale-pulse-out-rapid" color="#7cff66"/>
-                        <div></div>
-                    </div>
-                </div>
             </el-card>
 
         </div>
@@ -154,7 +156,7 @@
                 </el-card>
             </div>
             <el-card style="height: 500px; margin-top: -50px;padding:50px 0;text-align: left;overflow: hidden">
-                <div class="inner-container" style="width: 100%">
+                <div id="inner" class="inner-container" style="width: 100%" :style="scroll" ref="scl">
                         <div style="background-color: #ecf5ff;;border-radius: 4px;width: 100%;padding: 5px 0 5px 3px;margin-bottom: 8px" v-for="item in actiityList">
                             <el-tooltip :content="item.title" placement="left" v-if="item.title.length>=14">
                                 <p style="font-size: 18px;padding: 5px 0 5px 3px">{{item.title.substring(0,13)}}...</p>
@@ -186,6 +188,7 @@
                     </div>
             </el-card>
         </div>
+    </div>
     </div>
 </template>
 
@@ -243,7 +246,10 @@
                     type: [{required: true, message: '请输入任务类型', trigger: 'blur'}],
                     newObject: [{validator: validatePass, trigger: 'blur'}]
                 },
-                actiityList:[]
+                actiityList:[],
+                scroll:{
+                    marginTop:'0px'
+                }
 
             }
         },
@@ -253,6 +259,31 @@
                     this.radioChoose(newVal);
                 }
             },
+            'actiityList': {
+                handler: function (newVal, oldVal) {
+                    if(newVal.length>0){
+                        let height = this.actiityList.length*70
+                        let time = (this.actiityList.length-6)*2000
+                        this.scroll.marginTop = `-${height}px`
+                        this.scroll.transition = `${this.actiityList.length*2}s`
+                        setInterval(()=>{
+                            if(this.scroll.marginTop == `-${height}px`){
+                                this.scroll.marginTop = `0px`;
+                                this.scroll.transition = `0s`;
+                                setTimeout(()=>{
+                                    this.scroll.marginTop = `-${height}px`
+                                    this.scroll.transition = `${this.actiityList.length*2}s`
+                                },500)
+
+                            }else{
+                                this.scroll.marginTop = `-${height}px`
+                                this.scroll.transition = `${this.actiityList.length*2}s`
+                            }
+                        },time)
+                    }
+                }
+            }
+
         },
         components: {
             CommonFileUpload,
@@ -380,7 +411,7 @@
             },
             //发布的活动信息
             getActivity(){
-                this.$http('Post','/identity/parActivity/list?sort=month,desc',false).then(data=>{
+                this.$http('Post','/identity/parActivity/listAll',false).then(data=>{
                     this.actiityList = data
                 }).catch(_=>{
                     this.$messgae(
@@ -390,11 +421,15 @@
                         }
                     )
                 })
-            }
+            },
+
+        },
+        mounted(){
+
         },
         created() {
             this.getActivity();
-        }
+        },
     }
 </script>
 
@@ -535,22 +570,22 @@
         overflow: hidden !important;
         padding-bottom: 50px;
     }
-    .inner-container {
-    animation: myMove 160s linear infinite;
-    animation-fill-mode: forwards;
-    }
-    .inner-container:hover{
-        animation-play-state: paused;
-    }
-    /*文字无缝滚动*/
-    @keyframes myMove {
-        0% {
-            transform: translateY(0);
-        }
+    /*.inner-container {*/
+    /*animation: myMove 160s linear infinite;*/
+    /*animation-fill-mode: forwards;*/
+    /*}*/
+    /*.inner-container:hover{*/
+        /*animation-play-state: paused;*/
+    /*}*/
+    /*!*文字无缝滚动*!*/
+    /*@keyframes myMove {*/
+        /*0% {*/
+            /*transform: translateY(0);*/
+        /*}*/
 
 
-        100% {
-            transform: translateY(-6050px);
-        }
-    }
+        /*100% {*/
+            /*transform: translateY(-6050px);*/
+        /*}*/
+    /*}*/
 </style>

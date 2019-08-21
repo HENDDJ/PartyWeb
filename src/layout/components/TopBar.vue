@@ -8,11 +8,11 @@
             class="top_bar_content">
             <div slot="title">
                 <div class="header-title"></div>
-                <div class="three_level">
-                    <template v-if="user.roleCode === 'CITY_LEADER'">市级平台</template>
-                    <template v-else-if="user.roleCode === 'TOWN_REVIEWER'">镇级平台</template>
-                    <template v-else-if="user.roleCode === 'COUNTRY_SIDE_ACTOR'">村级平台</template>
-                </div>
+<!--                <div class="three_level">-->
+<!--                    <template v-if="user.roleCode === 'CITY_LEADER'">市级平台</template>-->
+<!--                    <template v-else-if="user.roleCode === 'TOWN_REVIEWER'">镇级平台</template>-->
+<!--                    <template v-else-if="user.roleCode === 'COUNTRY_SIDE_ACTOR'">村级平台</template>-->
+<!--                </div>-->
             </div>
             <el-tooltip effect="dark" content="搜索" placement="bottom">
                 <div class="data_vis" @click="toggleSearch">
@@ -504,10 +504,10 @@
     }
 
     .top_bar .header-title {
-        width: calc(950 * 100vw/1920 * 0.85);
-        height: calc(90 * 100vw/1920 * 0.85);
-        min-width: 683px;
-        min-height: 39px;
+        width: calc(850 * 100vw/1920 * 0.82);
+        height: calc(90 * 100vw/1920 * 0.82);
+        min-width: 640px;
+        min-height: 67px;
         background: url("/static/header/title.png") no-repeat;
         background-size: 100% 100%;
         position: relative;

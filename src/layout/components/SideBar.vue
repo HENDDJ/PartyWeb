@@ -65,11 +65,11 @@
             changeMenuBg(){
                 let user = JSON.parse(sessionStorage.getItem("userInfo"));
                 if(user.roleCode === 'CITY_LEADER'){
-                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage = "url('/static/img/shi.png')";
+                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage = "url('/static/img/menushi.png')";
                 }else if(user.roleCode === 'TOWN_REVIEWER') {
-                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/zhen.png')";
+                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/menuzhen.png')";
                 }else{
-                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/cun.png')";
+                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/menucun.png')";
                 }
                 document.getElementsByClassName("el-menu-personal")[0].style.backgroundSize= `100% ${document.body.clientHeight - 70}px`
             }

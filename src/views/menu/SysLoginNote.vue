@@ -36,7 +36,7 @@
             this.columns.forEach(item => {
                 if (item.name == "createdAt") {
                     item.formatter = (row, column) => {
-                        return row.createdAt.replace(/T/, " ").split('.')[0]
+                          return row.createdAt ? ( row.createdAt.search("T") != -1 ? row.createdAt.replace(/T/, " ").split('.')[0]: row.createdAt): '';
                     }
                 }
             })

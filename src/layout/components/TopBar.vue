@@ -43,9 +43,8 @@
                     <vs-sidebar-item index="1" icon="question_answer" v-if="this.user.roleCode=='DEVELOPER'||this.user.roleCode=='CITY_LEADER'" @click="openLogDia()">
                         操作日志
                     </vs-sidebar-item>
-                    <vs-sidebar-item index="2" icon="gavel" @click="openResetDia()">密码重置
-                    </vs-sidebar-item>
-                    <vs-sidebar-item icon="edit" type="flat" @click="pswDia=true;active=false">修改密码</vs-sidebar-item>
+                    <vs-sidebar-item index="2" icon="gavel" @click="openResetDia()">密码重置 </vs-sidebar-item>
+                    <vs-sidebar-item index="3" icon="edit"  @click="pswDia=true;active=false">修改密码</vs-sidebar-item>
                     <vs-divider style="font-size: 14px;font-weight: 600;color: #1f74ff" color="primary" position="left">
                         账号信息
                     </vs-divider>
@@ -60,7 +59,6 @@
                         组织介绍
                     </vs-divider>
                     <p>{{user.introduction}}</p><br/>
-
                     <div class="footer-sidebar" slot="footer">
                         <vs-button icon="reply" color="danger" type="flat" @click="logOut">切换账号</vs-button>
                     </div>

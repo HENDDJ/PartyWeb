@@ -178,7 +178,11 @@
                     this.year=new Date();
                 }
                 if(!this.districtId){
-                    this.districtId = this.user.districtId;
+                    if(this.districtList.length>1){
+                        this.districtId = this.user.districtId;
+                    }else{
+                        this.districtId = this.districtList[0].value;
+                    }
                     this.toneName = this.user.organizationName;
                 }
                 if(!this.districtType){

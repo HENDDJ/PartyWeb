@@ -245,6 +245,8 @@
                                 this.submitLoading = false;
                                 this.dialogVisible = false;
                                 this.$refs.table.refreshTableData();
+                            }).catch( ()=>{
+                                this.submitLoading = true;
                             });
                         }
                         //编辑
@@ -254,6 +256,8 @@
                                 this.dialogVisible = false;
                                 this.$refs.table.refreshTableData();
                                 this.initForm();
+                            }).catch( ()=>{
+                                this.submitLoading = true;
                             });
                         }else{//查看
                             this.submitLoading = false;

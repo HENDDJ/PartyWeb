@@ -131,6 +131,8 @@
                         this.dialogVisible = false;
                         this.$refs.table.refreshTableData();
                         this.form ={};
+                    }).catch(() =>{
+                        this.submitLoading = false;
                     });
                 }
                 //编辑
@@ -140,6 +142,8 @@
                         this.dialogVisible = false;
                         this.$refs.table.refreshTableData();
                         this.form={};
+                    }).catch(() =>{
+                        this.submitLoading = false;
                     });
                 }else{//查看
                     this.submitLoading = false;

@@ -160,6 +160,8 @@
                                 this.$refs.table.refreshTableData();
                                 this.form = {};
                                 this.showZhenList();
+                            }).catch(() =>{
+                                this.submitLoading = false;
                             });
                         }
                         //编辑
@@ -170,6 +172,8 @@
                                 this.$refs.table.refreshTableData();
                                 this.form = {};
                                 this.showZhenList();
+                            }).catch(() =>{
+                                this.submitLoading = false;
                             });
                         } else {//查看
                             this.submitLoading = false;

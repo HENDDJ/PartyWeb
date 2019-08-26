@@ -10,6 +10,7 @@ import Search from '@/views/search/Search';
 import CloudRoot from '@/views/cloud/CloudRoot';
 import CloudMap from '@/views/cloud/CloudMap';
 import CloudVideo from '@/views/cloud/CloudVideo';
+import ParActivityManage from '@/views/menu/ParActivityManage';
 
 Vue.use(Router);
 
@@ -47,6 +48,16 @@ const router = new Router({
                 path: '/',
                 name: 'DashboardRoot',
                 component: () => import('@/views/menu/CentralConsole')
+            }]
+        },
+        {
+            path: '/parActivityManage',
+            name: 'ParActivityManage',
+            component: () => import('@/layout/Layout'),
+            children: [{
+                path: '/',
+                name: 'ParActivityManage',
+                component: ParActivityManage
             }]
         },
         {

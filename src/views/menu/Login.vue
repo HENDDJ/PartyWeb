@@ -89,7 +89,12 @@ export default {
                     this.$store.commit("getMenu",data);
                     DynamicRoutes.transfer(data);
                     this.$router.addRoutes(data);
-                    this.$router.push({path: 'Dashboard'});
+                    let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+                    if(userInfo.roleCode==='COUNTRY_SIDE_ACTOR'){
+                        this.$router.push({path: '/activity/parActivityManage/'});
+                    }else{
+                        this.$router.push({path: 'Dashboard'});
+                    }
                     this.loading = false;
                 });
             }).catch(e => {

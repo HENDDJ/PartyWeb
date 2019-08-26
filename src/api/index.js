@@ -56,20 +56,20 @@ service.interceptors.response.use(
         } else if (response.data.code === CODE_MAP.PWD_ERROR) {
             // 请求失败则要弹提示框
             return Promise.reject(response.data.msg);
-        } else if (response.data.code === CODE_MAP.TOKEN_ERROR) {
-            // 请求失败则要弹提示框
-            Message.error("用户已失效，请重新登录");
-            this.router.push({path:'/login'});
-            return Promise.reject(response.data.msg);
-        }else {
+        } else {
             return response.data
         }
     },
     error => {
-        // 处理HTTP请求错误
-        Message.error('HTTP请求错误！');
-        // this.router.push({path:'/login'});
-        return Promise.reject(error);
+        if(error.response.status===401){
+            Message.warning('用户已失效，请重新登录');
+            this.router.push({path:'/login'});
+            return Promise.reject(error);
+        }else{
+            Message.warning('文件上传过大或者请求错误！');
+            return Promise.reject(error);
+        }
+
     }
 );
 

@@ -392,7 +392,7 @@
                     </el-col>
                     <el-col :span="16">
                         <h3 style="text-align: center;line-height: 1.1">{{picTitle}}</h3>
-                        <div style="width: 100%">
+                        <div style="width: 100%" v-if="phoneOrTv">
                         <h4 style="text-align: left;line-height: 2;display: inline-block" v-if="timeLines[0] || timeLines[1] ">会议时间：<a style="font-weight: 100;color: #73767c">{{timeLines[1]|dateServer}} — {{timeLines[0]|dateServer}}</a></h4>
                         <h4 style="text-align: right;line-height: 2;display: inline-block;margin-left: 12%" v-if="timeLines[0] && timeLines[1] ">时长：<a style="font-weight: 100;color: #73767c">{{timeLength}}</a></h4>
                         </div>
@@ -554,6 +554,8 @@
                 progressType: 'line',
                 //图片时间
                 timeLines:[],
+                //手机截图或电视截图，判断时间是否显示
+                phoneOrTv:true
             }
         },
         watch: {
@@ -999,6 +1001,7 @@
                 return Math.floor(distance/(24*3600*1000))
             },
             getTV(item){
+                this.phoneOrTv = true
                 if (!this.townDetailVis) {
                     this.townDetailVis = true;
                 }
@@ -1032,6 +1035,7 @@
                 });
             },
             getPhone(item) {
+                this.phoneOrTv = false
                 if (!this.townDetailVis) {
                     this.townDetailVis = true;
                 }
@@ -1079,7 +1083,6 @@
                 }
             },
             imgTFPhone(item){
-
                 let imgUrl = item.imageUrl.toString()
                 if (imgUrl.indexOf("http" )== -1) {
                     if(imgUrl[0] === '.'){

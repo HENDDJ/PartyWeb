@@ -357,7 +357,7 @@
                         this.isVisible = true
                         this.form.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
                         this.form.status = '0'
-                        this.form.month = this.monVal
+                        this.form.month = this.monVal.Format("yyyy-MM-dd")
                         this.form.releaseTime = new Date().Format("yyyy-MM-ddTHH:mm:ss");
                         if (this.form.fileUrls) {
                             var ss = this.form.fileUrls.toString().split(",")

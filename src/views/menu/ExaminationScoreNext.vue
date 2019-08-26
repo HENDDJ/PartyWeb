@@ -34,10 +34,10 @@
                     <div class="itemUp">{{item.town}}</div>
                     <div class="itemDown">
                         <a>{{item.cun[0].townExam}}分
-                            <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 17px">({{item.cun[0].score|percent}}%)</span>
-                            <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 17px">({{item.cun[0].score|percent}}%)</span>
-                            <span v-else-if="item.cun[0].townScore<0.8" style="color:rgba(78,103,179,0.7);font-size: 17px">({{item.cun[0].score|percent}}%)</span>
-                            <span v-else style="color:#1bc821;font-size: 17px">({{item.cun[0].score|percent}}%)</span>
+                            <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 17px">({{item.cun[0].townScore|percent}}%)</span>
+                            <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 17px">({{item.cun[0].townScore|percent}}%)</span>
+                            <span v-else-if="item.cun[0].townScore<0.8" style="color:rgba(78,103,179,0.7);font-size: 17px">({{item.cun[0].townScore|percent}}%)</span>
+                            <span v-else style="color:#1bc821;font-size: 17px">({{item.cun[0].townScore|percent}}%)</span>
                             </a>
                     </div>
                 </div>

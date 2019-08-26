@@ -91,7 +91,7 @@ export default {
                     this.$router.addRoutes(data);
                     let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
                     if(userInfo.roleCode==='COUNTRY_SIDE_ACTOR'){
-                        this.$router.push({path: 'ParActivityManage'});
+                        this.$router.push({path: '/activity/parActivityManage/'});
                     }else{
                         this.$router.push({path: 'Dashboard'});
                     }

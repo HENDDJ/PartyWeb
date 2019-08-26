@@ -16,9 +16,10 @@
                     :value="item.value">
                 </el-option>
             </el-select>
-            <el-checkbox-group @change="handleCheckGroup" v-model="fakeValue" :max="1" style="display: inline-block;position: relative;top: -4px;">
-                <el-checkbox-button v-for="item in options" :label="item.value" :key="item.label + item.value">{{item.label}}</el-checkbox-button>
-            </el-checkbox-group>
+            <el-radio-group v-model="radioName" size="mini" style="display: inline-block;position: relative;width: 115px !important;top:1px;" @change="handleRadioGroup">
+                <el-radio-button label="农村"></el-radio-button>
+                <el-radio-button label="机关" ></el-radio-button>
+            </el-radio-group>
             <el-button style="padding: 4px 10px;position: relative;top: 2px;" type="primary" icon="el-icon-printer" size="mini" @click="print()">打印</el-button>
         </div>
         <div>
@@ -154,17 +155,7 @@
                 queryVisible:false,
                 objectType: '',
                 districtType:'',
-                options: [
-                    {
-                        value: 1,
-                        label: '农村'
-                    },
-                    {
-                        value: 2,
-                        label: '机关'
-                    }
-                ],
-                fakeValue: [1]
+                radioName:'',
             }
         },
         methods:{
@@ -190,6 +181,7 @@
                 }
                 if(!this.objectType){
                     this.objectType = this.user.sysDistrict.districtType=='Party' ? '1':'2';
+                    this.radioName = this.user.sysDistrict.districtType=='Party' ? '农村':'机关';
                 }
                 this.toneName = this.districtList.filter( item => item.value==this.districtId)[0].label;
                 this.$http('post',`identity/parActivity/list/completion?year=${new Date(this.year).Format("yyyy")}&districtId=${this.districtId}&objectType=${this.objectType}&districtType=${this.districtType}`,false).then( data => {
@@ -375,13 +367,12 @@
                     document.getElementById('activity-label-key').scrollLeft += 400;
                 }
             },
-            handleCheckGroup(value) {
-                if (value.length === 0) {
-                    return;
-                }
-                if (value[0] === 1) {
+            handleRadioGroup(value) {
+                if (value === '农村') {
+                    this.radioName = '农村';
                     this.queryTable('1', 'Party');
-                } else if (value[0] === 2) {
+                } else if (value=== '机关') {
+                    this.radioName = '机关';
                     this.queryTable('2', 'Office')
                 } else {
                     console.log('类型错误')

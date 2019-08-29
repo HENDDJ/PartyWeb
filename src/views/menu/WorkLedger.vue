@@ -1,11 +1,11 @@
 <template>
     <section>
         <CommonCRUD  :columns="columns" apiRoot="/identity/workLedger" :formColumns="formColumns" :queryFormColumns="queryForm">
-            <template slot="handle" slot-scope="scope" >
+           <!-- <template slot="handle" slot-scope="scope" >
                 <div class="encStyle" @click="downLoad(scope.row)">
                     {{(scope.row.enclosure) ? scope.row.enclosure.split("&")[1] : ' ' }}
                 </div>
-            </template>
+            </template>-->
             <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                 <el-form-item label="所属组织">
                     <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
@@ -81,14 +81,14 @@
             }
         },
         methods: {
-            handleEnc(){
+          /*  handleEnc(){
                 this.columns = [];
                 this.columns.length = 0;
                 let temp = JSON.parse(JSON.stringify(this.$store.state.classInfo.properties));
                 this.columns = temp;
                 var columsItems = {slot:true,name:'enclosure',des:'附件',slotName:'handle'};
                 this.columns.push(columsItems);
-            },
+            },*/
             downLoad(row){
                 window.open(row.enclosure.split("&")[0],'_self')
             },
@@ -122,7 +122,7 @@
             this.columns = this.$store.state.classInfo.properties;
             this.formColumns = this.$store.state.classInfo.properties;
             this.handleAuthority();
-            this.handleEnc();
+            //  this.handleEnc();
             this.columns.forEach(item => {
                 if (item.name == "workTime") {
                     item.formatter=(row, column, value) => {

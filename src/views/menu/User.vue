@@ -14,7 +14,7 @@
                     </div>
                     <div   style="margin-left: 61%;margin-top: 20px">
                         <el-button @click="closeResetDia">取 消</el-button>
-                        <el-button type="primary" :loading="submitLoad" @click="isLeft=false;isRight=true">下一步</el-button>
+                        <el-button type="primary" @click="isLeft=false;isRight=true">下一步</el-button>
                     </div>
                 </div>
                 <div style="width: 48%;display: inline-block">
@@ -70,8 +70,23 @@
                 isRight:false,
                 chooseData:{},
                 resetDia:false,
-                originalPassword:""
+                originalPassword:"",
+                imageApi:[
+                    {
+                        label:'http://218.162:18087',
+                        value:'http://218.162:18087',
+                    },
+                    {
+                        label:'http://218.162:18088',
+                        value:'http://218.162:18088',
+                    },
+                    {
+                        label:'http://218.162:18089',
+                        value:'http://218.162:18089',
+                    },
+                ]
             }
+
         },
         methods: {
             changeCol() {
@@ -88,12 +103,12 @@
                 });
                 this.$http('Post','identity/role/list',false).then((data)=>{
                     this.formColumns.filter(item=>item.name === 'roleID')[0].options =data.map(item=>{return {label:item.name,value:item.id}})
-                })
+                });
                 this.$http('Post','identity/sysDistrict/list',false).then((data)=>{
                     this.formColumns.filter(item=>item.name === 'districtId')[0].options =data.map(item=>{return {label:item.districtName,value:item.districtId}})
                     //查询下拉框（districtId）
                     this.queryColumns[1].options =data.map(item=>{return {label:item.districtName,value:item.districtId}})
-                })
+                });
                 //权限控制(districtId),句容市委显示组织查询条件
                 if(JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId=="01"){
                     this.queryColumns[1].value="";
@@ -101,6 +116,7 @@
                 }else{
                     this.queryColumns[1].value = JSON.parse(sessionStorage.getItem("userInfo")).sysDistrict.districtId;
                 }
+                this.formColumns.filter(item => item.name === 'uploadIP')[0].options = this.imageApi;
 
             },
                 showDia(data){
@@ -128,13 +144,12 @@
                 this.resetDia = false
             },
             resetPassword(){
-
                 let userName = sessionStorage.getItem("user")
                 if(this.originalPassword == ''){
                     this.$message({
                         message:'原密码输入错误',
                         type:'warning'
-                    })
+                    });
                     return
                 }
                 this.$http('POST', `/identity/sysUser/list`, {userName:userName,password:md5.hex_md5(this.originalPassword)}).then(data01=> {
@@ -142,7 +157,7 @@
                         this.$message({
                             message: '原密码输入错误',
                             type: 'warning'
-                        })
+                        });
                         return null;
                     }
                     this.chooseData.password = null;
@@ -151,9 +166,9 @@
                             message: '密码重置成功',
                             type: 'success'
                         });
-                        this.resetDia = false
+                        this.resetDia = false;
                         this.isLeft=true;
-                        this.isRight=false
+                        this.isRight=false;
                         this.$refs.table.refreshTableData();
                     })
                 })
@@ -167,7 +182,7 @@
                         return value ? new Date(value).Format("yyyy-MM-dd HH:mm:ss"):'还未登录';
                     }
                 }
-            })
+            });
         },
         components: {
             CommonCRUD

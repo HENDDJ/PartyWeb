@@ -61,5 +61,11 @@ export default {
             des: "组织简介",
             notShow:'true'
         },
+        {
+            name: "uploadIP",
+            type: 'select',
+            des: "图片服务器",
+            notShow:'true'
+        },
     ]
 }

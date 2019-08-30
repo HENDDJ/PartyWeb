@@ -373,7 +373,7 @@
                         })
                     } else {
                         this.$message({
-                            message: '请补全信息',
+                            message: '请根据提示填写好内容',
                             type: 'warning'
                         });
                     }

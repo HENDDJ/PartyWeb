@@ -457,6 +457,8 @@
                                 this.$refs.table.refreshTableData();
                                 this.initForm();
                                 this.checkBoxList=[];
+                            }).catch( ()=>{
+                                this.submitLoading = true;
                             });
                         }
                         //编辑
@@ -467,6 +469,8 @@
                                 this.$refs.table.refreshTableData();
                                 this.initForm();
                                 this.checkBoxList=[];
+                            }).catch( ()=>{
+                                this.submitLoading = true;
                             });
                         }else{//查看
                             this.submitLoading = false;

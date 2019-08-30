@@ -327,7 +327,6 @@
                             for (let i = 0; i < data.content.length; i++) {
 
                             if (data.content[i].imageUrl) {
-                                console.log(data.content[i].imageUrl)
                                 data.content[i].imageUrl.forEach((item) => {
                                     item.time = data.content[i].time;
                                     let formItem = {};
@@ -372,14 +371,22 @@
                 let imgUrl = item.imageUrl;
                 if (imgUrl.indexOf("http" )== -1) {
                     if(imgUrl[0] === '.'){
-                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
+                        if(new Date(item.time)<new Date("2018-11-23T00:00:00")){
+                            return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTake/${item.imageUrl}`
+                        }else {
+                            return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
+                        }
                     }else {
                         let time1 = item.time.toString().split("T")[0]
                         let time2 =  Number(time1.split("-")[0])
                         let time3 = Number(time1.split("-")[1])
                         let time4 = Number(time1.split("-")[2])
                         let time5 = time3.toString()+time4.toString()
-                        return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${item.imageUrl}`
+                        if(new Date(item.time)<new Date("2018-11-23T00:00:00")){
+                            return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTake/${item.imageUrl}`
+                        }else {
+                            return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${imgUrl}`
+                        }
                     }
                 }else {
                     return item.imageUrl

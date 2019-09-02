@@ -27,7 +27,7 @@
         </div>
 
         <div class='wholeContent' >
-            <div class="contentDiv" style="border: 1px #d8caca80 solid" >
+            <div class="contentDiv" style="border: 1px rgba(227,213,213,0.55) solid" >
                 <p class="titleContent">{{toneName+"活动完成情况一览表"}}</p>
                 <div style="display: flex">
                     <div>
@@ -67,7 +67,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pictureshow" style="border: 1px #d8caca80 solid" v-show="pictureVisible">
+            <div class="pictureshow" style="border: 1px rgba(227,213,213,0.55) solid" v-show="pictureVisible">
                 <p class="titleContent">{{countryName+"活动执行截图"}}</p><br/>
                 <div v-if="tipShow">请选择需要查看的任务记录！</div>
                 <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
@@ -407,7 +407,7 @@
         width:100px;
         height:100px;
         box-sizing:border-box;
-        border:1px solid #d8caca80;
+        border:1px solid rgba(227,213,213,0.55);
     }
 
     .result-table {
@@ -424,7 +424,7 @@
         width:100%;
         height:50px;
         box-sizing:border-box;
-        border-bottom:1px solid #d8caca80;
+        border-bottom:1px solid rgba(227,213,213,0.55);
         transform-origin:bottom center;
         transform:rotateZ(45deg) scale(1.414);
     }
@@ -502,7 +502,7 @@
         cursor: pointer;
     }
    .titleContent{
-        border-bottom: 1px #d8caca80 solid;
+        border-bottom: 1px rgba(227,213,213,0.55) solid;
         line-height: 45px;
         font-size: 20px;
         font-weight: bold;

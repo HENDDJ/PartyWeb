@@ -8,7 +8,7 @@
                 type="year"
                 placeholder="选择年" @change="loadTables()">
             </el-date-picker>
-            <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="mini">
+            <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="mini" v-if="this.user.sysDistrict.districtLevel==1">
                 <el-option
                     v-for="item in districtList"
                     :key="item.value"
@@ -16,7 +16,7 @@
                     :value="item.value">
                 </el-option>
             </el-select>
-            <el-radio-group v-model="radioName" size="mini" style="display: inline-block;position: relative;width: 115px !important;top:1px;" @change="handleRadioGroup">
+            <el-radio-group v-model="radioName" size="mini" style="display: inline-block;position: relative;width: 115px !important;top:1px;" @change="handleRadioGroup" v-if="this.user.sysDistrict.districtLevel==1">
                 <el-radio-button label="农村"></el-radio-button>
                 <el-radio-button label="机关" ></el-radio-button>
             </el-radio-group>
@@ -168,22 +168,27 @@
                 if(!this.year){
                     this.year=new Date();
                 }
-                if(!this.districtId){
-                    if(this.districtList.length>1){
-                        this.districtId = this.user.districtId;
-                    }else{
-                        this.districtId = this.districtList[0].value;
-                    }
-                    this.toneName = this.user.organizationName;
-                }
-                if(!this.districtType){
-                    this.districtType = this.user.sysDistrict.districtType;
-                }
                 if(!this.objectType){
                     this.objectType = this.user.sysDistrict.districtType=='Party' ? '1':'2';
                     this.radioName = this.user.sysDistrict.districtType=='Party' ? '农村':'机关';
                 }
-                this.toneName = this.districtList.filter( item => item.value==this.districtId)[0].label;
+                if(this.user.sysDistrict.districtLevel==3){
+                    this.districtId = this.user.districtId;
+                    this.toneName = this.user.organizationName;
+                }else{
+                    if(!this.districtId){
+                        if(this.districtList.length>1){
+                            this.districtId = this.user.districtId;
+                        }else{
+                            this.districtId = this.districtList[0].value;
+                        }
+                        this.toneName = this.user.organizationName;
+                    }
+                    this.toneName = this.districtList.filter( item => item.value==this.districtId)[0].label;
+                }
+                if(!this.districtType){
+                    this.districtType = this.user.sysDistrict.districtType;
+                }
                 this.$http('post',`identity/parActivity/list/completion?year=${new Date(this.year).Format("yyyy")}&districtId=${this.districtId}&objectType=${this.objectType}&districtType=${this.districtType}`,false).then( data => {
                     this.activityList = data;
                 });

@@ -124,7 +124,7 @@ export default {
     'DistrictLevel': [
         {
             value :1,
-            label :'句容市委'
+            label :'市级组织'
         },
         {
             value :2,

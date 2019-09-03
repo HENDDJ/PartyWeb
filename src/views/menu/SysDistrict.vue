@@ -8,7 +8,9 @@
                      :addBtnVis=false
                      :editBtnVis=false
                      :lookBtnVis = false
-                     :delBtnVis=false>
+                     :delBtnVis=false
+                     :objectSpanMethod="objectSpanMethod"
+                     @getTableData="handleTableData">
             <template slot="header-btn" >
                 <el-button type="primary" plain @click="add()" class="self-add self-btn">&nbsp;</el-button>
                 <el-button type="success" plain class="self-btn self-edit" @click="edit()">&nbsp;</el-button>
@@ -73,6 +75,7 @@
                 submitLoading: false,
                 zhenList:[],
                 districtTypeList:[],
+                user: {},
                 rules: {
                     districtType: [
                         { required: true, message: '请选择类别', trigger: 'change' }
@@ -86,9 +89,10 @@
                 },
                 sortQuery:[
                     {
-                        name:'createdAt',
-                        type:'desc'
+                        name:'attachTo',
+                        type:'asc'
                     }
+
                 ],
                 queryColumns:[
                     {
@@ -103,8 +107,15 @@
                         name: 'districtName',
                         type: 'string',
                         visible: true,
+                    },
+                    {
+                        des: '组织',
+                        name: 'districtId',
+                        type: 'string',
+                        visible: false,
                     }
-                ]
+                ],
+                spanObject: new Map()
             };
         },
         methods: {
@@ -208,17 +219,84 @@
                 this.queryColumns[0].options = this.parentList;*!/
             },*/
             //查询框下拉项
-            showZhenList(){
-                //镇级组织
-                this.zhenList = [];
-                this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
-                    data.forEach( item => {
-                        this.zhenList.push( {value:item.districtId , label:item.districtName});
-                    });
-                    this.zhenList.push({value:'01',label:'句容市委'});
-                    this.queryColumns[0].options = this.zhenList;
-                    this.districtTypeList =  LookUp['DistrictType'];
+            showZhenList(user){
+                if(user.sysDistrict.districtLevel==1){
+                    //镇级组织
+                    this.zhenList = [];
+                    this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
+                        data.forEach( item => {
+                            this.zhenList.push( {value:item.districtId , label:item.districtName});
+                        });
+                        this.zhenList.push({value:'01',label:'句容市委'});
+                        this.queryColumns[0].options = this.zhenList;
+                        this.districtTypeList =  LookUp['DistrictType'];
+                    })
+                }else{
+                    this.queryColumns[0].visible = false;
+                }
+
+            },
+            handleTableData(data) {
+                let attachTos = data.map(item => item.attachTo);
+                attachTos = new Set(attachTos);
+                let order = 0;
+                this.spanObject.clear();
+                attachTos.forEach((item) => {
+                    if (item === null) {
+                        item = 'null'
+                    }
+                    data.forEach((subItem, subIndex) => {
+                        if (String(subItem.attachTo) == item) {
+                            this.spanObject.set(item, {index: order, end: subIndex})
+                        }
+                    })
+                    order ++
                 })
+            },
+            objectSpanMethod({row, column, rowIndex, columnIndex}) {
+                if (this.spanObject.size === 0) {
+                    return ;
+                }
+                let key;
+                if (row.attachTo === null) {
+                    key = 'null';
+                } else {
+                    key = row.attachTo;
+                }
+                let index = this.spanObject.get(key).index;
+                let end = this.spanObject.get(key).end;
+                let start = 0;
+                if (index !== 0) {
+                    this.spanObject.forEach((v,key) => {
+                        if (v.index === (index - 1)) {
+                            start = v.end + 1;
+                        }
+                    })
+                }
+                if (columnIndex === 1) {
+                    if (rowIndex === start) {
+                        return {
+                            rowspan: end - start + 1,
+                            colspan: 1
+                        }
+                    }
+                    else if (start < rowIndex <= end) {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        }
+                    } else {
+                        return {
+                            rowspan: 1,
+                            colspan: 1
+                        }
+                    }
+                } else {
+                    return {
+                        rowspan: 1,
+                        colspan: 1
+                    }
+                }
             }
 
         },
@@ -228,8 +306,10 @@
         created() {
             this.columns = this.$store.state.classInfo.properties;
             tansfer(this.columns);
+            this.user=JSON.parse(sessionStorage.getItem('userInfo'));
           /*  this.showParentList();*/
-            this.showZhenList();
+            this.showZhenList(this.user);
+            this.queryColumns[2].value = this.user.districtId;
         }
     }
 </script>

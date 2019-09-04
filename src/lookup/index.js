@@ -119,6 +119,14 @@ export default {
         {
             value :'DEPUTY_DIRECTOR',
             label :'副主任'
+        },
+        {
+            value: 'ACCOUNTING',
+            label: '会计'
+        },
+        {
+            value: 'BATTALION_COMMANDER',
+            label: '民兵营长'
         }
     ],
     'DistrictLevel': [

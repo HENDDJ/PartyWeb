@@ -1,6 +1,6 @@
 <template>
     <el-scrollbar wrapClass="scrollbar-wrapper" viewClass="scrollbar_view">
-        <el-menu background-color="rgb(0,0,0,0)" text-color="#fff" active-text-color="#deb26b" router  unique-opened
+        <el-menu background-color="transparent" text-color="#fff" active-text-color="#deb26b" router  unique-opened
                  class="el-menu-personal" @select="changeActiveIndex"  :collapse="$store.state.isCollapse">
             <div v-for="item in routes" v-if="item.visible === 1" :key="item.name">
                 <!-- 有子菜单 -->
@@ -110,7 +110,7 @@
     }
    .el-submenu__title:hover {
         outline: 0 !important;
-        background-color: rgba(0,0,0,0.3)  !important;
+        background-color: rgba(0,0,0,.2) !important;
     }
     .el-menu-item{
         overflow: hidden;
@@ -119,8 +119,8 @@
         overflow: hidden;
     }
    .el-menu-item:hover{
-        outline: 0 !important;
-        background-color: rgba(0,0,0,0.3) !important;
+       outline: 0 !important;
+       background-color: rgba(0,0,0,.2) !important;
     }
     .el-submenu .el-menu-item{
         padding: 0 0 0 45px;

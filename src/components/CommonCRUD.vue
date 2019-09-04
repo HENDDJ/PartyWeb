@@ -323,7 +323,6 @@
                 this.selected = val;
             },
             defaultRequestConfig(path) {
-                console.log(this.queryFormColumns,123)
                 this.queryFormColumns.forEach((item) => {
                     if (item.value) {
                         this.queryForm[item.name] = item.value;

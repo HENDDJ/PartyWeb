@@ -8,7 +8,7 @@
                 type="year"
                 placeholder="选择年" @change="loadTables()">
             </el-date-picker>
-            <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="mini">
+            <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="mini" v-if="this.user.sysDistrict.districtLevel==1">
                 <el-option
                     v-for="item in districtList"
                     :key="item.value"
@@ -16,7 +16,7 @@
                     :value="item.value">
                 </el-option>
             </el-select>
-            <el-radio-group v-model="radioName" size="mini" style="display: inline-block;position: relative;width: 115px !important;top:1px;" @change="handleRadioGroup">
+            <el-radio-group v-model="radioName" size="mini" style="display: inline-block;position: relative;width: 115px !important;top:1px;" @change="handleRadioGroup" v-if="this.user.sysDistrict.districtLevel==1">
                 <el-radio-button label="农村"></el-radio-button>
                 <el-radio-button label="机关" ></el-radio-button>
             </el-radio-group>
@@ -27,7 +27,7 @@
         </div>
 
         <div class='wholeContent' >
-            <div class="contentDiv" style="border: 1px #d8caca80 solid" >
+            <div class="contentDiv" style="border: 1px rgba(227,213,213,0.55) solid" >
                 <p class="titleContent">{{toneName+"活动完成情况一览表"}}</p>
                 <div style="display: flex">
                     <div>
@@ -67,7 +67,7 @@
                     </div>
                 </div>
             </div>
-            <div class="pictureshow" style="border: 1px #d8caca80 solid" v-show="pictureVisible">
+            <div class="pictureshow" style="border: 1px rgba(227,213,213,0.55) solid" v-show="pictureVisible">
                 <p class="titleContent">{{countryName+"活动执行截图"}}</p><br/>
                 <div v-if="tipShow">请选择需要查看的任务记录！</div>
                 <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
@@ -168,22 +168,27 @@
                 if(!this.year){
                     this.year=new Date();
                 }
-                if(!this.districtId){
-                    if(this.districtList.length>1){
-                        this.districtId = this.user.districtId;
-                    }else{
-                        this.districtId = this.districtList[0].value;
-                    }
-                    this.toneName = this.user.organizationName;
-                }
-                if(!this.districtType){
-                    this.districtType = this.user.sysDistrict.districtType;
-                }
                 if(!this.objectType){
                     this.objectType = this.user.sysDistrict.districtType=='Party' ? '1':'2';
                     this.radioName = this.user.sysDistrict.districtType=='Party' ? '农村':'机关';
                 }
-                this.toneName = this.districtList.filter( item => item.value==this.districtId)[0].label;
+                if(this.user.sysDistrict.districtLevel==3){
+                    this.districtId = this.user.districtId;
+                    this.toneName = this.user.organizationName;
+                }else{
+                    if(!this.districtId){
+                        if(this.districtList.length>1){
+                            this.districtId = this.user.districtId;
+                        }else{
+                            this.districtId = this.districtList[0].value;
+                        }
+                        this.toneName = this.user.organizationName;
+                    }
+                    this.toneName = this.districtList.filter( item => item.value==this.districtId)[0].label;
+                }
+                if(!this.districtType){
+                    this.districtType = this.user.sysDistrict.districtType;
+                }
                 this.$http('post',`identity/parActivity/list/completion?year=${new Date(this.year).Format("yyyy")}&districtId=${this.districtId}&objectType=${this.objectType}&districtType=${this.districtType}`,false).then( data => {
                     this.activityList = data;
                 });
@@ -407,7 +412,7 @@
         width:100px;
         height:100px;
         box-sizing:border-box;
-        border:1px solid #d8caca80;
+        border:1px solid rgba(227,213,213,0.55);
     }
 
     .result-table {
@@ -424,7 +429,7 @@
         width:100%;
         height:50px;
         box-sizing:border-box;
-        border-bottom:1px solid #d8caca80;
+        border-bottom:1px solid rgba(227,213,213,0.55);
         transform-origin:bottom center;
         transform:rotateZ(45deg) scale(1.414);
     }
@@ -502,7 +507,7 @@
         cursor: pointer;
     }
    .titleContent{
-        border-bottom: 1px #d8caca80 solid;
+        border-bottom: 1px rgba(227,213,213,0.55) solid;
         line-height: 45px;
         font-size: 20px;
         font-weight: bold;

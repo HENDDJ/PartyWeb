@@ -529,14 +529,14 @@
     }
 
     .top_bar .header-title {
-        width: calc(850 * 100vw/1920 * 0.82);
-        height: calc(90 * 100vw/1920 * 0.82);
-        min-width: 640px;
-        min-height: 67px;
+        width: calc(774 * 100vw/1920 * 0.82);
+        height: calc(56 * 100vw/1920 * 0.82);
+        min-width: 774px;
+        min-height: 56px;
         background: url("/static/header/title.png") no-repeat;
         background-size: 100% 100%;
         position: relative;
-        left: 6px;
+        left: 20px;
         display: inline-block;
         vertical-align: bottom;
     }

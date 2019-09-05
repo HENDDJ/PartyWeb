@@ -1,7 +1,7 @@
 <template>
     <section>
         <vs-tabs :color="colorx">
-            <vs-tab @click="colorx = 'success';cadreQuery[0].value = '';cadreQuery[1].value = '';" label="村干部信息" >
+            <vs-tab @click="colorx = 'success';cadreQuery[0].value = '';cadreQuery[1].value = user.districtId;" label="村干部信息" >
                 <div class="con-tab-ejemplo">
                     <br>
                     <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns"
@@ -234,7 +234,7 @@
             handleSelect(){
                 this.colorx = 'danger';
                 this.positionQuery[0].value = '';
-                this.positionQuery[1].value = '';
+                this.positionQuery[1].value = this.user.districtId;
                 this.$http('POST',`identity/villageCadres/list`,false).then(data => {
                     this.villageCadreList = data;
                     this.positionFormColumns.filter( item => item.name === 'cadreId')[0].options = data.map(item => { return {value: item.id, label: item.name}});

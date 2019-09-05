@@ -184,6 +184,7 @@
         position: relative;
         display: inline-block;
         line-height: normal;
+        width: 99.9%;
     }
 
     .tinymce-container >>> .mce-fullscreen {

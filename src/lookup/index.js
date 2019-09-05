@@ -106,27 +106,55 @@ export default {
     'Post': [
         {
             value :'SECRETARY',
-            label :'书记'
+            label :'村书记'
         },
         {
             value :'DEPUTY_SECRETARY',
-            label :'副书记'
+            label :'村副书记'
         },
         {
             value :'DIRECTOR',
-            label :'主任'
+            label :'村主任'
         },
         {
             value :'DEPUTY_DIRECTOR',
-            label :'副主任'
+            label :'村副主任'
         },
         {
             value: 'ACCOUNTING',
-            label: '会计'
+            label: '村会计'
         },
         {
             value: 'BATTALION_COMMANDER',
             label: '民兵营长'
+        },
+        {
+            value: 'COMMITTEE_MEMBER',
+            label: '支部委员'
+        },
+        {
+            value: 'POPULATION_DIRECTOR',
+            label: '计生主任'
+        },
+        {
+            value: 'MEDIATION_DIRECTOR',
+            label: '调解主任'
+        },
+        {
+            value: 'SECURITY_DIRECTOR',
+            label: '治保主任'
+        },
+        {
+            value: 'DIRECTOR_ASSISTANT',
+            label: '主任助理'
+        },
+        {
+            value: 'WOMEN_DIRECTOR',
+            label: '妇女主任'
+        },
+        {
+            value: 'LEAGUE_BRANCH_SECRETARY',
+            label: '团支部书记'
         }
     ],
     'DistrictLevel': [

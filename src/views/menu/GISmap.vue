@@ -49,6 +49,49 @@
                         <el-divider style="margin-top: 8px"></el-divider>
                     </div>
             </vs-card>
+           <el-dialog
+               id="nnn"
+               title="组织成员"
+               visible.sync="true"
+               width="580px"
+               :before-close="closeMemberDialog">
+               123
+               <div slot="footer" class="dialog-footer">
+               <el-table
+                   :data="memberData"
+                   border
+                   style="width: 100%">
+                   <el-table-column
+                       prop="name"
+                       label="姓名"
+                       width="180">
+                   </el-table-column>
+                   <el-table-column
+                       prop="sex"
+                       label="性别"
+                       width="180">
+                   </el-table-column>
+                   <el-table-column
+                       prop="nativePlace"
+                       label="出生地"
+                       width="180">
+                   </el-table-column>
+                   <el-table-column
+                       prop="education"
+                       label="学历"
+                       width="180">
+                   </el-table-column>
+               </el-table>
+               <el-pagination
+                   layout="prev, pager, next"
+                   :page-count="pageable.total"
+                   @current-change="currentPage"
+                   @prev-click="prePage"
+                   @next-click="nextPage"
+                   hide-on-single-page="false">
+               </el-pagination>
+               </div>
+           </el-dialog>
         </div>
     </section>
 </template>
@@ -139,9 +182,50 @@
                     transition: 'all 1.5s',
                 },
                 rightMessage:{},
+                memberData:[{name:'12',sex:'1'}],
+                //分页类
+                pageable: {
+                    total: 1,
+                    currentPage: 1,
+                    pageSize: 10,
+                    flg:true
+                },
+                tableDataDistrictId:''
             }
         },
         methods: {
+            //关闭成员dialog
+            closeMemberDialog(){
+                document.getElementById('nnn').style.display = 'none'
+            },
+            //第几页
+            currentPage(val){
+                if(this.pageable.flg){
+                this.pageable.currentPage = val
+                this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId: this.tableDataDistrictId}).then((data)=>{
+                    this.memberData = data.content
+                })
+                }
+            },
+            //上一页
+            prePage(){
+                this.pageable.flg = false
+                this.pageable.currentPage = this.pageable.currentPage-1
+                this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId: this.tableDataDistrictId}).then((data)=>{
+                    this.memberData = data.content
+                    this.pageable.flg = true
+                })
+            },
+            //下一页
+            nextPage(){
+                this.pageable.flg = false
+                this.pageable.currentPage = this.pageable.currentPage+1
+                this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId: this.tableDataDistrictId}).then((data)=>{
+                    this.memberData = data.content
+                    this.pageable.flg = true
+                })
+            },
+
             //关闭右侧弹出栏目
             close(){
                 this.msgFloatRight.marginRight = '-285px'
@@ -284,10 +368,6 @@
                 this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.workingDataList();
-                setInterval(()=>{
-                    this.map.clearOverlays();
-                    this.workingDataList();
-                },30000)
 
             },
             //展示正在执行内的封装方法
@@ -495,7 +575,7 @@
                                 this.pandTo(marker)
                                 //定义具体党组织maker
                                 setTimeout(this.setPartyMaker(item.districtId),600);
-
+                                this.setPartyMaker(item.districtId)
                             })
                             this.map.addOverlay(marker2);
                             marker2.disableMassClear();
@@ -518,17 +598,53 @@
                     })
                 })
             },
-            setPartyMaker(){
+            //展示党组织村级
+            setPartyMaker(val){
                 this.map.clearOverlays();
-                //基本阵地
                 let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
                 this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
                     data.forEach(item => {
                             if(item.location) {
                                 let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]));
                                 let content = ''
+                                let type = item.districtType === 'Party'?'农村':'机关'
+                                marker.addEventListener('click',()=>{
+                                    this.pContent =
+                                        "<div class='infoBoxContent'>" +
+                                        "<div class='header'><div class='headerTitle'><img src='static/img/house06.svg' style='width: 20px;height: 20px'></img>"+item.districtName+"</div>" +
+                                        "<div>" +
+                                        "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
+                                        "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>"+type+"</sapn></div>" +
+                                        "</div>" +
+                                        "</div>"+
+                                        "<div class='content'><div style='line-height: 20px;'><div class='blueBlock'></div>" +
+                                        "<div style='display: inline-block;vertical-align: middle'>组织详情：</div><div class='member' onclick='document.getElementById("+'&quot;nnn&quot;'+").style.display="+'&quot;block&quot;'+";'><a href='##"+item.districtId+"'>组织成员</a></div></div>" +
+                                        "<div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
+                                        "</div>"+
+                                        "</div>"+
+                                        "</div>";
+                                    setTimeout(()=>{
+                                        this.map.panTo(item.location.split(",")[0],item.location.split(",")[0]);
+                                    },300)
+                                    setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
 
-
+                                })
+                                this.map.addOverlay(marker);
+                                let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
+                                label.setStyle({
+                                    backgroundColor: '#c8ff4d',
+                                    display: 'inline-block',
+                                    height: '24px',
+                                    padding: '0 8px',
+                                    lineHeight: '22px',
+                                    fontSize: '13px',
+                                    color: '#000000',
+                                    border: '1px solid #d9ecff',
+                                    borderRadius: '4px',
+                                    boxSizing: 'border-box',
+                                    whiteSpace: 'nowrap',
+                                });
+                                marker.setLabel(label);
                             }
                             })
                 })
@@ -548,6 +664,16 @@
         },
         mounted() {
             this.initMap();
+            window.addEventListener("hashchange",()=>{
+                this.memberData = []
+                if(window.location.hash.split("#").length-1>1){
+                    this.tableDataDistrictId = window.location.hash.split("#")[2]
+                    this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId:window.location.hash.split("#")[2]}).then((data)=>{
+                        this.pageable.total = data.totalPages
+                        this.memberData = data.content
+                    })
+                }
+            });
         }
     }
 </script>
@@ -966,8 +1092,58 @@
         display: inline-block;
         padding: 0 6px;
     }
+    .header{
+        width:100%;
+        height: 80px;
+        padding: 5px;
+        background:url("../../../static/img/partyHeader.jpg") no-repeat 100% 100%;
+        border-top-left-radius:3px;
+        border-top-right-radius:3px;
+    }
+    .content{
+
+        width:100%;
+        padding: 10px 10px;
+    }
+    .headerTitle{
+        font-family: "Microsoft YaHei";
+        font-weight: bold;
+        font-size: 20px;
+        margin-left: 5px;
+        padding-bottom: 2px;
+        padding-top: 10px;
+        line-height: 20px;
+    }
+    .headerTwo{
+        font-size: 15px;
+        margin-left: 25px;
+        padding-top: 5px;
+    }
+    .headerThree{
+        font-size: 15px;
+        text-align: right;
+        margin-right: 10px;
+        float: right;
+        padding-top: 5px;
+    }
+    .blueBlock{
+        background-color: #3399ff;
+        height: 20px;
+        margin-top: 10px;
+        width: 10px;
+        margin-left: -10px;
+        display: inline-block;
+        margin-bottom: 8px;
+        vertical-align: middle
+    }
+    .contentDetail{
+        border:2px solid #1d1f293d;
+        font-size: 15px;
+        text-indent : 25px;
+        letter-spacing:2px;
+    }
 </style>
-<style scoped>
+<style scope>
     #allmap{
         width: 100%;
         height: 822px;
@@ -1014,11 +1190,32 @@
         -moz-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         width: 200px;
-        z-index: 8888;
+        z-index: 1000;
         top: 100px;
         top: 100px;
         left: 30px;
         margin:30px 0 0 200px;
+    }
+    .member{
+        color: #409eff;
+        display: inline-block;
+        margin-left: 220px;
+        vertical-align: middle;
+        cursor: pointer;
+        padding: 0;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration:underline
+    }
+    .newDia{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: aquamarine;
+        opacity: 0.5;
+        z-index: 10000;
+        margin-top: -23px;
+        top:0px;
     }
 
 </style>

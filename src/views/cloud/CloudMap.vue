@@ -191,7 +191,10 @@
                         });
                         marker2.addEventListener('click', e => {
                             this.resetSetItem('cloudPicture',JSON.stringify(res.value[0]));
-                            console.log(JSON.parse(sessionStorage.getItem("cloudPicture")));
+                            /*console.log(JSON.parse(localStorage.getItem("cloudPicture")),"1");*/
+                          /*  let temp = { districtId: "1c8d1e35-cd63-4029-a20d-5f1a5766e54e",activityId: "60e9f56e-ff02-4a99-b57d-f1c6ab96f376"}
+                            this.resetSetItem('cloudPicture',JSON.stringify(temp));
+                            console.log(JSON.parse(localStorage.getItem("cloudPicture")),"2");*/
                         });
                         this.map.addOverlay(marker2);
                         marker2.setLabel(label);

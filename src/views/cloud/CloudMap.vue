@@ -112,7 +112,7 @@
                         if(allOverlay[i].ba){
                             allOverlay[i].enableMassClear();
                         }
-                    };
+                    }
                 }
                 this.map.clearOverlays();
                 this.initMap();
@@ -128,10 +128,10 @@
             workingDataList(){
                 this.$http('Post','identity/parActivityObject/list',{isWorking:1},false).then(
                     (data)=>{
-                        let orgId = []
+                        let orgId = [];
                         data.forEach(item=>{
                             orgId.push(item.organizationId)
-                        })
+                        });
                         let orgSort = [];
                         //删除重复阵地
                         for(let i = 0;i<orgId.length;i++){
@@ -158,72 +158,43 @@
                 let workList = []
                 if(ids){
                     ids.forEach(idItem=>{     //整合数据，解决一村都任务的情况
-                        let idValue = {}
-                        let values= []
+                        let idValue = {};
+                        let values= [];
                         value.forEach(valueItem=>{
                             if(idItem == valueItem.organizationId){
-                                values.push(valueItem)
+                                values.push(valueItem);
                             }
-                        })
+                        });
                         if(values){
-                            idValue.id = idItem
-                            idValue.value = values
-                            workList.push(idValue)
+                            idValue.id = idItem;
+                            idValue.value = values;
+                            workList.push(idValue);
                         }
-                    })
-                    console.log(workList)
+                    });
                     workList.forEach(res=>{
                         let marker = new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]);
                         let myIcon = new BMap.Icon("/static/img/working.gif", new BMap.Size(50, 50));
                         let marker2 = new BMap.Marker(marker, {icon: myIcon});  // 创建标注
-                        let content = ''
-                        let ip = '123'
-
-                        let time = (res.value[0].modifiedAt.split('T')[0]+" "+res.value[0].modifiedAt.split('T')[1]).split('.')[0]
+                        let label = new BMap.Label(res.value[0].districtName,{offset:new BMap.Size(-5,28)});
+                        label.setStyle({
+                            backgroundColor: '#ecf5ff',
+                            display: 'inline-block',
+                            height: '28px',
+                            padding: '0 5px',
+                            lineHeight: '26px',
+                            fontSize: '13px',
+                            color: '#409eff',
+                            border: '1px solid #d9ecff',
+                            borderRadius: '4px',
+                            boxSizing: 'border-box',
+                            whiteSpace: 'nowrap',
+                        });
                         marker2.addEventListener('click', e => {
-
-                            this.map.panTo(new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]+0.001));
-                            this.map.setZoom(13);
-                            let path = 'identity/parCamera/redisIp?key='+res.value[0].organizationId;
-                            this.$http('Get',path,false).then(data=>{
-                                if(data){
-                                    ip = data.ip;
-                                    localStorage.setItem("videoUrl", ip);
-                                    res.value.forEach(item=>{
-                                        content =   "<div style='position: relative;padding-bottom: 10px;padding-top: 3px'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>任务名称：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.title+"</span></span>" +
-                                            "<span style='color:#2C3E50;font-size: 15px;font-weight: 500;right: 29px;position: absolute;;'>任务类型：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.type+"</span></span>" +
-                                            "</div>"+
-                                            "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>截止日期：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.month+"</span></span>" +
-                                            "</div>"+
-                                            "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;float:left;'>任务要求：</span><div style='color:rgba(37, 37, 37, 0.51);font-size: 15px;font-weight: 500;margin-left: 92px;'>"+item.context+"</div>" +
-                                            "</div>"+
-                                            "<div style='position: relative;;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>直播视频：</span>" +
-                                            "</div>"+
-                                            "<div style='position: relative;margin-left: 17px'>" +
-                                            "<video class='tvhou' width='100%' height='100%'" +
-                                            " controls='controls' autoplay='autoplay'" +
-                                            " x-webkit-airplay='true' x5-video-player-fullscreen='true'" +
-                                            " preload='auto' playsinline='true' webkit-playsinline" +
-                                            " x5-video-player-typ='h5'>" +
-                                            " <source type='application/x-mpegURL' src='"+ip+"'>" +
-                                            "</video> "+
-                                            "</div>"
-                                    })
-                                    this.pContent =
-                                        "<div class='infoBoxContent'>" +
-                                        "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>"+res.value[0].districtName+"</span>" +
-                                        "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>"+res.value[0].parentName+"</span></div><div class='title02' style='font-size:12px'><img src='/static/img/active/party_build_active.png' class='zhen'><span style='margin-right: 3px'>摄像头状态:<span class='minitor'>正常</span><img src='/static/img/active/party_build_active.png' class='zhen'>" +
-                                        "<span>开始时间:<span style='background-color: #44ffd4ad;border-radius: 2px;margin-left: 2px;padding:0 5px'>"+time+"</span></span></div></div></div>"+
-                                        "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 700px;width: 80%;margin: auto' class='flowWin'>"+content+
-                                        "</div>"+
-                                        "</div>";
-
-                                    setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker2)),600)
-                                }
-
-                            })
+                            this.resetSetItem('cloudPicture',JSON.stringify(res.value[0]));
+                            console.log(JSON.parse(sessionStorage.getItem("cloudPicture")));
                         });
                         this.map.addOverlay(marker2);
+                        marker2.setLabel(label);
                     })
 
                 }

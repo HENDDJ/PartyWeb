@@ -10,6 +10,7 @@ import Search from '@/views/search/Search';
 import CloudRoot from '@/views/cloud/CloudRoot';
 import CloudMap from '@/views/cloud/CloudMap';
 import CloudVideo from '@/views/cloud/CloudVideo';
+import CloudPictures from '@/views/cloud/CloudPictures'
 import ParActivityManage from '@/views/menu/ParActivityManage';
 
 Vue.use(Router);
@@ -99,8 +100,12 @@ const router = new Router({
             path: '/cloudVideo',
             name: 'CloudVideo',
             component: CloudVideo
+        },
+        {
+            path: '/cloudPictures',
+            name: 'CloudPictures',
+            component: CloudPictures
         }
-
     ]
 });
 
@@ -126,6 +131,10 @@ router.beforeEach((to, from, next) => {
         return;
     }
     if(to.path === '/cloudVideo'){
+        next();
+        return;
+    }
+    if(to.path === '/cloudPictures'){
         next();
         return;
     }

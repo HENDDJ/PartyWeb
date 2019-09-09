@@ -159,7 +159,7 @@
         },
         methods:{
             getCurrentActivity() {
-                this.$http('POST',`/identity/parActivity/list`, {status: 'ACTING'},false).then(
+                this.$http('POST',`/identity/parActivity/currentMonth/list`,false).then(
                     data => {
                         this.currentActivityList = data;
                     }

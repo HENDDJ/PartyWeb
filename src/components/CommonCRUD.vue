@@ -54,7 +54,8 @@
                   ref="table"
                   @row-click="rowClick"
                   :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}"
-                  @selection-change="handleSelectionChange">
+                  @selection-change="handleSelectionChange"
+                  :span-method="objectSpanMethod">
             <el-table-column
                 type="selection"
                 width="55"
@@ -173,6 +174,9 @@
                 default: () => {
                     return [];
                 }
+            },
+            objectSpanMethod: {
+                type: Function
             }
         },
         data () {
@@ -244,6 +248,7 @@
                         this.tableData = data.content;
                         this.pageable.total = data.totalElements;
                         this.loading = false;
+                        this.$emit('getTableData', this.tableData)
                     }
                 ).catch(res => {
                     this.loading = false;

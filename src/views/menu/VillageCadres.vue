@@ -1,10 +1,13 @@
 <template>
     <section>
         <vs-tabs :color="colorx">
-            <vs-tab @click="colorx = 'success';cadreQuery[0].value = '';cadreQuery[1].value = '';" label="村干部信息" >
+            <vs-tab @click="colorx = 'success';cadreQuery[0].value = '';cadreQuery[1].value = user.districtId;" label="村干部信息" >
                 <div class="con-tab-ejemplo">
                     <br>
-                    <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns" :queryFormColumns="cadreQuery">
+                    <CommonCRUD :columns="cadreColumns" api-root="identity/villageCadres" :formColumns="cadreFormColumns"
+                                :queryFormColumns="cadreQuery" :sortColumns="sortColumns"
+                                :objectSpanMethod="objectSpanMethod"
+                                @getTableData="handleTableData">
                         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                             <el-form-item label="所属组织">
                                 <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
@@ -17,7 +20,11 @@
             <vs-tab @click="handleSelect()" label="岗位信息">
                 <div class="con-tab-ejemplo">
                     <br>
-                    <CommonCRUD :columns="positionColumns" api-root="identity/cadrePosition" :formColumns="positionFormColumns" :queryFormColumns="positionQuery">
+                    <CommonCRUD :columns="positionColumns" api-root="identity/cadrePosition" :formColumns="positionFormColumns"
+                                :queryFormColumns="positionQuery"
+                                :sortColumns="sortColumns"
+                                :objectSpanMethod="objectSpanMethodCadre"
+                                @getTableData="handleTableDataCadre">
                         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                             <el-form-item label="所属组织">
                                 <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
@@ -43,6 +50,12 @@
                 cadreColumns:[],//村干部列表
                 cadreformColumns:[],//村干部表单
                 user:{},
+                sortColumns: [
+                    {
+                        name: 'districtId',
+                        type: 'asc'
+                    }
+                ],
                 //村干部查询条件
                 cadreQuery:[
                     {
@@ -80,8 +93,20 @@
                 //岗位列表
                 positionColumns:[
                     {
+                        name: 'parentDistrictName',
+                        des: '镇级组织'
+                    },
+                    {
+                        name: 'districtName',
+                        des: '村级组织'
+                    },
+                    {
                         name: 'name',
                         des: '名称'
+                    },
+                    {
+                        name: 'cadreName',
+                        des: '任职干部'
                     },
                     {
                         name: 'post',
@@ -90,20 +115,8 @@
                         lookupKey: 'Post'
                     },
                     {
-                        name: 'districtName',
-                        des: '所属组织',
-                    },
-                    {
                         name: 'workPlace',
                         des: '工作地点'
-                    },
-                    {
-                        name: 'duty',
-                        des: '职责'
-                    },
-                    {
-                        name: 'cadreName',
-                        des: '任职干部'
                     }
                 ],
                 //岗位表单
@@ -186,6 +199,11 @@
                     }
                 },
                 userAuthority: 1,
+                spanParentObject: new Map(),
+                spanObject: new Map(),
+                spanParentCadreObject: new Map(),
+                spanCadreObject: new Map(),
+
             }
         },
         methods:{
@@ -216,7 +234,7 @@
             handleSelect(){
                 this.colorx = 'danger';
                 this.positionQuery[0].value = '';
-                this.positionQuery[1].value = '';
+                this.positionQuery[1].value = this.user.districtId;
                 this.$http('POST',`identity/villageCadres/list`,false).then(data => {
                     this.villageCadreList = data;
                     this.positionFormColumns.filter( item => item.name === 'cadreId')[0].options = data.map(item => { return {value: item.id, label: item.name}});
@@ -243,6 +261,236 @@
                     this.userAuthority = 2;
                 } else {
                     this.userAuthority = 1;
+                }
+            },
+            handleTableData(data) {
+                let parentDistrictIds = data.map(item => item.parentDistrictId);
+                parentDistrictIds = new Set(parentDistrictIds);
+                let order = 0;
+                this.spanParentObject.clear();
+                parentDistrictIds.forEach((item) => {
+                    if (item === null) {
+                        item = 'null'
+                    }
+                    data.forEach((subItem, subIndex) => {
+                        if (String(subItem.parentDistrictId) == item) {
+                            this.spanParentObject.set(item, {index: order, end: subIndex})
+                        }
+                    })
+                    order ++;
+                })
+
+                let districtIds = data.map(item => item.districtId);
+                districtIds = new Set(districtIds);
+                order = 0;
+                this.spanObject.clear()
+                districtIds.forEach(item => {
+                    if (item === null) {
+                        item = 'null'
+                    }
+                    data.forEach((subItem, subIndex) => {
+                        if (String(subItem.districtId) == item) {
+                            this.spanObject.set(item, {index: order, end: subIndex})
+                        }
+                    })
+                    order ++;
+                })
+            },
+            objectSpanMethod({row, column, rowIndex, columnIndex}) {
+                if (columnIndex === 1) {
+                    if (this.spanParentObject.size === 0) {
+                        return ;
+                    }
+                    let key;
+                    if (row.parentDistrictId === null) {
+                        key = 'null';
+                    } else {
+                        key = row.parentDistrictId;
+                    }
+                    let index = this.spanParentObject.get(key).index;
+                    let end = this.spanParentObject.get(key).end;
+                    let start = 0;
+                    if (index !== 0) {
+                        this.spanParentObject.forEach((v,key) => {
+                            if (v.index === (index - 1)) {
+                                start = v.end + 1;
+                            }
+                        })
+                    }
+                    if (rowIndex === start) {
+                        return {
+                            rowspan: end - start + 1,
+                            colspan: 1
+                        }
+                    }
+                    else if (start < rowIndex <= end) {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        }
+                    } else {
+                        return {
+                            rowspan: 1,
+                            colspan: 1
+                        }
+                    }
+                } else if (columnIndex === 2) {
+                    if (this.spanObject.size === 0) {
+                        return ;
+                    }
+                    let key;
+                    if (row.districtId === null) {
+                        key = 'null';
+                    } else {
+                        key = row.districtId;
+                    }
+                    let index = this.spanObject.get(key).index;
+                    let end = this.spanObject.get(key).end;
+                    let start = 0;
+                    if (index !== 0) {
+                        this.spanObject.forEach((v,key) => {
+                            if (v.index === (index - 1)) {
+                                start = v.end + 1;
+                            }
+                        })
+                    }
+                    if (rowIndex === start) {
+                        return {
+                            rowspan: end - start + 1,
+                            colspan: 1
+                        }
+                    }
+                    else if (start < rowIndex <= end) {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        }
+                    } else {
+                        return {
+                            rowspan: 1,
+                            colspan: 1
+                        }
+                    }
+                } else {
+                    return {
+                        rowspan: 1,
+                        colspan: 1
+                    }
+                }
+            },
+            handleTableDataCadre(data) {
+                let parentDistrictIds = data.map(item => item.parentDistrictId);
+                parentDistrictIds = new Set(parentDistrictIds);
+                let order = 0;
+                this.spanParentCadreObject.clear();
+                parentDistrictIds.forEach((item) => {
+                    if (item === null) {
+                        item = 'null'
+                    }
+                    data.forEach((subItem, subIndex) => {
+                        if (String(subItem.parentDistrictId) == item) {
+                            this.spanParentCadreObject.set(item, {index: order, end: subIndex})
+                        }
+                    })
+                    order ++;
+                })
+
+                let districtIds = data.map(item => item.districtId);
+                districtIds = new Set(districtIds);
+                order = 0;
+                this.spanCadreObject.clear()
+                districtIds.forEach(item => {
+                    if (item === null) {
+                        item = 'null'
+                    }
+                    data.forEach((subItem, subIndex) => {
+                        if (String(subItem.districtId) == item) {
+                            this.spanCadreObject.set(item, {index: order, end: subIndex})
+                        }
+                    })
+                    order ++;
+                })
+            },
+            objectSpanMethodCadre({row, column, rowIndex, columnIndex}) {
+                if (columnIndex === 1) {
+                    if (this.spanParentCadreObject.size === 0) {
+                        return ;
+                    }
+                    let key;
+                    if (row.parentDistrictId === null) {
+                        key = 'null';
+                    } else {
+                        key = row.parentDistrictId;
+                    }
+                    let index = this.spanParentCadreObject.get(key).index;
+                    let end = this.spanParentCadreObject.get(key).end;
+                    let start = 0;
+                    if (index !== 0) {
+                        this.spanParentCadreObject.forEach((v,key) => {
+                            if (v.index === (index - 1)) {
+                                start = v.end + 1;
+                            }
+                        })
+                    }
+                    if (rowIndex === start) {
+                        return {
+                            rowspan: end - start + 1,
+                            colspan: 1
+                        }
+                    }
+                    else if (start < rowIndex <= end) {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        }
+                    } else {
+                        return {
+                            rowspan: 1,
+                            colspan: 1
+                        }
+                    }
+                } else if (columnIndex === 2) {
+                    if (this.spanCadreObject.size === 0) {
+                        return ;
+                    }
+                    let key;
+                    if (row.districtId === null) {
+                        key = 'null';
+                    } else {
+                        key = row.districtId;
+                    }
+                    let index = this.spanCadreObject.get(key).index;
+                    let end = this.spanCadreObject.get(key).end;
+                    let start = 0;
+                    if (index !== 0) {
+                        this.spanCadreObject.forEach((v,key) => {
+                            if (v.index === (index - 1)) {
+                                start = v.end + 1;
+                            }
+                        })
+                    }
+                    if (rowIndex === start) {
+                        return {
+                            rowspan: end - start + 1,
+                            colspan: 1
+                        }
+                    }
+                    else if (start < rowIndex <= end) {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        }
+                    } else {
+                        return {
+                            rowspan: 1,
+                            colspan: 1
+                        }
+                    }
+                } else {
+                    return {
+                        rowspan: 1,
+                        colspan: 1
+                    }
                 }
             }
         },

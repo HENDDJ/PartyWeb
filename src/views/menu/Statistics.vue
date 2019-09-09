@@ -57,7 +57,7 @@
                         </div>
                         <table id="result-table-content" class="tableContent" style="margin-top: -7px;overflow: scroll;max-height: 620px;" @scroll="handleScroll">
                             <tr v-for="(value,key) in activityList"  v-if="key!='title'">
-                                <td class="content" v-for="(index,item) in value"  >
+                                <td class="sta-content" v-for="(index,item) in value"  >
                                     <div style="background-color: #39c667;line-height: 25px;height: 25px;" v-if="index.status=='2'" @click="showPictures(index)">已完成</div>
                                     <div style="background-color: #DC143C;line-height: 25px;height: 25px;"  v-else-if="index.status!='2' && (index.objectId !== null)" >未完成</div>
                                     <div style="background-color: #DC7F51;line-height: 25px;height: 25px;"  v-else-if="index.status== null && (index.objectId === null)">未指派</div>
@@ -497,13 +497,13 @@
         height: 25px;
         width: 100px;
     }
-    .tableContent .content{
+    .tableContent .sta-content{
         width: 100px;
         font-size: 12px;
         color: white;
         height: 25px;
     }
-    .tableContent .content :hover{
+    .tableContent .sta-content :hover{
         cursor: pointer;
     }
    .titleContent{

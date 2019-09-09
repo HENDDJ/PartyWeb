@@ -1,6 +1,8 @@
 <template>
     <section>
-        <CommonCRUD :columns="columns" api-root="identity/villageCadres" :formColumns="formColumns" :queryFormColumns="queryForm">
+        <CommonCRUD :columns="columns" api-root="identity/villageCadres" :formColumns="formColumns"
+                    :queryFormColumns="queryForm" :objectSpanMethod="objectSpanMethod"
+                    @getTableData="handleTableData" :sortColumns="sortColumns">
             <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                 <el-form-item label="所属组织">
                     <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
@@ -80,15 +82,138 @@
                         }
                     }
                 },
-                userAuthority:1
+                userAuthority:1,
+                spanParentObject: new Map(),
+                spanObject: new Map(),
+                sortColumns: [
+                    {
+                        name: 'districtId',
+                        type: 'asc'
+                    }
+                ],
             }
         },
         methods:{
             selValue(val){
                 if(val.length>0){
-                    this.queryForm[1].value = val[val.length-1];
+                    this.queryForm[2].value = val[val.length-1];
                 }else{
-                    this.queryForm[1].value = this.user.districtId;
+                    this.queryForm[2].value = this.user.districtId;
+                }
+            },
+            handleTableData(data) {
+                let parentDistrictIds = data.map(item => item.parentDistrictId);
+                parentDistrictIds = new Set(parentDistrictIds);
+                let order = 0;
+                this.spanParentObject.clear();
+                parentDistrictIds.forEach((item) => {
+                    if (item === null) {
+                        item = 'null'
+                    }
+                    data.forEach((subItem, subIndex) => {
+                        if (String(subItem.parentDistrictId) == item) {
+                            this.spanParentObject.set(item, {index: order, end: subIndex})
+                        }
+                    })
+                    order ++;
+                })
+
+                let districtIds = data.map(item => item.districtId);
+                districtIds = new Set(districtIds);
+                order = 0;
+                this.spanObject.clear()
+                districtIds.forEach(item => {
+                    if (item === null) {
+                        item = 'null'
+                    }
+                    data.forEach((subItem, subIndex) => {
+                        if (String(subItem.districtId) == item) {
+                            this.spanObject.set(item, {index: order, end: subIndex})
+                        }
+                    })
+                    order ++;
+                })
+            },
+            objectSpanMethod({row, column, rowIndex, columnIndex}) {
+                if (columnIndex === 1) {
+                    if (this.spanParentObject.size === 0) {
+                        return ;
+                    }
+                    let key;
+                    if (row.parentDistrictId === null) {
+                        key = 'null';
+                    } else {
+                        key = row.parentDistrictId;
+                    }
+                    let index = this.spanParentObject.get(key).index;
+                    let end = this.spanParentObject.get(key).end;
+                    let start = 0;
+                    if (index !== 0) {
+                        this.spanParentObject.forEach((v,key) => {
+                            if (v.index === (index - 1)) {
+                                start = v.end + 1;
+                            }
+                        })
+                    }
+                    if (rowIndex === start) {
+                        return {
+                            rowspan: end - start + 1,
+                            colspan: 1
+                        }
+                    }
+                    else if (start < rowIndex <= end) {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        }
+                    } else {
+                        return {
+                            rowspan: 1,
+                            colspan: 1
+                        }
+                    }
+                } else if (columnIndex === 2) {
+                    if (this.spanObject.size === 0) {
+                        return ;
+                    }
+                    let key;
+                    if (row.districtId === null) {
+                        key = 'null';
+                    } else {
+                        key = row.districtId;
+                    }
+                    let index = this.spanObject.get(key).index;
+                    let end = this.spanObject.get(key).end;
+                    let start = 0;
+                    if (index !== 0) {
+                        this.spanObject.forEach((v,key) => {
+                            if (v.index === (index - 1)) {
+                                start = v.end + 1;
+                            }
+                        })
+                    }
+                    if (rowIndex === start) {
+                        return {
+                            rowspan: end - start + 1,
+                            colspan: 1
+                        }
+                    }
+                    else if (start < rowIndex <= end) {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        }
+                    } else {
+                        return {
+                            rowspan: 1,
+                            colspan: 1
+                        }
+                    }
+                } else {
+                    return {
+                        rowspan: 1,
+                        colspan: 1
+                    }
                 }
             },
             handelOrg(){

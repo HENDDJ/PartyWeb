@@ -2,7 +2,7 @@
     <div class="carouselStyle">
         <el-carousel trigger="click" height="250px"  arrow="never">
             <el-carousel-item v-for="(item,index) in TvPic" :key="index">
-                <span style="position: absolute; top: 10px;left: 20px;color: #fff;font-size: 16px;">{{title}}</span>
+                <span style="position: absolute; bottom: 10px;left: 20px;color: #fff;font-size: 16px;">{{title}}</span>
                 <img
                     :src=item
                     style="width: 100%;height: 100%;">

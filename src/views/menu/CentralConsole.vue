@@ -464,6 +464,8 @@
             //统计总数
             totalStatistics(){
                 this.$http("POST",`identity/centralConsole/statistics/year${new Date().getFullYear()}`,false).then( data => {
+                    this.parMemberNumber = data.parMemberNumber;
+                    this.organizationNumber = data.organizationNumber;
                     this.activityPerformNumber = data.activityPerformNumber;
                     this.villageCadresNumber = data.villageCadresNumber;
                     this.positionNumber =data.positionNumber;

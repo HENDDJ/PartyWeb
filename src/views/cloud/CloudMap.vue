@@ -1,5 +1,5 @@
 <template>
-    <section class="gis-map">
+    <section>
         <div id="allmap"></div>
     </section>
 </template>
@@ -43,16 +43,29 @@
         methods: {
             initMap() {
                 // 百度地图API功能
-                this.map = new BMap.Map("allmap");    // 创建Map实例
+                this.map = new BMap.Map("allmap",{minZoom:11,maxZoom:20});    // 创建Map实例
+                this.map.setMapStyle({style:'midnight'});
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.map.disableDragging();
                 //添加地图类型控件
-                this.map.addControl(new BMap.MapTypeControl({
+               /* this.map.addControl(new BMap.MapTypeControl({
                     mapTypes: [
                         BMAP_NORMAL_MAP,
                         BMAP_HYBRID_MAP
                     ]
-                }));
+                }));*/
                 this.map.setCurrentCity("镇江");          // 设置地图显示的城市 此项是必须设置的
+
+                this.map.addEventListener("zoomend", ()=>{
+                    if(this.map.getZoom()>11){
+                        this.map.enableDragging();
+                    }else{
+                        this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500),11);
+                        this.map.disableDragging();
+                    }
+
+                });
+
                 this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
 
                 let cityName = '镇江市句容市';
@@ -67,11 +80,11 @@
                     let ply1 = new BMap.Polygon(rs.boundaries[0] + SE_JW + SE_JW + WS_JW + NW_JW + EN_JW + SE_JW, {
                         strokeColor: "none",
                        /* fillColor: "rgb(246,246,246)",*/
-                        fillColor:" #0d1736",
+                    //    fillColor:" transprate",
                         fillOpacity: 1,
                         strokeOpacity: 0.5
                     }); //建立多边形覆盖物
-                    self.map.addOverlay(ply1);
+                //    self.map.addOverlay(ply1);
                     ply1.disableMassClear();
 
                     let count = rs.boundaries.length; //行政区域的点有多少个
@@ -94,8 +107,8 @@
                     for (let i = 0; i < count; i++) {
                         let ply = new BMap.Polygon(rs.boundaries[i], {
                             strokeWeight: 3,
-                            strokeColor: "#ff0000",
-                            strokeOpacity: 0.8,
+                            strokeColor: "#1e3fa2",
+                            strokeOpacity: 1,
                             fillColor: '#fff',
                             fillOpacity: "0.1"
                         }); //建立多边形覆盖物
@@ -116,7 +129,6 @@
                 }
                 this.map.clearOverlays();
                 this.initMap();
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.workingDataList();
                 setInterval(()=>{
                     this.map.clearOverlays();
@@ -154,7 +166,7 @@
             setWorkingMaker(ids,value){
                 this.map.clearOverlays();
                 //正在执行的活动
-                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.workingOpts );
+            //    let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.workingOpts );
                 let workList = []
                 if(ids){
                     ids.forEach(idItem=>{     //整合数据，解决一村都任务的情况
@@ -171,28 +183,35 @@
                             workList.push(idValue);
                         }
                     });
-                    workList.forEach(res=>{
-                        let marker = new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]);
-                        let myIcon = new BMap.Icon("/static/img/working.gif", new BMap.Size(50, 50));
-                        let marker2 = new BMap.Marker(marker, {icon: myIcon});  // 创建标注
-                        let label = new BMap.Label(res.value[0].districtName,{offset:new BMap.Size(-5,28)});
-                        label.setStyle({
-                            backgroundColor: '#ecf5ff',
-                            display: 'inline-block',
-                            height: '28px',
-                            padding: '0 5px',
-                            lineHeight: '26px',
-                            fontSize: '13px',
-                            color: '#409eff',
-                            border: '1px solid #d9ecff',
-                            borderRadius: '4px',
-                            boxSizing: 'border-box',
-                            whiteSpace: 'nowrap',
-                        });
-                        marker2.addEventListener('click', e => {
-                            this.resetSetItem('cloudPicture',JSON.stringify(res.value[0]));
-                            /*console.log(JSON.parse(localStorage.getItem("cloudPicture")),"1");*/
-                          /*  let temp = { districtId: "1c8d1e35-cd63-4029-a20d-5f1a5766e54e",activityId: "60e9f56e-ff02-4a99-b57d-f1c6ab96f376"}
+                    if(!localStorage.getItem('cloudPicture')){
+                        if(workList.length>0){
+                          /*  let temp = { districtId: "1c8d1e35-cd63-4029-a20d-5f1a5766e54e",activityId: "60e9f56e-ff02-4a99-b57d-f1c6ab96f376",title:"一季度党员大会"}
+                            this.resetSetItem('cloudPicture',JSON.stringify(temp));*/
+                            this.resetSetItem('cloudPicture',JSON.stringify(workList[0].value[0]));
+                      }
+                  }
+                  workList.forEach(res=>{
+                      let marker = new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]);
+                      let myIcon = new BMap.Icon("/static/img/action.gif", new BMap.Size(50, 50));
+                      let marker2 = new BMap.Marker(marker, {icon: myIcon});  // 创建标注
+                      let label = new BMap.Label(res.value[0].districtName,{offset:new BMap.Size(-5,28)});
+                      label.setStyle({
+                          backgroundColor: '#ecf5ff',
+                          display: 'inline-block',
+                          height: '28px',
+                          padding: '0 5px',
+                          lineHeight: '26px',
+                          fontSize: '13px',
+                          color: '#409eff',
+                          border: '1px solid #d9ecff',
+                          borderRadius: '4px',
+                          boxSizing: 'border-box',
+                          whiteSpace: 'nowrap',
+                      });
+                      marker2.addEventListener('click', e => {
+                          this.resetSetItem('cloudPicture',JSON.stringify(res.value[0]));
+                          /*console.log(JSON.parse(localStorage.getItem("cloudPicture")),"1");*/
+                            /*let temp = { districtId: "1c8d1e35-cd63-4029-a20d-5f1a5766e54e",activityId: "60e9f56e-ff02-4a99-b57d-f1c6ab96f376"}
                             this.resetSetItem('cloudPicture',JSON.stringify(temp));
                             console.log(JSON.parse(localStorage.getItem("cloudPicture")),"2");*/
                         });
@@ -206,6 +225,9 @@
         mounted() {
             this.initMap();
             this.showWorking();
+        },
+        created() {
+            localStorage.removeItem('cloudPicture');
         }
     }
 </script>
@@ -215,8 +237,8 @@
 </style>
 <style scoped>
     #allmap{
-        width: 554px;
-        height: 418px;
+        width: 580px;
+        height: 780px;
         overflow: hidden;
         margin:0;font-family:"微软雅黑";
     }

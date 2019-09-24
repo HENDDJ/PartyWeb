@@ -10,7 +10,7 @@
                                 <p class="top_label">党员总人数</p>
                                 <p class="top_value">
                                     <template>
-                                        <CountTo :startVal="0" :endVal="18856" :duration="1300"></CountTo>
+                                        <CountTo :startVal="0" :endVal="parMemberNumber" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
@@ -30,7 +30,7 @@
                                 <p class="top_label">下属组织数</p>
                                 <p class="top_value">
                                     <template>
-                                        <CountTo :startVal="0" :endVal="200" :duration="1300"></CountTo>
+                                        <CountTo :startVal="0" :endVal="organizationNumber" :duration="1300"></CountTo>
                                     </template>
                                 </p>
                             </div>
@@ -354,6 +354,8 @@
                 activityCompleteRate:0,//活动完成率
                 villageCadresNumber:0, //村干部数量
                 positionNumber:0,//阵地数量
+                organizationNumber:0,//党组织数量
+                parMemberNumber:0,//党员数量
                 villageSecretaryNumber:0,//村书记数量
                 rank: {
                     tooltip : {
@@ -462,6 +464,8 @@
             //统计总数
             totalStatistics(){
                 this.$http("POST",`identity/centralConsole/statistics/year${new Date().getFullYear()}`,false).then( data => {
+                    this.parMemberNumber = data.parMemberNumber;
+                    this.organizationNumber = data.organizationNumber;
                     this.activityPerformNumber = data.activityPerformNumber;
                     this.villageCadresNumber = data.villageCadresNumber;
                     this.positionNumber =data.positionNumber;

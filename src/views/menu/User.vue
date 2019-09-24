@@ -41,6 +41,7 @@
         name: "User",
         data() {
             return {
+                submitLoad:false,
                 columns: UserStrcutre.columns,
                 formColumns: UserStrcutre.columns,
                 resetPsw:true,//重置密码按钮
@@ -144,16 +145,19 @@
                 this.resetDia = false
             },
             resetPassword(){
+                this.submitLoad = true;
                 let userName = sessionStorage.getItem("user")
                 if(this.originalPassword == ''){
+                    this.submitLoad = false;
                     this.$message({
-                        message:'原密码输入错误',
+                        message:'请输入原密码',
                         type:'warning'
                     });
                     return
                 }
-                this.$http('POST', `/identity/sysUser/list`, {userName:userName,password:md5.hex_md5(this.originalPassword)}).then(data01=> {
+                this.$http('POST', `/identity/sysUser/list`, {userName:userName,password:md5.hex_md5(this.originalPassword)},false).then(data01=> {
                     if (data01.length == 0) {
+                        this.submitLoad = false;
                         this.$message({
                             message: '原密码输入错误',
                             type: 'warning'
@@ -169,6 +173,7 @@
                         this.resetDia = false;
                         this.isLeft=true;
                         this.isRight=false;
+                        this.submitLoad = false;
                         this.$refs.table.refreshTableData();
                     })
                 })

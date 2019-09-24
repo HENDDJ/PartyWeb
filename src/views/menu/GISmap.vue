@@ -3,11 +3,20 @@
         <div id="allmap"></div>
         <nav class="nav">
             <ul>
-                <li class="store" @click="showParty()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
-                <li class="movies" @click="showBattleField()"><span class="store-icon"></span><a href="#" style="padding-left: 50px">基本阵地</a></li>
-                <li class="working" @click="showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">执行任务中</a></li>
+                <li class="store" @click="leftWidth.width = '230px';flag = 1;showLeft=true;showParty()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
+                <li class="movies" @click="leftWidth.width = '230px';flag = 2;showLeft=true;showBattleField()"><span class="store-icon"></span><a href="#" style="padding-left: 50px">基本阵地</a></li>
+                <li class="working" @click="leftWidth.width = '230px';flag = 3;showLeft=true;showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">执行任务中</a></li>
             </ul>
         </nav>
+        <div class="leftList" :style="leftWidth" v-if="showLeft">
+            <div class="leftClose" @click="leftWidth.width = '0px';showLeft=false;">
+
+            </div>
+            <div style="z-index: 99">
+                <el-tree :data="leftData"  @node-click="handleNodeClick" ></el-tree>
+            </div>
+        </div>
+        <div class="showLeftList" v-if="!showLeft" @click="leftWidth.width = '230px';showLeft=true;">>>></div>
         <div id="census" onclick="toggleDiv('')">
             <img src="/static/img/test.png" height="472" width="670" />
         </div>
@@ -186,14 +195,66 @@
                 //分页类
                 pageable: {
                     total: 1,
-                    currentPage: 1,
+                    currentPage: 0,
                     pageSize: 10,
                     flg:true
                 },
-                tableDataDistrictId:''
+                tableDataDistrictId:'',
+                leftData:[],
+                leftWidth:{
+                    width:'0px'
+                },
+                //模块选择
+                flag:0,
+                //是否展开显示左侧
+                showLeft:false
             }
         },
         methods: {
+            handleNodeClick(data){
+                if(data.leaf){
+                    if(this.flag == 1){
+                       this.$http('post','identity/sysDistrict/list',{districtId:data.id}).then(res=>{
+                            this.setPartyMaker(res[0].attachTo);
+                           setTimeout(()=>{
+                               let maker = new BMap.Point(res[0].location.split(",")[0], res[0].location.split(",")[1])
+                               this.map.panTo(maker);
+                           },300)
+                           setTimeout(()=> {
+                               this.map.setZoom(14);
+                           },500)
+                       })
+                    }else if(this.flag == 2){
+                        this.$http('post','identity/sysDistrict/list',{districtId:data.id}).then(res=>{
+                            this.setCunMaker(res[0].attachTo);
+                            setTimeout(()=>{
+                                let maker = new BMap.Point(res[0].location.split(",")[0], res[0].location.split(",")[1])
+                                this.map.panTo(maker);
+                            },300)
+                            setTimeout(()=> {
+                                this.map.setZoom(14);
+                            },500)
+                        })
+                    }
+                    else if(this.flag == 3){
+
+                    }
+                }
+            },
+            //取得树结构数据
+            getTreeData(){
+              this.$http('get','identity/sysDistrict/01alltree',false).then((data)=>{
+                  this.leftData = data[0].children
+              })
+            },
+            //open提示
+            openNotify(val) {
+                const h = this.$createElement;
+                this.$notify({
+                    title: '提示',
+                    message: h('i', { style: 'color: teal'}, val)
+                });
+            },
             //关闭成员dialog
             closeMemberDialog(){
                 document.getElementById('nnn').style.display = 'none'
@@ -201,7 +262,7 @@
             //第几页
             currentPage(val){
                 if(this.pageable.flg){
-                this.pageable.currentPage = val
+                this.pageable.currentPage = val-1
                 this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId: this.tableDataDistrictId}).then((data)=>{
                     this.memberData = data.content
                 })
@@ -303,6 +364,7 @@
             },
             //展示基本阵地点位
             showBattleField() {
+                this.openNotify('基本阵地是党组织开展活动的重要场所，是党员接受教育、发挥作用的重要平台，也是把党员和群众团结凝聚在党组织周围的重要物质依托。');
                 this.msgFloatRight.marginRight = '-285px'
                 let allOverlay = this.map.getOverlays();
                 console.log(allOverlay)
@@ -356,6 +418,7 @@
             },
             //展示正在执行
             showWorking(){
+                this.openNotify('此处显示电视端正在执行的任务');
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
@@ -505,11 +568,15 @@
                                 this.map.panTo(new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1] + 0.001));
                             })
                                 this.map.setZoom(13);
-                            let path = 'identity/parCamera/redisIp?key='+res.value[0].organizationId;
-                            this.$http('Get',path,false).then(data=>{
-                                if(data){
-                                    ip = data.ip;
-                                    res.value.forEach(item=>{
+                            let path = 'identity/parPictureInfro/list';
+                            this.$http('Post',path,{organizationId:res.value[0].districtId,studyContent:res.value[0].activityId},false).then(data=>{
+                                let url = ''
+                                    if(data[0].imageURL){
+                                         url = data[0].imageURL
+                                    }else {
+                                        url='../../../static/img/nodata.png'
+                                    }
+                                res.value.forEach(item=>{
                                         content =   "<div style='position: relative;padding-bottom: 10px;padding-top: 3px'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>任务名称：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.title+"</span></span>" +
                                             "<span style='color:#2C3E50;font-size: 15px;font-weight: 500;right: 29px;position: absolute;;'>任务类型：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.type+"</span></span>" +
                                             "</div>"+
@@ -517,16 +584,17 @@
                                             "</div>"+
                                             "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;float:left;'>任务要求：</span><div style='color:rgba(37, 37, 37, 0.51);font-size: 15px;font-weight: 500;margin-left: 92px;'>"+item.context+"</div>" +
                                             "</div>"+
-                                            "<div style='position: relative;;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>直播视频：</span>" +
+                                            "<div style='position: relative;;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>直播截图：</span><span style='color:rgba(37, 37, 37, 0.51);font-size: 15px;float:right'>"+data[0].createdAt.split('T')[0]+' '+data[0].createdAt.split('T')[1]+"</span>" +
                                             "</div>"+
                                             "<div style='position: relative;margin-left: 17px'>" +
-                                            "<video class='tvhou' width='100%' height='100%'" +
-                                            " controls='controls' autoplay='autoplay'" +
-                                            " x-webkit-airplay='true' x5-video-player-fullscreen='true'" +
-                                            " preload='auto' playsinline='true' webkit-playsinline" +
-                                            " x5-video-player-typ='h5'>" +
-                                            " <source type='application/x-mpegURL' src='"+ip+"'>" +
-                                            "</video> "+
+                                            // "<video class='tvhou' width='100%' height='100%'" +
+                                            // " controls='controls' autoplay='autoplay'" +
+                                            // " x-webkit-airplay='true' x5-video-player-fullscreen='true'" +
+                                            // " preload='auto' playsinline='true' webkit-playsinline" +
+                                            // " x5-video-player-typ='h5'>" +
+                                            // " <source type='application/x-mpegURL' src='"+ip+"'>" +
+                                            // "</video> "+
+                                            "<img src="+url+" style='width:420px'>"+
                                             "</div>"
                                     })
 
@@ -540,7 +608,6 @@
                                 "</div>";
 
                             setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker2)),600)
-                                }
                             })
                         });
                         this.map.addOverlay(marker2);
@@ -552,6 +619,7 @@
             },
             //展示党组织镇级
             showParty() {
+                this.openNotify('党的基层组织是党在社会基层组织中的战斗堡垒，是党的全部工作和战斗力的基础。新形势下基层党组织工作开展的怎么样，直接影响到党的凝聚力、影响力、战斗力的充分发挥。');
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
@@ -624,7 +692,7 @@
                                         "</div>"+
                                         "</div>";
                                     setTimeout(()=>{
-                                        this.map.panTo(item.location.split(",")[0],item.location.split(",")[0]);
+                                        this.map.panTo(item.location.split(",")[0],item.location.split(",")[1]);
                                     },300)
                                     setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
 
@@ -663,11 +731,13 @@
 
         },
         mounted() {
+            this.getTreeData();
             this.initMap();
             window.addEventListener("hashchange",()=>{
                 this.memberData = []
                 if(window.location.hash.split("#").length-1>1){
                     this.tableDataDistrictId = window.location.hash.split("#")[2]
+                    this.pageable.currentPage = 0
                     this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId:window.location.hash.split("#")[2]}).then((data)=>{
                         this.pageable.total = data.totalPages
                         this.memberData = data.content
@@ -1144,6 +1214,47 @@
     }
 </style>
 <style scope>
+    .showLeftList{
+        cursor: pointer;
+        position: fixed;
+        overflow-y:scroll;
+        top: 320px;
+        height: 50px;
+        width: 50px;
+        background: rgba(158, 204, 255, 0.3);
+        transition: all 0.6s;
+    }
+    .leftList{
+        position: fixed;
+        overflow-y:scroll;
+        top: 320px;
+        height: 550px;
+        background: rgba(158, 204, 255, 0.3);
+        transition: all 0.6s;
+    }
+    .leftList::-webkit-scrollbar {
+        width: 9px;
+    }
+    .leftClose{
+        z-index: 1000;
+        cursor: pointer;
+        position: absolute;
+        margin-top: 20px;
+        margin-left: 180px;
+        width: 25px;
+        height:5px;
+        background: black;
+        transform: rotate(45deg);
+        float: left;
+    }
+    .leftClose:before{
+        content:'';
+        display:block;
+        width: 25px;
+        height:5px;
+        background: black;
+        transform: rotate(-90deg);
+    }
     #allmap{
         width: 100%;
         height: 822px;
@@ -1192,9 +1303,7 @@
         width: 200px;
         z-index: 1000;
         top: 100px;
-        top: 100px;
-        left: 30px;
-        margin:30px 0 0 200px;
+        margin:30px 0 0 0px;
     }
     .member{
         color: #409eff;

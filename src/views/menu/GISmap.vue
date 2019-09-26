@@ -5,7 +5,7 @@
             <ul>
                 <li class="store" @click="leftWidth.width = '230px';flag = 1;showLeft=true;showParty()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
                 <li class="movies" @click="leftWidth.width = '230px';flag = 2;showLeft=true;showBattleField()"><span class="store-icon"></span><a href="#" style="padding-left: 50px">基本阵地</a></li>
-                <li class="working" @click="leftWidth.width = '230px';flag = 3;showLeft=true;showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">执行任务中</a></li>
+                <li class="working" @click="leftWidth.width = '230px';flag = 3;showLeft=false;showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">执行任务中</a></li>
             </ul>
         </nav>
         <div class="leftList" :style="leftWidth" v-if="showLeft">
@@ -16,7 +16,7 @@
                 <el-tree :data="leftData"  @node-click="handleNodeClick" ></el-tree>
             </div>
         </div>
-        <div class="showLeftList" v-if="!showLeft" @click="leftWidth.width = '230px';showLeft=true;">>>></div>
+        <div class="showLeftList" v-if="!showLeft&&flag!=3" @click="leftWidth.width = '230px';showLeft=true;">>>></div>
         <div id="census" onclick="toggleDiv('')">
             <img src="/static/img/test.png" height="472" width="670" />
         </div>
@@ -101,6 +101,20 @@
                </el-pagination>
                </div>
            </el-dialog>
+        </div>
+        <!--
+        右上角数据展示
+        -->
+        <div style="position: absolute;top:70px;right: 350px" v-if="flag==2">
+            <div style="display: inline-block">
+                <span style="background-color: rgba(255,207,34,0.5);" class="positionIcon">关爱</span>{{positionNumber.partyCare}}
+                <span style="background-color: rgba(108,116,255,0.5);" class="positionIcon">教育</span>{{positionNumber.memberEducation}}
+                <span style="background-color: rgba(255,71,56,0.5);" class="positionIcon">议事</span>{{positionNumber.organizationalConference}}
+                <span style="background-color: rgba(200,255,77,0.5); " class="positionIcon">党群</span>{{positionNumber.partyStudio}}
+                <span style="background-color: rgba(214,109,86,0.5); " class="positionIcon">厅</span>{{positionNumber.hall}}
+                <span style="background-color: rgba(158,204,255,0.5); " class="positionIcon">其他</span>{{positionNumber.column+positionNumber.hall}}
+            </div>
+
         </div>
     </section>
 </template>
@@ -207,7 +221,17 @@
                 //模块选择
                 flag:0,
                 //是否展开显示左侧
-                showLeft:false
+                showLeft:false,
+                //阵地数量
+                positionNumber:{
+                    column: 0,
+                    hall: 0,
+                    memberEducation: 0,
+                    organizationalConference: 0,
+                    partyCare: 0,
+                    partyStudio: 0,
+                    square: 0,
+                }
             }
         },
         methods: {
@@ -234,6 +258,10 @@
                             setTimeout(()=> {
                                 this.map.setZoom(14);
                             },500)
+                        })
+                        //阵地个数
+                        this.$http('post','identity/positionInformation/positionNumber?districtId='+data.id,false).then((data)=>{
+                            this.positionNumber = data
                         })
                     }
                     else if(this.flag == 3){
@@ -357,13 +385,20 @@
                 });
             },
             pandTo(val){
-               this.map.panTo(val);
+                    this.map.panTo(val,500);
                setTimeout(()=> {
                     this.map.setZoom(14);
-                },500)
+                },800)
             },
             //展示基本阵地点位
             showBattleField() {
+                this.flag =2
+                //阵地个数
+                this.$http('post','identity/positionInformation/positionNumber?districtId=01',false).then((data)=>{
+                    console.log(data)
+                    this.positionNumber = data
+                })
+
                 this.openNotify('基本阵地是党组织开展活动的重要场所，是党员接受教育、发挥作用的重要平台，也是把党员和群众团结凝聚在党组织周围的重要物质依托。');
                 this.msgFloatRight.marginRight = '-285px'
                 let allOverlay = this.map.getOverlays();
@@ -390,6 +425,10 @@
                                 marker2.addEventListener('click', e => {
                                     this.pandTo(marker)
                                     setTimeout(this.setCunMaker(item.districtId),600);
+                                    //阵地个数
+                                    this.$http('post','identity/positionInformation/positionNumber?districtId='+item.districtId,false).then((data)=>{
+                                        this.positionNumber = data
+                                    })
 
                                 })
                                 this.map.addOverlay(marker2);
@@ -435,6 +474,7 @@
             },
             //展示正在执行内的封装方法
             workingDataList(){
+                this.flag = 3
                 this.$http('Post','identity/parActivityObject/list',{isWorking:1},false).then(
                     (data)=>{
                         let orgId = []
@@ -497,6 +537,11 @@
                                 }
                             }
                             marker.addEventListener('click', e => {
+                                //阵地个数
+                                this.$http('post','identity/positionInformation/positionNumber?districtId='+item.districtId,false).then((data)=>{
+                                    this.positionNumber = data
+                                })
+
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
                                     "<div class='infoBoxTitle'><span class='text'>"+item.districtName+"</span>" +
@@ -611,14 +656,12 @@
                             })
                         });
                         this.map.addOverlay(marker2);
-
                     })
-
-
                 }
             },
             //展示党组织镇级
             showParty() {
+                this.flag = 1
                 this.openNotify('党的基层组织是党在社会基层组织中的战斗堡垒，是党的全部工作和战斗力的基础。新形势下基层党组织工作开展的怎么样，直接影响到党的凝聚力、影响力、战斗力的充分发挥。');
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
@@ -640,10 +683,33 @@
                             let myIcon = new BMap.Icon("/static/img/partyFlag.svg", new BMap.Size(50, 50));
                             let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
                             marker2.addEventListener('click', e => {
-                                this.pandTo(marker)
+                               this.pandTo(marker)
                                 //定义具体党组织maker
-                                setTimeout(this.setPartyMaker(item.districtId),600);
-                                this.setPartyMaker(item.districtId)
+                                setTimeout(this.setPartyMaker(item.districtId),500);
+                               let tableData = "<div><div style='line-height: 20px;'><div class='blueBlock'></div><div style='display: inline-block;vertical-align: middle'>组织成员：</div></div>" +
+                                   "<div class='row'><label class='detailLabel'>组织人数</label><div class='detailText'>"+666+"</div></div>"+
+                                   "<div class='row'><label class='detailLabel'>书记</label><div class='detailText'>"+666+"</div></div>"+
+                                   "<div class='row'><label class='detailLabel'>副书记</label><div class='detailText'>"+666+"</div></div>"+
+                                   "<div class='row'><label class='detailLabel'>其他委员</label><div class='detailText' style='text-overflow:clip;word-break: normal;overflow: visible;white-space:normal'>"+'daoiwjdiwoadiajowwwwwwwwaw达瓦达瓦啊我的娃达娃大wwwwwwwwww'+"</div></div>"+
+                                   "</div>"
+                                this.pContent =
+                                    "<div class='infoBoxContent'>" +
+                                    "<div class='header'><div class='headerTitle'><img src='static/img/house06.svg' style='width: 20px;height: 20px'></img>"+item.districtName+"</div>" +
+                                    "<div>" +
+                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
+                                    "</div>" +
+                                    "</div>"+
+                                    "<div class='content'><div style='line-height: 20px;'><div class='blueBlock'></div>" +
+                                    "<div style='display: inline-block;vertical-align: middle'>组织详情：</div></div>" +
+                                    "<div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
+                                    "</div>"+
+                                    tableData+
+                                    "</div>"+
+                                    "</div>";
+                                setTimeout(
+                                    ()=>{
+                                        let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
+                                        infoBox._setContent(this.pContent,infoBox.open(marker2))},1200)
                             })
                             this.map.addOverlay(marker2);
                             marker2.disableMassClear();
@@ -1049,7 +1115,7 @@
     .detailText{
         display: block;
         vertical-align: middle;
-        width: 240px;
+        width: 250px;
         padding: 7px 8px;
         font-size: 12px;
         color: #706874;
@@ -1127,29 +1193,33 @@
     }
     .closeBtnBg{
         transition: all 0.3s;
-        position: absolute;right: 256px;top: 102px;background-color: rgba(28, 24, 24, 0.60);width: 30px;height: 30px;border-radius: 3px
+        position: absolute;right: 252px;top: 90px;
+        /*background-color: rgba(28, 24, 24, 0.60);*/
+        width: 30px;height: 30px;border-radius: 3px
     }
     .closeBtnBg:hover{
         transform: scale(1.05);
         cursor:pointer;
         background-color: rgba(28, 24, 24, 0.34);
+        width: 32px;
+        z-index: 1001;
     }
     .closeBtn{
-        position: absolute;
-        top:12px;
-        left: 3px;
-        width: 25px;
-        height:5px;
-        background: white;
-        transform: rotate(45deg);
+        top:4px;
+        left: 13px;
+        width: 0;
+        height: 0;
+        border: 13px solid;
+        border-color:  transparent transparent transparent #73abff;
+        position: relative;
     }
-    .closeBtn:before{
-        content:'';
-        display:block;
-        width: 25px;
-        height:5px;
-        background: white;
-        transform: rotate(-90deg);
+    .closeBtn:after{
+        content: '';
+        position: absolute;
+        top:-13px;
+        left: -19px;
+        border: 13px solid;
+        border-color:  transparent transparent transparent rgba(97, 133, 255, 0.6);
     }
     .flowWin::-webkit-scrollbar{
         width: 8px;
@@ -1211,6 +1281,7 @@
         font-size: 15px;
         text-indent : 25px;
         letter-spacing:2px;
+        margin:0 auto;
     }
 </style>
 <style scope>
@@ -1326,6 +1397,12 @@
         margin-top: -23px;
         top:0px;
     }
-
+ /* 右上角阵地个数图标*/
+    .positionIcon{
+        border-radius: 30px;
+        padding: 6px;
+        font-size: 13px;
+        margin: 0px 2px
+    }
 </style>
 

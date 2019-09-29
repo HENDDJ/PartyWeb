@@ -6,6 +6,7 @@
                 <li class="store" @click="leftWidth.width = '230px';flag = 1;showLeft=true;showParty()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
                 <li class="movies" @click="leftWidth.width = '230px';flag = 2;showLeft=true;showBattleField()"><span class="store-icon"></span><a href="#" style="padding-left: 50px">基本阵地</a></li>
                 <li class="working" @click="leftWidth.width = '230px';flag = 3;showLeft=false;showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">执行任务中</a></li>
+                <li class="working" @click="leftWidth.width = '230px';flag = 4;showLeft=false;showPeopleStream()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">阵地实时人流量</a></li>
             </ul>
         </nav>
         <div class="leftList" :style="leftWidth" v-if="showLeft">
@@ -114,7 +115,22 @@
                 <span style="background-color: rgba(214,109,86,0.5); " class="positionIcon">厅</span>{{positionNumber.hall}}
                 <span style="background-color: rgba(158,204,255,0.5); " class="positionIcon">其他</span>{{positionNumber.column+positionNumber.hall}}
             </div>
+        </div>
 
+        <div style="position: absolute;top:70px;right: 350px" v-if="flag==4">
+            <div style="display: inline-block;">
+                <el-date-picker
+                    v-model="heatMapRange"
+                    type="datetimerange"
+                    align="right"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :unlink-panels="true"
+                    :default-time="['00:00:00', '00:00:00']"
+                    value-format="yyyy-MM-ddTHH:mm:ss"
+                    @change="showPeopleStream">
+                </el-date-picker>
+            </div>
         </div>
     </section>
 </template>
@@ -231,7 +247,8 @@
                     partyCare: 0,
                     partyStudio: 0,
                     square: 0,
-                }
+                },
+                heatMapRange: []
             }
         },
         methods: {
@@ -325,7 +342,7 @@
             initMap() {
                 // 百度地图API功能
                 this.map = new BMap.Map("allmap");    // 创建Map实例
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 12);  // 初始化地图,设置中心点坐标和地图级别
                 //添加地图类型控件
                 this.map.addControl(new BMap.MapTypeControl({
                     mapTypes: [
@@ -334,7 +351,16 @@
                     ]
                 }));
                 this.map.setCurrentCity("镇江");          // 设置地图显示的城市 此项是必须设置的
-                this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+                this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放a
+                this.map.addControl(
+                    new BMap.NavigationControl({
+                        // 靠左上角位置
+                        anchor: BMAP_ANCHOR_TOP_LEFT,
+                        // LARGE类型
+                        type: BMAP_NAVIGATION_CONTROL_LARGE,
+                        // 启用显示定位
+                    })
+                );
 
                 let cityName = '镇江市句容市';
                 let bdary = new BMap.Boundary();
@@ -783,6 +809,33 @@
                             })
                 })
 
+            },
+            //阵地实时人流量
+            showPeopleStream(value) {
+                this.$http('POST', '/identity/sumPerHour/getHeatMapData', {
+                    startTime: value[0],
+                    endTime:  value[1]
+                }).then(data => {
+                    data.forEach(item => {
+                        item.geometry = {
+                            type: 'Point',
+                            coordinates: item.location.split(',')
+                        };
+                        item.count = item.total
+                    });
+
+                    let dataSet = new mapv.DataSet(data);
+
+                    let options = {
+                        size: 15,
+                        gradient: { 0.25: "rgb(0,0,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
+                        max: 150,
+                        // range: [0, 100], // 过滤显示数据范围
+                        draw: 'heatmap'
+                    }
+
+                    let mapvLayer = new mapv.baiduMapLayer(this.map, dataSet, options);
+                })
             },
             toggleDiv(action) {
                 var census = document.getElementById('census');
@@ -1403,6 +1456,9 @@
         padding: 6px;
         font-size: 13px;
         margin: 0px 2px
+    }
+    .gis-map .el-date-editor.el-input, .gis-map .el-date-editor.el-input__inner {
+        width: 300px !important;
     }
 </style>
 

@@ -5,7 +5,8 @@
             <ul>
                 <li class="store" @click="leftWidth.width = '230px';flag = 1;showLeft=true;showParty()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
                 <li class="movies" @click="leftWidth.width = '230px';flag = 2;showLeft=true;showBattleField()"><span class="store-icon"></span><a href="#" style="padding-left: 50px">基本阵地</a></li>
-                <li class="working" @click="leftWidth.width = '230px';flag = 3;showLeft=false;showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">实时任务</a></li>
+                <li class="working" @click="leftWidth.width = '230px';flag = 3;showLeft=false;showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">执行任务中</a></li>
+                <li class="working" @click="leftWidth.width = '230px';flag = 4;showLeft=false;showPeopleStream()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">阵地实时人流量</a></li>
             </ul>
         </nav>
         <div class="leftList" :style="leftWidth" v-if="showLeft">
@@ -24,83 +25,83 @@
         <div class="closeBtnBg" v-if="this.msgFloatRight.marginRight === '48px'" @click="close">
             <div class="closeBtn"></div>
         </div>
-        <div style="width: 250px;height: 579px;position: absolute;right: 0px;top:10px">
-            <vs-card class="msgCard" :style="msgFloatRight">
+        <div style="width: 250px;height: 579px">
+        <vs-card class="msgCard" :style="msgFloatRight">
                 <div slot="header" style="padding-bottom: 8px;padding-top: 6px;">
                     <a v-if="!rightMessage.districtName">暂无数据</a>
-                    {{rightMessage.districtName}}
+                  {{rightMessage.districtName}}
                 </div>
-                <div  v-for="(item,index) in rightMessage.positionInformation">
+                    <div  v-for="(item,index) in rightMessage.positionInformation">
                     <div class='block' style="margin-top: 2px"></div>
                     <div style="float: left;font-size: 17px">{{item.name}}</div><br>
-                    <div style="font-size: 25px;text-align: left">
-                        <el-tag style="margin-right: 200px" effect="plain" size="small">
-                            <i class="el-icon-picture"style="margin-right: 5px;vertical-align: middle"/>
-                            图片
+                    <div style="font-size: 25px">
+                        <el-tag style="margin-right: 132px" effect="plain" size="small">
+                        <i class="el-icon-picture"style="margin-right: 5px;vertical-align: middle"/>
+                        图片
                         </el-tag>
                     </div>
                     <div style="margin-top: 10px">
                         <viewer >
                             <img :src="item.pictures" v-if="item.pictures"
-                                 style="width: 262px;height: 175px;">
+                                 style="width: 200px;height: 135px;">
                             <img src="/static/img/nodata.png" v-else
-                                 style="width: 262px;height: 175px;">
-                        </viewer>
+                                 style="width: 200px;height: 135px;">
+                           </viewer>
                     </div>
-                    <div style="font-size: 25px;text-align: left">
-                        <el-tag style="margin-left: 15px" effect="plain" size="small">
+                    <div style="font-size: 25px">
+                        <el-tag style="margin-left: -87px" effect="plain" size="small">
                             <i class="el-icon-user-solid"style="margin-right: 5px;vertical-align: middle"/>
                             人流量统计图
                         </el-tag>
                     </div>
-                    <div style="margin-top: 10px;width: 285px;height: 176px; border: 1px solid #c1c1c1;margin-left: 12px" :id='msgFloatRight.zIndex'>
+                    <div style="margin-top: 10px;width: 200px;height: 150px; border: 1px solid #c1c1c1;margin-left: 12px" :id='msgFloatRight.zIndex'>
                     </div>
-                    <el-divider style="margin-top: 8px"></el-divider>
-                </div>
+                        <el-divider style="margin-top: 8px"></el-divider>
+                    </div>
             </vs-card>
-            <el-dialog
-                id="nnn"
-                title="组织成员"
-                visible.sync="true"
-                width="580px"
-                :before-close="closeMemberDialog">
-                123
-                <div slot="footer" class="dialog-footer">
-                    <el-table
-                        :data="memberData"
-                        border
-                        style="width: 100%">
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="sex"
-                            label="性别"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="nativePlace"
-                            label="出生地"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="education"
-                            label="学历"
-                            width="180">
-                        </el-table-column>
-                    </el-table>
-                    <el-pagination
-                        layout="prev, pager, next"
-                        :page-count="pageable.total"
-                        @current-change="currentPage"
-                        @prev-click="prePage"
-                        @next-click="nextPage"
-                        hide-on-single-page="false">
-                    </el-pagination>
-                </div>
-            </el-dialog>
+           <el-dialog
+               id="nnn"
+               title="组织成员"
+               visible.sync="true"
+               width="580px"
+               :before-close="closeMemberDialog">
+               123
+               <div slot="footer" class="dialog-footer">
+               <el-table
+                   :data="memberData"
+                   border
+                   style="width: 100%">
+                   <el-table-column
+                       prop="name"
+                       label="姓名"
+                       width="180">
+                   </el-table-column>
+                   <el-table-column
+                       prop="sex"
+                       label="性别"
+                       width="180">
+                   </el-table-column>
+                   <el-table-column
+                       prop="nativePlace"
+                       label="出生地"
+                       width="180">
+                   </el-table-column>
+                   <el-table-column
+                       prop="education"
+                       label="学历"
+                       width="180">
+                   </el-table-column>
+               </el-table>
+               <el-pagination
+                   layout="prev, pager, next"
+                   :page-count="pageable.total"
+                   @current-change="currentPage"
+                   @prev-click="prePage"
+                   @next-click="nextPage"
+                   hide-on-single-page="false">
+               </el-pagination>
+               </div>
+           </el-dialog>
         </div>
         <!--
         右上角数据展示
@@ -114,7 +115,22 @@
                 <span style="background-color: rgba(214,109,86,0.5); " class="positionIcon">厅</span>{{positionNumber.hall}}
                 <span style="background-color: rgba(158,204,255,0.5); " class="positionIcon">其他</span>{{positionNumber.column+positionNumber.hall}}
             </div>
+        </div>
 
+        <div style="position: absolute;top:70px;right: 350px" v-if="flag==4">
+            <div style="display: inline-block;">
+                <el-date-picker
+                    v-model="heatMapRange"
+                    type="datetimerange"
+                    align="right"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :unlink-panels="true"
+                    :default-time="['00:00:00', '00:00:00']"
+                    value-format="yyyy-MM-ddTHH:mm:ss"
+                    @change="showPeopleStream">
+                </el-date-picker>
+            </div>
         </div>
     </section>
 </template>
@@ -127,43 +143,43 @@
             return {
                 map: {},
                 positionList:[],
-                /* pointList:[
-                     {label: '茅山村党员教育室', x: 119.302738, y: 31.797112},
-                     {label: '宝华村党员教育室', x: 119.083573, y: 32.155268},
-                     {label: '二圣村党员教育室', x: 119.195893, y: 31.86983},
-                     {label: '古村党员教育室', x: 119.2061525, y: 31.82931},
-                     {label: '城上村党员教育室', x: 119.185518, y: 31.992343},
-                     {label: '莲塘村党员教育室', x: 119.139197, y: 31.997086},
-                     {label: '马埂村党员教育室', x: 119.273542, y: 31.687244},
-                     {label: '后塘村党员教育室', x: 119.140707, y: 32.027599},
-                 ],
-                 orgList:[
-                     {label: '茅山村党支部', x: 119.302738, y: 31.797112},
-                     {label: '宝华村党支部', x: 119.083573, y: 32.155268},
-                     {label: '二圣村党支部', x: 119.195893, y: 31.86983},
-                     {label: '古村党支部', x: 119.2061525, y: 31.82931},
-                     {label: '城上村党支部', x: 119.185518, y: 31.992343},
-                     {label: '莲塘村党支部', x: 119.139197, y: 31.997086},
-                     {label: '马埂村党支部', x: 119.273542, y: 31.687244},
-                     {label: '后塘村党支部', x: 119.140707, y: 32.027599},
-                 ],
-                 leaderList:[
-                     {label: '沈海涛', x: 119.302738, y: 31.797112},
-                     {label: '朱品兰', x: 119.083573, y: 32.155268},
-                     {label: '唐金莲', x: 119.195893, y: 31.86983},
-                     {label: '刘玲', x: 119.2061525, y: 31.82931},
-                     {label: '丁璐', x: 119.185518, y: 31.992343},
-                     {label: '王小斌', x: 119.139197, y: 31.997086},
-                     {label: '巫诚', x: 119.273542, y: 31.687244},
-                     {label: '朱倩', x: 119.140707, y: 32.027599},
-                     {label: '贡彩霞', x: 119.211677, y: 32.021569},
-                     {label: '吴正荣', x: 119.192597, y: 32.082439},
-                     {label: '朱又专', x: 119.343567, y: 32.02349},
-                     {label: '房贝林', x: 119.144667, y: 32.124599},
-                     {label: '乔飞飞', x: 119.125817, y: 32.115599},
-                     {label: '任玉生', x: 119.276697, y: 32.026439},
-                     {label: '蒋振华', x: 119.187457, y: 32.137519},
-                 ],*/
+               /* pointList:[
+                    {label: '茅山村党员教育室', x: 119.302738, y: 31.797112},
+                    {label: '宝华村党员教育室', x: 119.083573, y: 32.155268},
+                    {label: '二圣村党员教育室', x: 119.195893, y: 31.86983},
+                    {label: '古村党员教育室', x: 119.2061525, y: 31.82931},
+                    {label: '城上村党员教育室', x: 119.185518, y: 31.992343},
+                    {label: '莲塘村党员教育室', x: 119.139197, y: 31.997086},
+                    {label: '马埂村党员教育室', x: 119.273542, y: 31.687244},
+                    {label: '后塘村党员教育室', x: 119.140707, y: 32.027599},
+                ],
+                orgList:[
+                    {label: '茅山村党支部', x: 119.302738, y: 31.797112},
+                    {label: '宝华村党支部', x: 119.083573, y: 32.155268},
+                    {label: '二圣村党支部', x: 119.195893, y: 31.86983},
+                    {label: '古村党支部', x: 119.2061525, y: 31.82931},
+                    {label: '城上村党支部', x: 119.185518, y: 31.992343},
+                    {label: '莲塘村党支部', x: 119.139197, y: 31.997086},
+                    {label: '马埂村党支部', x: 119.273542, y: 31.687244},
+                    {label: '后塘村党支部', x: 119.140707, y: 32.027599},
+                ],
+                leaderList:[
+                    {label: '沈海涛', x: 119.302738, y: 31.797112},
+                    {label: '朱品兰', x: 119.083573, y: 32.155268},
+                    {label: '唐金莲', x: 119.195893, y: 31.86983},
+                    {label: '刘玲', x: 119.2061525, y: 31.82931},
+                    {label: '丁璐', x: 119.185518, y: 31.992343},
+                    {label: '王小斌', x: 119.139197, y: 31.997086},
+                    {label: '巫诚', x: 119.273542, y: 31.687244},
+                    {label: '朱倩', x: 119.140707, y: 32.027599},
+                    {label: '贡彩霞', x: 119.211677, y: 32.021569},
+                    {label: '吴正荣', x: 119.192597, y: 32.082439},
+                    {label: '朱又专', x: 119.343567, y: 32.02349},
+                    {label: '房贝林', x: 119.144667, y: 32.124599},
+                    {label: '乔飞飞', x: 119.125817, y: 32.115599},
+                    {label: '任玉生', x: 119.276697, y: 32.026439},
+                    {label: '蒋振华', x: 119.187457, y: 32.137519},
+                ],*/
                 markerList:[],
                 mapvLayer:'',
                 pContent:'',
@@ -171,7 +187,7 @@
                     boxStyle: {
                         // opacity: "0.8",
                         background: 'white',
-                        width: "650px",
+                        width: "400px",
                         // height:"300px"
                         maxHeight:'600px'
                     },
@@ -196,7 +212,7 @@
                 zhenList:[],
                 //控制右侧导航栏
                 msgFloatRight:{
-                    marginRight:'-315px',
+                    marginRight:'-285px',
                     // marginRight:'48px',
                     position: 'absolute',
                     zIndex: 1000,
@@ -231,23 +247,24 @@
                     partyCare: 0,
                     partyStudio: 0,
                     square: 0,
-                }
+                },
+                heatMapRange: []
             }
         },
         methods: {
             handleNodeClick(data){
                 if(data.leaf){
                     if(this.flag == 1){
-                        this.$http('post','identity/sysDistrict/list',{districtId:data.id}).then(res=>{
+                       this.$http('post','identity/sysDistrict/list',{districtId:data.id}).then(res=>{
                             this.setPartyMaker(res[0].attachTo);
-                            setTimeout(()=>{
-                                let maker = new BMap.Point(res[0].location.split(",")[0], res[0].location.split(",")[1])
-                                this.map.panTo(maker);
-                            },300)
-                            setTimeout(()=> {
-                                this.map.setZoom(14);
-                            },500)
-                        })
+                           setTimeout(()=>{
+                               let maker = new BMap.Point(res[0].location.split(",")[0], res[0].location.split(",")[1])
+                               this.map.panTo(maker);
+                           },300)
+                           setTimeout(()=> {
+                               this.map.setZoom(14);
+                           },500)
+                       })
                     }else if(this.flag == 2){
                         this.$http('post','identity/sysDistrict/list',{districtId:data.id}).then(res=>{
                             this.setCunMaker(res[0].attachTo);
@@ -271,9 +288,9 @@
             },
             //取得树结构数据
             getTreeData(){
-                this.$http('get','identity/sysDistrict/01alltree',false).then((data)=>{
-                    this.leftData = data[0].children
-                })
+              this.$http('get','identity/sysDistrict/01alltree',false).then((data)=>{
+                  this.leftData = data[0].children
+              })
             },
             //open提示
             openNotify(val) {
@@ -290,10 +307,10 @@
             //第几页
             currentPage(val){
                 if(this.pageable.flg){
-                    this.pageable.currentPage = val-1
-                    this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId: this.tableDataDistrictId}).then((data)=>{
-                        this.memberData = data.content
-                    })
+                this.pageable.currentPage = val-1
+                this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId: this.tableDataDistrictId}).then((data)=>{
+                    this.memberData = data.content
+                })
                 }
             },
             //上一页
@@ -317,7 +334,7 @@
 
             //关闭右侧弹出栏目
             close(){
-                this.msgFloatRight.marginRight = '-315px'
+                this.msgFloatRight.marginRight = '-285px'
             },
             posit(val){
                 return `margin-top:${val*108}px;`;
@@ -325,7 +342,7 @@
             initMap() {
                 // 百度地图API功能
                 this.map = new BMap.Map("allmap");    // 创建Map实例
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 12);  // 初始化地图,设置中心点坐标和地图级别
                 //添加地图类型控件
                 this.map.addControl(new BMap.MapTypeControl({
                     mapTypes: [
@@ -334,7 +351,16 @@
                     ]
                 }));
                 this.map.setCurrentCity("镇江");          // 设置地图显示的城市 此项是必须设置的
-                this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+                this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放a
+                this.map.addControl(
+                    new BMap.NavigationControl({
+                        // 靠左上角位置
+                        anchor: BMAP_ANCHOR_TOP_LEFT,
+                        // LARGE类型
+                        type: BMAP_NAVIGATION_CONTROL_LARGE,
+                        // 启用显示定位
+                    })
+                );
 
                 let cityName = '镇江市句容市';
                 let bdary = new BMap.Boundary();
@@ -359,7 +385,7 @@
                         alert('未能获取当前输入行政区域');
                         return;
                     }
-                    //   let pointArray = [];
+                 //   let pointArray = [];
                     for (let i = 0; i < count; i++) {
                         let ply = new BMap.Polygon(rs.boundaries[i], {
                             strokeWeight: 7,
@@ -385,8 +411,8 @@
                 });
             },
             pandTo(val){
-                this.map.panTo(val,500);
-                setTimeout(()=> {
+                    this.map.panTo(val,500);
+               setTimeout(()=> {
                     this.map.setZoom(14);
                 },800)
             },
@@ -400,7 +426,7 @@
                 })
 
                 this.openNotify('基本阵地是党组织开展活动的重要场所，是党员接受教育、发挥作用的重要平台，也是把党员和群众团结凝聚在党组织周围的重要物质依托。');
-                this.msgFloatRight.marginRight = '-315px'
+                this.msgFloatRight.marginRight = '-285px'
                 let allOverlay = this.map.getOverlays();
                 console.log(allOverlay)
                 if(allOverlay.length>4){
@@ -416,26 +442,26 @@
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http("POST",`identity/sysDistrict/list`,{districtLevel:2},false).then( data =>{
                     data.forEach(item => {
-                        if(item.location) {
-                            //定义镇名
-                            this.zhenList.push(item.districtName);
-                            let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
-                            let myIcon = new BMap.Icon("/static/img/house06.svg", new BMap.Size(50, 50));
-                            let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
-                            marker2.addEventListener('click', e => {
-                                this.pandTo(marker)
-                                setTimeout(this.setCunMaker(item.districtId),600);
-                                //阵地个数
-                                this.$http('post','identity/positionInformation/positionNumber?districtId='+item.districtId,false).then((data)=>{
-                                    this.positionNumber = data
-                                })
+                            if(item.location) {
+                                //定义镇名
+                                this.zhenList.push(item.districtName);
+                                let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
+                                let myIcon = new BMap.Icon("/static/img/house06.svg", new BMap.Size(50, 50));
+                                let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
+                                marker2.addEventListener('click', e => {
+                                    this.pandTo(marker)
+                                    setTimeout(this.setCunMaker(item.districtId),600);
+                                    //阵地个数
+                                    this.$http('post','identity/positionInformation/positionNumber?districtId='+item.districtId,false).then((data)=>{
+                                        this.positionNumber = data
+                                    })
 
-                            })
-                            this.map.addOverlay(marker2);
-                            marker2.disableMassClear();
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
-                            label.setStyle({
-                                backgroundColor: '#ecf5ff',
+                                })
+                                this.map.addOverlay(marker2);
+                                marker2.disableMassClear();
+                                let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
+                                label.setStyle({
+                                    backgroundColor: '#ecf5ff',
                                 display: 'inline-block',
                                 height: '28px',
                                 padding: '0 5px',
@@ -446,10 +472,10 @@
                                 borderRadius: '4px',
                                 boxSizing: 'border-box',
                                 whiteSpace: 'nowrap',
-                            });
-                            marker2.setLabel(label);
-                        }
-                    })
+                                });
+                                marker2.setLabel(label);
+                            }
+                            })
                 })
 
 
@@ -461,9 +487,9 @@
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].ba){
-                            allOverlay[i].enableMassClear();
-                        }
+                       if(allOverlay[i].ba){
+                           allOverlay[i].enableMassClear();
+                       }
                     };
                 }
                 this.map.clearOverlays();
@@ -546,8 +572,8 @@
                                     "<div class='infoBoxContent'>" +
                                     "<div class='infoBoxTitle'><span class='text'>"+item.districtName+"</span>" +
                                     "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>"+item.parentName+"</span></div><div class='title02'><img src='/static/img/active/party_build_active.png' class='zhen'><span>更新时间:"+newTime+"</span></div></div></div>"+
-                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 650px' class='flowWin'>"+content+
-                                    "</div>"+
+                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 400px' class='flowWin'>"+content+
+                                      "</div>"+
                                     "</div>";
                                 setTimeout(()=> {
                                     this.map.panTo(new BMap.Point(item.location.split(",")[0],item.location.split(",")[1]));
@@ -612,47 +638,47 @@
                             setTimeout(()=> {
                                 this.map.panTo(new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1] + 0.001));
                             })
-                            this.map.setZoom(13);
+                                this.map.setZoom(13);
                             let path = 'identity/parPictureInfro/list';
                             this.$http('Post',path,{organizationId:res.value[0].districtId,studyContent:res.value[0].activityId},false).then(data=>{
                                 let url = ''
-                                if(data[0].imageURL){
-                                    url = data[0].imageURL
-                                }else {
-                                    url='../../../static/img/nodata.png'
-                                }
+                                    if(data[0].imageURL){
+                                         url = data[0].imageURL
+                                    }else {
+                                        url='../../../static/img/nodata.png'
+                                    }
                                 res.value.forEach(item=>{
-                                    content =   "<div style='position: relative;padding-bottom: 10px;padding-top: 3px'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>任务名称：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.title+"</span></span>" +
-                                        "<span style='color:#2C3E50;font-size: 15px;font-weight: 500;right: 29px;position: absolute;;'>任务类型：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.type+"</span></span>" +
-                                        "</div>"+
-                                        "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>截止日期：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.month+"</span></span>" +
-                                        "</div>"+
-                                        "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;float:left;'>任务要求：</span><div style='color:rgba(37, 37, 37, 0.51);font-size: 15px;font-weight: 500;margin-left: 92px;'>"+item.context+"</div>" +
-                                        "</div>"+
-                                        "<div style='position: relative;;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>直播截图：</span><span style='color:rgba(37, 37, 37, 0.51);font-size: 15px;float:right'>"+data[0].createdAt.split('T')[0]+' '+data[0].createdAt.split('T')[1]+"</span>" +
-                                        "</div>"+
-                                        "<div style='position: relative;margin-left: 17px'>" +
-                                        // "<video class='tvhou' width='100%' height='100%'" +
-                                        // " controls='controls' autoplay='autoplay'" +
-                                        // " x-webkit-airplay='true' x5-video-player-fullscreen='true'" +
-                                        // " preload='auto' playsinline='true' webkit-playsinline" +
-                                        // " x5-video-player-typ='h5'>" +
-                                        // " <source type='application/x-mpegURL' src='"+ip+"'>" +
-                                        // "</video> "+
-                                        "<img src="+url+" style='width:420px'>"+
-                                        "</div>"
-                                })
+                                        content =   "<div style='position: relative;padding-bottom: 10px;padding-top: 3px'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>任务名称：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.title+"</span></span>" +
+                                            "<span style='color:#2C3E50;font-size: 15px;font-weight: 500;right: 29px;position: absolute;;'>任务类型：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.type+"</span></span>" +
+                                            "</div>"+
+                                            "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>截止日期：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.month+"</span></span>" +
+                                            "</div>"+
+                                            "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;float:left;'>任务要求：</span><div style='color:rgba(37, 37, 37, 0.51);font-size: 15px;font-weight: 500;margin-left: 92px;'>"+item.context+"</div>" +
+                                            "</div>"+
+                                            "<div style='position: relative;;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>直播截图：</span><span style='color:rgba(37, 37, 37, 0.51);font-size: 15px;float:right'>"+data[0].createdAt.split('T')[0]+' '+data[0].createdAt.split('T')[1]+"</span>" +
+                                            "</div>"+
+                                            "<div style='position: relative;margin-left: 17px'>" +
+                                            // "<video class='tvhou' width='100%' height='100%'" +
+                                            // " controls='controls' autoplay='autoplay'" +
+                                            // " x-webkit-airplay='true' x5-video-player-fullscreen='true'" +
+                                            // " preload='auto' playsinline='true' webkit-playsinline" +
+                                            // " x5-video-player-typ='h5'>" +
+                                            // " <source type='application/x-mpegURL' src='"+ip+"'>" +
+                                            // "</video> "+
+                                            "<img src="+url+" style='width:420px'>"+
+                                            "</div>"
+                                    })
 
-                                this.pContent =
-                                    "<div class='infoBoxContent'>" +
-                                    "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>"+res.value[0].districtName+"</span>" +
-                                    "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>"+res.value[0].parentName+"</span></div><div class='title02' style='font-size:12px'><img src='/static/img/active/party_build_active.png' class='zhen'><span style='margin-right: 3px'>摄像头状态:<span class='minitor'>正常</span><img src='/static/img/active/party_build_active.png' class='zhen'>" +
-                                    "<span>开始时间:<span style='background-color: #44ffd4ad;border-radius: 2px;margin-left: 2px;padding:0 5px'>"+time+"</span></span></div></div></div>"+
-                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 700px;width: 80%;margin: auto' class='flowWin'>"+content+
-                                    "</div>"+
-                                    "</div>";
+                            this.pContent =
+                                "<div class='infoBoxContent'>" +
+                                "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>"+res.value[0].districtName+"</span>" +
+                                "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>"+res.value[0].parentName+"</span></div><div class='title02' style='font-size:12px'><img src='/static/img/active/party_build_active.png' class='zhen'><span style='margin-right: 3px'>摄像头状态:<span class='minitor'>正常</span><img src='/static/img/active/party_build_active.png' class='zhen'>" +
+                                "<span>开始时间:<span style='background-color: #44ffd4ad;border-radius: 2px;margin-left: 2px;padding:0 5px'>"+time+"</span></span></div></div></div>"+
+                                "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 700px;width: 80%;margin: auto' class='flowWin'>"+content+
+                                "</div>"+
+                                "</div>";
 
-                                setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker2)),600)
+                            setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker2)),600)
                             })
                         });
                         this.map.addOverlay(marker2);
@@ -683,15 +709,15 @@
                             let myIcon = new BMap.Icon("/static/img/partyFlag.svg", new BMap.Size(50, 50));
                             let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
                             marker2.addEventListener('click', e => {
-                                this.pandTo(marker)
+                               this.pandTo(marker)
                                 //定义具体党组织maker
                                 setTimeout(this.setPartyMaker(item.districtId),500);
-                                let tableData = "<div><div style='line-height: 20px;'><div class='blueBlock'></div><div style='display: inline-block;vertical-align: middle'>组织成员：</div></div>" +
-                                    "<div class='row'><label class='detailLabel'>组织人数</label><div class='detailText' style='width:500px'>"+666+"</div></div>"+
-                                    "<div class='row'><label class='detailLabel'>书记</label><div class='detailText' style='width:500px'>"+666+"</div></div>"+
-                                    "<div class='row'><label class='detailLabel'>副书记</label><div class='detailText' style='width:500px'>"+666+"</div></div>"+
-                                    "<div class='row'><label class='detailLabel'>其他委员</label><div class='detailText' style='width:500px;text-overflow:clip;word-break: normal;overflow: visible;white-space:normal'>"+'daoiwjdiwoadiajowwwwwwwwaw达瓦达瓦啊我的娃达娃大wwwwwwwwww'+"</div></div>"+
-                                    "</div>"
+                               let tableData = "<div><div style='line-height: 20px;'><div class='blueBlock'></div><div style='display: inline-block;vertical-align: middle'>组织成员：</div></div>" +
+                                   "<div class='row'><label class='detailLabel'>组织人数</label><div class='detailText'>"+666+"</div></div>"+
+                                   "<div class='row'><label class='detailLabel'>书记</label><div class='detailText'>"+666+"</div></div>"+
+                                   "<div class='row'><label class='detailLabel'>副书记</label><div class='detailText'>"+666+"</div></div>"+
+                                   "<div class='row'><label class='detailLabel'>其他委员</label><div class='detailText' style='text-overflow:clip;word-break: normal;overflow: visible;white-space:normal'>"+'daoiwjdiwoadiajowwwwwwwwaw达瓦达瓦啊我的娃达娃大wwwwwwwwww'+"</div></div>"+
+                                   "</div>"
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
                                     "<div class='header'><div class='headerTitle'><img src='static/img/house06.svg' style='width: 20px;height: 20px'></img>"+item.districtName+"</div>" +
@@ -738,51 +764,78 @@
                 let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
                 this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
                     data.forEach(item => {
-                        if(item.location) {
-                            let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]));
-                            let content = ''
-                            let type = item.districtType === 'Party'?'农村':'机关'
-                            marker.addEventListener('click',()=>{
-                                this.pContent =
-                                    "<div class='infoBoxContent'>" +
-                                    "<div class='header'><div class='headerTitle'><img src='static/img/house06.svg' style='width: 20px;height: 20px'></img>"+item.districtName+"</div>" +
-                                    "<div>" +
-                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
-                                    "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>"+type+"</sapn></div>" +
-                                    "</div>" +
-                                    "</div>"+
-                                    "<div class='content'><div style='line-height: 20px;'><div class='blueBlock'></div>" +
-                                    "<div style='display: inline-block;vertical-align: middle'>组织详情：</div><div class='member' onclick='document.getElementById("+'&quot;nnn&quot;'+").style.display="+'&quot;block&quot;'+";'><a href='##"+item.districtId+"'>组织成员</a></div></div>" +
-                                    "<div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
-                                    "</div>"+
-                                    "</div>"+
-                                    "</div>";
-                                setTimeout(()=>{
-                                    this.map.panTo(item.location.split(",")[0],item.location.split(",")[1]);
-                                },300)
-                                setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
+                            if(item.location) {
+                                let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]));
+                                let content = ''
+                                let type = item.districtType === 'Party'?'农村':'机关'
+                                marker.addEventListener('click',()=>{
+                                    this.pContent =
+                                        "<div class='infoBoxContent'>" +
+                                        "<div class='header'><div class='headerTitle'><img src='static/img/house06.svg' style='width: 20px;height: 20px'></img>"+item.districtName+"</div>" +
+                                        "<div>" +
+                                        "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
+                                        "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>"+type+"</sapn></div>" +
+                                        "</div>" +
+                                        "</div>"+
+                                        "<div class='content'><div style='line-height: 20px;'><div class='blueBlock'></div>" +
+                                        "<div style='display: inline-block;vertical-align: middle'>组织详情：</div><div class='member' onclick='document.getElementById("+'&quot;nnn&quot;'+").style.display="+'&quot;block&quot;'+";'><a href='##"+item.districtId+"'>组织成员</a></div></div>" +
+                                        "<div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
+                                        "</div>"+
+                                        "</div>"+
+                                        "</div>";
+                                    setTimeout(()=>{
+                                        this.map.panTo(item.location.split(",")[0],item.location.split(",")[1]);
+                                    },300)
+                                    setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
 
+                                })
+                                this.map.addOverlay(marker);
+                                let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
+                                label.setStyle({
+                                    backgroundColor: '#c8ff4d',
+                                    display: 'inline-block',
+                                    height: '24px',
+                                    padding: '0 8px',
+                                    lineHeight: '22px',
+                                    fontSize: '13px',
+                                    color: '#000000',
+                                    border: '1px solid #d9ecff',
+                                    borderRadius: '4px',
+                                    boxSizing: 'border-box',
+                                    whiteSpace: 'nowrap',
+                                });
+                                marker.setLabel(label);
+                            }
                             })
-                            this.map.addOverlay(marker);
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
-                            label.setStyle({
-                                backgroundColor: '#c8ff4d',
-                                display: 'inline-block',
-                                height: '24px',
-                                padding: '0 8px',
-                                lineHeight: '22px',
-                                fontSize: '13px',
-                                color: '#000000',
-                                border: '1px solid #d9ecff',
-                                borderRadius: '4px',
-                                boxSizing: 'border-box',
-                                whiteSpace: 'nowrap',
-                            });
-                            marker.setLabel(label);
-                        }
-                    })
                 })
 
+            },
+            //阵地实时人流量
+            showPeopleStream(value) {
+                this.$http('POST', '/identity/sumPerHour/getHeatMapData', {
+                    startTime: value[0],
+                    endTime:  value[1]
+                }).then(data => {
+                    data.forEach(item => {
+                        item.geometry = {
+                            type: 'Point',
+                            coordinates: item.location.split(',')
+                        };
+                        item.count = item.total
+                    });
+
+                    let dataSet = new mapv.DataSet(data);
+
+                    let options = {
+                        size: 15,
+                        gradient: { 0.25: "rgb(0,0,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
+                        max: 150,
+                        // range: [0, 100], // 过滤显示数据范围
+                        draw: 'heatmap'
+                    }
+
+                    let mapvLayer = new mapv.baiduMapLayer(this.map, dataSet, options);
+                })
             },
             toggleDiv(action) {
                 var census = document.getElementById('census');
@@ -831,10 +884,10 @@
         list-style: none;
         height: 50px;
     }
-    /*    nav ul li:hover {
-            width: 200px;
-            height: 50px;
-        }*/
+/*    nav ul li:hover {
+        width: 200px;
+        height: 50px;
+    }*/
     nav ul li a {
         position: absolute;
         width: 140px;
@@ -843,9 +896,9 @@
         color: #555;
         padding: 10px 0 0 60px;
     }
-    /*    nav ul li a:hover {
-            color: #fff;
-        }*/
+/*    nav ul li a:hover {
+        color: #fff;
+    }*/
     .store {
         background: #b3c833;
         width: 50px;
@@ -977,17 +1030,17 @@
     .infoBoxContent{
         margin:0 ;
     }
-    /*  .infoBoxContent button{
-          background-color: #008CBA;
-          border: none;
-          color: white;
-          text-align: center;
-          text-decoration: none;
-          display: inline-block;
-          font-size: 16px;
-          border-radius: 16px;
-          width: 120px;
-      }*/
+  /*  .infoBoxContent button{
+        background-color: #008CBA;
+        border: none;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 16px;
+        width: 120px;
+    }*/
     .infoBoxContent p{
         color:black;
         font-size: 14px;
@@ -1035,7 +1088,7 @@
     }
     .infoBoxTitle .title01 .zhen{
         position: relative;
-        width: 18px;
+       width: 18px;
         height: 18px;
         top:2px;
     }
@@ -1060,7 +1113,7 @@
     }
     .tooltiptext{
         visibility: hidden;
-        width: 500px;
+        width: 290px;
         background-color: #1d21249e;
         color: #fff;
         text-align: left;
@@ -1076,12 +1129,11 @@
     }
     .block{
         float: left;
-        width: 9px;
+        width: 4px;
         background: #108ee9;
-        height: 22px;
+        height: 14px;
         margin-right: 8px;
-        margin-top: 10px;
-        margin-bottom: 10px;
+        margin-top: 6px;
     }
     .houseName{
         float: left;
@@ -1091,7 +1143,7 @@
         position: relative;
         left: 5px;
         font-weight: 500;
-        font-size: 17px;
+        font-size: 14px;
     }
     .row{
         margin: auto;
@@ -1108,7 +1160,7 @@
         width: 94px;
         padding: 7px 8px;
         color: #212121;
-        font-size: 15px;
+        font-size: 12px;
         border-right: 1px solid #EDEDED;
         background: #FAFAFA;
 
@@ -1116,9 +1168,9 @@
     .detailText{
         display: block;
         vertical-align: middle;
-        width: 400px;
+        width: 250px;
         padding: 7px 8px;
-        font-size: 15px;
+        font-size: 12px;
         color: #706874;
         white-space:nowrap;
         overflow:hidden;
@@ -1141,8 +1193,8 @@
             transform: scale(0.6);
         }
         10% {
-            transform: scale(0.65);
-        }
+              transform: scale(0.65);
+          }
         20% {
             transform: scale(0.7);
         }
@@ -1163,24 +1215,24 @@
         }
     }
     /*.infoBox:after{*/
-    /*!* content: "";*/
-    /*box-shadow: 80px 10px 5px #888888;*/
-    /*!*  transform:rotate(40deg);*/
-    /*transform-origin: bottom center;*!*!*/
-    /*content: "";*/
-    /*position: absolute;*/
-    /*bottom: -30px;*/
-    /*left: 10px;*/
-    /*width: calc(0.5 * 1144px);*/
-    /*height: calc(0.5 * 370px);*/
-    /*background-size: contain;*/
-    /*background: url("/static/img/iws3.png") no-repeat;*/
-    /*//   background-color: rgba(167,167,167,0.5);*/
-    /*//   -moz-box-shadow: 10px 10px 10px 10px rgba(0,0,0,0.3);*/
+        /*!* content: "";*/
+         /*box-shadow: 80px 10px 5px #888888;*/
+       /*!*  transform:rotate(40deg);*/
+        /*transform-origin: bottom center;*!*!*/
+        /*content: "";*/
+        /*position: absolute;*/
+        /*bottom: -30px;*/
+        /*left: 10px;*/
+        /*width: calc(0.5 * 1144px);*/
+        /*height: calc(0.5 * 370px);*/
+        /*background-size: contain;*/
+        /*background: url("/static/img/iws3.png") no-repeat;*/
+   /*//   background-color: rgba(167,167,167,0.5);*/
+     /*//   -moz-box-shadow: 10px 10px 10px 10px rgba(0,0,0,0.3);*/
     /*//  box-shadow: 10px 0px 5px  rgba(167,167,167,0.5),10px 0px 5px  rgba(167,167,167,0.5),0px -10px 5px  rgba(167,167,167,0.5),0px 10px 5px  rgba(167,167,167,0.5);*/
-    /*//   transform: skewX(130deg);*/
-    /*z-index: -1;*/
-    /*//  transform-origin: bottom center;*/
+     /*//   transform: skewX(130deg);*/
+        /*z-index: -1;*/
+      /*//  transform-origin: bottom center;*/
     /*}*/
     .msgCard{
         width:250px;
@@ -1189,12 +1241,12 @@
         position: relative;
     }
     .gis-map .con-vs-card {
-        width:330px !important;
-        height: 682px  !important;
+        width:250px !important;
+        height: 579px  !important;
     }
     .closeBtnBg{
         transition: all 0.3s;
-        position: absolute;right: 335px;top: 99px;
+        position: absolute;right: 252px;top: 90px;
         /*background-color: rgba(28, 24, 24, 0.60);*/
         width: 30px;height: 30px;border-radius: 3px
     }
@@ -1237,7 +1289,7 @@
         width:100%;
         height: 80px;
         padding: 5px;
-        background:url("../../../static/img/partyHeader.jpg") ;
+        background:url("../../../static/img/partyHeader.jpg") no-repeat 100% 100%;
         border-top-left-radius:3px;
         border-top-right-radius:3px;
     }
@@ -1279,10 +1331,9 @@
     }
     .contentDetail{
         border:2px solid #1d1f293d;
-        font-size: 18px;
-        line-height: 28px;
-        text-indent : 36px;
-        letter-spacing:2.5px;
+        font-size: 15px;
+        text-indent : 25px;
+        letter-spacing:2px;
         margin:0 auto;
     }
 </style>
@@ -1360,13 +1411,13 @@
         from {width: 350px}
         to {width: 0}
     }
-    /*  .nav {
-          position: fixed;
-          top: 30px;
-          left: 30px;
-          z-index: 8888;
-          margin: 0;
-      }*/
+  /*  .nav {
+        position: fixed;
+        top: 30px;
+        left: 30px;
+        z-index: 8888;
+        margin: 0;
+    }*/
     .nav {
         position: fixed;
         background: rgba(245, 245, 245, 0.95);
@@ -1381,11 +1432,11 @@
     .member{
         color: #409eff;
         display: inline-block;
-        margin-left: 455px;
+        margin-left: 220px;
         vertical-align: middle;
         cursor: pointer;
         padding: 0;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 500;
         text-decoration:underline
     }
@@ -1399,12 +1450,15 @@
         margin-top: -23px;
         top:0px;
     }
-    /* 右上角阵地个数图标*/
+ /* 右上角阵地个数图标*/
     .positionIcon{
         border-radius: 30px;
         padding: 6px;
         font-size: 13px;
         margin: 0px 2px
+    }
+    .gis-map .el-date-editor.el-input, .gis-map .el-date-editor.el-input__inner {
+        width: 300px !important;
     }
 </style>
 

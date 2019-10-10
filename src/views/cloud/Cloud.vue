@@ -192,7 +192,7 @@
 <style scoped>
     .cloud {
  /*    background-color: #0d1736;*/
-        width: 560px;
+        width: 550px;
         height: 370px;
         flex: 1;
         overflow: hidden;

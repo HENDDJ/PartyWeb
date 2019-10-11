@@ -25,7 +25,8 @@ let router = null;
 // 请求拦截器
 service.interceptors.request.use(config => {
     // token可以存在浏览器端的sessionStorage中，也可以用Vuex管理
-    const token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhZDFmMDdmYy1iZWIzLTQxZWQtODE3My0xNTE0Y2E0NjkxYWIiLCJpYXQiOjE1NzA1MTQ4MTQsImlzcyI6Ind3dy5jbG91ZGtlZXBlci5jb20iLCJzdWIiOiJzZXJ2aWNlQGNsb3Vka2VlcGVyLmNuIiwiZXhwIjoxNTcwNTUwODE0fQ.w5ZKb798C09lM4FMK5EVcaCOVsXZ2eo6laLtpp3BDSs";
+    const token = sessionStorage.getItem('token');
+    // const token = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhZDFmMDdmYy1iZWIzLTQxZWQtODE3My0xNTE0Y2E0NjkxYWIiLCJpYXQiOjE1NzA1MTQ4MTQsImlzcyI6Ind3dy5jbG91ZGtlZXBlci5jb20iLCJzdWIiOiJzZXJ2aWNlQGNsb3Vka2VlcGVyLmNuIiwiZXhwIjoxNTcwNTUwODE0fQ.w5ZKb798C09lM4FMK5EVcaCOVsXZ2eo6laLtpp3BDSs";
     // 如果当前有token，则请求头加上token
     if (token) {
         config.headers['authorization'] = token;

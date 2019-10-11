@@ -1,6 +1,6 @@
 <template>
     <section>
-        <iframe width="1920" height="1080" src="http://sugar.baidubce.com/dashboard/b464603c86efa03bc0e7bfe227ddd7f6" frameborder="0"></iframe>
+        <iframe width="1920" height="1080" src="http://sugar.baidubce.com/dashboard/21be9b86c9e1cb3264b2979c843d78bd" frameborder="0"></iframe>
     </section>
 </template>
 <script>

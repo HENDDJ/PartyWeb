@@ -541,10 +541,12 @@
                                 let times = []
                                 item.positionInformation.forEach((val)=>{
                                     times.push(val.modifiedAt.split('T')[0])
-                                    content = content + "<div class='house'><div class='block'></div><div class='houseName'>"+val.name+":</div><div class='rowF'><div class='row'><label class='detailLabel'>设施</label><div class='detailText'>"+val.facilities+"</div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.facilities+"</span></div></div>" +
+                                    content = content + "<div class='house'><div class='houseName'>"+val.name+":</div>" +
+                                        "<div style=''><div class='blueBlockPos'></div><div class='blueBlockTopPos'></div>" +
+                                        "<div class='rowF'><div class='row'><label class='detailLabel'>设施</label><div class='detailText'>"+val.facilities+"</div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.facilities+"</span></div></div>" +
                                         "<div class='rowF'><div class='row'><label class='detailLabel'>占地面积</label><div class='detailText'>"+val.area+"平方米</div></div></div>"+
-                                        "<div class='rowF'><div class='row'><label class='detailLabel'>功能介绍</label><div class='detailText'>"+val.introduction+"</div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.introduction+"</span></div></div>"+
-                                        "</div>"
+                                        "<div class='rowF'><div class='row'><label class='detailLabel'>功能介绍</label><div class='detailText'><a style='width:95%'>"+val.introduction+"</a><div class='detailMore' onclick='window.location=&quot;/#/basePosition/positionInformation?positionName="+val.name+"&quot;'>更多</div></div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.introduction+"</span></div></div>"+
+                                        "</div></div>"
                                 })
                                 let year=[]
                                 let mon = []
@@ -712,12 +714,12 @@
                                this.pandTo(marker)
                                 //定义具体党组织maker
                                 setTimeout(this.setPartyMaker(item.districtId),500);
-                                let tableData = "<div><div style='line-height: 20px;'><div class='blueBlock'></div><div style='display: inline-block;vertical-align: middle'>组织成员：</div></div>" +
-                                    "<div class='row'><label class='detailLabel'>组织人数</label><div class='detailText' style='width:500px'>"+666+"</div></div>"+
-                                    "<div class='row'><label class='detailLabel'>书记</label><div class='detailText' style='width:500px'>"+666+"</div></div>"+
-                                    "<div class='row'><label class='detailLabel'>副书记</label><div class='detailText' style='width:500px'>"+666+"</div></div>"+
-                                    "<div class='row'><label class='detailLabel'>其他委员</label><div class='detailText' style='width:500px;text-overflow:clip;word-break: normal;overflow: visible;white-space:normal'>"+'daoiwjdiwoadiajowwwwwwwwaw达瓦达瓦啊我的娃达娃大wwwwwwwwww'+"</div></div>"+
-                                    "</div>"
+                                let tableData = "<div><div style='line-height: 20px;'><div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织成员：</div></div>" +
+                                    "<div style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='row'><label class='detailLabel'>组织人数</label><div class='detailText' style=''>"+666+"</div></div>"+
+                                    "<div class='row'><label class='detailLabel'>书记</label><div class='detailText' style=''>"+666+"</div></div>"+
+                                    "<div class='row'><label class='detailLabel'>副书记</label><div class='detailText' style=''>"+666+"</div></div>"+
+                                    "<div class='row'><label class='detailLabel'>其他委员</label><div class='detailText' style='text-overflow:clip;word-break: normal;overflow: visible;white-space:normal'>"+'daoiwjdiwoadiajowwwwwwwwaw达瓦达瓦啊我的娃达娃大wwwwwwwwww'+"</div></div>"+
+                                    "</div></div>"
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
                                     "<div class='header'><div class='headerTitle'><img src='static/img/house06.svg' style='width: 20px;height: 20px'></img>"+item.districtName+"</div>" +
@@ -725,10 +727,10 @@
                                     "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
                                     "</div>" +
                                     "</div>"+
-                                    "<div class='content'><div style='line-height: 20px;'><div class='blueBlock'></div>" +
-                                    "<div style='display: inline-block;vertical-align: middle'>组织详情：</div></div>" +
-                                    "<div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
-                                    "</div>"+
+                                    "<div class='content'><div style='line-height: 20px;'>" +
+                                    "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织详情：</div></div>" +
+                                    "<div  style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div  class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
+                                    "</div></div>"+
                                     tableData+
                                     "</div>"+
                                     "</div>";
@@ -777,10 +779,10 @@
                                     "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>"+type+"</sapn></div>" +
                                     "</div>" +
                                     "</div>"+
-                                    "<div class='content'><div style='line-height: 20px;'><div class='blueBlock'></div>" +
-                                    "<div style='display: inline-block;vertical-align: middle'>组织详情：</div><div class='member' onclick='document.getElementById("+'&quot;nnn&quot;'+").style.display="+'&quot;block&quot;'+";'><a href='##"+item.districtId+"'>组织成员</a></div></div>" +
-                                    "<div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
-                                    "</div>"+
+                                    "<div class='content'><div style='line-height: 20px;'>" +
+                                    "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织详情：</div><div class='member' onclick='document.getElementById("+'&quot;nnn&quot;'+").style.display="+'&quot;block&quot;'+";'><a href='##"+item.districtId+"'>组织成员</a></div></div>" +
+                                    "<div  style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
+                                    "</div></div>"+
                                     "</div>"+
                                     "</div>";
                                 setTimeout(()=>{
@@ -1106,6 +1108,7 @@
         z-index: 99;
     }
     .house{
+        position: relative;
         z-index: 1111;
         text-align: center;
         border-bottom: 1px solid #c1c1c1;
@@ -1141,80 +1144,104 @@
         padding-top: 5px;
         padding-bottom: 5px;
         text-align: left;
-        position: relative;
-        left: 5px;
+        margin-left: 44px;
         font-weight: 500;
         font-size: 17px;
     }
     .row{
-        margin: auto;
-        width: 100%;
-        display: table;
+        margin: 0 auto;
+        width: 85%;
         min-height: 25px;
         overflow: hidden;
-        border: 1px solid #EDEDED;
+        /*border: 1px solid #EDEDED;*/
         /*border-bottom: none;*/
-    }
-    .detailLabel{
-        display: table-cell;
-        vertical-align: middle;
-        width: 94px;
-        padding: 7px 8px;
-        color: #212121;
-        font-size: 15px;
-        border-right: 1px solid #EDEDED;
+        clear: both;
         background: #FAFAFA;
 
     }
-    .detailText{
-        display: block;
+    .detailMore{
+        position: absolute;
+        right: -15px;
+        top: 45px;
+        color: #7bff50;
+    }
+    .detailMore:hover{
+        cursor: pointer;
+    }
+
+
+    .detailLabel{
+        display: inline-block;
         vertical-align: middle;
-        width: 400px;
+        width: 84px;
+        padding: 7px 8px;
+        color: #212121;
+        font-size: 15px;
+        /*border-right: 1px solid #EDEDED;*/
+        background: #FAFAFA;
+        line-height: 35px;
+        margin-right: 15px;
+
+
+    }
+    .detailText{
+        position: relative;
+        text-align: left;
+        margin-right: 20px;
+        float: right;
+        vertical-align: middle;
+        width: 330px;
+        line-height: 35px;
         padding: 7px 8px;
         font-size: 15px;
         color: #706874;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        word-break:keep-all;
+
+    }
+    .detailText a{
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden
     }
     .rowF{
-        margin: auto;
+        margin: 0 auto;
         clear: both;
         width: 85%;
-        z-index: 1111
+        z-index: 1111;
+        background: #FAFAFA;
+
     }
-    .rowF:hover .tooltiptext{
-        visibility: visible;
-        z-index: 1000;
-        animation: tooltiptext 0.1s;
-    }
-    @keyframes tooltiptext {
-        0% {
-            transform: scale(0.6);
-        }
-        10% {
-              transform: scale(0.65);
-          }
-        20% {
-            transform: scale(0.7);
-        }
-        35% {
-            transform: scale(0.75);
-        }
-        50% {
-            transform: scale(0.8);
-        }
-        70% {
-            transform: scale(0.85);
-        }
-        85% {
-            transform: scale(0.9);
-        }
-        100% {
-            transform: scale(1);
-        }
-    }
+    /*.rowF:hover .tooltiptext{*/
+        /*visibility: visible;*/
+        /*z-index: 1000;*/
+        /*animation: tooltiptext 0.1s;*/
+    /*}*/
+    /*@keyframes tooltiptext {*/
+        /*0% {*/
+            /*transform: scale(0.6);*/
+        /*}*/
+        /*10% {*/
+              /*transform: scale(0.65);*/
+          /*}*/
+        /*20% {*/
+            /*transform: scale(0.7);*/
+        /*}*/
+        /*35% {*/
+            /*transform: scale(0.75);*/
+        /*}*/
+        /*50% {*/
+            /*transform: scale(0.8);*/
+        /*}*/
+        /*70% {*/
+            /*transform: scale(0.85);*/
+        /*}*/
+        /*85% {*/
+            /*transform: scale(0.9);*/
+        /*}*/
+        /*100% {*/
+            /*transform: scale(1);*/
+        /*}*/
+    /*}*/
     /*.infoBox:after{*/
         /*!* content: "";*/
          /*box-shadow: 80px 10px 5px #888888;*/
@@ -1320,15 +1347,42 @@
         float: right;
         padding-top: 5px;
     }
+    /*党组织进度条样式*/
     .blueBlock{
-        background-color: #3399ff;
-        height: 20px;
+        position: absolute;
+        background: rgba(100, 100, 100, 0.5);
+        height: 100%;
+        margin-left: 15px;
+        width: 3.5px;
+
+    }
+    .blueBlockTop{
+        position: absolute;
+        background: deepskyblue;
+        width: 12px;
+        height: 12px;
+        margin-left: 10px;
+        margin-top: -22px;
+        transform:rotate(45deg);
+    }
+    /*基本阵地进度条样式*/
+    .blueBlockPos{
+        position: absolute;
+        background: rgba(100, 100, 100, 0.5);
+        height: 80%;
+        margin-left: 20px;
+        margin-top: 35px;
+        width: 3.5px;
+
+    }
+    .blueBlockTopPos{
+        position: absolute;
+        background: deepskyblue;
+        width: 12px;
+        height: 12px;
+        margin-left: 15px;
         margin-top: 10px;
-        width: 10px;
-        margin-left: -10px;
-        display: inline-block;
-        margin-bottom: 8px;
-        vertical-align: middle
+        transform:rotate(45deg);
     }
     .contentDetail{
         border:2px solid #1d1f293d;
@@ -1337,6 +1391,7 @@
         text-indent : 36px;
         letter-spacing:2.5px;
         margin:0 auto;
+        width: 85%;
     }
 </style>
 <style scope>
@@ -1344,7 +1399,7 @@
         cursor: pointer;
         position: fixed;
         overflow-y:scroll;
-        top: 320px;
+        top: 350px;
         height: 50px;
         width: 50px;
         background: rgba(158, 204, 255, 0.3);
@@ -1353,7 +1408,7 @@
     .leftList{
         position: fixed;
         overflow-y:scroll;
-        top: 320px;
+        top: 350px;
         height: 550px;
         background: rgba(158, 204, 255, 0.3);
         transition: all 0.6s;
@@ -1434,7 +1489,7 @@
     .member{
         color: #409eff;
         display: inline-block;
-        margin-left: 455px;
+        margin-left: 335px;
         vertical-align: middle;
         cursor: pointer;
         padding: 0;

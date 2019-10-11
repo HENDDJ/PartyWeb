@@ -395,6 +395,20 @@
                 let menuHeight = this.$screen() * 53;
                 document.getElementsByClassName('common-crud')[0].style.minHeight = `${Math.ceil(document.body.clientHeight - headerHeight - menuHeight - 310)}px`;
             }, 200)
+            let query = window.location.href;
+            if(query.indexOf('?')!=-1){
+                query.split('?')[1].split('&').forEach(item=>{
+                    if(item.split('=')[0]=='positionName'){
+                        console.log(123)
+                        this.queryForm={}
+                        this.queryForm.name = decodeURI(item.split('=')[1])
+                        this.query();
+                    }else {
+
+                    }
+                })
+
+            }
         }
     };
 </script>

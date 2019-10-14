@@ -31,7 +31,7 @@
             </vs-tab>
             <vs-tab @click="showCharts()" label="数据统计">
                 <div>
-                    <el-card class="box-card">
+                    <el-card class="box-card" v-if="this.userAuthority!=3">
                         <div class="chartDivStyle">
                             <div class="query-position" >
                                 <el-select v-model="heatMapTownId" placeholder="请选择" @change="showHeatMap('')" size="mini">
@@ -96,7 +96,7 @@
                             <div id="peakLineChart" class="chartStyle"></div>
                         </div>
                     </el-card>
-                    <el-card class="box-card">
+                    <el-card class="box-card" v-if="this.userAuthority!=3">
                         <div class="chartDivStyle">
                             <div class="query-position">
                                 <el-select v-model="useHistogramTownId" placeholder="请选择" @change="showUseHistogram('')" size="mini">
@@ -113,7 +113,7 @@
                             <div id="useHistogram" class="chartStyle"></div>
                         </div>
                     </el-card>
-                    <el-card class="box-card">
+                    <el-card class="box-card" v-if="this.userAuthority!=3">
                         <div class="chartDivStyle">
                             <div class="query-position">
                                 <el-select v-model="frequencyRadarTownId" placeholder="请选择" @change="showFrequencyRadar('')" size="mini">
@@ -169,6 +169,8 @@
                 },
                 indexValue:1,
                 colorx:'success',
+                user:'',
+                userAuthority:''
             }
         },
         methods: {
@@ -207,13 +209,52 @@
             //镇级查询框下拉项
             showTownList(){
                 this.townList = [];
-                //镇级组织
-                this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
-                    data.forEach( item => {
-                        this.townList.push( {value:item.districtId , label:item.districtName});
+                if(this.userAuthority==1){
+                    //镇级组织
+                    this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
+                        data.forEach( item => {
+                            this.townList.push( {value:item.districtId , label:item.districtName});
+                        });
+                        this.townList.push({value:'01',label:'全市'});
+                    })
+                }
+                if(this.userAuthority==2){
+                    this.townList.push({value:this.user.districtId , label:this.user.organizationName});
+                    this.heatMapTownId = this.user.districtId;
+                    this.realLineTownId = this.user.districtId;
+                    this.peakLineTownId = this.user.districtId;
+                    this.useHistogramTownId = this.user.districtId;
+                    this.frequencyRadarTownId = this.user.districtId;
+                    //村级组织
+                    this.$http('POST',`identity/sysDistrict/list`,{attachTo:this.user.districtId},false).then(data => {
+                        this.realLineCountryList = [];
+                        this.peakLineCountryList = [];
+                        data.forEach( item => {
+                            //实时折线图
+                            this.realLineCountryList.push({value:item.districtId , label:item.districtName});
+                            this.peakLineCountryList.push({value:item.districtId , label:item.districtName});
+                        });
+
+                    })
+                }
+                if(this.userAuthority ==3){
+                    this.townList = [];
+                    this.realLineCountryList = [];
+                    this.peakLineCountryList = [];
+                    this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2,districtId:this.user.sysDistrict.attachTo},false).then(data => {
+                        data.forEach( item => {
+                            this.townList.push( {value:item.districtId , label:item.districtName});
+                        });
                     });
-                    this.townList.push({value:'01',label:'全市'});
-                })
+                    this.realLineCountryList.push({value:this.user.districtId , label:this.user.organizationName});
+                    this.peakLineCountryList.push({value:this.user.districtId , label:this.user.organizationName});
+                    this.realLineTownId = this.user.sysDistrict.attachTo;
+                    this.peakLineTownId = this.user.sysDistrict.attachTo;
+                    this.realLineCountryId = this.user.districtId;
+                    this.peakLineCountryId = this.user.districtId;
+
+                }
+
             },
             //村级查询框下拉项
             showCountryList(type){
@@ -247,16 +288,20 @@
                         })
                     }
                 }
-
             },
             showCharts(){
                 this.colorx = 'danger';
                 this.$nextTick(()=>{
-                    this.showHeatMap('');
-                    this.showRealLineChart();
-                    this.showPeakLineChart('');
-                    this.showUseHistogram('');
-                    this.showFrequencyRadar('');
+                    if(this.userAuthority == 3){
+                        this.showRealLineChart();
+                        this.showPeakLineChart('');
+                    }else{
+                        this.showHeatMap('');
+                        this.showRealLineChart();
+                        this.showPeakLineChart('');
+                        this.showUseHistogram('');
+                        this.showFrequencyRadar('');
+                    }
                 })
             },
             //热力图
@@ -347,7 +392,8 @@
             //实时人流量折线图
             showRealLineChart(){
                 let districtId = this.realLineCountryId?this.realLineCountryId:this.realLineTownId;
-                let titleName = this.townList.filter( item => item.value==this.heatMapTownId)[0].label;
+                let townTitleName = this.townList.filter( item => item.value==this.realLineTownId)[0].label;
+                let countryTitleName = this.realLineCountryId ? this.realLineCountryList.filter(item => item.value==this.realLineCountryId)[0].label:'';
                 this.$http('Post',`identity/positionChart/realLineChart?districtId=`+districtId,false).then( data =>{
                     let realLineChart = echarts.init(document.getElementById("realLineChart"));
                     let hours = [];
@@ -356,7 +402,7 @@
                     });
                     let option = {
                         title: {
-                            text: titleName+'各阵地实时人流量统计折线图' ,
+                            text: townTitleName+countryTitleName+'各阵地实时人流量统计折线图' ,
                         },
                         tooltip: {
                             trigger: 'axis'
@@ -447,7 +493,8 @@
             //人流量折线图
             showPeakLineChart(interval){
                 let peakLineChart = echarts.init(document.getElementById("peakLineChart"));
-                let titleName = this.townList.filter( item => item.value==this.heatMapTownId)[0].label;
+                let townTitleName = this.townList.filter( item => item.value==this.peakLineTownId)[0].label;
+                let countryTitleName = this.peakLineCountryId ? this.peakLineCountryList.filter(item => item.value==this.peakLineCountryId)[0].label:'';
                 if(interval){
                     this.peakLineInterval = interval;
                 }
@@ -459,7 +506,7 @@
                     });
                     let option = {
                         title: {
-                            text: titleName+'近'+this.peakLineInterval+'日各阵地人流量统计折线图' ,
+                            text: townTitleName+countryTitleName+'近'+this.peakLineInterval+'日各阵地人流量统计折线图' ,
                         },
                         tooltip: {
                             trigger: 'axis'
@@ -600,7 +647,6 @@
                     data.forEach(item=>{
                         radarX.push(item.districtName);
                         maxNumber = Math.max(maxNumber,item.memberEducation,item.partyCare,item.organizationalConference,item.partyStudio);
-                        console.log(maxNumber);
                         radarDataFormate.push({value:[item.memberEducation,item.partyCare,item.organizationalConference,item.partyStudio],name:item.districtName})
                     });
                     this.$nextTick(()=>{
@@ -645,8 +691,17 @@
 
         },
         created(){
+            this.user = JSON.parse(sessionStorage.getItem("userInfo"));
+            if(this.user.sysDistrict.districtLevel == 3){
+                this.userAuthority = 3;
+            }else  if(this.user.sysDistrict.districtLevel == 2){
+                this.userAuthority = 2;
+            }else{
+                this.userAuthority = 1;
+            }
             this.showPositionList();
             this.showTownList();
+
         }
     }
 </script>

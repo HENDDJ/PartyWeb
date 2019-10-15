@@ -529,7 +529,7 @@
             setCunMaker(val){
                 this.map.clearOverlays();
                 //基本阵地
-                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
+
                 this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
                     data.forEach(item => {
                         if(item.location){
@@ -708,8 +708,8 @@
                             //定义镇名
                             this.zhenList.push(item.districtName);
                             let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
-                            let myIcon = new BMap.Icon("/static/img/partyFlag.svg", new BMap.Size(50, 50));
-                            let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
+                            let myIcon = new BMap.Icon("/static/img/partyFlag.gif", new BMap.Size(50, 50));
+                            let marker2 = new BMap.Marker(marker, {icon: myIcon,name:1},{name:1});  // 创建标注
                             marker2.addEventListener('click', e => {
                                this.pandTo(marker)
                                 //定义具体党组织maker
@@ -724,7 +724,7 @@
                                     "<div class='infoBoxContent'>" +
                                     "<div class='header'><div class='headerTitle'><img src='static/img/house06.svg' style='width: 20px;height: 20px'></img>"+item.districtName+"</div>" +
                                     "<div>" +
-                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
+                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<a id='close'>12313</a><sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
                                     "</div>" +
                                     "</div>"+
                                     "<div class='content'><div style='line-height: 20px;'>" +
@@ -734,14 +734,23 @@
                                     tableData+
                                     "</div>"+
                                     "</div>";
+                                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
                                 setTimeout(
                                     ()=>{
-                                        let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
-                                        infoBox._setContent(this.pContent,infoBox.open(marker2))},1200)
+                                        infoBox._setContent(this.pContent,infoBox.open(marker2))
+                                        document.getElementById('close').addEventListener('click',()=>{
+                                            console.log(123)
+
+                                            infoBox.close()
+                                            infoBox.ba.hidden = true
+                                            document.getElementById('close')
+                                        })},1200)
+
+
                             })
                             this.map.addOverlay(marker2);
                             marker2.disableMassClear();
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
+                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-15,38)});
                             label.setStyle({
                                 backgroundColor: '#ecf5ff',
                                 display: 'inline-block',
@@ -767,7 +776,8 @@
                 this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
                     data.forEach(item => {
                         if(item.location) {
-                            let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]));
+                            let myIcon = new BMap.Icon("/static/img/partyPosition.png", new BMap.Size(50, 50));
+                            let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]),{icon: myIcon,name:123},{name:123});// 创建标注
                             let content = ''
                             let type = item.districtType === 'Party'?'农村':'机关'
                             marker.addEventListener('click',()=>{

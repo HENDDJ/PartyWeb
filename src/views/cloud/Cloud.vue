@@ -18,7 +18,7 @@
                                 <el-col :span="8" >
                                     <br>
                                     <radial-progress-bar
-                                        style="margin: -5px 60px 0 0;float: right"
+                                        style="margin: -5px 80px 0 0;float: right"
                                         :diameter="90"
                                         :completed-steps="handlePercent(item.totalPercent)"
                                         :total-steps="100"
@@ -191,7 +191,7 @@
 
 <style scoped>
     .cloud {
- /*    background-color: #0d1736;*/
+  /*   background-color: #0d1736;*/
         width: 550px;
         height: 370px;
         flex: 1;
@@ -209,7 +209,7 @@
         width: 45%;
         font-size: 14px;
         color: #fff;
-        margin: 8px 13px ;
+        margin: 8px 0px ;
     }
     .vs-progress--background{
         float: right;

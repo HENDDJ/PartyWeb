@@ -1,6 +1,6 @@
 <template>
     <div class="carouselStyle">
-        <el-carousel trigger="click" height="250px"  arrow="never">
+        <el-carousel trigger="click" height="270px"  arrow="never">
             <el-carousel-item v-for="(item,index) in TvPic" :key="index">
                 <span style="position: absolute; bottom: 10px;left: 20px;color: #fff;font-size: 16px;">{{title}}</span>
                 <img
@@ -65,8 +65,8 @@
 
 <style scoped>
     .carouselStyle{
-        width: 535px;
-        height: 250px;
+        width: 475px;
+        height: 270px;
         background-color: transparent;
     }
     .el-carousel__item h3 {

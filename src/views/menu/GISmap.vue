@@ -248,7 +248,8 @@
                     partyStudio: 0,
                     square: 0,
                 },
-                heatMapRange: []
+                heatMapRange: [],
+                centerPoint: new BMap.Point(119.175072,31.951147) //市委坐标
             }
         },
         methods: {
@@ -341,8 +342,8 @@
             },
             initMap() {
                 // 百度地图API功能
-                this.map = new BMap.Map("allmap");    // 创建Map实例
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 12);  // 初始化地图,设置中心点坐标和地图级别
+                this.map = new BMap.Map("allmap",{maxZoom: 18, minZoom: 11});    // 创建Map实例
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 //添加地图类型控件
                 this.map.addControl(new BMap.MapTypeControl({
                     mapTypes: [
@@ -708,7 +709,9 @@
                             //定义镇名
                             this.zhenList.push(item.districtName);
                             let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
-                            let myIcon = new BMap.Icon("/static/img/partyFlag.gif", new BMap.Size(50, 50));
+                            let myIcon = new BMap.Icon("/static/img/zhen_position.png", new BMap.Size(25, 34), {
+                                anchor: new BMap.Size(11, 32),
+                            });
                             let marker2 = new BMap.Marker(marker, {icon: myIcon,name:1},{name:1});  // 创建标注
                             marker2.addEventListener('click', e => {
                                this.pandTo(marker)
@@ -739,8 +742,6 @@
                                     ()=>{
                                         infoBox._setContent(this.pContent,infoBox.open(marker2))
                                         document.getElementById('close').addEventListener('click',()=>{
-                                            console.log(123)
-
                                             infoBox.close()
                                             infoBox.ba.hidden = true
                                             document.getElementById('close')
@@ -750,14 +751,15 @@
                             })
                             this.map.addOverlay(marker2);
                             marker2.disableMassClear();
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-15,38)});
+                            let offsetWidth = item.districtName.length * 12 / 2 - 12;
+                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-offsetWidth,34)});
                             label.setStyle({
                                 backgroundColor: '#ecf5ff',
                                 display: 'inline-block',
                                 height: '28px',
-                                padding: '0 5px',
+                                padding: '0 3px',
                                 lineHeight: '26px',
-                                fontSize: '13px',
+                                fontSize: '12px',
                                 color: '#409eff',
                                 border: '1px solid #d9ecff',
                                 borderRadius: '4px',
@@ -766,8 +768,30 @@
                             });
                             marker2.setLabel(label);
                         }
-                    })
+                    });
                 })
+            },
+            showCenterMarker() {
+                let centerIcon = new BMap.Icon("/static/img/partyFlag.gif", new BMap.Size(50, 50), {
+                    anchor: new BMap.Size(0, 50),
+                });
+                let centerMarker = new BMap.Marker(this.centerPoint,{icon: centerIcon});
+                this.map.addOverlay(centerMarker);
+                let label = new BMap.Label('句容市委',{offset:new BMap.Size(-24,50)});
+                label.setStyle({
+                    backgroundColor: 'rgba(255,7,0,0.9)',
+                    display: 'inline-block',
+                    height: '24px',
+                    padding: '0 3px',
+                    lineHeight: '26px',
+                    fontSize: '12px',
+                    color: '#fffe3e',
+                    border: '1px solid red',
+                    borderRadius: '4px',
+                    boxSizing: 'border-box',
+                    whiteSpace: 'nowrap',
+                });
+                centerMarker.setLabel(label);
             },
             //展示党组织村级
             setPartyMaker(val){
@@ -776,7 +800,9 @@
                 this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
                     data.forEach(item => {
                         if(item.location) {
-                            let myIcon = new BMap.Icon("/static/img/partyPosition.png", new BMap.Size(50, 50));
+                            let myIcon = new BMap.Icon("/static/img/partyPosition.png", new BMap.Size(50, 50), {
+                                anchor: new BMap.Size(11, 32),
+                            });
                             let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]),{icon: myIcon,name:123},{name:123});// 创建标注
                             let content = ''
                             let type = item.districtType === 'Party'?'农村':'机关'
@@ -802,14 +828,15 @@
 
                             })
                             this.map.addOverlay(marker);
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
+                            let offsetWidth = item.districtName.length * 12/2;
+                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-offsetWidth,28)});
                             label.setStyle({
                                 backgroundColor: '#c8ff4d',
                                 display: 'inline-block',
                                 height: '24px',
                                 padding: '0 8px',
                                 lineHeight: '22px',
-                                fontSize: '13px',
+                                fontSize: '12px',
                                 color: '#000000',
                                 border: '1px solid #d9ecff',
                                 borderRadius: '4px',

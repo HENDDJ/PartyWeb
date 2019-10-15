@@ -59,7 +59,8 @@
                 _map:{},
                 currentZhenPoint:{},
                 attachToCache: new Map(),
-                pixelOffset: {}
+                pixelOffset: {},
+                activityWorkList:[],
             }
         },
         methods: {
@@ -67,7 +68,7 @@
                 // 百度地图API功能
                 this.map = new BMap.Map("allmap", {minZoom: 11, maxZoom: 13});    // 创建Map实例
                 this.map.setMapStyle({style: 'midnight'});
-                this.map.centerAndZoom(new BMap.Point(119.172559, 32.09000), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.map.centerAndZoom(new BMap.Point(119.209426,31.942559), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.map.disableDragging();
                 this.map.setCurrentCity("镇江");          // 设置地图显示的城市 此项是必须设置的
                 this.map.addEventListener("zoomend", () => {
@@ -75,7 +76,7 @@
                     if (this.map.getZoom() > 11) {
                         this.map.enableDragging();
                     } else {
-                        this.map.centerAndZoom(new BMap.Point(119.172559, 32.09000), 11);
+                        this.map.centerAndZoom(new BMap.Point(119.209426,31.942559), 11);
                         this.map.disableDragging();
                     }
                     this.showCunPoint(this.currentZhenPoint);
@@ -120,20 +121,26 @@
             },
               //展示正在执行
             showWorking(){
-                let allOverlay = this.map.getOverlays();
-                if(allOverlay.length>4){
+             /*  // let allOverlay = this.map.getOverlays();
+                this.activityWorkList.forEach(item=>{
+                    this.map.removeOverlay(item);
+                });
+               /!* if(this.activityWorkList.length>0){
                     for (let i = 0; i < allOverlay.length; i++) {
                         if(allOverlay[i].ba){
                             allOverlay[i].enableMassClear();
                         }
                     }
-                }
-                this.map.clearOverlays();
-                this.initMap();
-                this.workingDataList();
+                }*!/
+                this.workingDataList();*/
                 setInterval(()=>{
-                    this.map.clearOverlays();
-                    this.workingDataList();
+                    this.activityWorkList.forEach(item=>{
+                        this.map.removeOverlay(item);
+                    });
+                    this.activityWorkList = [];
+                    this.$nextTick(()=>{
+                        this.workingDataList();
+                    });
                 },30000)
             },
             //展示正在执行内的封装方法
@@ -164,9 +171,7 @@
             },
             //定义正在执行maker
             setWorkingMaker(ids,value){
-                this.map.clearOverlays();
                 //正在执行的活动
-            //    let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.workingOpts );
                 let workList = [];
                 if(ids){
                     ids.forEach(idItem=>{     //整合数据，解决一村都任务的情况
@@ -217,6 +222,7 @@
                         });
                         this.map.addOverlay(marker2);
                         marker2.setLabel(label);
+                        this.activityWorkList.push(marker2);
                     })
                 }
             },
@@ -430,12 +436,10 @@
         mounted() {
             this.initMap();
             this.showTown();
-            // this.showWorking();
+            this.showWorking();
         },
         created() {
             localStorage.removeItem('cloudPicture');
-
-
         }
     }
 </script>
@@ -448,7 +452,6 @@
         overflow: hidden;
         margin:0;font-family:"微软雅黑";
     }
-
 </style>
 <style>
     #example-map .BMap_mask {

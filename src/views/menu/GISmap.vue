@@ -17,7 +17,9 @@
                 <el-tree :data="leftData"  @node-click="handleNodeClick" ></el-tree>
             </div>
         </div>
-        <div class="showLeftList" v-if="!showLeft&&flag!=3" @click="leftWidth.width = '230px';showLeft=true;">>>></div>
+        <div class="showLeftListTop">
+        <div class="showLeftList" v-if="!showLeft&&flag!=3" @click="leftWidth.width = '220px';showLeft=true;"></div>
+        </div>
         <div id="census" onclick="toggleDiv('')">
             <img src="/static/img/test.png" height="472" width="670" />
         </div>
@@ -409,6 +411,7 @@
                         ply.disableMassClear();
                     }
                 });
+                console.log(this.map.getOverlays()[0],789)
             },
             pandTo(val){
                 this.map.panTo(val,500);
@@ -431,8 +434,9 @@
                 console.log(allOverlay)
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].ba) {
+                        if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
+                                console.log(123)
                         }
                     };
                 }
@@ -487,8 +491,8 @@
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
-                       if(allOverlay[i].ba){
-                           allOverlay[i].enableMassClear();
+                        if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
+                            allOverlay[i].enableMassClear();
                        }
                     };
                 }
@@ -584,6 +588,7 @@
                                 this.rightMessage = item
                                 this.msgFloatRight.marginRight = '48px'
                                 this.msgFloatRight.display = 'block'
+                                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
                                 setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
                             });
                             this.map.addOverlay(marker);
@@ -610,7 +615,7 @@
             setWorkingMaker(ids,value){
                 this.map.clearOverlays();
                 //正在执行的活动
-                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.workingOpts );
+                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
                 let workList = []
                 if(ids){
                     ids.forEach(idItem=>{     //整合数据，解决一村都任务的情况
@@ -694,7 +699,7 @@
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].ba){
+                        if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
                     };
@@ -722,9 +727,9 @@
                                     "</div></div>"
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
-                                    "<div class='header'><div class='headerTitle'><img src='static/img/house06.svg' style='width: 20px;height: 20px'></img>"+item.districtName+"</div>" +
+                                    "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>"+item.districtName+"</a></div>" +
                                     "<div>" +
-                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<a id='close'>12313</a><sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
+                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
                                     "</div>" +
                                     "</div>"+
                                     "<div class='content'><div style='line-height: 20px;'>" +
@@ -738,13 +743,7 @@
                                 setTimeout(
                                     ()=>{
                                         infoBox._setContent(this.pContent,infoBox.open(marker2))
-                                        document.getElementById('close').addEventListener('click',()=>{
-                                            console.log(123)
-
-                                            infoBox.close()
-                                            infoBox.ba.hidden = true
-                                            document.getElementById('close')
-                                        })},1200)
+                                   },1200)
 
 
                             })
@@ -772,7 +771,6 @@
             //展示党组织村级
             setPartyMaker(val){
                 this.map.clearOverlays();
-                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
                 this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
                     data.forEach(item => {
                         if(item.location) {
@@ -783,7 +781,7 @@
                             marker.addEventListener('click',()=>{
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
-                                    "<div class='header'><div class='headerTitle'><img src='static/img/house06.svg' style='width: 20px;height: 20px'></img>"+item.districtName+"</div>" +
+                                    "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>"+item.districtName+"</a></div>" +
                                     "<div>" +
                                     "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
                                     "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>"+type+"</sapn></div>" +
@@ -795,6 +793,7 @@
                                     "</div></div>"+
                                     "</div>"+
                                     "</div>";
+                                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
                                 setTimeout(()=>{
                                     this.map.panTo(item.location.split(",")[0],item.location.split(",")[1]);
                                 },300)
@@ -1325,7 +1324,7 @@
     }
     .header{
         width:100%;
-        height: 80px;
+        height: 90px;
         padding: 5px;
         background:url("../../../static/img/partyHeader.jpg") ;
         border-top-left-radius:3px;
@@ -1344,10 +1343,12 @@
         padding-bottom: 2px;
         padding-top: 10px;
         line-height: 20px;
+        width:50%;
+
     }
     .headerTwo{
-        font-size: 15px;
-        margin-left: 25px;
+        font-size: 16px;
+        margin-left: 36px;
         padding-top: 5px;
     }
     .headerThree{
@@ -1405,22 +1406,46 @@
     }
 </style>
 <style scope>
+    .el-tree-node__label {
+        font-size: 16px !important;
+    }
     .showLeftList{
         cursor: pointer;
-        position: fixed;
         overflow-y:scroll;
-        top: 350px;
-        height: 50px;
+        width: 0;
+        height: 0;
+        border: 15px solid;
+        border-color:  transparent transparent transparent #73abff;
+    }
+    .showLeftList:after{
+        content: '';
+        left: 10px;
+        top: 0px;
+        position: absolute;
+        border: 15px solid;
+        border-color:  transparent transparent transparent rgba(97, 133, 255, 0.6);
+    }
+
+    .showLeftListTop{
         width: 50px;
-        background: rgba(158, 204, 255, 0.3);
-        transition: all 0.6s;
+        height: 50px;
+        position: fixed;
+        top: 350px;
+        left: 250px;
+        transition: all 0.5s;
+    }
+    .showLeftListTop:hover{
+        margin-left: 10px;
+        transform: scale(1.2);
     }
     .leftList{
         position: fixed;
         overflow-y:scroll;
         top: 350px;
-        height: 550px;
+        height: 450px;
         background: rgba(158, 204, 255, 0.3);
+        border-radius: 5px;
+        box-shadow: 5px 5px 5px #888888;;
         transition: all 0.6s;
     }
     .leftList::-webkit-scrollbar {

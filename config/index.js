@@ -12,7 +12,7 @@ module.exports = {
         assetsPublicPath: '/',
         proxyTable: {
             '/api/zuul': {
-                target: 'http://localhost:8762',  // 本地域名
+                target: 'http://localhost:8762',  // 本地域名http://122.97.218.162:21018
                 changeOrigin: true,  //是否跨域
                 pathRewrite: {
                     '^/api/zuul': '/zuul/api',   //需要rewrite重写的,

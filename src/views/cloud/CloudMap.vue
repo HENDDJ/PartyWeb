@@ -451,7 +451,7 @@
 
 </style>
 <style>
-    #allmap .BMap_mask {
+    #example-map .BMap_mask {
         /*background-image: radial-gradient(90deg, #000000, rgba(0, 0, 0, 0.8), rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.8), #000000) !important;*/
         background: radial-gradient(circle at 960px 700px,rgba(255, 255, 255, 0), rgba(0, 0, 0, 0.7),rgba(0, 0, 0, 0.9), #000000) !important;
     }

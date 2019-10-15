@@ -363,6 +363,11 @@
           //   this._map.removeOverlay(this);
              this._isOpen = false;
              this._dispatchEvent(this,"close",{"point" : this._point});
+             for(var indexNum in  document.getElementsByClassName('infoBox')){
+                 if(document.getElementsByClassName('infoBox')[indexNum].parentNode){
+                     document.getElementsByClassName('infoBox')[indexNum].parentNode.removeChild(document.getElementsByClassName('infoBox')[indexNum]);
+                 }
+             }
          }
      }
 
@@ -664,4 +669,4 @@
      });
  })();
 
- 
+

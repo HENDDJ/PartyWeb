@@ -133,6 +133,13 @@
                     }
                 }*!/
                 this.workingDataList();*/
+                this.activityWorkList.forEach(item=>{
+                    this.map.removeOverlay(item);
+                });
+                this.activityWorkList = [];
+                this.$nextTick(()=>{
+                    this.workingDataList();
+                });
                 setInterval(()=>{
                     this.activityWorkList.forEach(item=>{
                         this.map.removeOverlay(item);
@@ -197,21 +204,22 @@
                   }
                   workList.forEach(res=>{
                       let marker = new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]);
-                      let myIcon = new BMap.Icon("/static/img/action.gif", new BMap.Size(50, 50));
+                      let myIcon = new BMap.Icon("/static/img/action.gif", new BMap.Size(12, 12), {
+                          imageSize: new BMap.Size(12, 12),
+                          anchor: new BMap.Size(6, 10)
+                      });
                       let marker2 = new BMap.Marker(marker, {icon: myIcon});  // 创建标注
-                      let label = new BMap.Label(res.value[0].districtName,{offset:new BMap.Size(-5,28)});
-                      label.setStyle({
-                          backgroundColor: '#ecf5ff',
-                          display: 'inline-block',
-                          height: '28px',
-                          padding: '0 5px',
-                          lineHeight: '26px',
-                          fontSize: '13px',
-                          color: '#409eff',
-                          border: '1px solid #d9ecff',
-                          borderRadius: '4px',
-                          boxSizing: 'border-box',
-                          whiteSpace: 'nowrap',
+                      let opts = {
+                          height: 30,     // 信息窗口高度
+                          title : "<h5>实时活动</h5>" , // 信息窗口标题
+                      }
+                      let msg = `<p style="font-size: 14px;color: green">${res.value[0].districtName}正在执行${res.value[0].title}...</p>`;
+                      let infoWindow = new BMap.InfoWindow(msg, opts);
+                      marker2.addEventListener("mouseover", function(){
+                          this.map.openInfoWindow(infoWindow,marker); //开启信息窗口
+                      });
+                      marker2.addEventListener("mouseout", function(){
+                          this.map.closeInfoWindow(infoWindow,marker); //开启信息窗口
                       });
                       marker2.addEventListener('click', e => {
                           this.resetSetItem('cloudPicture',JSON.stringify(res.value[0]));
@@ -221,7 +229,6 @@
                           //   console.log(JSON.parse(localStorage.getItem("cloudPicture")),"2");
                         });
                         this.map.addOverlay(marker2);
-                        marker2.setLabel(label);
                         this.activityWorkList.push(marker2);
                     })
                 }

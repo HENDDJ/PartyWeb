@@ -31,23 +31,6 @@
             </vs-tab>
             <vs-tab @click="showCharts()" label="数据统计">
                 <div>
-                    <el-card class="box-card" v-if="this.userAuthority!=3">
-                        <div class="chartDivStyle">
-                            <div class="query-position" >
-                                <el-select v-model="heatMapTownId" placeholder="请选择" @change="showHeatMap('')" size="mini">
-                                    <el-option
-                                        v-for="item in townList"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
-                                    </el-option>
-                                </el-select>
-                                <el-button type="info" plain @click="showHeatMap('7')">近7日</el-button>
-                                <el-button type="info" plain @click="showHeatMap('30')">近30日</el-button>
-                            </div>
-                            <div id="heatMap" class="chartStyle"></div>
-                        </div>
-                    </el-card>
                     <el-card class="box-card">
                         <div class="chartDivStyle">
                             <div class="query-position">
@@ -94,6 +77,23 @@
                                 <el-button type="info" plain @click="showPeakLineChart('30')">近30日</el-button>
                             </div>
                             <div id="peakLineChart" class="chartStyle"></div>
+                        </div>
+                    </el-card>
+                    <el-card class="box-card" v-if="this.userAuthority!=3">
+                        <div class="chartDivStyle">
+                            <div class="query-position" >
+                                <el-select v-model="heatMapTownId" placeholder="请选择" @change="showHeatMap('')" size="mini">
+                                    <el-option
+                                        v-for="item in townList"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                    </el-option>
+                                </el-select>
+                                <el-button type="info" plain @click="showHeatMap('7')">近7日</el-button>
+                                <el-button type="info" plain @click="showHeatMap('30')">近30日</el-button>
+                            </div>
+                            <div id="heatMap" class="chartStyle"></div>
                         </div>
                     </el-card>
                     <el-card class="box-card" v-if="this.userAuthority!=3">

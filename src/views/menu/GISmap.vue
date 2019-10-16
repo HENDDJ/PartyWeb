@@ -2,19 +2,42 @@
     <section class="gis-map">
         <div id="allmap"></div>
         <nav class="nav">
-            <ul>
-                <li class="store" @click="leftWidth.width = '230px';flag = 1;showLeft=true;showParty()"><span class="books-icon"></span><a href="#" style="padding-left: 50px">党组织</a></li>
-                <li class="movies" @click="leftWidth.width = '230px';flag = 2;showLeft=true;showBattleField()"><span class="store-icon"></span><a href="#" style="padding-left: 50px">基本阵地</a></li>
-                <li class="working" @click="leftWidth.width = '230px';flag = 3;showLeft=false;showWorking()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">执行任务中</a></li>
-                <li class="working" @click="leftWidth.width = '230px';flag = 4;showLeft=false;showPeopleStream()"><span class="working-icon"></span><a href="#" style="padding-left: 50px">阵地实时人流量</a></li>
-            </ul>
+            <el-button class="nav-btn" type="primary" size="large" @click="showParty()">
+                <div class="logo-outer">
+                    <img src="/static/img/org_logo.png" style="margin-top: 2px;" alt=""/>
+                </div>
+                <span>党组织分布</span>
+            </el-button>
+            <el-button class="nav-btn" type="primary" size="large" @click="showBattleField()">
+                <div class="logo-outer">
+                    <img src="/static/img/position_logo.png" style="margin-top: 5px;" alt=""/>
+                </div>
+                <span>阵地分布&emsp;</span>
+            </el-button>
+            <el-button class="nav-btn" type="primary" size="large" @click="showWorking()">
+                <div class="logo-outer">
+                    <img src="/static/img/act_logo.png" style="margin-top: 6px;" alt=""/>
+                </div>
+                <span>实时活动&emsp;</span>
+            </el-button>
+            <el-button class="nav-btn" type="primary" size="large">
+                <div class="logo-outer">
+                    <img src="/static/img/activity_logo.png" style="margin-top: 5px;" alt=""/>
+                </div>
+                <span>活动统计&emsp;</span>
+            </el-button>
+            <el-button class="nav-btn" type="primary" size="large" @click="showPeopleStream()">
+                <div class="logo-outer">
+                    <img src="/static/img/stream_logo.png" style="margin-top: 6px;" alt=""/>
+                </div>
+                <span>实时人流量</span>
+            </el-button>
         </nav>
+        <div v-if="showLeft" class="leftClose" @click="leftWidth.width = '0px';showLeft=false;">
+        </div>
         <div class="leftList" :style="leftWidth" v-if="showLeft">
-            <div class="leftClose" @click="leftWidth.width = '0px';showLeft=false;">
-
-            </div>
             <div style="z-index: 99">
-                <el-tree :data="leftData"  @node-click="handleNodeClick" ></el-tree>
+                <el-tree :data="leftData" @node-click="handleNodeClick" ></el-tree>
             </div>
         </div>
         <div class="showLeftListTop">
@@ -354,15 +377,6 @@
                 }));
                 this.map.setCurrentCity("镇江");          // 设置地图显示的城市 此项是必须设置的
                 this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放a
-                this.map.addControl(
-                    new BMap.NavigationControl({
-                        // 靠左上角位置
-                        anchor: BMAP_ANCHOR_TOP_LEFT,
-                        // LARGE类型
-                        type: BMAP_NAVIGATION_CONTROL_LARGE,
-                        // 启用显示定位
-                    })
-                );
 
                 let cityName = '镇江市句容市';
                 let bdary = new BMap.Boundary();
@@ -420,6 +434,8 @@
             },
             //展示基本阵地点位
             showBattleField() {
+                this.leftWidth.width = '200px';
+                this.showLeft=true;
                 this.flag =2
                 //阵地个数
                 this.$http('post','identity/positionInformation/positionNumber?districtId=01',false).then((data)=>{
@@ -485,6 +501,9 @@
             },
             //展示正在执行
             showWorking(){
+                this.leftWidth.width = '200px';
+                this.flag = 3;
+                this.showLeft = false;
                 this.openNotify('此处显示电视端正在执行的任务');
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
@@ -692,7 +711,9 @@
             },
             //展示党组织镇级
             showParty() {
-                this.flag = 1
+                this.flag = 1;
+                this.leftWidth.width = '200px';
+                this.showLeft = true;
                 this.openNotify('党的基层组织是党在社会基层组织中的战斗堡垒，是党的全部工作和战斗力的基础。新形势下基层党组织工作开展的怎么样，直接影响到党的凝聚力、影响力、战斗力的充分发挥。');
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
@@ -849,6 +870,9 @@
             },
             //阵地实时人流量
             showPeopleStream(value) {
+                this.leftWidth.width = '200px';
+                this.flag = 4;
+                this.showLeft = false;
                 this.$http('POST', '/identity/sumPerHour/getHeatMapData', {
                     startTime: value[0],
                     endTime:  value[1]
@@ -905,6 +929,13 @@
 </script>
 
 <style>
+    .gis-map .el-tree-node__label {
+        font-size: 14px !important;
+    }
+    .gis-map .el-tree-node__content:hover {
+        background-color: #ffffff;
+        color: red;
+    }
     nav {
         background: rgba(245, 245, 245, 0.95);
         box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
@@ -936,133 +967,10 @@
 /*    nav ul li a:hover {
         color: #fff;
     }*/
-    .store {
-        background: #b3c833;
-        width: 50px;
-        height: 50px;
-        margin-bottom: px;
-    }
-    .working{
-        background: #c3cec1;
-        width: 50px;
-        height: 50px;
-        margin-bottom: px;
-    }
-    .movies {
-        background: #ce5043;
-        width: 50px;
-        height: 50px;
-        margin-bottom: px;
-    }
-
-    .music {
-        background: #fb8521;
-        width: 50px;
-        height: 50px;
-        margin-bottom: px;
-    }
-
-    .books {
-        background: #1aa1e1;
-        width: 50px;
-        height: 50px;
-        margin-bottom: px;
-    }
-
-    .magazines {
-        background: #5e5ca6;
-        width: 50px;
-        height: 50px;
-        margin-bottom: px;
-    }
-
     .devices {
         background: #658092;
         width: 50px;
         height: 50px;
-        margin-bottom: px;
-    }
-
-    .store-icon {
-        position: absolute;
-        margin-left: -10px;
-        padding-top: 12px;
-    }
-    .store-icon:before {
-        width: 50px;
-        height: 50px;
-        margin-right: 30px;
-        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAA0UlEQVRIx+XWUQ2DMBCA4UpAAhIqAQmTgIRJqIRKqAQkIAEJSKiDfy+3rFm6wpWyJeySvnC0H1euBAOYbwzzE6gUQAcEIPKKCbCFOToIsAkQAAd4uRaBWytokQVtpspnrj8EAaNUMn7I95L3R6EJWDfeX/YeLTQD0wbkyCxQam9P+3A5yF0OuhcmRGBtBQ2FCXPS7lEBDVVQclDdTrAeejusoQbqNFAClh7QZg+ssqI9W2gOQdIUe7qwDpJtWhRdp4aifPe0oYZq4x+g6/1unTkek/bCyLhDiUMAAAAASUVORK5CYII=");
-    }
-    working-icon{
-        position: absolute;
-        margin-left: 10px;
-        padding-top: 12px;
-    }
-    working-icon:before{
-        width: 50px;
-        height: 50px;
-        margin-right: 30px;
-        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAANklEQVRIx2P4//8/Az0ww6hF1LCIVmCALWKAArJNxdQ/GnSjQTcadKNBNxp0wyLoRtsMI9wiAFADCXZf9dlZAAAAAElFTkSuQmCC");
-    }
-    .movies-icon {
-        position: absolute;
-        margin-left: 10px;
-        padding-top: 12px;
-    }
-    .movies-icon:before {
-        width: 50px;
-        height: 50px;
-        margin-right: 30px;
-        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAANklEQVRIx2P4//8/Az0ww6hF1LCIVmCALWKAArJNxdQ/GnSjQTcadKNBNxp0wyLoRtsMI9wiAFADCXZf9dlZAAAAAElFTkSuQmCC");
-    }
-
-    .music-icon {
-        position: absolute;
-        margin-left: 10px;
-        padding-top: 12px;
-    }
-    .music-icon:before {
-        width: 50px;
-        height: 50px;
-        margin-right: 30px;
-        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAABWklEQVRIx82W0Y2DMAxAGSEjZARGYARGYAQ2aDYoG7QbXDcoG8AGxwZlg3cf50i+NA2BRtVZCh/E8Usc23EFVJ8Yv58MAZpwJHT3gYAOuJGWEegOgYAWWNgnC9Bmg4AhYmQCzsBJjbP8D2XYBEUgF8Bu3J0VPS3XlyBxl5dH6rITwfJQNtonEGCAVUHq6oDI6b7Fzip2/4D6dyEKVquT9SFo9hNVAVEbn0PQCbhUhURsTmL3KRjGxO5cGH1yHy7mBTG+vAoGACOKRgx1OiEDY6uaawSq1xMLBqd8atRCp5MjAGnxuo2sn8Pk9SCdqKuKmDETNKgAWGNVwoNskGzeHbmgUfQJkt7GgqEvDOpTte6rEOi+VVRdIZD7NyBTCGRyHr6rKHc7QDf1zFxzX1gjdcqF/UJGwk6x06R6BquqQw6oFw/Yo11QrUM2mLurOftWu6VOVyc2YnP6uh+8uEodULzJQAAAAABJRU5ErkJggg==");
-    }
-
-    .books-icon {
-        position: absolute;
-        margin-left: -10px;
-        padding-top: 12px;
-    }
-    .books-icon:before {
-        width: 50px;
-        height: 50px;
-        margin-right: 30px;
-        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAA9klEQVRIx+3VYQ2DMBCGYSQgYRJwMCQgAQk4ACcgAQfgAAnMAXPw7sc+kqOjwBjjF5c0hGt7D21ILgCCM4abSIAaaPUsgFuwEsBNa+3e2AcVQASEQM40aiD2AJVZNwC55mKhH9AYlbAI6BywMEgKPM1cIzh0cC+ECqQq6J6u0BXbGE+ROfgqNEarr4z1xY3yD/MeaU3rqbEJGk+X4f+j5k6xC7IbtuQu6IIu6IJ2QAnvfnIUNKjmFDKNrDsA6lBnnoU0EQLlD1AJhKbePOR00OELaEDN0qmzDGmRbedLUAdEnhrrkHOVAdAbpFfubq9qFfr3OA16AcSstrz4r0qKAAAAAElFTkSuQmCC");
-    }
-
-    .magazines-icon {
-        position: absolute;
-        margin-left: 10px;
-        padding-top: 12px;
-    }
-    .magazines-icon:before {
-        width: 50px;
-        height: 50px;
-        margin-right: 30px;
-        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAA1klEQVRIx72WYQ3DIBBGkVAJSMDAEiQgoRIqAQmTMAmVgIRJqIQ5ePuxa8K6lgSyuy+5pAncfX1wvdQB7krABEQgAw+gAC9aSZ+8n3B1DuCBBViBjbbCkJG8+VF3oVqEqg7fbQQEKXqTovP+LImpVbiXaNezPrbD2ogujb53KRilwx0ULaO9dYscnxpRtCLKVkTeiihWRKrtPVkRTaNEF5Ph3KhqCF0iKdhN1Jh1TaOiPoJGjUaJshVRtiKarYiiFVEwITorWn1ffzdaZUMBkhtQ6y9IPd6TPeBqjeAP/QAAAABJRU5ErkJggg==");
-    }
-
-    .devices-icon {
-        position: absolute;
-        margin-left: 10px;
-        padding-top: 12px;
-    }
-    .devices-icon:before {
-        width: 50px;
-        height: 50px;
-        margin-right: 30px;
-        content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAAa0lEQVRIx2P4//8/Az0wusCC/5SDBAYowGcRVQDRFjGQCciyiBxfjFo0ci0C5TkBAqmQKhYZEKHmA8UWwdQQka9GLRq1aNSiUYtItYjYqpsii4gAB3BZhFyi47PoApEWgUplBShNVulNMwwA8TkerCj0FuMAAAAASUVORK5CYII=");
     }
     .infoBoxContent{
         margin:0 ;
@@ -1432,9 +1340,6 @@
     }
 </style>
 <style scope>
-    .el-tree-node__label {
-        font-size: 16px !important;
-    }
     .showLeftList{
         cursor: pointer;
         overflow-y:scroll;
@@ -1465,35 +1370,39 @@
         transform: scale(1.2);
     }
     .leftList{
-        position: fixed;
-        overflow-y:scroll;
-        top: 350px;
+        position: absolute;
+        overflow-y: auto;
+        overflow-x: hidden;
+        top: 370px;
+        left: 10px;
         height: 450px;
         background: rgba(158, 204, 255, 0.3);
         border-radius: 5px;
-        box-shadow: 5px 5px 5px #888888;;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+        -moz-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+        -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         transition: all 0.6s;
+        padding-top: 10px;
     }
     .leftList::-webkit-scrollbar {
-        width: 9px;
+        width: 4px;
     }
     .leftClose{
         z-index: 1000;
         cursor: pointer;
         position: absolute;
-        margin-top: 20px;
-        margin-left: 180px;
-        width: 25px;
-        height:5px;
+        top: 380px;
+        left: 190px;
+        width: 16px;
+        height:2px;
         background: black;
         transform: rotate(45deg);
-        float: left;
     }
     .leftClose:before{
         content:'';
         display:block;
-        width: 25px;
-        height:5px;
+        width: 16px;
+        height:2px;
         background: black;
         transform: rotate(-90deg);
     }
@@ -1537,15 +1446,17 @@
         margin: 0;
     }*/
     .nav {
-        position: fixed;
-        background: rgba(245, 245, 245, 0.95);
+        position: absolute;
+        background: rgba(255, 255, 255, 0.8);
         box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         -moz-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         width: 200px;
         z-index: 1000;
-        top: 100px;
+        top: 35px;
+        left: 10px;
         margin:30px 0 0 0px;
+        padding: 0 5px;
     }
     .member{
         color: #409eff;
@@ -1577,6 +1488,26 @@
     }
     .gis-map .el-date-editor.el-input, .gis-map .el-date-editor.el-input__inner {
         width: 300px !important;
+    }
+    .nav-btn {
+        width: 100%;
+        display: block;
+        margin: 6px 0 !important;
+        padding: 6px 14px;
+    }
+    .logo-outer {
+        width: 38px;
+        height: 38px;
+        border-radius: 6px;
+        background-color: white;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    .nav-btn span span {
+        font-size: 18px;
+        margin-left: 5px;
+        position: relative;
+        top: 2px;
     }
 </style>
 

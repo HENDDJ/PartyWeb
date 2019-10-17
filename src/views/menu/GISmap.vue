@@ -366,8 +366,11 @@
             },
             initMap() {
                 // 百度地图API功能
-                this.map = new BMap.Map("allmap");    // 创建Map实例
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 12);  // 初始化地图,设置中心点坐标和地图级别
+                this.map = new BMap.Map("allmap", {
+                    minZoom: 11,
+                    maxZoom: 18
+                });    // 创建Map实例
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 //添加地图类型控件
                 this.map.addControl(new BMap.MapTypeControl({
                     mapTypes: [
@@ -439,14 +442,12 @@
                 this.flag =2
                 //阵地个数
                 this.$http('post','identity/positionInformation/positionNumber?districtId=01',false).then((data)=>{
-                    console.log(data)
                     this.positionNumber = data
                 })
 
                 this.openNotify('基本阵地是党组织开展活动的重要场所，是党员接受教育、发挥作用的重要平台，也是把党员和群众团结凝聚在党组织周围的重要物质依托。');
                 this.msgFloatRight.marginRight = '-315px'
                 let allOverlay = this.map.getOverlays();
-                console.log(allOverlay)
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
                         if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
@@ -464,7 +465,7 @@
                                 //定义镇名
                                 this.zhenList.push(item.districtName);
                                 let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
-                                let myIcon = new BMap.Icon("/static/img/house06.svg", new BMap.Size(50, 50));
+                                let myIcon = new BMap.Icon("/static/img/house06.svg", new BMap.Size(45, 45));
                                 let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
                                 marker2.addEventListener('click', e => {
                                     this.pandTo(marker)
@@ -477,14 +478,14 @@
                                 })
                                 this.map.addOverlay(marker2);
                                 marker2.disableMassClear();
-                                let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-5,28)});
+                                let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-item.districtName.length * 6 + 12,28)});
                                 label.setStyle({
                                     backgroundColor: '#ecf5ff',
                                 display: 'inline-block',
                                 height: '28px',
                                 padding: '0 5px',
                                 lineHeight: '26px',
-                                fontSize: '13px',
+                                fontSize: '12px',
                                 color: '#409eff',
                                 border: '1px solid #d9ecff',
                                 borderRadius: '4px',
@@ -609,14 +610,14 @@
                                 setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
                             });
                             this.map.addOverlay(marker);
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-8,28)});
+                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-item.districtName.length * 6,28)});
                             label.setStyle({
                                 backgroundColor: '#ecf5ff',
                                 display: 'inline-block',
                                 height: '24px',
                                 padding: '0 8px',
                                 lineHeight: '22px',
-                                fontSize: '13px',
+                                fontSize: '12px',
                                 color: '#139c56',
                                 border: '1px solid #d9ecff',
                                 borderRadius: '4px',

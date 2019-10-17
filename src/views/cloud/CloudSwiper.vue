@@ -1,6 +1,6 @@
 <template>
     <swiper :options="swiperOption" style = "width: 1510px;height: 150px;">
-        <swiper-slide v-for="(item,index) in list" :key="item.id">
+        <swiper-slide v-for="(item,index) in positionRankList" :key="item.id">
             <el-card class="cardStyle">
                 <div>
                     <icon name="NO.1" scale="3"  class="rankTagStyle" v-if="index===0"></icon>
@@ -36,11 +36,6 @@
             swiperSlide
         },
         methods:{
-            showList(){
-                for (let i = 0; i < 20; i++) {
-                    this.list.push({id:i,name:"茅山村村支部",degree:50-i});
-                }
-            },
             showPositionRank(){
                 this.$http('POST',`identity/positionInformation/list?sort=hotDegree,desc`,false).then(data => {
                     data.forEach(item =>{
@@ -52,8 +47,8 @@
             } ,
         },
         created(){
-           // this.showPositionRank();
-            this.showList();
+           this.showPositionRank();
+
         }
     }
 </script>

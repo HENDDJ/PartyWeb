@@ -267,12 +267,13 @@
                             data.forEach( item => {
                                 this.realLineCountryList.push({value:item.districtId , label:item.districtName})
                             });
-                            this.$nextTick(()=>{
-                                this.showRealLineChart();
-                            })
                         })
                     }
+                    this.$nextTick(()=>{
+                        this.showRealLineChart();
+                    });
                 }
+
                 if(type=='peakLine'){
                     this.peakLineCountryList = [];
                     this.peakLineCountryId = '';
@@ -282,11 +283,11 @@
                             data.forEach( item => {
                                 this.peakLineCountryList.push({value:item.districtId , label:item.districtName})
                             });
-                            this.$nextTick(()=>{
-                                this.showPeakLineChart('');
-                            })
                         })
                     }
+                    this.$nextTick(()=>{
+                        this.showPeakLineChart('');
+                    })
                 }
             },
             showCharts(){

@@ -68,7 +68,7 @@
                 // 百度地图API功能
                 this.map = new BMap.Map("allmap", {minZoom: 11, maxZoom: 13});    // 创建Map实例
                 this.map.setMapStyle({style: 'midnight'});
-                this.map.centerAndZoom(new BMap.Point(119.209426,31.942559), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.map.centerAndZoom(new BMap.Point(119.254197,31.886684), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.map.disableDragging();
                 this.map.setCurrentCity("镇江");          // 设置地图显示的城市 此项是必须设置的
                 this.map.addEventListener("zoomend", () => {
@@ -76,7 +76,7 @@
                     if (this.map.getZoom() > 11) {
                         this.map.enableDragging();
                     } else {
-                        this.map.centerAndZoom(new BMap.Point(119.209426,31.942559), 11);
+                        this.map.centerAndZoom(new BMap.Point(119.254197,31.886684), 11);
                         this.map.disableDragging();
                     }
                     this.showCunPoint(this.currentZhenPoint);

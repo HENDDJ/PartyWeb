@@ -10,6 +10,7 @@ import Search from '@/views/search/Search';
 import CloudRoot from '@/views/cloud/CloudRoot';
 import CloudMap from '@/views/cloud/CloudMap';
 import CloudVideo from '@/views/cloud/CloudVideo';
+import CloudSwiper from '@/views/cloud/CloudSwiper';
 import CloudPictures from '@/views/cloud/CloudPictures'
 import ParActivityManage from '@/views/menu/ParActivityManage';
 
@@ -105,7 +106,13 @@ const router = new Router({
             path: '/cloudPictures',
             name: 'CloudPictures',
             component: CloudPictures
+        },
+        {
+            path: '/cloudSwiper',
+            name: 'CloudSwiper',
+            component: CloudSwiper
         }
+
     ]
 });
 
@@ -135,6 +142,10 @@ router.beforeEach((to, from, next) => {
         return;
     }
     if(to.path === '/cloudPictures'){
+        next();
+        return;
+    }
+    if(to.path === '/cloudSwiper'){
         next();
         return;
     }

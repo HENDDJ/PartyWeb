@@ -56,33 +56,7 @@
                     <a v-if="!rightMessage.districtName">暂无数据</a>
                     {{rightMessage.districtName}}
                 </div>
-                <div  v-for="(item,index) in rightMessage.positionInformation">
-                    <div class='block' style="margin-top: 2px"></div>
-                    <div style="float: left;font-size: 17px">{{item.name}}</div><br>
-                    <div style="font-size: 25px;text-align: left">
-                        <el-tag style="margin-right: 200px" effect="plain" size="small">
-                            <i class="el-icon-picture"style="margin-right: 5px;vertical-align: middle"/>
-                            图片
-                        </el-tag>
-                    </div>
-                    <div style="margin-top: 10px">
-                        <viewer >
-                            <img :src="item.pictures" v-if="item.pictures"
-                                 style="width: 262px;height: 175px;">
-                            <img src="/static/img/nodata.png" v-else
-                                 style="width: 262px;height: 175px;">
-                        </viewer>
-                    </div>
-                    <div style="font-size: 25px;text-align: left">
-                        <el-tag style="margin-left: 15px" effect="plain" size="small">
-                            <i class="el-icon-user-solid"style="margin-right: 5px;vertical-align: middle"/>
-                            人流量统计图
-                        </el-tag>
-                    </div>
-                    <div style="margin-top: 10px;width: 285px;height: 176px; border: 1px solid #c1c1c1;margin-left: 12px" :id='msgFloatRight.zIndex'>
-                    </div>
-                    <el-divider style="margin-top: 8px"></el-divider>
-                </div>
+                <div id="realLineChart" style="width: 460px;height: 330px;"></div>
             </vs-card>
             <el-dialog
                 id="nnn"
@@ -123,7 +97,7 @@
                         @current-change="currentPage"
                         @prev-click="prePage"
                         @next-click="nextPage"
-                        hide-on-single-page="false">
+                        :hide-on-single-page="false">
                     </el-pagination>
                 </div>
             </el-dialog>
@@ -237,7 +211,7 @@
                 zhenList:[],
                 //控制右侧导航栏
                 msgFloatRight:{
-                    marginRight:'-315px',
+                    marginRight: '-500px',
                     // marginRight:'48px',
                     position: 'absolute',
                     zIndex: 1000,
@@ -359,7 +333,7 @@
 
             //关闭右侧弹出栏目
             close(){
-                this.msgFloatRight.marginRight = '-315px'
+                this.msgFloatRight.marginRight = '-500px'
             },
             posit(val){
                 return `margin-top:${val*108}px;`;
@@ -446,7 +420,7 @@
                 })
 
                 this.openNotify('基本阵地是党组织开展活动的重要场所，是党员接受教育、发挥作用的重要平台，也是把党员和群众团结凝聚在党组织周围的重要物质依托。');
-                this.msgFloatRight.marginRight = '-315px'
+                this.msgFloatRight.marginRight = '-500px'
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
@@ -565,7 +539,7 @@
                                     times.push(val.modifiedAt.split('T')[0])
                                     content = content + "<div class='house'><div class='houseName'>"+val.name+":</div>" +
                                         "<div style=''><div class='blueBlockPos'></div><div class='blueBlockTopPos'></div>" +
-                                        "<div class='rowF'><div class='row'><label class='detailLabel'>设施</label><div class='detailText'>"+val.facilities+"</div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.facilities+"</span></div></div>" +
+                                        "<div class='rowF'><div class='row'><label class='detailLabel'>设施</label><div class='detailText'>"+ (val.facilities || "暂无") +"</div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.facilities+"</span></div></div>" +
                                         "<div class='rowF'><div class='row'><label class='detailLabel'>占地面积</label><div class='detailText'>"+val.area+"平方米</div></div></div>"+
                                         "<div class='rowF'><div class='row'><label class='detailLabel'>功能介绍</label><div class='detailText'><a style='width:95%'>"+val.introduction+"</a><div class='detailMore' onclick='window.location=&quot;/#/basePosition/positionInformation?positionName="+val.name+"&quot;'>更多</div></div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.introduction+"</span></div></div>"+
                                         "</div></div>"
@@ -587,6 +561,8 @@
                                 }
                             }
                             marker.addEventListener('click', e => {
+                                this.showRealLineChart(item);
+
                                 //阵地个数
                                 this.$http('post','identity/positionInformation/positionNumber?districtId='+item.districtId,false).then((data)=>{
                                     this.positionNumber = data
@@ -607,6 +583,9 @@
                                 this.msgFloatRight.marginRight = '48px'
                                 this.msgFloatRight.display = 'block'
                                 let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
+                                infoBox.addEventListener('close', () => {
+                                    this.close();
+                                })
                                 setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
                             });
                             this.map.addOverlay(marker);
@@ -813,6 +792,13 @@
                 });
                 centerMarker.setLabel(label);
             },
+            generateHtml(arr) {
+                let str = '';
+                arr.forEach(item => {
+                    str += `<div class="row"><div class="detailText">${item.name}</div><label class="detailLabel">${item.postExperience}</label></div>`
+                })
+                return str;
+            },
             //展示党组织村级
             setPartyMaker(val){
                 this.map.clearOverlays();
@@ -826,26 +812,37 @@
                             let content = ''
                             let type = item.districtType === 'Party'?'农村':'机关'
                             marker.addEventListener('click',()=>{
-                                this.pContent =
-                                    "<div class='infoBoxContent'>" +
-                                    "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>"+item.districtName+"</a></div>" +
-                                    "<div>" +
-                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
-                                    "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>"+type+"</sapn></div>" +
-                                    "</div>" +
-                                    "</div>"+
-                                    "<div class='content'><div style='line-height: 20px;'>" +
-                                    "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织详情：</div><div class='member' onclick='document.getElementById("+'&quot;nnn&quot;'+").style.display="+'&quot;block&quot;'+";'><a href='##"+item.districtId+"'>组织成员</a></div></div>" +
-                                    "<div  style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
-                                    "</div></div>"+
-                                    "</div>"+
-                                    "</div>";
-                                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
-                                setTimeout(()=>{
-                                    this.map.panTo(item.location.split(",")[0],item.location.split(",")[1]);
-                                },300)
-                                setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
-
+                                this.$http('POST', 'identity/villageCadres/list?sort=postExperience,asc', {districtId: item.districtId}, false).then(
+                                    data => {
+                                        this.pContent =
+                                            "<div class='infoBoxContent'>" +
+                                            "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>"+item.districtName+"</a></div>" +
+                                            "<div>" +
+                                            "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
+                                            "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>"+type+"</sapn></div>" +
+                                            "</div>" +
+                                            "</div>"+
+                                            "<div class='content'>" +
+                                            "<div style='line-height: 20px;'>" +
+                                            "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织详情：</div>" +
+                                            "</div>" +
+                                            "<div style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
+                                            "</div></div>"+
+                                            "<div style='line-height: 20px;'>" +
+                                            "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织成员：</div>" +
+                                            "</div>" +
+                                            "<div style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div>" +
+                                            "<div class='contentDetail'></div>" + this.generateHtml(data) +
+                                            "</div>" +
+                                            "</div>" +
+                                            "</div>";
+                                        let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
+                                        setTimeout(()=>{
+                                            this.map.panTo(item.location.split(",")[0],item.location.split(",")[1]);
+                                        },300)
+                                        setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500);
+                                    }
+                                )
                             })
                             this.map.addOverlay(marker);
                             let offsetWidth = item.districtName.length * 12/2;
@@ -908,23 +905,109 @@
                     census.style.width = "0";
                 }
                 census.style.animation = action + ' 1s'
+            },
+            showRealLineChart(item) {
+                this.$http('Post',`identity/positionChart/realLineChart?districtId=`+item.districtId,false).then( data =>{
+                    let realLineChart = echarts.init(document.getElementById("realLineChart"));
+                    let hours = [];
+                    data.monthDay.forEach(item =>{
+                        hours.push(item.substr(11,5))
+                    });
+                    let option = {
+                        title: {
+                            text: item.districtName + '各阵地实时人流量统计折线图' ,
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            x:'center',
+                            y:'bottom',
+                            data:['党员教育室','党内关爱室','组织议事室','党群工作室']
+                        },
+                        xAxis:  {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: hours
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value} '
+                            }
+                        },
+                        series: [
+                            {
+                                name:'党员教育室',
+                                type:'line',
+                                data:data.MEMBER_EDUCATION,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+                            },
+                            {
+                                name:'党内关爱室',
+                                type:'line',
+                                data:data.PARTY_CARE,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'},
+                                    ]
+                                }
+                            },
+                            {
+                                name:'组织议事室',
+                                type:'line',
+                                data:data.ORGANIZATIONAL_CONFERENCE,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+                            },
+                            {
+                                name:'党群工作室',
+                                type:'line',
+                                data:data.PARTY_STUDIO,
+                                markPoint: {
+                                    data: [
+                                        {type: 'max', name: '最大值'},
+                                    ]
+                                },
+                                markLine: {
+                                    data: [
+                                        {type: 'average', name: '平均值'}
+                                    ]
+                                }
+                            },
+                        ]
+                    };
+                    realLineChart.setOption(option);
+                });
+
             }
 
         },
         mounted() {
             this.getTreeData();
             this.initMap();
-            window.addEventListener("hashchange",()=>{
-                this.memberData = []
-                if(window.location.hash.split("#").length-1>1){
-                    this.tableDataDistrictId = window.location.hash.split("#")[2]
-                    this.pageable.currentPage = 0
-                    this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId:window.location.hash.split("#")[2]}).then((data)=>{
-                        this.pageable.total = data.totalPages
-                        this.memberData = data.content
-                    })
-                }
-            });
         }
     }
 </script>
@@ -1000,8 +1083,9 @@
         border-top-color:white;
         position: absolute;
         left: 50%;
-        top: 100%;
+        top: 94%;
         margin-left: -20px;
+        transform: rotate(150deg);
     }
     .infoBoxTitle{
         padding: 12px 12px 16px 12px;
@@ -1050,6 +1134,7 @@
         border-radius: 3px;
         box-shadow: 2px 2px 10px rgba(51, 51, 51, 0.6);
         z-index: 99;
+        min-height: 450px;
     }
     .house{
         position: relative;
@@ -1095,7 +1180,6 @@
     .row{
         margin: 0 auto;
         width: 85%;
-        min-height: 25px;
         overflow: hidden;
         /*border: 1px solid #EDEDED;*/
         /*border-bottom: none;*/
@@ -1106,7 +1190,7 @@
     .detailMore{
         position: absolute;
         right: -15px;
-        top: 45px;
+        top: 7px;
         color: #7bff50;
     }
     .detailMore:hover{
@@ -1117,13 +1201,13 @@
     .detailLabel{
         display: inline-block;
         vertical-align: middle;
-        width: 84px;
+        min-width: 260px;
         padding: 7px 8px;
         color: #212121;
-        font-size: 15px;
+        font-size: 14px;
         /*border-right: 1px solid #EDEDED;*/
         background: #FAFAFA;
-        line-height: 35px;
+        line-height: 18px;
         margin-right: 15px;
 
 
@@ -1134,10 +1218,10 @@
         margin-right: 20px;
         float: right;
         vertical-align: middle;
-        width: 330px;
-        line-height: 35px;
+        width: 190px;
+        line-height: 18px;
         padding: 7px 8px;
-        font-size: 15px;
+        font-size: 14px;
         color: #706874;
 
     }
@@ -1154,6 +1238,16 @@
         z-index: 1111;
         background: #FAFAFA;
 
+    }
+    .rowF .row {
+        width: 100%;
+    }
+    .rowF .row .detailLabel{
+        min-width: 50px;
+    }
+    .rowF .row .detailText{
+        width: 400px;
+        display: inline-block;
     }
     /*.rowF:hover .tooltiptext{*/
         /*visibility: visible;*/
@@ -1207,18 +1301,16 @@
       /*//  transform-origin: bottom center;*/
     /*}*/
     .msgCard{
-        width:250px;
-        height: 579px;
         overflow-y:scroll;
         position: relative;
     }
     .gis-map .con-vs-card {
-        width:330px !important;
-        height: 682px  !important;
+        width:500px !important;
+        height: 450px  !important;
     }
     .closeBtnBg{
         transition: all 0.3s;
-        position: absolute;right: 335px;top: 99px;
+        position: absolute;right: 500px;top: 99px;
         /*background-color: rgba(28, 24, 24, 0.60);*/
         width: 30px;height: 30px;border-radius: 3px
     }

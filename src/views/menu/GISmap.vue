@@ -1,5 +1,26 @@
 <template>
     <section class="gis-map">
+        <div class="realTimeChart" v-show="flag==4">
+            <div class="query-position">
+                <el-select v-model="realLineTownId" placeholder="请选择" @change="showCountryList()" size="mini">
+                    <el-option
+                        v-for="item in townList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-select v-model="realLineCountryId" placeholder="请选择" @change="showRealLineChart({districtId: realLineCountryId}, 'realLineChart2')" size="mini">
+                    <el-option
+                        v-for="item in realLineCountryList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div id="realLineChart2" style="width: 500px;height: 400px;"></div>
+        </div>
         <div id="allmap"></div>
         <nav class="nav">
             <el-button class="nav-btn" type="primary" size="large" @click="showParty()">
@@ -56,51 +77,8 @@
                     <a v-if="!rightMessage.districtName">暂无数据</a>
                     {{rightMessage.districtName}}
                 </div>
-                <div id="realLineChart" style="width: 460px;height: 330px;"></div>
+                <div id="realLineChart" style="width: 470px;height: 330px;"></div>
             </vs-card>
-            <el-dialog
-                id="nnn"
-                title="组织成员"
-                visible.sync="true"
-                width="580px"
-                :before-close="closeMemberDialog">
-                123
-                <div slot="footer" class="dialog-footer">
-                    <el-table
-                        :data="memberData"
-                        border
-                        style="width: 100%">
-                        <el-table-column
-                            prop="name"
-                            label="姓名"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="sex"
-                            label="性别"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="nativePlace"
-                            label="出生地"
-                            width="180">
-                        </el-table-column>
-                        <el-table-column
-                            prop="education"
-                            label="学历"
-                            width="180">
-                        </el-table-column>
-                    </el-table>
-                    <el-pagination
-                        layout="prev, pager, next"
-                        :page-count="pageable.total"
-                        @current-change="currentPage"
-                        @prev-click="prePage"
-                        @next-click="nextPage"
-                        :hide-on-single-page="false">
-                    </el-pagination>
-                </div>
-            </el-dialog>
         </div>
         <!--
         右上角数据展示
@@ -116,7 +94,7 @@
             </div>
         </div>
 
-        <div style="position: absolute;top:70px;right: 350px" v-if="flag==4">
+        <div style="position: absolute;top:120px;right: 550px" v-if="flag==4">
             <div style="display: inline-block;">
                 <el-date-picker
                     v-model="heatMapRange"
@@ -247,7 +225,12 @@
                     partyStudio: 0,
                     square: 0,
                 },
-                heatMapRange: []
+                heatMapRange: [],
+                realLineTownId: '01',
+                realLineCountryId: '',
+                townList: [],
+                realLineCountryList: [],
+                userAuthority: ''
             }
         },
         methods: {
@@ -868,19 +851,28 @@
             },
             //阵地实时人流量
             showPeopleStream(value) {
+                this.initMap();
+                this.showRealLineChart({districtId: '01'}, "realLineChart2")
                 this.leftWidth.width = '200px';
                 this.flag = 4;
                 this.showLeft = false;
+                if (!value || value.length === 0) {
+                    return;
+                }
                 this.$http('POST', '/identity/sumPerHour/getHeatMapData', {
                     startTime: value[0],
                     endTime:  value[1]
                 }).then(data => {
+                    let max = 0;
                     data.forEach(item => {
                         item.geometry = {
                             type: 'Point',
                             coordinates: item.location.split(',')
                         };
                         item.count = item.total
+                        if (item.count > max) {
+                            max = item.count
+                        }
                     });
 
                     let dataSet = new mapv.DataSet(data);
@@ -888,7 +880,7 @@
                     let options = {
                         size: 15,
                         gradient: { 0.25: "rgb(0,0,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
-                        max: 150,
+                        max: max,
                         // range: [0, 100], // 过滤显示数据范围
                         draw: 'heatmap'
                     }
@@ -906,16 +898,19 @@
                 }
                 census.style.animation = action + ' 1s'
             },
-            showRealLineChart(item) {
+            showRealLineChart(item, id) {
                 this.$http('Post',`identity/positionChart/realLineChart?districtId=`+item.districtId,false).then( data =>{
-                    let realLineChart = echarts.init(document.getElementById("realLineChart"));
+                    let realLineChart = echarts.init(document.getElementById(id || "realLineChart"));
                     let hours = [];
                     data.monthDay.forEach(item =>{
                         hours.push(item.substr(11,5))
                     });
                     let option = {
                         title: {
-                            text: item.districtName + '各阵地实时人流量统计折线图' ,
+                            text: item.districtName || "" + '各阵地实时人流量统计折线图' ,
+                        },
+                        grid: {
+                          y: 80
                         },
                         tooltip: {
                             trigger: 'axis'
@@ -945,11 +940,6 @@
                                     data: [
                                         {type: 'max', name: '最大值'},
                                     ]
-                                },
-                                markLine: {
-                                    data: [
-                                        {type: 'average', name: '平均值'}
-                                    ]
                                 }
                             },
                             {
@@ -959,11 +949,6 @@
                                 markPoint: {
                                     data: [
                                         {type: 'max', name: '最大值'},
-                                    ]
-                                },
-                                markLine: {
-                                    data: [
-                                        {type: 'average', name: '平均值'},
                                     ]
                                 }
                             },
@@ -975,11 +960,6 @@
                                     data: [
                                         {type: 'max', name: '最大值'},
                                     ]
-                                },
-                                markLine: {
-                                    data: [
-                                        {type: 'average', name: '平均值'}
-                                    ]
                                 }
                             },
                             {
@@ -990,11 +970,6 @@
                                     data: [
                                         {type: 'max', name: '最大值'},
                                     ]
-                                },
-                                markLine: {
-                                    data: [
-                                        {type: 'average', name: '平均值'}
-                                    ]
                                 }
                             },
                         ]
@@ -1002,11 +977,71 @@
                     realLineChart.setOption(option);
                 });
 
+            },
+            showTownList(){
+                this.townList = [];
+                if(this.userAuthority==1){
+                    //镇级组织
+                    this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
+                        data.forEach( item => {
+                            this.townList.push( {value:item.districtId , label:item.districtName});
+                        });
+                        this.townList.push({value:'01',label:'全市'});
+                    })
+                }
+                if(this.userAuthority==2){
+                    this.townList.push({value:this.user.districtId , label:this.user.organizationName});
+                    this.realLineTownId = this.user.districtId;
+                    //村级组织
+                    this.$http('POST',`identity/sysDistrict/list`,{attachTo:this.user.districtId},false).then(data => {
+                        this.realLineCountryList = [];
+                        data.forEach( item => {
+                            //实时折线图
+                            this.realLineCountryList.push({value:item.districtId , label:item.districtName});
+                        });
+
+                    })
+                }
+                if(this.userAuthority ==3){
+                    this.townList = [];
+                    this.realLineCountryList = [];
+                    this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2,districtId:this.user.sysDistrict.attachTo},false).then(data => {
+                        data.forEach( item => {
+                            this.townList.push( {value:item.districtId , label:item.districtName});
+                        });
+                    });
+                    this.realLineCountryList.push({value:this.user.districtId , label:this.user.organizationName});
+                    this.realLineTownId = this.user.sysDistrict.attachTo;
+                    this.realLineCountryId = this.user.districtId;
+
+                }
+
+            },
+            showCountryList() {
+                this.realLineCountryList = [];
+                this.realLineCountryId = '';
+                if(this.realLineTownId.length>2){
+                    //村级组织
+                    this.$http('POST',`identity/sysDistrict/list`,{attachTo:this.realLineTownId},false).then(data => {
+                        data.forEach( item => {
+                            this.realLineCountryList.push({value:item.districtId , label:item.districtName})
+                        });
+                    })
+                }
+                this.$nextTick(()=>{
+                    let temp = {};
+                    temp.districtId = this.realLineCountryId || this.realLineTownId;
+                    console.log(temp, 7878)
+                    this.showRealLineChart(temp, "realLineChart2");
+                });
             }
 
         },
         mounted() {
+            this.user = JSON.parse(sessionStorage.getItem("userInfo"));
+            this.userAuthority = this.user.sysDistrict.districtLevel;
             this.getTreeData();
+            this.showTownList();
             this.initMap();
         }
     }
@@ -1191,7 +1226,7 @@
         position: absolute;
         right: -15px;
         top: 7px;
-        color: #7bff50;
+        color: #06b1ff;
     }
     .detailMore:hover{
         cursor: pointer;
@@ -1301,6 +1336,7 @@
       /*//  transform-origin: bottom center;*/
     /*}*/
     .msgCard{
+        margin-top: 10px;
         overflow-y:scroll;
         position: relative;
     }
@@ -1310,7 +1346,7 @@
     }
     .closeBtnBg{
         transition: all 0.3s;
-        position: absolute;right: 500px;top: 99px;
+        position: absolute;right: 505px;top: 110px;
         /*background-color: rgba(28, 24, 24, 0.60);*/
         width: 30px;height: 30px;border-radius: 3px
     }
@@ -1601,6 +1637,16 @@
         margin-left: 5px;
         position: relative;
         top: 2px;
+    }
+    .realTimeChart {
+        position: absolute;
+        top: 120px;
+        right: 0;
+        z-index: 2;
+    }
+    .query-position {
+        text-align: left;
+        margin-bottom: 20px;
     }
 </style>
 

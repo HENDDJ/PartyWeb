@@ -120,43 +120,6 @@
             return {
                 map: {},
                 positionList:[],
-                /* pointList:[
-                     {label: '茅山村党员教育室', x: 119.302738, y: 31.797112},
-                     {label: '宝华村党员教育室', x: 119.083573, y: 32.155268},
-                     {label: '二圣村党员教育室', x: 119.195893, y: 31.86983},
-                     {label: '古村党员教育室', x: 119.2061525, y: 31.82931},
-                     {label: '城上村党员教育室', x: 119.185518, y: 31.992343},
-                     {label: '莲塘村党员教育室', x: 119.139197, y: 31.997086},
-                     {label: '马埂村党员教育室', x: 119.273542, y: 31.687244},
-                     {label: '后塘村党员教育室', x: 119.140707, y: 32.027599},
-                 ],
-                 orgList:[
-                     {label: '茅山村党支部', x: 119.302738, y: 31.797112},
-                     {label: '宝华村党支部', x: 119.083573, y: 32.155268},
-                     {label: '二圣村党支部', x: 119.195893, y: 31.86983},
-                     {label: '古村党支部', x: 119.2061525, y: 31.82931},
-                     {label: '城上村党支部', x: 119.185518, y: 31.992343},
-                     {label: '莲塘村党支部', x: 119.139197, y: 31.997086},
-                     {label: '马埂村党支部', x: 119.273542, y: 31.687244},
-                     {label: '后塘村党支部', x: 119.140707, y: 32.027599},
-                 ],
-                 leaderList:[
-                     {label: '沈海涛', x: 119.302738, y: 31.797112},
-                     {label: '朱品兰', x: 119.083573, y: 32.155268},
-                     {label: '唐金莲', x: 119.195893, y: 31.86983},
-                     {label: '刘玲', x: 119.2061525, y: 31.82931},
-                     {label: '丁璐', x: 119.185518, y: 31.992343},
-                     {label: '王小斌', x: 119.139197, y: 31.997086},
-                     {label: '巫诚', x: 119.273542, y: 31.687244},
-                     {label: '朱倩', x: 119.140707, y: 32.027599},
-                     {label: '贡彩霞', x: 119.211677, y: 32.021569},
-                     {label: '吴正荣', x: 119.192597, y: 32.082439},
-                     {label: '朱又专', x: 119.343567, y: 32.02349},
-                     {label: '房贝林', x: 119.144667, y: 32.124599},
-                     {label: '乔飞飞', x: 119.125817, y: 32.115599},
-                     {label: '任玉生', x: 119.276697, y: 32.026439},
-                     {label: '蒋振华', x: 119.187457, y: 32.137519},
-                 ],*/
                 markerList:[],
                 mapvLayer:'',
                 pContent:'',
@@ -400,62 +363,57 @@
                 //阵地个数
                 this.$http('post','identity/positionInformation/positionNumber?districtId=01',false).then((data)=>{
                     this.positionNumber = data
-                })
-
+                });
                 this.openNotify('基本阵地是党组织开展活动的重要场所，是党员接受教育、发挥作用的重要平台，也是把党员和群众团结凝聚在党组织周围的重要物质依托。');
-                this.msgFloatRight.marginRight = '-500px'
+                this.msgFloatRight.marginRight = '-500px';
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
                         if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
-                    };
+                    }
                 }
-
                 this.map.clearOverlays();
                 this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http("POST",`identity/sysDistrict/list`,{districtLevel:2},false).then( data =>{
                     data.forEach(item => {
-                            if(item.location) {
-                                //定义镇名
-                                this.zhenList.push(item.districtName);
-                                let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
-                                let myIcon = new BMap.Icon("/static/img/house06.svg", new BMap.Size(45, 45));
-                                let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
-                                marker2.addEventListener('click', e => {
-                                    this.pandTo(marker)
-                                    setTimeout(this.setCunMaker(item.districtId),600);
-                                    //阵地个数
-                                    this.$http('post','identity/positionInformation/positionNumber?districtId='+item.districtId,false).then((data)=>{
-                                        this.positionNumber = data
-                                    })
-
+                        if(item.location) {
+                            //定义镇名
+                            this.zhenList.push(item.districtName);
+                            let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
+                            let myIcon = new BMap.Icon("/static/img/house06.svg", new BMap.Size(45, 45));
+                            let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
+                            marker2.addEventListener('click', e => {
+                                this.pandTo(marker)
+                                setTimeout(this.setCunMaker(item.districtId),600);
+                                //阵地个数
+                                this.$http('post','identity/positionInformation/positionNumber?districtId='+item.districtId,false).then((data)=>{
+                                    this.positionNumber = data
                                 })
-                                this.map.addOverlay(marker2);
-                                marker2.disableMassClear();
-                                let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-item.districtName.length * 6 + 12,28)});
-                                label.setStyle({
-                                    backgroundColor: '#ecf5ff',
-                                display: 'inline-block',
-                                height: '28px',
-                                padding: '0 5px',
-                                lineHeight: '26px',
-                                fontSize: '12px',
-                                color: '#409eff',
-                                border: '1px solid #d9ecff',
-                                borderRadius: '4px',
-                                boxSizing: 'border-box',
-                                whiteSpace: 'nowrap',
-                                });
-                                marker2.setLabel(label);
-                            }
+
                             })
+                            this.map.addOverlay(marker2);
+                            marker2.disableMassClear();
+                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-item.districtName.length * 6 + 12,28)});
+                            label.setStyle({
+                                backgroundColor: '#ecf5ff',
+                            display: 'inline-block',
+                            height: '28px',
+                            padding: '0 5px',
+                            lineHeight: '26px',
+                            fontSize: '12px',
+                            color: '#409eff',
+                            border: '1px solid #d9ecff',
+                            borderRadius: '4px',
+                            boxSizing: 'border-box',
+                            whiteSpace: 'nowrap',
+                            });
+                            marker2.setLabel(label);
+                        }
+                    })
                 })
-
-
-
             },
             //展示正在执行
             showWorking(){
@@ -469,23 +427,22 @@
                         if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                        }
-                    };
+                    }
                 }
                 this.map.clearOverlays();
                 this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.workingDataList();
-
             },
             //展示正在执行内的封装方法
             workingDataList(){
-                this.flag = 3
+                this.flag = 3;
                 this.$http('Post','identity/parActivityObject/list',{isWorking:1},false).then(
                     (data)=>{
-                        let orgId = []
+                        let orgId = [];
                         data.forEach(item=>{
                             orgId.push(item.organizationId)
-                        })
+                        });
                         let orgSort = [];
                         //删除重复阵地
                         for(let i = 0;i<orgId.length;i++){
@@ -595,56 +552,55 @@
             setWorkingMaker(ids,value){
                 this.map.clearOverlays();
                 //正在执行的活动
-                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
-                let workList = []
+                let workList = [];
                 if(ids){
                     ids.forEach(idItem=>{     //整合数据，解决一村都任务的情况
-                        let idValue = {}
-                        let values= []
+                        let idValue = {};
+                        let values= [];
                         value.forEach(valueItem=>{
                             if(idItem == valueItem.organizationId){
                                 values.push(valueItem)
                             }
-                        })
+                        });
                         if(values){
-                            idValue.id = idItem
-                            idValue.value = values
+                            idValue.id = idItem;
+                            idValue.value = values;
                             workList.push(idValue)
                         }
-                    })
-                    console.log(workList)
+                    });
                     workList.forEach(res=>{
                         let marker = new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]);
-                        let myIcon = new BMap.Icon("/static/img/working.gif", new BMap.Size(50, 50));
+                        let myIcon = new BMap.Icon("/static/img/working.gif", new BMap.Size(50, 50),{
+                            imageOffset: new BMap.Size(0, 20) // 设置图片偏移
+                        });
                         let marker2 = new BMap.Marker(marker, {icon: myIcon});  // 创建标注
-                        let content = ''
-                        let ip = '123'
+                        let content = '';
 
-                        let time = (res.value[0].modifiedAt.split('T')[0]+" "+res.value[0].modifiedAt.split('T')[1]).split('.')[0]
+                        let time = (res.value[0].modifiedAt.split('T')[0]+" "+res.value[0].modifiedAt.split('T')[1]).split('.')[0];
                         marker2.addEventListener('click', e => {
-                            setTimeout(()=> {
+                            /*setTimeout(()=> {
                                 this.map.panTo(new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1] + 0.001));
-                            })
-                                this.map.setZoom(13);
+                            });*/
+                            this.map.setZoom(13);
                             let path = 'identity/parPictureInfro/list';
                             this.$http('Post',path,{organizationId:res.value[0].districtId,studyContent:res.value[0].activityId},false).then(data=>{
-                                let url = ''
-                                    if(data[0].imageURL){
-                                         url = data[0].imageURL
-                                    }else {
-                                        url='../../../static/img/nodata.png'
-                                    }
+                                let url = '';
+                                if(data[0].imageURL){
+                                     url = data[0].imageURL
+                                }else {
+                                    url='../../../static/img/nodata.png'
+                                }
                                 res.value.forEach(item=>{
-                                    content =   "<div style='position: relative;padding-bottom: 10px;padding-top: 3px'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>任务名称：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.title+"</span></span>" +
-                                        "<span style='color:#2C3E50;font-size: 15px;font-weight: 500;right: 29px;position: absolute;;'>任务类型：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.type+"</span></span>" +
+                                    content = "<div class='realActDiv'><span class='realActTitleSpan'>任务名称：<span class='realActSpan'>"+item.title+"</span></span>" +
+                                        "<span class='realActTitleSpan' style='right: 29px;position: absolute;;'>任务类型：<span class='realActSpan'>"+item.type+"</span></span>" +
                                         "</div>"+
-                                        "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>截止日期：<span style='color:rgba(37, 37, 37, 0.51);margin-left: 5px'>"+item.month+"</span></span>" +
+                                        "<div class='realActDiv'><span class='realActTitleSpan'>截止日期：<span class='realActSpan'>"+item.month+"</span></span>" +
                                         "</div>"+
-                                        "<div style='position: relative;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;float:left;'>任务要求：</span><div style='color:rgba(37, 37, 37, 0.51);font-size: 15px;font-weight: 500;margin-left: 92px;'>"+item.context+"</div>" +
+                                        "<div class='realActDiv'><span class='realActTitleSpan'>任务要求：<span class='realActSpan'>"+item.context+"</span></span>" +
                                         "</div>"+
-                                        "<div style='position: relative;;padding-bottom: 10px;'><span style='color:#2C3E50;font-size: 15px;font-weight: 500;margin-left: 17px;'>直播截图：</span><span style='color:rgba(37, 37, 37, 0.51);font-size: 15px;float:right'>"+data[0].createdAt.split('T')[0]+' '+data[0].createdAt.split('T')[1]+"</span>" +
+                                        "<div class='realActDiv'><span class='realActTitleSpan'>直播截图：</span>" +
                                         "</div>"+
-                                        "<div style='position: relative;margin-left: 17px'>" +
+                                        "<div class='realActDiv'>" +
                                         // "<video class='tvhou' width='100%' height='100%'" +
                                         // " controls='controls' autoplay='autoplay'" +
                                         // " x-webkit-airplay='true' x5-video-player-fullscreen='true'" +
@@ -652,19 +608,20 @@
                                         // " x5-video-player-typ='h5'>" +
                                         // " <source type='application/x-mpegURL' src='"+ip+"'>" +
                                         // "</video> "+
-                                        "<img src="+url+" style='width:420px'>"+
+                                        "<img src="+url+" style='width:470px;margin-left:17px;margin-bottom:20px;'>"+
                                         "</div>"
-                                })
+                                });
 
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
-                                    "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>"+res.value[0].districtName+"</span>" +
-                                    "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>"+res.value[0].parentName+"</span></div><div class='title02' style='font-size:12px'><img src='/static/img/active/party_build_active.png' class='zhen'><span style='margin-right: 3px'>摄像头状态:<span class='minitor'>正常</span><img src='/static/img/active/party_build_active.png' class='zhen'>" +
-                                    "<span>开始时间:<span style='background-color: #44ffd4ad;border-radius: 2px;margin-left: 2px;padding:0 5px'>"+time+"</span></span></div></div></div>"+
+                                    "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>"+res.value[0].parentName+"--"+res.value[0].districtName+"</span>" +
+                                    "<div class='system-field'><div class='title01'><img src='/static/img/map/mapcamera.png' class='zhen'><span class='minitor'>在线</span></div>" +
+                                    "<div class='title02' style='font-size:12px'><span style='margin-right: 3px'><img src='/static/img/map/maptime.png' class='zhen'>" +
+                                    "<span style='color:white;font-size: 14px;'>"+time+"</span></div></div></div>"+
                                     "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 700px;width: 80%;margin: auto' class='flowWin'>"+content+
                                     "</div>"+
                                     "</div>";
-
+                                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts);
                                 setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker2)),600)
                             })
                         });
@@ -1142,7 +1099,7 @@
         margin-top: 11px;
     }
     .infoBoxTitle .title01{
-        max-width: 100px;
+        max-width: 150px;
         overflow: hidden;
         font-size: 14px;
     }
@@ -1153,15 +1110,17 @@
     }
     .infoBoxTitle .title01 .zhen{
         position: relative;
-       width: 18px;
-        height: 18px;
-        top:2px;
+        width: 26px;
+        height: 26px;
+        top: 5px;
+        margin-right: 5px;
     }
     .infoBoxTitle .title02 .zhen{
         position: relative;
-        width: 18px;
-        height: 18px;
-        top:2px;
+        width: 26px;
+        height: 26px;
+        top: 5px;
+        margin-right: 5px;
     }
     .infoBox {
         animation: boxmove 500ms ease;
@@ -1647,6 +1606,21 @@
     .query-position {
         text-align: left;
         margin-bottom: 20px;
+    }
+    .realActDiv{
+        position: relative;
+        padding-bottom: 10px;
+        padding-top: 3px;
+    }
+    .realActTitleSpan{
+        color:#2C3E50;
+        font-size: 15px;
+        font-weight: 500;
+        margin-left: 17px
+    }
+    .realActSpan{
+        color:rgba(37, 37, 37, 0.51);
+        margin-left: 5px;
     }
 </style>
 

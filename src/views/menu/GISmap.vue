@@ -1,6 +1,6 @@
 <template>
     <section class="gis-map">
-        <div class="realTimeChart" v-show="flag==4">
+        <div class="realTimeChart" v-show="flag==5">
             <div class="query-position">
                 <el-select v-model="realLineTownId" placeholder="请选择" @change="showCountryList()" size="mini">
                     <el-option
@@ -94,7 +94,7 @@
             </div>
         </div>
 
-        <div style="position: absolute;top:120px;right: 550px" v-if="flag==4">
+        <div style="position: absolute;top:120px;right: 550px" v-if="flag==5">
             <div style="display: inline-block;">
                 <el-date-picker
                     v-model="heatMapRange"
@@ -231,43 +231,42 @@
             }
         },
         methods: {
-            handleNodeClick(data){
-                if(data.leaf){
-                    if(this.flag == 1){
-                        this.$http('post','identity/sysDistrict/list',{districtId:data.id}).then(res=>{
+            handleNodeClick(data) {
+                if (data.leaf) {
+                    if (this.flag == 1) {
+                        this.$http('post', 'identity/sysDistrict/list', {districtId: data.id}).then(res => {
                             this.setPartyMaker(res[0].attachTo);
-                            setTimeout(()=>{
+                            setTimeout(() => {
                                 let maker = new BMap.Point(res[0].location.split(",")[0], res[0].location.split(",")[1])
                                 this.map.panTo(maker);
-                            },300)
-                            setTimeout(()=> {
+                            }, 300)
+                            setTimeout(() => {
                                 this.map.setZoom(14);
-                            },500)
+                            }, 500)
                         })
-                    }else if(this.flag == 2){
-                        this.$http('post','identity/sysDistrict/list',{districtId:data.id}).then(res=>{
+                    } else if (this.flag == 2) {
+                        this.$http('post', 'identity/sysDistrict/list', {districtId: data.id}).then(res => {
                             this.setCunMaker(res[0].attachTo);
-                            setTimeout(()=>{
+                            setTimeout(() => {
                                 let maker = new BMap.Point(res[0].location.split(",")[0], res[0].location.split(",")[1])
                                 this.map.panTo(maker);
-                            },300)
-                            setTimeout(()=> {
+                            }, 300)
+                            setTimeout(() => {
                                 this.map.setZoom(14);
-                            },500)
+                            }, 500)
                         })
                         //阵地个数
-                        this.$http('post','identity/positionInformation/positionNumber?districtId='+data.id,false).then((data)=>{
+                        this.$http('post', 'identity/positionInformation/positionNumber?districtId=' + data.id, false).then((data) => {
                             this.positionNumber = data
                         })
-                    }
-                    else if(this.flag == 3){
+                    } else if (this.flag == 3) {
 
                     }
                 }
             },
             //取得树结构数据
-            getTreeData(){
-                this.$http('get','identity/sysDistrict/01alltree',false).then((data)=>{
+            getTreeData() {
+                this.$http('get', 'identity/sysDistrict/01alltree', false).then((data) => {
                     this.leftData = data[0].children
                 })
             },
@@ -276,47 +275,47 @@
                 const h = this.$createElement;
                 this.$notify({
                     title: '提示',
-                    message: h('i', { style: 'color: teal'}, val)
+                    message: h('i', {style: 'color: teal'}, val)
                 });
             },
             //关闭成员dialog
-            closeMemberDialog(){
+            closeMemberDialog() {
                 document.getElementById('nnn').style.display = 'none'
             },
             //第几页
-            currentPage(val){
-                if(this.pageable.flg){
-                    this.pageable.currentPage = val-1
-                    this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId: this.tableDataDistrictId}).then((data)=>{
+            currentPage(val) {
+                if (this.pageable.flg) {
+                    this.pageable.currentPage = val - 1
+                    this.$http('Post', 'identity/parMember/page?page=' + this.pageable.currentPage + '&size=' + this.pageable.pageSize, {districtId: this.tableDataDistrictId}).then((data) => {
                         this.memberData = data.content
                     })
                 }
             },
             //上一页
-            prePage(){
+            prePage() {
                 this.pageable.flg = false
-                this.pageable.currentPage = this.pageable.currentPage-1
-                this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId: this.tableDataDistrictId}).then((data)=>{
+                this.pageable.currentPage = this.pageable.currentPage - 1
+                this.$http('Post', 'identity/parMember/page?page=' + this.pageable.currentPage + '&size=' + this.pageable.pageSize, {districtId: this.tableDataDistrictId}).then((data) => {
                     this.memberData = data.content
                     this.pageable.flg = true
                 })
             },
             //下一页
-            nextPage(){
+            nextPage() {
                 this.pageable.flg = false
-                this.pageable.currentPage = this.pageable.currentPage+1
-                this.$http('Post','identity/parMember/page?page='+this.pageable.currentPage+'&size='+this.pageable.pageSize,{districtId: this.tableDataDistrictId}).then((data)=>{
+                this.pageable.currentPage = this.pageable.currentPage + 1
+                this.$http('Post', 'identity/parMember/page?page=' + this.pageable.currentPage + '&size=' + this.pageable.pageSize, {districtId: this.tableDataDistrictId}).then((data) => {
                     this.memberData = data.content
                     this.pageable.flg = true
                 })
             },
 
             //关闭右侧弹出栏目
-            close(){
+            close() {
                 this.msgFloatRight.marginRight = '-500px'
             },
-            posit(val){
-                return `margin-top:${val*108}px;`;
+            posit(val) {
+                return `margin-top:${val * 108}px;`;
             },
             initMap() {
                 // 百度地图API功能
@@ -334,7 +333,7 @@
                 }));
                 this.map.addEventListener("zoomend", () => {
                     //地图缩放时，村的活动执行柱状图跟随坐标移动
-                    if(this.flag===4){
+                    if (this.flag === 4) {
                         this.showCunPoint(this.currentZhenPoint);
                     }
 
@@ -360,12 +359,12 @@
                     self.map.addOverlay(ply1);
                     ply1.disableMassClear();
 
-                    let count =  rs.boundaries.length; //行政区域的点有多少个
+                    let count = rs.boundaries.length; //行政区域的点有多少个
                     if (count === 0) {
                         alert('未能获取当前输入行政区域');
                         return;
                     }
-                 //   let pointArray = [];
+                    //   let pointArray = [];
                     for (let i = 0; i < count; i++) {
                         let ply = new BMap.Polygon(rs.boundaries[i], {
                             strokeWeight: 7,
@@ -390,11 +389,11 @@
                     }
                 });
             },
-            pandTo(val){
-                this.map.panTo(val,500);
-                setTimeout(()=> {
+            pandTo(val) {
+                this.map.panTo(val, 500);
+                setTimeout(() => {
                     this.map.setZoom(14);
-                },800)
+                }, 800)
             },
             //展示基本阵地点位
             showBattleField() {
@@ -402,18 +401,18 @@
                     window.clearInterval(this.realTimer)
                 }
                 this.leftWidth.width = '200px';
-                this.showLeft=true;
-                this.flag =2
+                this.showLeft = true;
+                this.flag = 2
                 //阵地个数
-                this.$http('post','identity/positionInformation/positionNumber?districtId=01',false).then((data)=>{
+                this.$http('post', 'identity/positionInformation/positionNumber?districtId=01', false).then((data) => {
                     this.positionNumber = data
                 });
                 this.openNotify('基本阵地是党组织开展活动的重要场所，是党员接受教育、发挥作用的重要平台，也是把党员和群众团结凝聚在党组织周围的重要物质依托。');
                 this.msgFloatRight.marginRight = '-500px';
                 let allOverlay = this.map.getOverlays();
-                if(allOverlay.length>4){
+                if (allOverlay.length > 4) {
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
+                        if (allOverlay[i].AC && allOverlay[i].AC.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
                     }
@@ -421,38 +420,38 @@
                 this.map.clearOverlays();
                 this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
-                this.$http("POST",`identity/sysDistrict/list`,{districtLevel:2},false).then( data =>{
+                this.$http("POST", `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
                     data.forEach(item => {
-                        if(item.location) {
+                        if (item.location) {
                             //定义镇名
                             this.zhenList.push(item.districtName);
                             let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
                             let myIcon = new BMap.Icon("/static/img/house06.svg", new BMap.Size(45, 45));
-                            let marker2 = new BMap.Marker(marker, {icon: myIcon,name:123},{name:123});  // 创建标注
+                            let marker2 = new BMap.Marker(marker, {icon: myIcon, name: 123}, {name: 123});  // 创建标注
                             marker2.addEventListener('click', e => {
                                 this.pandTo(marker)
-                                setTimeout(this.setCunMaker(item.districtId),600);
+                                setTimeout(this.setCunMaker(item.districtId), 600);
                                 //阵地个数
-                                this.$http('post','identity/positionInformation/positionNumber?districtId='+item.districtId,false).then((data)=>{
+                                this.$http('post', 'identity/positionInformation/positionNumber?districtId=' + item.districtId, false).then((data) => {
                                     this.positionNumber = data
                                 })
 
                             })
                             this.map.addOverlay(marker2);
                             marker2.disableMassClear();
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-item.districtName.length * 6 + 12,28)});
+                            let label = new BMap.Label(item.districtName, {offset: new BMap.Size(-item.districtName.length * 6 + 12, 28)});
                             label.setStyle({
                                 backgroundColor: '#ecf5ff',
-                            display: 'inline-block',
-                            height: '28px',
-                            padding: '0 5px',
-                            lineHeight: '26px',
-                            fontSize: '12px',
-                            color: '#409eff',
-                            border: '1px solid #d9ecff',
-                            borderRadius: '4px',
-                            boxSizing: 'border-box',
-                            whiteSpace: 'nowrap',
+                                display: 'inline-block',
+                                height: '28px',
+                                padding: '0 5px',
+                                lineHeight: '26px',
+                                fontSize: '12px',
+                                color: '#409eff',
+                                border: '1px solid #d9ecff',
+                                borderRadius: '4px',
+                                boxSizing: 'border-box',
+                                whiteSpace: 'nowrap',
                             });
                             marker2.setLabel(label);
                         }
@@ -460,7 +459,7 @@
                 })
             },
             //展示正在执行
-            showWorking(){
+            showWorking() {
                 if (this.realTimer) {
                     window.clearInterval(this.realTimer)
                 }
@@ -469,11 +468,11 @@
                 this.showLeft = false;
                 this.openNotify('此处显示电视端正在执行的任务');
                 let allOverlay = this.map.getOverlays();
-                if(allOverlay.length>4){
+                if (allOverlay.length > 4) {
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
+                        if (allOverlay[i].AC && allOverlay[i].AC.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
-                       }
+                        }
                     }
                 }
                 this.map.clearOverlays();
@@ -489,68 +488,68 @@
                 }, 5000)
             },
             //展示正在执行内的封装方法
-            workingDataList(){
+            workingDataList() {
                 this.flag = 3;
-                this.$http('Post','identity/parActivityObject/list',{isWorking:1},false).then(
-                    (data)=>{
+                this.$http('Post', 'identity/parActivityObject/list', {isWorking: 1}, false).then(
+                    (data) => {
                         let orgId = [];
-                        data.forEach(item=>{
+                        data.forEach(item => {
                             orgId.push(item.organizationId)
                         });
                         let orgSort = [];
                         //删除重复阵地
-                        for(let i = 0;i<orgId.length;i++){
-                            if(orgSort.indexOf(orgId[i]) == -1){
+                        for (let i = 0; i < orgId.length; i++) {
+                            if (orgSort.indexOf(orgId[i]) == -1) {
                                 orgSort.push(orgId[i]);
                             }
                         }
-                        this.setWorkingMaker(orgSort,data);
+                        this.setWorkingMaker(orgSort, data);
                     }
-                ).catch(_=>{
+                ).catch(_ => {
                     this.$message(
                         {
-                            type:'error',
-                            message:'网络错误'
+                            type: 'error',
+                            message: '网络错误'
                         }
                     )
                 })
             },
             //定义村级阵地
-            setCunMaker(val){
+            setCunMaker(val) {
                 this.map.clearOverlays();
                 //基本阵地
 
-                this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
+                this.$http("POST", `identity/sysDistrict/list`, {attachTo: val}, false).then(data => {
                     data.forEach(item => {
-                        if(item.location){
-                            let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0],item.location.split(",")[1]));
+                        if (item.location) {
+                            let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]));
                             let content = ''
                             //获取最新阵地修改时间
                             let newTime = ''
-                            if(item.positionInformation){
+                            if (item.positionInformation) {
                                 let times = []
-                                item.positionInformation.forEach((val)=>{
+                                item.positionInformation.forEach((val) => {
                                     times.push(val.modifiedAt.split('T')[0])
-                                    content = content + "<div class='house'><div class='houseName'>"+val.name+":</div>" +
+                                    content = content + "<div class='house'><div class='houseName'>" + val.name + ":</div>" +
                                         "<div style=''><div class='blueBlockPos'></div><div class='blueBlockTopPos'></div>" +
-                                        "<div class='rowF'><div class='row'><label class='detailLabel'>设施</label><div class='detailText'>"+ (val.facilities || "暂无") +"</div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.facilities+"</span></div></div>" +
-                                        "<div class='rowF'><div class='row'><label class='detailLabel'>占地面积</label><div class='detailText'>"+val.area+"平方米</div></div></div>"+
-                                        "<div class='rowF'><div class='row'><label class='detailLabel'>功能介绍</label><div class='detailText'><a style='width:95%'>"+val.introduction+"</a><div class='detailMore' onclick='window.location=&quot;/#/basePosition/positionInformation?positionName="+val.name+"&quot;'>更多</div></div></div><div style='position: relative;float: left;'><span class='tooltiptext'>"+val.introduction+"</span></div></div>"+
+                                        "<div class='rowF'><div class='row'><label class='detailLabel'>设施</label><div class='detailText'>" + (val.facilities || "暂无") + "</div></div><div style='position: relative;float: left;'><span class='tooltiptext'>" + val.facilities + "</span></div></div>" +
+                                        "<div class='rowF'><div class='row'><label class='detailLabel'>占地面积</label><div class='detailText'>" + val.area + "平方米</div></div></div>" +
+                                        "<div class='rowF'><div class='row'><label class='detailLabel'>功能介绍</label><div class='detailText'><a style='width:95%'>" + val.introduction + "</a><div class='detailMore' onclick='window.location=&quot;/#/basePosition/positionInformation?positionName=" + val.name + "&quot;'>更多</div></div></div><div style='position: relative;float: left;'><span class='tooltiptext'>" + val.introduction + "</span></div></div>" +
                                         "</div></div>"
                                 })
-                                let year=[]
+                                let year = []
                                 let mon = []
                                 let day = []
-                                times.forEach((val)=>{
-                                    year.push(Number(val.substring(0,4)))
-                                    mon.push(Number(val.substring(5,7)))
-                                    day.push(Number(val.substring(8,10)))
+                                times.forEach((val) => {
+                                    year.push(Number(val.substring(0, 4)))
+                                    mon.push(Number(val.substring(5, 7)))
+                                    day.push(Number(val.substring(8, 10)))
                                 })
                                 console.log(year)
-                                if(year.length == 0 ||mon.length == 0  ||day.length == 0 ){
+                                if (year.length == 0 || mon.length == 0 || day.length == 0) {
                                     newTime = '无数据'
-                                }else {
-                                    newTime =  Math.max.apply(Math,year)+'-'+Math.max.apply(Math,mon)+'-'+Math.max.apply(Math,day)
+                                } else {
+                                    newTime = Math.max.apply(Math, year) + '-' + Math.max.apply(Math, mon) + '-' + Math.max.apply(Math, day)
 
                                 }
                             }
@@ -558,32 +557,32 @@
                                 this.showRealLineChart(item);
 
                                 //阵地个数
-                                this.$http('post','identity/positionInformation/positionNumber?districtId='+item.districtId,false).then((data)=>{
+                                this.$http('post', 'identity/positionInformation/positionNumber?districtId=' + item.districtId, false).then((data) => {
                                     this.positionNumber = data
                                 })
 
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
-                                    "<div class='infoBoxTitle'><span class='text'>"+item.districtName+"</span>" +
-                                    "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>"+item.parentName+"</span></div><div class='title02'><img src='/static/img/active/party_build_active.png' class='zhen'><span>更新时间:"+newTime+"</span></div></div></div>"+
-                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 650px' class='flowWin'>"+content+
-                                    "</div>"+
+                                    "<div class='infoBoxTitle'><span class='text'>" + item.districtName + "</span>" +
+                                    "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>" + item.parentName + "</span></div><div class='title02'><img src='/static/img/active/party_build_active.png' class='zhen'><span>更新时间:" + newTime + "</span></div></div></div>" +
+                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 650px' class='flowWin'>" + content +
+                                    "</div>" +
                                     "</div>";
-                                setTimeout(()=> {
-                                    this.map.panTo(new BMap.Point(item.location.split(",")[0],item.location.split(",")[1]));
-                                },300)
+                                setTimeout(() => {
+                                    this.map.panTo(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]));
+                                }, 300)
 
                                 this.rightMessage = item
                                 this.msgFloatRight.marginRight = '48px'
                                 this.msgFloatRight.display = 'block'
-                                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
+                                let infoBox = new BMapLib.InfoBox(this.map, this.pContent, this.opts);
                                 infoBox.addEventListener('close', () => {
                                     this.close();
                                 })
-                                setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500)
+                                setTimeout(infoBox._setContent(this.pContent, infoBox.open(marker)), 500)
                             });
                             this.map.addOverlay(marker);
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-item.districtName.length * 6,28)});
+                            let label = new BMap.Label(item.districtName, {offset: new BMap.Size(-item.districtName.length * 6, 28)});
                             label.setStyle({
                                 backgroundColor: '#ecf5ff',
                                 display: 'inline-block',
@@ -603,57 +602,60 @@
                 });
             },
             //定义正在执行maker
-            setWorkingMaker(ids,value){
+            setWorkingMaker(ids, value) {
                 this.map.clearOverlays();
                 //正在执行的活动
                 let workList = [];
-                if(ids){
-                    ids.forEach(idItem=>{     //整合数据，解决一村都任务的情况
+                if (ids) {
+                    ids.forEach(idItem => {     //整合数据，解决一村都任务的情况
                         let idValue = {};
-                        let values= [];
-                        value.forEach(valueItem=>{
-                            if(idItem == valueItem.organizationId){
+                        let values = [];
+                        value.forEach(valueItem => {
+                            if (idItem == valueItem.organizationId) {
                                 values.push(valueItem)
                             }
                         });
-                        if(values){
+                        if (values) {
                             idValue.id = idItem;
                             idValue.value = values;
                             workList.push(idValue)
                         }
                     });
-                    workList.forEach(res=>{
+                    workList.forEach(res => {
                         let marker = new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1]);
-                        let myIcon = new BMap.Icon("/static/img/working.gif", new BMap.Size(50, 50),{
+                        let myIcon = new BMap.Icon("/static/img/working.gif", new BMap.Size(50, 50), {
                             imageOffset: new BMap.Size(0, 20) // 设置图片偏移
                         });
                         let marker2 = new BMap.Marker(marker, {icon: myIcon});  // 创建标注
                         let content = '';
 
-                        let time = (res.value[0].modifiedAt.split('T')[0]+" "+res.value[0].modifiedAt.split('T')[1]).split('.')[0];
+                        let time = (res.value[0].modifiedAt.split('T')[0] + " " + res.value[0].modifiedAt.split('T')[1]).split('.')[0];
                         marker2.addEventListener('click', e => {
                             /*setTimeout(()=> {
                                 this.map.panTo(new BMap.Point(res.value[0].location.split(",")[0], res.value[0].location.split(",")[1] + 0.001));
                             });*/
                             this.map.setZoom(13);
                             let path = 'identity/parPictureInfro/list';
-                            this.$http('Post',path,{organizationId:res.value[0].districtId,studyContent:res.value[0].activityId},false).then(data=>{
+                            this.$http('Post', path, {
+                                organizationId: res.value[0].districtId,
+                                studyContent: res.value[0].activityId
+                            }, false).then(data => {
                                 let url = '';
-                                if(data[0].imageURL){
-                                     url = data[0].imageURL
-                                }else {
-                                    url='../../../static/img/nodata.png'
+                                if (data[0].imageURL) {
+                                    url = data[0].imageURL
+                                } else {
+                                    url = '../../../static/img/nodata.png'
                                 }
-                                res.value.forEach(item=>{
-                                    content = "<div class='realActDiv'><span class='realActTitleSpan'>任务名称：<span class='realActSpan'>"+item.title+"</span></span>" +
-                                        "<span class='realActTitleSpan' style='right: 29px;position: absolute;;'>任务类型：<span class='realActSpan'>"+item.type+"</span></span>" +
-                                        "</div>"+
-                                        "<div class='realActDiv'><span class='realActTitleSpan'>截止日期：<span class='realActSpan'>"+item.month+"</span></span>" +
-                                        "</div>"+
-                                        "<div class='realActDiv'><span class='realActTitleSpan'>任务要求：<span class='realActSpan'>"+item.context+"</span></span>" +
-                                        "</div>"+
+                                res.value.forEach(item => {
+                                    content = "<div class='realActDiv'><span class='realActTitleSpan'>任务名称：<span class='realActSpan'>" + item.title + "</span></span>" +
+                                        "<span class='realActTitleSpan' style='right: 29px;position: absolute;;'>任务类型：<span class='realActSpan'>" + item.type + "</span></span>" +
+                                        "</div>" +
+                                        "<div class='realActDiv'><span class='realActTitleSpan'>截止日期：<span class='realActSpan'>" + item.month + "</span></span>" +
+                                        "</div>" +
+                                        "<div class='realActDiv'><span class='realActTitleSpan'>任务要求：<span class='realActSpan'>" + item.context + "</span></span>" +
+                                        "</div>" +
                                         "<div class='realActDiv'><span class='realActTitleSpan'>直播截图：</span>" +
-                                        "</div>"+
+                                        "</div>" +
                                         "<div class='realActDiv'>" +
                                         // "<video class='tvhou' width='100%' height='100%'" +
                                         // " controls='controls' autoplay='autoplay'" +
@@ -662,21 +664,21 @@
                                         // " x5-video-player-typ='h5'>" +
                                         // " <source type='application/x-mpegURL' src='"+ip+"'>" +
                                         // "</video> "+
-                                        "<img src="+url+" style='width:470px;margin-left:17px;margin-bottom:20px;'>"+
+                                        "<img src=" + url + " style='width:470px;margin-left:17px;margin-bottom:20px;'>" +
                                         "</div>"
                                 });
 
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
-                                    "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>"+res.value[0].parentName+"--"+res.value[0].districtName+"</span>" +
+                                    "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>" + res.value[0].parentName + "--" + res.value[0].districtName + "</span>" +
                                     "<div class='system-field'><div class='title01'><img src='/static/img/map/mapcamera.png' class='zhen'><span class='minitor'>在线</span></div>" +
                                     "<div class='title02' style='font-size:12px'><span style='margin-right: 3px'><img src='/static/img/map/maptime.png' class='zhen'>" +
-                                    "<span style='color:white;font-size: 14px;'>"+time+"</span></div></div></div>"+
-                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 700px;width: 80%;margin: auto' class='flowWin'>"+content+
-                                    "</div>"+
+                                    "<span style='color:white;font-size: 14px;'>" + time + "</span></div></div></div>" +
+                                    "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 700px;width: 80%;margin: auto' class='flowWin'>" + content +
+                                    "</div>" +
                                     "</div>";
-                                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts);
-                                setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker2)),600)
+                                let infoBox = new BMapLib.InfoBox(this.map, this.pContent, this.opts);
+                                setTimeout(infoBox._setContent(this.pContent, infoBox.open(marker2)), 600)
                             })
                         });
                         this.map.addOverlay(marker2);
@@ -693,62 +695,63 @@
                 this.showLeft = true;
                 this.openNotify('党的基层组织是党在社会基层组织中的战斗堡垒，是党的全部工作和战斗力的基础。新形势下基层党组织工作开展的怎么样，直接影响到党的凝聚力、影响力、战斗力的充分发挥。');
                 let allOverlay = this.map.getOverlays();
-                if(allOverlay.length>4){
+                if (allOverlay.length > 4) {
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
+                        if (allOverlay[i].AC && allOverlay[i].AC.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
-                    };
+                    }
+                    ;
                 }
                 this.map.clearOverlays();
                 this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
-                this.$http("POST",`identity/sysDistrict/list`,{districtLevel:2},false).then( data =>{
+                this.$http("POST", `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
                     data.forEach(item => {
-                        if(item.location) {
+                        if (item.location) {
                             //定义镇名
                             this.zhenList.push(item.districtName);
                             let marker = new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]);
                             let myIcon = new BMap.Icon("/static/img/zhen_position.png", new BMap.Size(25, 34), {
                                 anchor: new BMap.Size(11, 32),
                             });
-                            let marker2 = new BMap.Marker(marker, {icon: myIcon,name:1},{name:1});  // 创建标注
+                            let marker2 = new BMap.Marker(marker, {icon: myIcon, name: 1}, {name: 1});  // 创建标注
                             marker2.addEventListener('click', e => {
-                               this.pandTo(marker)
+                                this.pandTo(marker)
                                 //定义具体党组织maker
-                                setTimeout(this.setPartyMaker(item.districtId),500);
+                                setTimeout(this.setPartyMaker(item.districtId), 500);
                                 let tableData = "<div><div style='line-height: 20px;'><div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织成员：</div></div>" +
-                                    "<div style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='row'><label class='detailLabel'>组织人数</label><div class='detailText' style=''>"+666+"</div></div>"+
-                                    "<div class='row'><label class='detailLabel'>书记</label><div class='detailText' style=''>"+666+"</div></div>"+
-                                    "<div class='row'><label class='detailLabel'>副书记</label><div class='detailText' style=''>"+666+"</div></div>"+
-                                    "<div class='row'><label class='detailLabel'>其他委员</label><div class='detailText' style='text-overflow:clip;word-break: normal;overflow: visible;white-space:normal'>"+'daoiwjdiwoadiajowwwwwwwwaw达瓦达瓦啊我的娃达娃大wwwwwwwwww'+"</div></div>"+
+                                    "<div style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='row'><label class='detailLabel'>组织人数</label><div class='detailText' style=''>" + 666 + "</div></div>" +
+                                    "<div class='row'><label class='detailLabel'>书记</label><div class='detailText' style=''>" + 666 + "</div></div>" +
+                                    "<div class='row'><label class='detailLabel'>副书记</label><div class='detailText' style=''>" + 666 + "</div></div>" +
+                                    "<div class='row'><label class='detailLabel'>其他委员</label><div class='detailText' style='text-overflow:clip;word-break: normal;overflow: visible;white-space:normal'>" + 'daoiwjdiwoadiajowwwwwwwwaw达瓦达瓦啊我的娃达娃大wwwwwwwwww' + "</div></div>" +
                                     "</div></div>"
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
-                                    "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>"+item.districtName+"</a></div>" +
+                                    "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>" + item.districtName + "</a></div>" +
                                     "<div>" +
-                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
+                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>" + item.parentName + "</sapn></div>" +
                                     "</div>" +
-                                    "</div>"+
+                                    "</div>" +
                                     "<div class='content'><div style='line-height: 20px;'>" +
                                     "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织详情：</div></div>" +
-                                    "<div  style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div  class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
-                                    "</div></div>"+
-                                    tableData+
-                                    "</div>"+
+                                    "<div  style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div  class='contentDetail'>" + "暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据" +
+                                    "</div></div>" +
+                                    tableData +
+                                    "</div>" +
                                     "</div>";
-                                let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
+                                let infoBox = new BMapLib.InfoBox(this.map, this.pContent, this.opts);
                                 setTimeout(
-                                    ()=>{
-                                        infoBox._setContent(this.pContent,infoBox.open(marker2))
-                                   },1200)
+                                    () => {
+                                        infoBox._setContent(this.pContent, infoBox.open(marker2))
+                                    }, 1200)
 
 
                             })
                             this.map.addOverlay(marker2);
                             marker2.disableMassClear();
                             let offsetWidth = item.districtName.length * 12 / 2 - 12;
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-offsetWidth,34)});
+                            let label = new BMap.Label(item.districtName, {offset: new BMap.Size(-offsetWidth, 34)});
                             label.setStyle({
                                 backgroundColor: '#ecf5ff',
                                 display: 'inline-block',
@@ -771,9 +774,9 @@
                 let centerIcon = new BMap.Icon("/static/img/partyFlag.gif", new BMap.Size(50, 50), {
                     anchor: new BMap.Size(0, 50),
                 });
-                let centerMarker = new BMap.Marker(this.centerPoint,{icon: centerIcon});
+                let centerMarker = new BMap.Marker(this.centerPoint, {icon: centerIcon});
                 this.map.addOverlay(centerMarker);
-                let label = new BMap.Label('句容市委',{offset:new BMap.Size(-24,50)});
+                let label = new BMap.Label('句容市委', {offset: new BMap.Size(-24, 50)});
                 label.setStyle({
                     backgroundColor: 'rgba(255,7,0,0.9)',
                     display: 'inline-block',
@@ -797,34 +800,37 @@
                 return str;
             },
             //展示党组织村级
-            setPartyMaker(val){
+            setPartyMaker(val) {
                 this.map.clearOverlays();
-                this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
+                this.$http("POST", `identity/sysDistrict/list`, {attachTo: val}, false).then(data => {
                     data.forEach(item => {
-                        if(item.location) {
+                        if (item.location) {
                             let myIcon = new BMap.Icon("/static/img/partyPosition.png", new BMap.Size(50, 50), {
                                 anchor: new BMap.Size(11, 32),
                             });
-                            let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]),{icon: myIcon,name:123},{name:123});// 创建标注
+                            let marker = new BMap.Marker(new BMap.Point(item.location.split(",")[0], item.location.split(",")[1]), {
+                                icon: myIcon,
+                                name: 123
+                            }, {name: 123});// 创建标注
                             let content = ''
-                            let type = item.districtType === 'Party'?'农村':'机关'
-                            marker.addEventListener('click',()=>{
+                            let type = item.districtType === 'Party' ? '农村' : '机关'
+                            marker.addEventListener('click', () => {
                                 this.$http('POST', 'identity/villageCadres/list?sort=postExperience,asc', {districtId: item.districtId}, false).then(
                                     data => {
                                         this.pContent =
                                             "<div class='infoBoxContent'>" +
-                                            "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>"+item.districtName+"</a></div>" +
+                                            "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>" + item.districtName + "</a></div>" +
                                             "<div>" +
-                                            "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
-                                            "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>"+type+"</sapn></div>" +
+                                            "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>" + item.parentName + "</sapn></div>" +
+                                            "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>" + type + "</sapn></div>" +
                                             "</div>" +
-                                            "</div>"+
+                                            "</div>" +
                                             "<div class='content'>" +
                                             "<div style='line-height: 20px;'>" +
                                             "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织详情：</div>" +
                                             "</div>" +
-                                            "<div style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='contentDetail'>"+"暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据"+
-                                            "</div></div>"+
+                                            "<div style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='contentDetail'>" + "暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据" +
+                                            "</div></div>" +
                                             "<div style='line-height: 20px;'>" +
                                             "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织成员：</div>" +
                                             "</div>" +
@@ -833,17 +839,17 @@
                                             "</div>" +
                                             "</div>" +
                                             "</div>";
-                                        let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
-                                        setTimeout(()=>{
-                                            this.map.panTo(item.location.split(",")[0],item.location.split(",")[1]);
-                                        },300)
-                                        setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500);
+                                        let infoBox = new BMapLib.InfoBox(this.map, this.pContent, this.opts);
+                                        setTimeout(() => {
+                                            this.map.panTo(item.location.split(",")[0], item.location.split(",")[1]);
+                                        }, 300)
+                                        setTimeout(infoBox._setContent(this.pContent, infoBox.open(marker)), 500);
                                     }
                                 )
                             })
                             this.map.addOverlay(marker);
-                            let offsetWidth = item.districtName.length * 12/2;
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-offsetWidth,28)});
+                            let offsetWidth = item.districtName.length * 12 / 2;
+                            let label = new BMap.Label(item.districtName, {offset: new BMap.Size(-offsetWidth, 28)});
                             label.setStyle({
                                 backgroundColor: '#c8ff4d',
                                 display: 'inline-block',
@@ -871,14 +877,14 @@
                 this.initMap();
                 this.showRealLineChart({districtId: '01'}, "realLineChart2")
                 this.leftWidth.width = '200px';
-                this.flag = 4;
+                this.flag = 5;
                 this.showLeft = false;
                 if (!value || value.length === 0) {
                     return;
                 }
                 this.$http('POST', '/identity/sumPerHour/getHeatMapData', {
                     startTime: value[0],
-                    endTime:  value[1]
+                    endTime: value[1]
                 }).then(data => {
                     let max = 0;
                     data.forEach(item => {
@@ -896,7 +902,7 @@
 
                     let options = {
                         size: 15,
-                        gradient: { 0.25: "rgb(0,0,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
+                        gradient: {0.25: "rgb(0,0,255)", 0.55: "rgb(0,255,0)", 0.85: "yellow", 1.0: "rgb(255,0,0)"},
                         max: max,
                         // range: [0, 100], // 过滤显示数据范围
                         draw: 'heatmap'
@@ -916,28 +922,28 @@
                 census.style.animation = action + ' 1s'
             },
             showRealLineChart(item, id) {
-                this.$http('Post',`identity/positionChart/realLineChart?districtId=`+item.districtId,false).then( data =>{
+                this.$http('Post', `identity/positionChart/realLineChart?districtId=` + item.districtId, false).then(data => {
                     let realLineChart = echarts.init(document.getElementById(id || "realLineChart"));
                     let hours = [];
-                    data.monthDay.forEach(item =>{
-                        hours.push(item.substr(11,5))
+                    data.monthDay.forEach(item => {
+                        hours.push(item.substr(11, 5))
                     });
                     let option = {
                         title: {
-                            text: item.districtName || "" + '各阵地实时人流量统计折线图' ,
+                            text: item.districtName || "" + '各阵地实时人流量统计折线图',
                         },
                         grid: {
-                          y: 80
+                            y: 80
                         },
                         tooltip: {
                             trigger: 'axis'
                         },
                         legend: {
-                            x:'center',
-                            y:'bottom',
-                            data:['党员教育室','党内关爱室','组织议事室','党群工作室']
+                            x: 'center',
+                            y: 'bottom',
+                            data: ['党员教育室', '党内关爱室', '组织议事室', '党群工作室']
                         },
-                        xAxis:  {
+                        xAxis: {
                             type: 'category',
                             boundaryGap: false,
                             data: hours
@@ -950,9 +956,9 @@
                         },
                         series: [
                             {
-                                name:'党员教育室',
-                                type:'line',
-                                data:data.MEMBER_EDUCATION,
+                                name: '党员教育室',
+                                type: 'line',
+                                data: data.MEMBER_EDUCATION,
                                 markPoint: {
                                     data: [
                                         {type: 'max', name: '最大值'},
@@ -960,9 +966,9 @@
                                 }
                             },
                             {
-                                name:'党内关爱室',
-                                type:'line',
-                                data:data.PARTY_CARE,
+                                name: '党内关爱室',
+                                type: 'line',
+                                data: data.PARTY_CARE,
                                 markPoint: {
                                     data: [
                                         {type: 'max', name: '最大值'},
@@ -970,9 +976,9 @@
                                 }
                             },
                             {
-                                name:'组织议事室',
-                                type:'line',
-                                data:data.ORGANIZATIONAL_CONFERENCE,
+                                name: '组织议事室',
+                                type: 'line',
+                                data: data.ORGANIZATIONAL_CONFERENCE,
                                 markPoint: {
                                     data: [
                                         {type: 'max', name: '最大值'},
@@ -980,9 +986,9 @@
                                 }
                             },
                             {
-                                name:'党群工作室',
-                                type:'line',
-                                data:data.PARTY_STUDIO,
+                                name: '党群工作室',
+                                type: 'line',
+                                data: data.PARTY_STUDIO,
                                 markPoint: {
                                     data: [
                                         {type: 'max', name: '最大值'},
@@ -995,39 +1001,42 @@
                 });
 
             },
-            showTownList(){
+            showTownList() {
                 this.townList = [];
-                if(this.userAuthority==1){
+                if (this.userAuthority == 1) {
                     //镇级组织
-                    this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
-                        data.forEach( item => {
-                            this.townList.push( {value:item.districtId , label:item.districtName});
+                    this.$http('POST', `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
+                        data.forEach(item => {
+                            this.townList.push({value: item.districtId, label: item.districtName});
                         });
-                        this.townList.push({value:'01',label:'全市'});
+                        this.townList.push({value: '01', label: '全市'});
                     })
                 }
-                if(this.userAuthority==2){
-                    this.townList.push({value:this.user.districtId , label:this.user.organizationName});
+                if (this.userAuthority == 2) {
+                    this.townList.push({value: this.user.districtId, label: this.user.organizationName});
                     this.realLineTownId = this.user.districtId;
                     //村级组织
-                    this.$http('POST',`identity/sysDistrict/list`,{attachTo:this.user.districtId},false).then(data => {
+                    this.$http('POST', `identity/sysDistrict/list`, {attachTo: this.user.districtId}, false).then(data => {
                         this.realLineCountryList = [];
-                        data.forEach( item => {
+                        data.forEach(item => {
                             //实时折线图
-                            this.realLineCountryList.push({value:item.districtId , label:item.districtName});
+                            this.realLineCountryList.push({value: item.districtId, label: item.districtName});
                         });
 
                     })
                 }
-                if(this.userAuthority ==3){
+                if (this.userAuthority == 3) {
                     this.townList = [];
                     this.realLineCountryList = [];
-                    this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2,districtId:this.user.sysDistrict.attachTo},false).then(data => {
-                        data.forEach( item => {
-                            this.townList.push( {value:item.districtId , label:item.districtName});
+                    this.$http('POST', `identity/sysDistrict/list`, {
+                        districtLevel: 2,
+                        districtId: this.user.sysDistrict.attachTo
+                    }, false).then(data => {
+                        data.forEach(item => {
+                            this.townList.push({value: item.districtId, label: item.districtName});
                         });
                     });
-                    this.realLineCountryList.push({value:this.user.districtId , label:this.user.organizationName});
+                    this.realLineCountryList.push({value: this.user.districtId, label: this.user.organizationName});
                     this.realLineTownId = this.user.sysDistrict.attachTo;
                     this.realLineCountryId = this.user.districtId;
 
@@ -1037,15 +1046,15 @@
             showCountryList() {
                 this.realLineCountryList = [];
                 this.realLineCountryId = '';
-                if(this.realLineTownId.length>2){
+                if (this.realLineTownId.length > 2) {
                     //村级组织
-                    this.$http('POST',`identity/sysDistrict/list`,{attachTo:this.realLineTownId},false).then(data => {
-                        data.forEach( item => {
-                            this.realLineCountryList.push({value:item.districtId , label:item.districtName})
+                    this.$http('POST', `identity/sysDistrict/list`, {attachTo: this.realLineTownId}, false).then(data => {
+                        data.forEach(item => {
+                            this.realLineCountryList.push({value: item.districtId, label: item.districtName})
                         });
                     })
                 }
-                this.$nextTick(()=>{
+                this.$nextTick(() => {
                     let temp = {};
                     temp.districtId = this.realLineCountryId || this.realLineTownId;
                     console.log(temp, 7878)
@@ -1069,7 +1078,6 @@
                         this.realTimeLog = data.rows;
                     }
                 )
-            }
             },
             //活动统计--显示当月镇活动完成情况的气泡图
             showTown() {
@@ -1114,17 +1122,17 @@
                         max: 30,
                         draw: 'text'
                     };
-                    if(this.circleLayer){
+                    if (this.circleLayer) {
                         this.circleLayer.destroy();
                         this.labelLayer.destroy();
-                        this.$nextTick(()=>{
-                            console.log(this.circleLayer,"1232");
+                        this.$nextTick(() => {
+                            console.log(this.circleLayer, "1232");
                             this.circleLayer.show();
                             this.circleLayer.bindEvent();
                             this.labelLayer.show();
-                            console.log(this.circleLayer,"123112");
+                            console.log(this.circleLayer, "123112");
                         })
-                    }else{
+                    } else {
                         this.circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
                         this.labelLayer = new mapv.baiduMapLayer(this.map, dataSet, labelOptions);
                     }
@@ -1226,7 +1234,7 @@
 
                         let pieChar = echarts.init(document.getElementById("charts" + subItem.organizationId));
                         let option = {
-                            color: ["red","green"],
+                            color: ["red", "green"],
                             tooltip: {},
                             xAxis: {
                                 show: false,
@@ -1282,15 +1290,14 @@
                     ComplexCustomOverlay.prototype.draw = () => {
                         let newestMap = this._map;
                         let pixel = newestMap.pointToOverlayPixel(cunPoint);
-                        this._div.style.left = pixel.x -25 + "px";
-                        this._div.style.top = pixel.y -80 + "px";
+                        this._div.style.left = pixel.x - 25 + "px";
+                        this._div.style.top = pixel.y - 80 + "px";
                     };
                     let myCompOverlay = new ComplexCustomOverlay(cunPoint);
                     this.map.addOverlay(myCompOverlay);
                     this.cunPointList.push(myCompOverlay);
                 }
             },
-
         },
         mounted() {
             this.user = JSON.parse(sessionStorage.getItem("userInfo"));

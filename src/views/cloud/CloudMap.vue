@@ -14,53 +14,12 @@
                 cunPointList:[],
                 cunLabelList:[],
                 townPointList:[],
-                tableOption : {
-                    color: ['#3398DB'],
-                    tooltip : {
-                        trigger: 'axis',
-                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                        }
-                    },
-                    grid: {
-                        left: '3%',
-                        right: '4%',
-                        bottom: '3%',
-                        containLabel: true
-                    },
-                    xAxis : [
-                        {
-                            show:false,
-                            type : 'category',
-                            data : ['Mon', 'Tue'],
-                            axisTick: {
-                                alignWithLabel: true
-                            }
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            show:false,
-                            type : 'value'
-                        }
-                    ],
-                    series : [
-                        {
-                            name:'直接访问',
-                            type:'bar',
-                            barWidth: '60%',
-                            data:[1, 2]
-                        }
-                    ]
-                },
-                pieChar:{},
                 _point:{},
-                _p:{},
                 _map:{},
                 currentZhenPoint:{},
                 attachToCache: new Map(),
-                pixelOffset: {},
                 activityWorkList:[],
+                _div:{},
             }
         },
         methods: {
@@ -274,8 +233,8 @@
                         max: 30,
                         draw: 'text'
                     };
-                    let circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
-                    let labelLayer = new mapv.baiduMapLayer(this.map, dataSet, labelOptions);
+                   let circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
+                   let labelLayer = new mapv.baiduMapLayer(this.map, dataSet, labelOptions);
                 });
             },
             showCunPoint(item, cb) {
@@ -285,7 +244,7 @@
                 this.cunLabelList = [];
                 this.cunPointList.forEach(item => {
                     item.ba.style.display = 'none';
-                })
+                });
                 if (cb) {
                     cb();
                 }
@@ -319,13 +278,13 @@
                         });
                         this.map.addOverlay(label);
                         this.cunLabelList.push(label);
-                    })
+                    });
                     return;
                 }
                 this.$http('POST', `identity/cloudStatistics/cunMonthObject?attachTo=` + item.item.attachTo, false).then(data => {
                     this.attachToCache.set(item.item.attachTo, data);
                     data.forEach(subItem => {
-                        this.drawBar(subItem)
+                        this.drawBar(subItem);
                     })
                 })
             },

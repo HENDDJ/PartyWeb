@@ -226,7 +226,7 @@
                 _map:{},
                 _div:{},
                 circleLayer:null,//活动统计镇气泡
-                labelLayer:null,//活动统计镇label,
+                labelLayer:null,//活动统计镇label
                 currentZhenPoint:{},
             }
         },
@@ -413,13 +413,13 @@
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
+                        if(allOverlay[i].Ac&&allOverlay[i].Ac.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
                     }
                 }
                 this.map.clearOverlays();
-                this.initMap();
+               // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http("POST",`identity/sysDistrict/list`,{districtLevel:2},false).then( data =>{
                     data.forEach(item => {
@@ -471,13 +471,13 @@
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
+                        if(allOverlay[i].Ac&&allOverlay[i].Ac.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                        }
                     }
                 }
                 this.map.clearOverlays();
-                this.initMap();
+               // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.workingDataList();
                 this.getCurrentSituation();
@@ -519,7 +519,6 @@
             setCunMaker(val){
                 this.map.clearOverlays();
                 //基本阵地
-
                 this.$http("POST",`identity/sysDistrict/list`,{attachTo:val},false).then( data =>{
                     data.forEach(item => {
                         if(item.location){
@@ -695,13 +694,13 @@
                 let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].AC&&allOverlay[i].AC.className === 'BMap_Marker') {
+                        if(allOverlay[i].Ac) {
                             allOverlay[i].enableMassClear();
                         }
-                    };
+                    }
                 }
                 this.map.clearOverlays();
-                this.initMap();
+               // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
                 this.$http("POST",`identity/sysDistrict/list`,{districtLevel:2},false).then( data =>{
                     data.forEach(item => {
@@ -742,8 +741,6 @@
                                     ()=>{
                                         infoBox._setContent(this.pContent,infoBox.open(marker2))
                                    },1200)
-
-
                             })
                             this.map.addOverlay(marker2);
                             marker2.disableMassClear();
@@ -868,7 +865,17 @@
                 if (this.realTimer) {
                     window.clearInterval(this.realTimer)
                 }
-                this.initMap();
+                let allOverlay = this.map.getOverlays();
+                if(allOverlay.length>4){
+                    for (let i = 0; i < allOverlay.length; i++) {
+                        if(allOverlay[i].Ac&&allOverlay[i].Ac.className === 'BMap_Marker') {
+                            allOverlay[i].enableMassClear();
+                        }
+                    }
+                }
+                this.map.clearOverlays();
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
+               // this.initMap();
                 this.showRealLineChart({districtId: '01'}, "realLineChart2")
                 this.leftWidth.width = '200px';
                 this.flag = 4;
@@ -1069,13 +1076,28 @@
                         this.realTimeLog = data.rows;
                     }
                 )
-            }
             },
             //活动统计--显示当月镇活动完成情况的气泡图
             showTown() {
                 this.flag = 4;
+                let allOverlay = this.map.getOverlays();
+                for (let i = 0; i < allOverlay.length; i++) {
+                    console.log(allOverlay[i].Ac,i);
+                    if(allOverlay[i].Ac){
+                        allOverlay[i].enableMassClear();
+                    }
+                }
                 this.map.clearOverlays();
-                this.initMap();
+               /* let allOverlay = this.map.getOverlays();
+                if(allOverlay.length>4){
+                    for (let i = 0; i < allOverlay.length; i++) {
+                        if(allOverlay[i].Ac&&allOverlay[i].Ac.className === 'BMap_Marker') {
+                            allOverlay[i].enableMassClear();
+                        }
+                    }
+                }*/
+               // this.initMap();
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http('POST', `identity/cloudStatistics/townMonthRate`, {}, false).then(data => {
                     data.forEach(item => {
                         let count = Math.round(item.rate * 25) + 15;
@@ -1115,20 +1137,21 @@
                         draw: 'text'
                     };
                     if(this.circleLayer){
-                        this.circleLayer.destroy();
-                        this.labelLayer.destroy();
-                        this.$nextTick(()=>{
-                            console.log(this.circleLayer,"1232");
-                            this.circleLayer.show();
-                            this.circleLayer.bindEvent();
-                            this.labelLayer.show();
-                            console.log(this.circleLayer,"123112");
-                        })
+                         this.circleLayer.destroy();
+                         this.labelLayer.destroy();
+                         this.$nextTick(()=>{
+                             this.circleLayer.show();
+                             this.circleLayer.bindEvent();
+                             this.labelLayer.show();
+                           /*  this.circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
+                             this.labelLayer = new mapv.baiduMapLayer(this.map, dataSet, labelOptions);*/
+                         })
                     }else{
                         this.circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
                         this.labelLayer = new mapv.baiduMapLayer(this.map, dataSet, labelOptions);
                     }
                 });
+
             },
             showCunPoint(item, cb) {
                 this.cunLabelList.forEach(sub => {
@@ -1226,7 +1249,7 @@
 
                         let pieChar = echarts.init(document.getElementById("charts" + subItem.organizationId));
                         let option = {
-                            color: ["red","green"],
+                            color: ["red", "green"],
                             tooltip: {},
                             xAxis: {
                                 show: false,
@@ -1282,15 +1305,14 @@
                     ComplexCustomOverlay.prototype.draw = () => {
                         let newestMap = this._map;
                         let pixel = newestMap.pointToOverlayPixel(cunPoint);
-                        this._div.style.left = pixel.x -25 + "px";
-                        this._div.style.top = pixel.y -80 + "px";
+                        this._div.style.left = pixel.x - 25 + "px";
+                        this._div.style.top = pixel.y - 80 + "px";
                     };
                     let myCompOverlay = new ComplexCustomOverlay(cunPoint);
                     this.map.addOverlay(myCompOverlay);
                     this.cunPointList.push(myCompOverlay);
                 }
-            },
-
+            }
         },
         mounted() {
             this.user = JSON.parse(sessionStorage.getItem("userInfo"));

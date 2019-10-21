@@ -109,11 +109,30 @@
                 </el-date-picker>
             </div>
         </div>
+
+        <div style="position: absolute;top: 200px;right: 40px;" v-if="flag == 3">
+            <div class="marker-data">
+                <el-tag type="info" effect="dark" size="medium">今日执行次数 <span>{{this.executeNumber}}</span></el-tag>
+            </div>
+            <div class="marker-data">
+                <el-tag type="success" effect="dark" size="medium">今日通过个数 <span>{{this.passNumber}}</span></el-tag>
+            </div>
+            <div class="marker-data">
+                <el-tag effect="dark" size="medium">今日正在进行 <span>{{this.isWorkingNumber}}</span></el-tag>
+            </div>
+            <div style="position:absolute;margin-top: 250px;">
+                <h4 style="text-align: left">实时动态</h4>
+                <div style="font-size: 14px;text-align: left;">
+                    <p style="max-width: 250px;margin: 10px 0;text-align:justify" v-for="item in realTimeLog">{{item.msg}}</p>
+                </div>
+            </div>
+        </div>
     </section>
 </template>
 
 <script>
     import LookUp from '@/lookup';
+    import axios from 'axios';
     export default {
         name: "GISmap",
         data () {
@@ -193,7 +212,11 @@
                 realLineCountryId: '',
                 townList: [],
                 realLineCountryList: [],
-                userAuthority: ''
+                userAuthority: '',
+                executeNumber: 0,
+                passNumber: 0,
+                isWorkingNumber: 0,
+                realTimeLog: []
             }
         },
         methods: {
@@ -357,6 +380,9 @@
             },
             //展示基本阵地点位
             showBattleField() {
+                if (this.realTimer) {
+                    window.clearInterval(this.realTimer)
+                }
                 this.leftWidth.width = '200px';
                 this.showLeft=true;
                 this.flag =2
@@ -417,6 +443,9 @@
             },
             //展示正在执行
             showWorking(){
+                if (this.realTimer) {
+                    window.clearInterval(this.realTimer)
+                }
                 this.leftWidth.width = '200px';
                 this.flag = 3;
                 this.showLeft = false;
@@ -433,6 +462,12 @@
                 this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.workingDataList();
+                this.getCurrentSituation();
+                this.getRealTimeLog();
+                this.realTimer = setInterval(() => {
+                    this.getCurrentSituation();
+                    this.getRealTimeLog();
+                }, 5000)
             },
             //展示正在执行内的封装方法
             workingDataList(){
@@ -631,6 +666,9 @@
             },
             //展示党组织镇级
             showParty() {
+                if (this.realTimer) {
+                    window.clearInterval(this.realTimer)
+                }
                 this.flag = 1;
                 this.leftWidth.width = '200px';
                 this.showLeft = true;
@@ -808,6 +846,9 @@
             },
             //阵地实时人流量
             showPeopleStream(value) {
+                if (this.realTimer) {
+                    window.clearInterval(this.realTimer)
+                }
                 this.initMap();
                 this.showRealLineChart({districtId: '01'}, "realLineChart2")
                 this.leftWidth.width = '200px';
@@ -991,6 +1032,24 @@
                     console.log(temp, 7878)
                     this.showRealLineChart(temp, "realLineChart2");
                 });
+            },
+            getCurrentSituation() {
+                axios.all([
+                    this.$http("post", 'identity/cloudStatistics/activityExecuteNumber', {}, false),
+                    this.$http("post", 'identity/cloudStatistics/activityPassNumber', {}, false),
+                    this.$http("post", 'identity/cloudStatistics/activityIsWorkingNumber', {}, false)
+                ]).then(axios.spread((d1, d2, d3) => {
+                    this.executeNumber = d1;
+                    this.passNumber = d2;
+                    this.isWorkingNumber = d3;
+                }))
+            },
+            getRealTimeLog() {
+                this.$http("post", 'identity/cloudStatistics/getCloudLog', {}, false).then(
+                    data => {
+                        this.realTimeLog = data.rows;
+                    }
+                )
             }
 
         },
@@ -1621,6 +1680,19 @@
     .realActSpan{
         color:rgba(37, 37, 37, 0.51);
         margin-left: 5px;
+    }
+    .marker-data {
+        margin: 15px 0;
+    }
+    .marker-data .el-tag {
+        width: 250px;
+        height: 50px;
+        padding: 12px 0px;
+        font-size: 24px;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+    }
+    .marker-data .el-tag span{
+        font-weight: bold;
     }
 </style>
 

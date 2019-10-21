@@ -483,6 +483,7 @@
                 this.getCurrentSituation();
                 this.getRealTimeLog();
                 this.realTimer = setInterval(() => {
+                    this.workingDataList();
                     this.getCurrentSituation();
                     this.getRealTimeLog();
                 }, 5000)

@@ -49,7 +49,7 @@ service.interceptors.response.use(
                     type: 'success'
                 });
             }
-            return Promise.resolve(response.data.content);
+            return Promise.resolve(response.data.content || response.data.data);
         } else if (response.data.code === CODE_MAP.ERROR) {
             // 请求失败则要弹提示框
             Message.error(response.data.msg);

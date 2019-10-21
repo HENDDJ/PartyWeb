@@ -412,13 +412,13 @@
                 let allOverlay = this.map.getOverlays();
                 if (allOverlay.length > 4) {
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].Ac&&allOverlay[i].Ac.className === 'BMap_Marker') {
+                        if (allOverlay[i].Ac && allOverlay[i].Ac.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
                     }
                 }
                 this.map.clearOverlays();
-               // this.initMap();
+                // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http("POST", `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
                     data.forEach(item => {
@@ -470,13 +470,13 @@
                 let allOverlay = this.map.getOverlays();
                 if (allOverlay.length > 4) {
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].Ac&&allOverlay[i].Ac.className === 'BMap_Marker') {
+                        if (allOverlay[i].Ac && allOverlay[i].Ac.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
                     }
                 }
                 this.map.clearOverlays();
-               // this.initMap();
+                // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.workingDataList();
                 this.getCurrentSituation();
@@ -702,7 +702,7 @@
                     }
                 }
                 this.map.clearOverlays();
-               // this.initMap();
+                // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
                 this.$http("POST", `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
                     data.forEach(item => {
@@ -817,8 +817,8 @@
                                             "<div class='infoBoxContent'>" +
                                             "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>" + item.districtName + "</a></div>" +
                                             "<div>" +
-                                            "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>"+item.parentName+"</sapn></div>" +
-                                            "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>"+type+"</sapn></div>" +
+                                            "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>" + item.parentName + "</sapn></div>" +
+                                            "<div style='display: inline-block' class='headerThree'>组织类型:<sapn style='color: #8b8b8b'>" + type + "</sapn></div>" +
                                             "</div>" +
                                             "</div>" +
                                             "<div class='content'>" +
@@ -835,17 +835,17 @@
                                             "</div>" +
                                             "</div>" +
                                             "</div>";
-                                        let infoBox = new BMapLib.InfoBox(this.map,this.pContent,this.opts );
-                                        setTimeout(()=>{
-                                            this.map.panTo(item.location.split(",")[0],item.location.split(",")[1]);
-                                        },300)
-                                        setTimeout(infoBox._setContent(this.pContent,infoBox.open(marker)),500);
+                                        let infoBox = new BMapLib.InfoBox(this.map, this.pContent, this.opts);
+                                        setTimeout(() => {
+                                            this.map.panTo(item.location.split(",")[0], item.location.split(",")[1]);
+                                        }, 300)
+                                        setTimeout(infoBox._setContent(this.pContent, infoBox.open(marker)), 500);
                                     }
                                 )
                             })
                             this.map.addOverlay(marker);
-                            let offsetWidth = item.districtName.length * 12/2;
-                            let label = new BMap.Label(item.districtName,{offset:new BMap.Size(-offsetWidth,28)});
+                            let offsetWidth = item.districtName.length * 12 / 2;
+                            let label = new BMap.Label(item.districtName, {offset: new BMap.Size(-offsetWidth, 28)});
                             label.setStyle({
                                 backgroundColor: '#c8ff4d',
                                 display: 'inline-block',
@@ -871,16 +871,16 @@
                     window.clearInterval(this.realTimer)
                 }
                 let allOverlay = this.map.getOverlays();
-                if(allOverlay.length>4){
+                if (allOverlay.length > 4) {
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if(allOverlay[i].Ac&&allOverlay[i].Ac.className === 'BMap_Marker') {
+                        if (allOverlay[i].Ac && allOverlay[i].Ac.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
                     }
                 }
                 this.map.clearOverlays();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
-               // this.initMap();
+                // this.initMap();
                 this.showRealLineChart({districtId: '01'}, "realLineChart2")
                 this.leftWidth.width = '200px';
                 this.flag = 5;
@@ -1009,29 +1009,29 @@
             },
             showTownList() {
                 this.townList = [];
-                if(this.userAuthority==1){
+                if (this.userAuthority == 1) {
                     //镇级组织
-                    this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
-                        data.forEach( item => {
-                            this.townList.push( {value:item.districtId , label:item.districtName});
+                    this.$http('POST', `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
+                        data.forEach(item => {
+                            this.townList.push({value: item.districtId, label: item.districtName});
                         });
-                        this.townList.push({value:'01',label:'全市'});
+                        this.townList.push({value: '01', label: '全市'});
                     })
                 }
-                if(this.userAuthority==2){
-                    this.townList.push({value:this.user.districtId , label:this.user.organizationName});
+                if (this.userAuthority == 2) {
+                    this.townList.push({value: this.user.districtId, label: this.user.organizationName});
                     this.realLineTownId = this.user.districtId;
                     //村级组织
-                    this.$http('POST',`identity/sysDistrict/list`,{attachTo:this.user.districtId},false).then(data => {
+                    this.$http('POST', `identity/sysDistrict/list`, {attachTo: this.user.districtId}, false).then(data => {
                         this.realLineCountryList = [];
-                        data.forEach( item => {
+                        data.forEach(item => {
                             //实时折线图
-                            this.realLineCountryList.push({value:item.districtId , label:item.districtName});
+                            this.realLineCountryList.push({value: item.districtId, label: item.districtName});
                         });
 
                     })
                 }
-                if(this.userAuthority ==3){
+                if (this.userAuthority == 3) {
                     this.townList = [];
                     this.realLineCountryList = [];
                     this.$http('POST', `identity/sysDistrict/list`, {
@@ -1042,7 +1042,7 @@
                             this.townList.push({value: item.districtId, label: item.districtName});
                         });
                     });
-                    this.realLineCountryList.push({value:this.user.districtId , label:this.user.organizationName});
+                    this.realLineCountryList.push({value: this.user.districtId, label: this.user.organizationName});
                     this.realLineTownId = this.user.sysDistrict.attachTo;
                     this.realLineCountryId = this.user.districtId;
 
@@ -1052,15 +1052,15 @@
             showCountryList() {
                 this.realLineCountryList = [];
                 this.realLineCountryId = '';
-                if(this.realLineTownId.length>2){
+                if (this.realLineTownId.length > 2) {
                     //村级组织
-                    this.$http('POST',`identity/sysDistrict/list`,{attachTo:this.realLineTownId},false).then(data => {
-                        data.forEach( item => {
-                            this.realLineCountryList.push({value:item.districtId , label:item.districtName})
+                    this.$http('POST', `identity/sysDistrict/list`, {attachTo: this.realLineTownId}, false).then(data => {
+                        data.forEach(item => {
+                            this.realLineCountryList.push({value: item.districtId, label: item.districtName})
                         });
                     })
                 }
-                this.$nextTick(()=>{
+                this.$nextTick(() => {
                     let temp = {};
                     temp.districtId = this.realLineCountryId || this.realLineTownId;
                     console.log(temp, 7878)
@@ -1084,20 +1084,19 @@
                         this.realTimeLog = data.rows;
                     }
                 )
-            }
             },
             //活动统计--显示当月镇活动完成情况的气泡图
             showTown() {
                 this.flag = 4;
                 let allOverlay = this.map.getOverlays();
                 for (let i = 0; i < allOverlay.length; i++) {
-                    console.log(allOverlay[i].Ac,i);
-                    if(allOverlay[i].Ac){
+                    console.log(allOverlay[i].Ac, i);
+                    if (allOverlay[i].Ac) {
                         allOverlay[i].enableMassClear();
                     }
                 }
                 this.map.clearOverlays();
-               /* let allOverlay = this.map.getOverlays();
+                /* let allOverlay = this.map.getOverlays();
                 if(allOverlay.length>4){
                     for (let i = 0; i < allOverlay.length; i++) {
                         if(allOverlay[i].Ac&&allOverlay[i].Ac.className === 'BMap_Marker') {
@@ -1105,7 +1104,7 @@
                         }
                     }
                 }*/
-               // this.initMap();
+                // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http('POST', `identity/cloudStatistics/townMonthRate`, {}, false).then(data => {
                     data.forEach(item => {
@@ -1145,17 +1144,17 @@
                         max: 30,
                         draw: 'text'
                     };
-                    if(this.circleLayer){
-                         this.circleLayer.destroy();
-                         this.labelLayer.destroy();
-                         this.$nextTick(()=>{
-                             this.circleLayer.show();
-                             this.circleLayer.bindEvent();
-                             this.labelLayer.show();
-                           /*  this.circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
+                    if (this.circleLayer) {
+                        this.circleLayer.destroy();
+                        this.labelLayer.destroy();
+                        this.$nextTick(() => {
+                            this.circleLayer.show();
+                            this.circleLayer.bindEvent();
+                            this.labelLayer.show();
+                            /*  this.circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
                              this.labelLayer = new mapv.baiduMapLayer(this.map, dataSet, labelOptions);*/
-                         })
-                    }else{
+                        })
+                    } else {
                         this.circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
                         this.labelLayer = new mapv.baiduMapLayer(this.map, dataSet, labelOptions);
                     }

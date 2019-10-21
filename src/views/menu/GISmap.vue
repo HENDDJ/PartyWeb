@@ -20,7 +20,7 @@
                 </div>
                 <span>实时活动&emsp;</span>
             </el-button>
-            <el-button class="nav-btn" type="primary" size="large">
+            <el-button class="nav-btn" type="primary" size="large" @click="showTown()">
                 <div class="logo-outer">
                     <img src="/static/img/activity_logo.png" style="margin-top: 5px;" alt=""/>
                 </div>
@@ -210,7 +210,17 @@
                     partyStudio: 0,
                     square: 0,
                 },
-                heatMapRange: []
+                heatMapRange: [],
+                townPointList:[],
+                cunPointList:[],
+                cunLabelList:[],
+                attachToCache: new Map(),
+                _point:{},
+                _map:{},
+                _div:{},
+                circleLayer:null,//活动统计镇气泡
+                labelLayer:null,//活动统计镇label,
+                currentZhenPoint:{},
             }
         },
         methods: {
@@ -315,6 +325,13 @@
                         BMAP_HYBRID_MAP
                     ]
                 }));
+                this.map.addEventListener("zoomend", () => {
+                    //地图缩放时，村的活动执行柱状图跟随坐标移动
+                    if(this.flag===4){
+                        this.showCunPoint(this.currentZhenPoint);
+                    }
+
+                });
                 this.map.setCurrentCity("镇江");          // 设置地图显示的城市 此项是必须设置的
                 this.map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放a
 
@@ -959,7 +976,226 @@
                     realLineChart.setOption(option);
                 });
 
-            }
+            },
+            //活动统计--显示当月镇活动完成情况的气泡图
+            showTown() {
+                this.flag = 4;
+                this.map.clearOverlays();
+                this.initMap();
+                this.$http('POST', `identity/cloudStatistics/townMonthRate`, {}, false).then(data => {
+                    data.forEach(item => {
+                        let count = Math.round(item.rate * 25) + 15;
+                        let rate = Math.round(item.rate * 100);
+                        this.townPointList.push({
+                            geometry: {
+                                type: 'Point',
+                                coordinates: [item.location.split(",")[0], item.location.split(",")[1]]
+                            },
+                            count: count,
+                            text: item.districtName + rate + "%",
+                            item: item,
+                        });
+                    });
+                    let dataSet = new mapv.DataSet(this.townPointList);
+                    let circleOptions = {
+                        fillStyle: 'rgba(64, 158, 255, 0.8)',
+                        minSize: 25,
+                        maxSize: 50,
+                        max: 50,
+                        draw: 'bubble',
+                        methods: { // 一些事件回调函数
+                            click: item => { // 点击事件，返回对应点击元素的对象值
+                                if (item) {
+                                    this.currentZhenPoint = item;
+                                    this.showCunPoint(item, () => {
+                                        this.map.centerAndZoom(new BMap.Point(item.item.location.split(",")[0], item.item.location.split(",")[1]), 13);
+                                    });
+                                }
+                            },
+                        },
+                    };
+                    let labelOptions = {
+                        fillStyle: 'rgba(255,255,255,0.8)',
+                        maxSize: 20,
+                        max: 30,
+                        draw: 'text'
+                    };
+                    if(this.circleLayer){
+                        this.circleLayer.destroy();
+                        this.labelLayer.destroy();
+                        this.$nextTick(()=>{
+                            console.log(this.circleLayer,"1232");
+                            this.circleLayer.show();
+                            this.circleLayer.bindEvent();
+                            this.labelLayer.show();
+                            console.log(this.circleLayer,"123112");
+                        })
+                    }else{
+                        this.circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
+                        this.labelLayer = new mapv.baiduMapLayer(this.map, dataSet, labelOptions);
+                    }
+                });
+            },
+            showCunPoint(item, cb) {
+                this.cunLabelList.forEach(sub => {
+                    this.map.removeOverlay(sub);
+                });
+                this.cunLabelList = [];
+                this.cunPointList.forEach(item => {
+                    item.ba.style.display = 'none';
+                });
+                if (cb) {
+                    cb();
+                }
+                let temp = this.attachToCache.get(item.item.attachTo);
+                if (temp) {
+                    temp.forEach(subItem => {
+                        let tempBar = document.getElementById("charts" + subItem.organizationId);
+                        let latLonArr = subItem.location.split(",");
+                        let point = new BMap.Point(latLonArr[0], latLonArr[1]);
+                        let pixel = this.map.pointToOverlayPixel(point);
+                        tempBar.style.display = 'block';
+                        tempBar.style.left = pixel.x - 25 + "px";
+                        tempBar.style.top = pixel.y - 80 + "px";
+                        let opts = {
+                            position: point,    // 指定文本标注所在的地理位置
+                            offset: new BMap.Size(-25, -20)    //设置文本偏移量
+                        };
+                        let label = new BMap.Label(subItem.districtName, opts);  // 创建文本标注对象
+                        label.setStyle({
+                            backgroundColor: 'transparent',
+                            display: 'inline-block',
+                            height: '28px',
+                            padding: '0 5px',
+                            lineHeight: '26px',
+                            fontSize: '12px',
+                            color: '#265498',
+                            border: '0px solid #d9ecff',
+                            borderRadius: '4px',
+                            boxSizing: 'border-box',
+                            whiteSpace: 'nowrap',
+                        });
+                        this.map.addOverlay(label);
+                        this.cunLabelList.push(label);
+                    });
+                    return;
+                }
+                this.$http('POST', `identity/cloudStatistics/cunMonthObject?attachTo=` + item.item.attachTo, false).then(data => {
+                    this.attachToCache.set(item.item.attachTo, data);
+                    data.forEach(subItem => {
+                        this.drawBar(subItem);
+                    })
+                })
+            },
+            drawBar(subItem) {
+                let cunPoint = new BMap.Point(subItem.location.split(",")[0], subItem.location.split(",")[1]);
+                if (subItem.location) {
+                    let opts = {
+                        position: cunPoint,    // 指定文本标注所在的地理位置
+                        offset: new BMap.Size(-25, -20)    //设置文本偏移量
+                    };
+                    let label = new BMap.Label(subItem.districtName, opts);  // 创建文本标注对象
+                    label.setStyle({
+                        backgroundColor: 'transparent',
+                        display: 'inline-block',
+                        height: '28px',
+                        padding: '0 5px',
+                        lineHeight: '26px',
+                        fontSize: '12px',
+                        color: '#265498',
+                        border: '0px solid #d9ecff',
+                        borderRadius: '4px',
+                        boxSizing: 'border-box',
+                        whiteSpace: 'nowrap',
+                    });
+                    this.map.addOverlay(label);
+                    this.cunLabelList.push(label);
+
+                    function ComplexCustomOverlay(point) {
+                        this._point = point;
+                    }
+
+                    ComplexCustomOverlay.prototype = new BMap.Overlay();
+                    ComplexCustomOverlay.prototype.initialize = (newMap) => {
+                        this._map = newMap;
+                        let div = this._div = document.createElement("div");
+                        div.id = "charts" + subItem.organizationId;
+                        div.style.position = "absolute";
+                        div.style.zIndex = BMap.Overlay.getZIndex(cunPoint.lat);
+                        div.style.color = "white";
+                        div.style.height = "80px";
+                        div.style.width = "50px";
+                        div.style.whiteSpace = "nowrap";
+                        div.style.MozUserSelect = "none";
+
+                        this.map.getPanes().labelPane.appendChild(div);
+
+                        let pieChar = echarts.init(document.getElementById("charts" + subItem.organizationId));
+                        let option = {
+                            color: ["red","green"],
+                            tooltip: {},
+                            xAxis: {
+                                show: false,
+                                name: '',
+                                nameGap: 1,
+                                type: 'category',
+                                data: ["未完成", "已完成"]
+                            },
+                            yAxis: {
+                                show: false,
+                                type: 'value',
+                            },
+                            series: [{
+                                type: 'bar',
+                                barWidth: 12,
+                                data: [subItem.unfinished, subItem.finished],
+                                label: {
+                                    textStyle: {
+                                        fontSize: 16,
+                                        borderWidth: 1
+                                    }
+                                },
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            let arr = [
+                                                new echarts.graphic.LinearGradient(
+                                                    0, 0, 0, 1,
+                                                    [
+                                                        {offset: 0, color: 'rgb(255,255,255)'},
+                                                        {offset: 0.5, color: 'rgba(255,0,2,0.71)'},
+                                                        {offset: 1, color: '#fe0700'}
+                                                    ]
+                                                ),
+                                                new echarts.graphic.LinearGradient(
+                                                    0, 0, 0, 1,
+                                                    [
+                                                        {offset: 0, color: 'rgba(37,246,15,0.41)'},
+                                                        {offset: 0.5, color: '#17f01a'},
+                                                        {offset: 1, color: '#07f05e'}
+                                                    ]),
+
+                                            ];
+                                            return arr[params.dataIndex];
+                                        }
+                                    },
+                                },
+                            }]
+                        };
+                        pieChar.setOption(option);
+                        return div;
+                    };
+                    ComplexCustomOverlay.prototype.draw = () => {
+                        let newestMap = this._map;
+                        let pixel = newestMap.pointToOverlayPixel(cunPoint);
+                        this._div.style.left = pixel.x -25 + "px";
+                        this._div.style.top = pixel.y -80 + "px";
+                    };
+                    let myCompOverlay = new ComplexCustomOverlay(cunPoint);
+                    this.map.addOverlay(myCompOverlay);
+                    this.cunPointList.push(myCompOverlay);
+                }
+            },
 
         },
         mounted() {

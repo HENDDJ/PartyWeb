@@ -11,15 +11,24 @@ module.exports = {
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
         proxyTable: {
+            '/es': {
+                target: 'http://172.16.1.47:9200',  // 本地域名
+                changeOrigin: true,  //是否跨域
+                pathRewrite: {
+                    '^/es': '',   //需要rewrite重写的,
+                }
+            },
             '/api/zuul': {
-                target: 'http://localhost:8762',  // 本地域名http://122.97.218.162:21018
+               // target: 'http://localhost:8762',  // 本地域名
+                target: 'http://122.97.218.162:21018',
                 changeOrigin: true,  //是否跨域
                 pathRewrite: {
                     '^/api/zuul': '/zuul/api',   //需要rewrite重写的,
                 }
             },
             '/api': {
-                target: 'http://localhost:8762',  // 本地域名
+               // target: 'http://localhost:8762',  // 本地域名
+                target: 'http://122.97.218.162:21018',
                 changeOrigin: true,  //是否跨域
                 pathRewrite: {
                     '^/api': '/api',   //需要rewrite重写的,
@@ -28,7 +37,7 @@ module.exports = {
         },
 
         // Various Dev Server settings
-        host: 'localhost', // can be overwritten by process.env.HOST
+        host: '172.16.1.46', // can be overwritten by process.env.HOST
         port: 1018, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
         autoOpenBrowser: false,
         errorOverlay: true,

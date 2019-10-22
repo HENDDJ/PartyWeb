@@ -564,7 +564,7 @@
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
                                     "<div class='infoBoxTitle'><span class='text'>" + item.districtName + "</span>" +
-                                    "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>" + item.parentName + "</span></div><div class='title02'><img src='/static/img/active/party_build_active.png' class='zhen'><span>更新时间:" + newTime + "</span></div></div></div>" +
+                                    "<div class='system-field'><div class='title01'><img src='/static/img/position_logo.png' class='zhen'><span>" + item.parentName + "</span></div><div class='title02'><img src='/static/img/map/maptime.png' style='vertical-align: bottom' width='22' height='22'/><span style='margin-left: 4px;vertical-align: bottom'>更新时间:" + newTime + "</span></div></div></div>" +
                                     "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 650px' class='flowWin'>" + content +
                                     "</div>" +
                                     "</div>";
@@ -671,9 +671,9 @@
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
                                     "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>" + res.value[0].parentName + "--" + res.value[0].districtName + "</span>" +
-                                    "<div class='system-field'><div class='title01'><img src='/static/img/map/mapcamera.png' class='zhen'><span class='minitor'>在线</span></div>" +
-                                    "<div class='title02' style='font-size:12px'><span style='margin-right: 3px'><img src='/static/img/map/maptime.png' class='zhen'>" +
-                                    "<span style='color:white;font-size: 14px;'>" + time + "</span></div></div></div>" +
+                                    "<div class='system-field'><div class='title01'><img src='/static/img/map/mapcamera.png' width='20' height='20'><span class='minitor'>在线</span></div>" +
+                                    "<div class='title02' style='font-size:12px'><span style='margin-right: 3px'><img src='/static/img/map/maptime.png' width='20' height='20'>" +
+                                    "<span style='color:white;font-size: 14px;vertical-align: top;margin-left: 4px;'>" + time + "</span></div></div></div>" +
                                     "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 700px;width: 80%;margin: auto' class='flowWin'>" + content +
                                     "</div>" +
                                     "</div>";
@@ -720,31 +720,31 @@
                                 this.pandTo(marker)
                                 //定义具体党组织maker
                                 setTimeout(this.setPartyMaker(item.districtId), 500);
-                                let tableData = "<div><div style='line-height: 20px;'><div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织成员：</div></div>" +
-                                    "<div style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='row'><label class='detailLabel'>组织人数</label><div class='detailText' style=''>" + 666 + "</div></div>" +
-                                    "<div class='row'><label class='detailLabel'>书记</label><div class='detailText' style=''>" + 666 + "</div></div>" +
-                                    "<div class='row'><label class='detailLabel'>副书记</label><div class='detailText' style=''>" + 666 + "</div></div>" +
-                                    "<div class='row'><label class='detailLabel'>其他委员</label><div class='detailText' style='text-overflow:clip;word-break: normal;overflow: visible;white-space:normal'>" + 'daoiwjdiwoadiajowwwwwwwwaw达瓦达瓦啊我的娃达娃大wwwwwwwwww' + "</div></div>" +
-                                    "</div></div>"
-                                this.pContent =
-                                    "<div class='infoBoxContent'>" +
-                                    "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>" + item.districtName + "</a></div>" +
-                                    "<div>" +
-                                    "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>" + item.parentName + "</sapn></div>" +
-                                    "</div>" +
-                                    "</div>" +
-                                    "<div class='content'><div style='line-height: 20px;'>" +
-                                    "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织详情：</div></div>" +
-                                    "<div  style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div  class='contentDetail'>" + "暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据" +
-                                    "</div></div>" +
-                                    tableData +
-                                    "</div>" +
-                                    "</div>";
-                                let infoBox = new BMapLib.InfoBox(this.map, this.pContent, this.opts);
-                                setTimeout(
-                                    () => {
-                                        infoBox._setContent(this.pContent, infoBox.open(marker2))
-                                    }, 1200)
+                                // let tableData = "<div><div style='line-height: 20px;'><div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织成员：</div></div>" +
+                                //     "<div style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div class='row'><label class='detailLabel'>组织人数</label><div class='detailText' style=''>" + 666 + "</div></div>" +
+                                //     "<div class='row'><label class='detailLabel'>书记</label><div class='detailText' style=''>" + 666 + "</div></div>" +
+                                //     "<div class='row'><label class='detailLabel'>副书记</label><div class='detailText' style=''>" + 666 + "</div></div>" +
+                                //     "<div class='row'><label class='detailLabel'>其他委员</label><div class='detailText' style='text-overflow:clip;word-break: normal;overflow: visible;white-space:normal'>" + 'daoiwjdiwoadiajowwwwwwwwaw达瓦达瓦啊我的娃达娃大wwwwwwwwww' + "</div></div>" +
+                                //     "</div></div>"
+                                // this.pContent =
+                                //     "<div class='infoBoxContent'>" +
+                                //     "<div class='header'><div class='headerTitle' style='line-height: 32px;position: relative'><img src='static/img/partyTitle.png' style='width: 33px;height: 32px;'></img><a style='margin-top: -1px;position: absolute'>" + item.districtName + "</a></div>" +
+                                //     "<div>" +
+                                //     "<div style='display: inline-block' class='headerTwo'>所属组织:<sapn style='color: #8b8b8b'>" + item.parentName + "</sapn></div>" +
+                                //     "</div>" +
+                                //     "</div>" +
+                                //     "<div class='content'><div style='line-height: 20px;'>" +
+                                //     "<div style='display: inline-block;vertical-align: middle;margin: 8px 46px'>组织详情：</div></div>" +
+                                //     "<div  style='position: relative'><div class='blueBlock'></div><div class='blueBlockTop'></div><div  class='contentDetail'>" + "暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据暂无数据" +
+                                //     "</div></div>" +
+                                //     tableData +
+                                //     "</div>" +
+                                //     "</div>";
+                                // let infoBox = new BMapLib.InfoBox(this.map, this.pContent, this.opts);
+                                // setTimeout(
+                                //     () => {
+                                //         infoBox._setContent(this.pContent, infoBox.open(marker2))
+                                //     }, 1200)
 
 
                             })
@@ -1415,8 +1415,8 @@
     }
     .infoBoxTitle .title01 .zhen{
         position: relative;
-        width: 26px;
-        height: 26px;
+        width: 18px;
+        height: 23px;
         top: 5px;
         margin-right: 5px;
     }
@@ -1642,12 +1642,14 @@
         width: 8px;
     }
     .minitor{
+        margin-left: 4px;
         margin-right: 8px;
         background-color: #67C23A;
         border-radius: 3px;
         color: #FFF;
         display: inline-block;
         padding: 0 6px;
+        vertical-align: top;
     }
     .header{
         width:100%;

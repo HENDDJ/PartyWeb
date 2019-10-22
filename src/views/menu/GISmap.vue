@@ -226,8 +226,8 @@
                 _map:{},
                 _div:{},
                 circleLayer:null,//活动统计镇气泡
-                labelLayer:null,//活动统计镇label,
-                currentZhenPoint:{},
+                labelLayer:null,//活动统计镇label
+                currentZhenPoint:null,
             }
         },
         methods: {
@@ -334,7 +334,9 @@
                 this.map.addEventListener("zoomend", () => {
                     //地图缩放时，村的活动执行柱状图跟随坐标移动
                     if (this.flag === 4) {
-                        this.showCunPoint(this.currentZhenPoint);
+                        if(this.currentZhenPoint){
+                            this.showCunPoint(this.currentZhenPoint);
+                        }
                     }
 
                 });
@@ -412,13 +414,13 @@
                 let allOverlay = this.map.getOverlays();
                 if (allOverlay.length > 4) {
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if (allOverlay[i].AC && allOverlay[i].AC.className === 'BMap_Marker') {
+                        if (allOverlay[i].Ac && allOverlay[i].Ac.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
                     }
                 }
                 this.map.clearOverlays();
-                this.initMap();
+                // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http("POST", `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
                     data.forEach(item => {
@@ -470,13 +472,13 @@
                 let allOverlay = this.map.getOverlays();
                 if (allOverlay.length > 4) {
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if (allOverlay[i].AC && allOverlay[i].AC.className === 'BMap_Marker') {
+                        if (allOverlay[i].Ac && allOverlay[i].Ac.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
                     }
                 }
                 this.map.clearOverlays();
-                this.initMap();
+                // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.workingDataList();
                 this.getCurrentSituation();
@@ -518,7 +520,6 @@
             setCunMaker(val) {
                 this.map.clearOverlays();
                 //基本阵地
-
                 this.$http("POST", `identity/sysDistrict/list`, {attachTo: val}, false).then(data => {
                     data.forEach(item => {
                         if (item.location) {
@@ -564,7 +565,7 @@
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
                                     "<div class='infoBoxTitle'><span class='text'>" + item.districtName + "</span>" +
-                                    "<div class='system-field'><div class='title01'><img src='/static/img/position_logo.png' class='zhen'><span>" + item.parentName + "</span></div><div class='title02'><img src='/static/img/map/maptime.png' style='vertical-align: bottom' width='22' height='22'/><span style='margin-left: 4px;vertical-align: bottom'>更新时间:" + newTime + "</span></div></div></div>" +
+                                    "<div class='system-field'><div class='title01'><img src='/static/img/active/party_build_active.png' class='zhen'><span>" + item.parentName + "</span></div><div class='title02'><img src='/static/img/active/party_build_active.png' class='zhen'><span>更新时间:" + newTime + "</span></div></div></div>" +
                                     "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 400px;width: 650px' class='flowWin'>" + content +
                                     "</div>" +
                                     "</div>";
@@ -671,9 +672,9 @@
                                 this.pContent =
                                     "<div class='infoBoxContent'>" +
                                     "<div class='infoBoxTitle' style='background-color:#255cc296 '><span class='text'>" + res.value[0].parentName + "--" + res.value[0].districtName + "</span>" +
-                                    "<div class='system-field'><div class='title01'><img src='/static/img/map/mapcamera.png' width='20' height='20'><span class='minitor'>在线</span></div>" +
-                                    "<div class='title02' style='font-size:12px'><span style='margin-right: 3px'><img src='/static/img/map/maptime.png' width='20' height='20'>" +
-                                    "<span style='color:white;font-size: 14px;vertical-align: top;margin-left: 4px;'>" + time + "</span></div></div></div>" +
+                                    "<div class='system-field'><div class='title01'><img src='/static/img/map/mapcamera.png' class='zhen'><span class='minitor'>在线</span></div>" +
+                                    "<div class='title02' style='font-size:12px'><span style='margin-right: 3px'><img src='/static/img/map/maptime.png' class='zhen'>" +
+                                    "<span style='color:white;font-size: 14px;'>" + time + "</span></div></div></div>" +
                                     "<div style='padding-top: 10px;overflow-y:scroll;OVERFLOW-X:hidden;max-height: 700px;width: 80%;margin: auto' class='flowWin'>" + content +
                                     "</div>" +
                                     "</div>";
@@ -697,14 +698,13 @@
                 let allOverlay = this.map.getOverlays();
                 if (allOverlay.length > 4) {
                     for (let i = 0; i < allOverlay.length; i++) {
-                        if (allOverlay[i].AC && allOverlay[i].AC.className === 'BMap_Marker') {
+                        if (allOverlay[i].Ac && allOverlay[i].Ac.className === 'BMap_Marker') {
                             allOverlay[i].enableMassClear();
                         }
                     }
-                    ;
                 }
                 this.map.clearOverlays();
-                this.initMap();
+                // this.initMap();
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
                 this.$http("POST", `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
                     data.forEach(item => {
@@ -874,7 +874,17 @@
                 if (this.realTimer) {
                     window.clearInterval(this.realTimer)
                 }
-                this.initMap();
+                let allOverlay = this.map.getOverlays();
+                if (allOverlay.length > 4) {
+                    for (let i = 0; i < allOverlay.length; i++) {
+                        if (allOverlay[i].Ac && allOverlay[i].Ac.className === 'BMap_Marker') {
+                            allOverlay[i].enableMassClear();
+                        }
+                    }
+                }
+                this.map.clearOverlays();
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
+                // this.initMap();
                 this.showRealLineChart({districtId: '01'}, "realLineChart2")
                 this.leftWidth.width = '200px';
                 this.flag = 5;
@@ -1082,8 +1092,23 @@
             //活动统计--显示当月镇活动完成情况的气泡图
             showTown() {
                 this.flag = 4;
+                let allOverlay = this.map.getOverlays();
+                for (let i = 0; i < allOverlay.length; i++) {
+                    if (allOverlay[i].Ac) {
+                        allOverlay[i].enableMassClear();
+                    }
+                }
                 this.map.clearOverlays();
-                this.initMap();
+                /* let allOverlay = this.map.getOverlays();
+                if(allOverlay.length>4){
+                    for (let i = 0; i < allOverlay.length; i++) {
+                        if(allOverlay[i].Ac&&allOverlay[i].Ac.className === 'BMap_Marker') {
+                            allOverlay[i].enableMassClear();
+                        }
+                    }
+                }*/
+                // this.initMap();
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http('POST', `identity/cloudStatistics/townMonthRate`, {}, false).then(data => {
                     data.forEach(item => {
                         let count = Math.round(item.rate * 25) + 15;
@@ -1126,11 +1151,11 @@
                         this.circleLayer.destroy();
                         this.labelLayer.destroy();
                         this.$nextTick(() => {
-                            console.log(this.circleLayer, "1232");
                             this.circleLayer.show();
                             this.circleLayer.bindEvent();
                             this.labelLayer.show();
-                            console.log(this.circleLayer, "123112");
+                            /*  this.circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
+                             this.labelLayer = new mapv.baiduMapLayer(this.map, dataSet, labelOptions);*/
                         })
                     } else {
                         this.circleLayer = new mapv.baiduMapLayer(this.map, dataSet, circleOptions);
@@ -1297,7 +1322,7 @@
                     this.map.addOverlay(myCompOverlay);
                     this.cunPointList.push(myCompOverlay);
                 }
-            },
+            }
         },
         mounted() {
             this.user = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -1415,8 +1440,8 @@
     }
     .infoBoxTitle .title01 .zhen{
         position: relative;
-        width: 18px;
-        height: 23px;
+        width: 26px;
+        height: 26px;
         top: 5px;
         margin-right: 5px;
     }
@@ -1642,14 +1667,12 @@
         width: 8px;
     }
     .minitor{
-        margin-left: 4px;
         margin-right: 8px;
         background-color: #67C23A;
         border-radius: 3px;
         color: #FFF;
         display: inline-block;
         padding: 0 6px;
-        vertical-align: top;
     }
     .header{
         width:100%;

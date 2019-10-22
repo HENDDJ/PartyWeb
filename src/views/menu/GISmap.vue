@@ -227,7 +227,7 @@
                 _div:{},
                 circleLayer:null,//活动统计镇气泡
                 labelLayer:null,//活动统计镇label
-                currentZhenPoint:{},
+                currentZhenPoint:null,
             }
         },
         methods: {
@@ -334,7 +334,9 @@
                 this.map.addEventListener("zoomend", () => {
                     //地图缩放时，村的活动执行柱状图跟随坐标移动
                     if (this.flag === 4) {
-                        this.showCunPoint(this.currentZhenPoint);
+                        if(this.currentZhenPoint){
+                            this.showCunPoint(this.currentZhenPoint);
+                        }
                     }
 
                 });
@@ -1090,7 +1092,6 @@
                 this.flag = 4;
                 let allOverlay = this.map.getOverlays();
                 for (let i = 0; i < allOverlay.length; i++) {
-                    console.log(allOverlay[i].Ac, i);
                     if (allOverlay[i].Ac) {
                         allOverlay[i].enableMassClear();
                     }

@@ -1854,7 +1854,8 @@
     }
     #allmap{
         width: 100%;
-        height: 822px;
+       /* height: 822px;*/
+        height:  calc(100vh - 140px);
         overflow: hidden;
         margin:0;font-family:"微软雅黑";
     }

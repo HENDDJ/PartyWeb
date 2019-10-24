@@ -353,7 +353,7 @@
                             },
                             axisLabel:{
                                 interval: 0,
-                                rotate:40
+                                rotate:20
                             }
                         },
                         yAxis: {
@@ -595,7 +595,7 @@
                                data : histogramX,
                                axisLabel:{
                                    interval: 0,
-                                   rotate:40
+                                   rotate:20
                                }
                             }
                         ],
@@ -658,12 +658,11 @@
                             tooltip: {},
                             legend: {
                                 x:'left',
-                                width:170,
-                                padding:[50,0,0,10],
+                                y:'bottom',
+                                padding:[0,0,0,0],
                                 data: radarX,
                             },
                             radar: {
-                                // shape: 'circle',
                                 name: {
                                     textStyle: {
                                         color: '#fff',
@@ -711,30 +710,36 @@
     .el-table .success-row {
         background: #e8f5e7 !important;
     }
-    .chartDivStyle {
-        height: 500px;
-        width: 770px;
-      /*  border: 1px red solid;
+    .box-card{
+        height: calc(100vh / 1080 * 600);
+        width: calc((100vw - 268px) / 1652 * 770);
         float: left;
-        margin:30px 20px;*/
+        margin:calc(100vh / 1080 * 30) calc((100vw - 268px) / 1652 * 20);
+    }
+    .chartDivStyle {
+        height: calc(100vh / 1080 * 600);
+        width: calc((100vw - 268px) / 1652 * 770);
     }
     .query-position{
         position: relative;
         float: left;
-        margin:20px 10px;
+     /*   margin:calc(100vh / 1280 * 20)  calc((100vw - 268px) / 1652 * 10);*/
         z-index: 9999;
     }
     .chartStyle {
-        height: 400px;
-        width: 770px;
-    }
-    .box-card{
-        height: 500px;
-        width: 770px;
-        float: left;
-        margin:30px 20px;
+        height: calc(100vh / 1080 * 500);
+        width: calc((100vw - 268px) / 1652 * 750);
     }
 
+   /* .el-card__body {
+        padding: calc(100vh / 1280 * 20);
+    }*/
+    .query-position .el-select {
+        width: calc((100vw - 268px) / 1652 * 200) !important;
+    }
+    .query-position .el-input--mini .el-input__inner {
+        width: calc((100vw - 268px) / 1652 * 200) !important;
+    }
 </style>
 
 <style scoped>

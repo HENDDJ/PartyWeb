@@ -16,10 +16,10 @@
                     <a style="color: hsla(0,0%,100%,.62);;margin-top:6px;position: absolute;font-size: 14px;">完成任务基本信息</a>
                 </el-card>
             </div>
-            <el-card style="margin-top: -50px;min-height: 700px;">
+            <el-card class="cardHeight">
                 <div>
                     <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" align="left"
-                             label-width="170px" id="labelOne" :rules="rules">
+                             :label-width=labelWidth id="labelOne" :rules="rules">
                         <el-row>
                             <div>&nbsp;</div>
                         </el-row>
@@ -33,7 +33,7 @@
                             <div>&nbsp;</div>
                         </el-row>
                         <el-row style="margin: 10px 0">
-                            <el-col :span="10">
+                            <el-col :span="24">
                                 <el-form-item label="任务分类" prop="taskType">
                                     <vs-radio color="success" v-model="form.taskType" vs-value="Party">党建任务</vs-radio>
                                     <vs-radio color="success" v-model="form.taskType" vs-value="DistLearning"
@@ -48,12 +48,12 @@
                         <el-row style="margin: 10px 0">
                             <el-col :span="11">
                                 <el-form-item label="任务名称" prop="title">
-                                    <el-input v-model="form.title" :disabled=disabled></el-input>
+                                    <el-input  v-model="form.title" :disabled=disabled></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="11">
                                 <el-form-item label="任务类型" prop="type">
-                                    <el-input v-model="form.type" :disabled=disabled></el-input>
+                                    <el-input  v-model="form.type" :disabled=disabled></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -69,13 +69,12 @@
                             </el-col>
                             <el-col :span="11">
                                 <el-form-item label="任务分值" prop="score">
-                                    <el-input-number v-model="form.score" label="分值"
-                                                     style="width: 200px"></el-input-number>
+                                    <el-input-number v-model="form.score" label="分值" class="scoreWidth"></el-input-number>
                                 </el-form-item>
                             </el-col>
                         </el-row>
                         <el-row style="margin: 10px 0">
-                            <el-col :span="11">
+                            <el-col :span="24">
                                 <el-form-item label="上传文件" prop="fileUrls">
                                     <CommonFileUpload :value="form.fileUrls"
                                                       @getValue="form.fileUrls = $event"></CommonFileUpload>
@@ -127,7 +126,7 @@
                             <el-col :span="10">
                                 <div>&nbsp;</div>
                             </el-col>
-                            <el-col :span="11" style="margin-top: 40px">
+                            <el-col :span="11" style="margin-top: 20px">
                                 <br>
                                 <el-form-item label=" ">
                                     <el-button type="primary" @click="submit('form')" size="large">
@@ -249,7 +248,9 @@
                 actiityList:[],
                 scroll:{
                     marginTop:'0px'
-                }
+                },
+                labelWidth:document.body.clientWidth/1920*170+'px',
+                inputWidth:document.body.clientWidth/1920*200+'px',
 
             }
         },
@@ -588,4 +589,18 @@
             /*transform: translateY(-6050px);*/
         /*}*/
     /*}*/
+    .activity-release .el-input--mini .el-input__inner  {
+        width: calc(100vw / 1920 * 200) !important;
+    }
+    .activity-release .el-date-editor.el-input {
+        width: calc(100vw / 1920 * 200) !important;
+    }
+    .activity-release .cardHeight {
+        margin-top: -50px;
+        max-height: calc(100vh - 150px);
+    }
+    .activity-release .scoreWidth{
+        width: calc(100vw / 1920 * 200) ;
+    }
+
 </style>

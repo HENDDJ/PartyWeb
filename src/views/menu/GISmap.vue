@@ -1937,9 +1937,9 @@
     }
     .nav-btn {
         width: 100%;
-        display: block;
+        display: block !important;
         margin: 6px 0 !important;
-        padding: 6px 14px;
+        padding: 6px 14px !important;
     }
     .logo-outer {
         width: 38px;

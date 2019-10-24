@@ -711,13 +711,13 @@
         background: #e8f5e7 !important;
     }
     .box-card{
-        height: calc(100vh / 1080 * 600);
+        height: calc((100vw - 268px) / 1652 * 600);
         width: calc((100vw - 268px) / 1652 * 770);
         float: left;
-        margin:calc(100vh / 1080 * 30) calc((100vw - 268px) / 1652 * 20);
+        margin:calc((100vw - 268px) / 1652 * 30) calc((100vw - 268px) / 1652 * 20);
     }
     .chartDivStyle {
-        height: calc(100vh / 1080 * 600);
+        height: calc((100vw - 268px) / 1652 * 600);
         width: calc((100vw - 268px) / 1652 * 770);
     }
     .query-position{
@@ -727,7 +727,7 @@
         z-index: 9999;
     }
     .chartStyle {
-        height: calc(100vh / 1080 * 500);
+        height: calc((100vw - 268px) / 1652 * 500);
         width: calc((100vw - 268px) / 1652 * 750);
     }
 

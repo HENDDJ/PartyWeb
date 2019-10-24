@@ -20,19 +20,7 @@
                 <div>
                     <el-form :inline="true" :model="form" ref="form" class="demo-form-inline" align="left"
                              :label-width=labelWidth id="labelOne" :rules="rules">
-                        <el-row>
-                            <div>&nbsp;</div>
-                        </el-row>
-                        <el-row>
-                            <div>&nbsp;</div>
-                        </el-row>
-                        <el-row>
-                            <div>&nbsp;</div>
-                        </el-row>
-                        <el-row>
-                            <div>&nbsp;</div>
-                        </el-row>
-                        <el-row style="margin: 10px 0">
+                        <el-row class="firstRow" >
                             <el-col :span="24">
                                 <el-form-item label="任务分类" prop="taskType">
                                     <vs-radio color="success" v-model="form.taskType" vs-value="Party">党建任务</vs-radio>
@@ -109,7 +97,7 @@
                             </el-col>
                         </el-row>
 
-                        <el-row style="margin: 10px 0">
+                       <!-- <el-row style="margin: 10px 0">
                             <el-col :span="20">
                                 <el-form-item label="上传视频" prop="video" v-if="addVideo">
                                     <el-transfer
@@ -121,12 +109,12 @@
                                     </el-transfer>
                                 </el-form-item>
                             </el-col>
-                        </el-row>
-                        <el-row style="margin-top: -52px;text-align: right;">
+                        </el-row>-->
+                        <el-row style="text-align: right;">
                             <el-col :span="10">
                                 <div>&nbsp;</div>
                             </el-col>
-                            <el-col :span="11" style="margin-top: 20px">
+                            <el-col :span="11">
                                 <br>
                                 <el-form-item label=" ">
                                     <el-button type="primary" @click="submit('form')" size="large">
@@ -596,11 +584,14 @@
         width: calc(100vw / 1920 * 200) !important;
     }
     .activity-release .cardHeight {
-        margin-top: -50px;
-        max-height: calc(100vh - 150px);
+        margin-top: calc(100vw / 1920  * (-50));
+       /*// max-height: calc(100vh - 150px);*/
     }
     .activity-release .scoreWidth{
         width: calc(100vw / 1920 * 200) ;
+    }
+    .firstRow {
+        margin: calc(100vw / 1920 * 80) 0 0 ;
     }
 
 </style>

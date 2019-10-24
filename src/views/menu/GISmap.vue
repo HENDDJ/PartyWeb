@@ -491,7 +491,7 @@
             },
             //展示正在执行内的封装方法
             workingDataList() {
-                this.flag = 3;
+              //  this.flag = 3;
                 this.$http('Post', 'identity/parActivityObject/list', {isWorking: 1}, false).then(
                     (data) => {
                         let orgId = [];
@@ -1089,8 +1089,25 @@
                     }
                 )
             },
+            //初始化活动统计变量
+            initVariable(){
+                this.townPointList=[];
+                this.cunPointList=[];
+                this.cunLabelList=[];
+                this.attachToCache = new Map();
+                this._point = {};
+                this._map = {};
+                this._div = {};
+                this.circleLayer = null;//活动统计镇气泡
+                this.labelLayer = null;//活动统计镇label
+                this.currentZhenPoint = null;
+            },
             //活动统计--显示当月镇活动完成情况的气泡图
             showTown() {
+                if (this.realTimer) {
+                    window.clearInterval(this.realTimer)
+                }
+                this.initVariable();
                 this.flag = 4;
                 let allOverlay = this.map.getOverlays();
                 for (let i = 0; i < allOverlay.length; i++) {
@@ -1111,17 +1128,19 @@
                 this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http('POST', `identity/cloudStatistics/townMonthRate`, {}, false).then(data => {
                     data.forEach(item => {
-                        let count = Math.round(item.rate * 25) + 15;
-                        let rate = Math.round(item.rate * 100);
-                        this.townPointList.push({
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [item.location.split(",")[0], item.location.split(",")[1]]
-                            },
-                            count: count,
-                            text: item.districtName + rate + "%",
-                            item: item,
-                        });
+                        if(item.location){
+                            let count = Math.round(item.rate * 25) + 15;
+                            let rate = Math.round(item.rate * 100);
+                            this.townPointList.push({
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [item.location.split(",")[0], item.location.split(",")[1]]
+                                },
+                                count: count,
+                                text: item.districtName + rate + "%",
+                                item: item,
+                            });
+                        }
                     });
                     let dataSet = new mapv.DataSet(this.townPointList);
                     let circleOptions = {
@@ -1133,10 +1152,12 @@
                         methods: { // 一些事件回调函数
                             click: item => { // 点击事件，返回对应点击元素的对象值
                                 if (item) {
-                                    this.currentZhenPoint = item;
-                                    this.showCunPoint(item, () => {
-                                        this.map.centerAndZoom(new BMap.Point(item.item.location.split(",")[0], item.item.location.split(",")[1]), 13);
-                                    });
+                                    if(this.flag === 4){
+                                        this.currentZhenPoint = item;
+                                        this.showCunPoint(item, () => {
+                                            this.map.centerAndZoom(new BMap.Point(item.item.location.split(",")[0], item.item.location.split(",")[1]), 13);
+                                        });
+                                    }
                                 }
                             },
                         },
@@ -1164,6 +1185,9 @@
                 });
             },
             showCunPoint(item, cb) {
+                if(this.flag !== 4){
+                    return;
+                }
                 this.cunLabelList.forEach(sub => {
                     this.map.removeOverlay(sub);
                 });
@@ -1177,40 +1201,44 @@
                 let temp = this.attachToCache.get(item.item.attachTo);
                 if (temp) {
                     temp.forEach(subItem => {
-                        let tempBar = document.getElementById("charts" + subItem.organizationId);
-                        let latLonArr = subItem.location.split(",");
-                        let point = new BMap.Point(latLonArr[0], latLonArr[1]);
-                        let pixel = this.map.pointToOverlayPixel(point);
-                        tempBar.style.display = 'block';
-                        tempBar.style.left = pixel.x - 25 + "px";
-                        tempBar.style.top = pixel.y - 80 + "px";
-                        let opts = {
-                            position: point,    // 指定文本标注所在的地理位置
-                            offset: new BMap.Size(-25, -20)    //设置文本偏移量
-                        };
-                        let label = new BMap.Label(subItem.districtName, opts);  // 创建文本标注对象
-                        label.setStyle({
-                            backgroundColor: 'transparent',
-                            display: 'inline-block',
-                            height: '28px',
-                            padding: '0 5px',
-                            lineHeight: '26px',
-                            fontSize: '12px',
-                            color: '#265498',
-                            border: '0px solid #d9ecff',
-                            borderRadius: '4px',
-                            boxSizing: 'border-box',
-                            whiteSpace: 'nowrap',
-                        });
-                        this.map.addOverlay(label);
-                        this.cunLabelList.push(label);
+                        if(subItem.location){
+                            let tempBar = document.getElementById("charts" + subItem.organizationId);
+                            let latLonArr = subItem.location.split(",");
+                            let point = new BMap.Point(latLonArr[0], latLonArr[1]);
+                            let pixel = this.map.pointToOverlayPixel(point);
+                            tempBar.style.display = 'block';
+                            tempBar.style.left = pixel.x - 25 + "px";
+                            tempBar.style.top = pixel.y - 80 + "px";
+                            let opts = {
+                                position: point,    // 指定文本标注所在的地理位置
+                                offset: new BMap.Size(-25, -20)    //设置文本偏移量
+                            };
+                            let label = new BMap.Label(subItem.districtName, opts);  // 创建文本标注对象
+                            label.setStyle({
+                                backgroundColor: 'transparent',
+                                display: 'inline-block',
+                                height: '28px',
+                                padding: '0 5px',
+                                lineHeight: '26px',
+                                fontSize: '12px',
+                                color: '#265498',
+                                border: '0px solid #d9ecff',
+                                borderRadius: '4px',
+                                boxSizing: 'border-box',
+                                whiteSpace: 'nowrap',
+                            });
+                            this.map.addOverlay(label);
+                            this.cunLabelList.push(label);
+                        }
                     });
                     return;
                 }
                 this.$http('POST', `identity/cloudStatistics/cunMonthObject?attachTo=` + item.item.attachTo, false).then(data => {
                     this.attachToCache.set(item.item.attachTo, data);
                     data.forEach(subItem => {
-                        this.drawBar(subItem);
+                        if(subItem.location){
+                            this.drawBar(subItem);
+                        }
                     })
                 })
             },

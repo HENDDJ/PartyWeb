@@ -25,31 +25,31 @@
         <nav class="nav">
             <el-button class="nav-btn" type="primary" size="large" @click="showParty()">
                 <div class="logo-outer">
-                    <img src="/static/img/org_logo.png" style="margin-top: 2px;" alt=""/>
+                    <img src="/static/img/org_logo.png" alt=""/>
                 </div>
                 <span>党组织分布</span>
             </el-button>
             <el-button class="nav-btn" type="primary" size="large" @click="showBattleField()">
                 <div class="logo-outer">
-                    <img src="/static/img/position_logo.png" style="margin-top: 5px;" alt=""/>
+                    <img src="/static/img/position_logo.png"  alt=""/>
                 </div>
                 <span>阵地分布&emsp;</span>
             </el-button>
             <el-button class="nav-btn" type="primary" size="large" @click="showWorking()">
                 <div class="logo-outer">
-                    <img src="/static/img/act_logo.png" style="margin-top: 6px;" alt=""/>
+                    <img src="/static/img/act_logo.png"  alt=""/>
                 </div>
                 <span>实时活动&emsp;</span>
             </el-button>
             <el-button class="nav-btn" type="primary" size="large" @click="showTown()">
                 <div class="logo-outer">
-                    <img src="/static/img/activity_logo.png" style="margin-top: 5px;" alt=""/>
+                    <img src="/static/img/activity_logo.png"  alt=""/>
                 </div>
                 <span>活动统计&emsp;</span>
             </el-button>
             <el-button class="nav-btn" type="primary" size="large" @click="showPeopleStream()">
                 <div class="logo-outer">
-                    <img src="/static/img/stream_logo.png" style="margin-top: 6px;" alt=""/>
+                    <img src="/static/img/stream_logo.png"  alt=""/>
                 </div>
                 <span>实时人流量</span>
             </el-button>
@@ -62,13 +62,13 @@
             </div>
         </div>
         <div class="showLeftListTop">
-        <div class="showLeftList" v-if="!showLeft&&flag!=3" @click="leftWidth.width = '220px';showLeft=true;"></div>
+        <div class="showLeftList" v-if="!showLeft&&flag!=3" @click="controlLeftWidth()"></div>
         </div>
         <div id="census" onclick="toggleDiv('')">
             <img src="/static/img/test.png" height="472" width="670" />
         </div>
 
-        <div class="closeBtnBg" v-if="this.msgFloatRight.marginRight === '48px'" @click="close">
+        <div class="closeBtnBg" v-if="this.msgFloatRight.marginRight === '48px' " @click="close">
             <div class="closeBtn"></div>
         </div>
         <div style="width: 250px;height: 579px;position: absolute;right: 0px;top:10px">
@@ -228,6 +228,7 @@
                 circleLayer:null,//活动统计镇气泡
                 labelLayer:null,//活动统计镇label
                 currentZhenPoint:null,
+                mapSize:'',//地图缩放比例
             }
         },
         methods: {
@@ -318,12 +319,18 @@
                 return `margin-top:${val * 108}px;`;
             },
             initMap() {
+                if(window.screen.width<1920){
+                    this.mapSize = 10;
+                }else{
+                    this.mapSize = 11;
+                }
                 // 百度地图API功能
                 this.map = new BMap.Map("allmap", {
-                    minZoom: 11,
+                    minZoom: this.mapSize,
                     maxZoom: 18
                 });    // 创建Map实例
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
+
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), this.mapSize);  // 初始化地图,设置中心点坐标和地图级别
                 //添加地图类型控件
                 this.map.addControl(new BMap.MapTypeControl({
                     mapTypes: [
@@ -397,12 +404,17 @@
                     this.map.setZoom(14);
                 }, 800)
             },
+            controlLeftWidth(){
+                this.leftWidth.width = (window.screen.width/1920*200)+'px';
+                this.showLeft=true;
+
+            },
             //展示基本阵地点位
             showBattleField() {
                 if (this.realTimer) {
                     window.clearInterval(this.realTimer)
                 }
-                this.leftWidth.width = '200px';
+                this.leftWidth.width = window.screen.width/1920*200+'px';
                 this.showLeft = true;
                 this.flag = 2
                 //阵地个数
@@ -421,7 +433,7 @@
                 }
                 this.map.clearOverlays();
                 // this.initMap();
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), this.mapSize);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http("POST", `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
                     data.forEach(item => {
                         if (item.location) {
@@ -479,7 +491,7 @@
                 }
                 this.map.clearOverlays();
                 // this.initMap();
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), this.mapSize);  // 初始化地图,设置中心点坐标和地图级别
                 this.workingDataList();
                 this.getCurrentSituation();
                 this.getRealTimeLog();
@@ -692,7 +704,8 @@
                     window.clearInterval(this.realTimer)
                 }
                 this.flag = 1;
-                this.leftWidth.width = '200px';
+                this.leftWidth.width = window.screen.width/1920*200+'px';
+                console.log(this.leftWidth,"333");
                 this.showLeft = true;
                 this.openNotify('党的基层组织是党在社会基层组织中的战斗堡垒，是党的全部工作和战斗力的基础。新形势下基层党组织工作开展的怎么样，直接影响到党的凝聚力、影响力、战斗力的充分发挥。');
                 let allOverlay = this.map.getOverlays();
@@ -705,7 +718,7 @@
                 }
                 this.map.clearOverlays();
                 // this.initMap();
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), this.mapSize);
                 this.$http("POST", `identity/sysDistrict/list`, {districtLevel: 2}, false).then(data => {
                     data.forEach(item => {
                         if (item.location) {
@@ -883,10 +896,10 @@
                     }
                 }
                 this.map.clearOverlays();
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), this.mapSize);
                 // this.initMap();
                 this.showRealLineChart({districtId: '01'}, "realLineChart2")
-                this.leftWidth.width = '200px';
+                this.leftWidth.width = window.screen.width/1920*200;
                 this.flag = 5;
                 this.showLeft = false;
                 if (!value || value.length === 0) {
@@ -1125,7 +1138,7 @@
                     }
                 }*/
                 // this.initMap();
-                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), 11);  // 初始化地图,设置中心点坐标和地图级别
+                this.map.centerAndZoom(new BMap.Point(119.172559, 31.92500), this.mapSize);  // 初始化地图,设置中心点坐标和地图级别
                 this.$http('POST', `identity/cloudStatistics/townMonthRate`, {}, false).then(data => {
                     data.forEach(item => {
                         if(item.location){
@@ -1155,7 +1168,7 @@
                                     if(this.flag === 4){
                                         this.currentZhenPoint = item;
                                         this.showCunPoint(item, () => {
-                                            this.map.centerAndZoom(new BMap.Point(item.item.location.split(",")[0], item.item.location.split(",")[1]), 13);
+                                            this.map.centerAndZoom(new BMap.Point(item.item.location.split(",")[0], item.item.location.split(",")[1]), this.mapSize+2);
                                         });
                                     }
                                 }
@@ -1358,6 +1371,7 @@
             this.getTreeData();
             this.showTownList();
             this.initMap();
+            console.log(window,"12312");
         }
     }
 </script>
@@ -1375,8 +1389,8 @@
         box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         -moz-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-        width: 200px;
-        margin:30px 0 0 200px;
+        width: calc(100vw / 1920 * 200);
+        margin:calc(100vw / 1920 * 30) 0 0 calc(100vw / 1920 * 200);
     }
     nav ul {
         padding: 0;
@@ -1384,7 +1398,7 @@
     }
     nav ul li {
         list-style: none;
-        height: 50px;
+        height: calc(100vw / 1920 * 50);
     }
 /*    nav ul li:hover {
         width: 200px;
@@ -1796,7 +1810,7 @@
     }
     .showLeftList:after{
         content: '';
-        left: 10px;
+        left: calc(100vw / 1920 * 10);
         top: 0px;
         position: absolute;
         border: 15px solid;
@@ -1804,31 +1818,31 @@
     }
 
     .showLeftListTop{
-        width: 50px;
-        height: 50px;
+        width: calc(100vw / 1920 * 50);
+        height: calc(100vw / 1920 * 50);
         position: fixed;
-        top: 350px;
+        top: calc(100vw / 1920 * 500);
         left: 250px;
         transition: all 0.5s;
     }
     .showLeftListTop:hover{
-        margin-left: 10px;
+        margin-left: calc(100vw / 1920 * 10);
         transform: scale(1.2);
     }
     .leftList{
         position: absolute;
         overflow-y: auto;
         overflow-x: hidden;
-        top: 370px;
-        left: 10px;
-        height: 450px;
+        top: calc(100vw / 1920 * 430);
+        left: calc(100vw / 1920 * 10);
+        height: calc(100vw / 1920 * 450);
         background: rgba(158, 204, 255, 0.3);
         border-radius: 5px;
         box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         -moz-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         transition: all 0.6s;
-        padding-top: 10px;
+        padding-top: calc(100vw / 1920 * 10);
     }
     .leftList::-webkit-scrollbar {
         width: 4px;
@@ -1837,18 +1851,18 @@
         z-index: 1000;
         cursor: pointer;
         position: absolute;
-        top: 380px;
-        left: 190px;
-        width: 16px;
-        height:2px;
+        top: calc(100vw / 1920 * 440);
+        left: calc(100vw / 1920 * 190);
+        width: calc(100vw / 1920 * 16);
+        height:calc(100vw / 1920 * 2);
         background: black;
         transform: rotate(45deg);
     }
     .leftClose:before{
         content:'';
         display:block;
-        width: 16px;
-        height:2px;
+        width: calc(100vw / 1920 * 16);
+        height:calc(100vw / 1920 * 2);
         background: black;
         transform: rotate(-90deg);
     }
@@ -1898,12 +1912,12 @@
         box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         -moz-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
         -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
-        width: 200px;
+        width: calc(100vw / 1920 * 200);
         z-index: 1000;
         top: 35px;
-        left: 10px;
-        margin:30px 0 0 0px;
-        padding: 0 5px;
+        left: calc(100vw / 1920 * 10);
+        margin:calc(100vw / 1920 * 30) 0 0 0px;
+        padding: 0 calc(100vw / 1920 * 5);
     }
     .member{
         color: #409eff;
@@ -1943,18 +1957,23 @@
         padding: 6px 14px !important;
     }
     .logo-outer {
-        width: 38px;
-        height: 38px;
+        width: calc(100vw / 1920 * 38);
+        height: calc(100vw / 1920 * 38);
         border-radius: 6px;
         background-color: white;
         display: inline-block;
         vertical-align: middle;
+        padding: calc(100vw / 1920 * 5);
     }
     .nav-btn span span {
-        font-size: 18px;
-        margin-left: 5px;
+        font-size: calc(100vw / 1920 * 18);
+        margin-left: calc(100vw / 1920 * 5);
         position: relative;
         top: 2px;
+    }
+    .logo-outer img {
+        width: 100%;
+        height: 100%;
     }
     .realTimeChart {
         position: absolute;

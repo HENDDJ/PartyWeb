@@ -455,7 +455,7 @@
         transform: scale(1.1);
     }
     .self-add {
-        margin-left: 3px;
+        margin-left: 3px !important;
         background: url('../../static/img/add.png') !important;
         background-size: cover !important;
     }

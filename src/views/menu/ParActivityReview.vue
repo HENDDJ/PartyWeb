@@ -516,17 +516,6 @@
         width: 120px !important;
     }
 
-    .self-btn {
-        width: 56px !important;
-        height: 28px !important;
-        border-radius: 5px !important;
-    }
-
-    .self-add {
-        background: url('../../../static/img/add.png') !important;
-        background-size: cover !important;
-    }
-
     #vd .el-checkbox__inner {
         margin-left: -100px !important;
     }

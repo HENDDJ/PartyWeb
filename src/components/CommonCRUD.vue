@@ -417,12 +417,13 @@
     .btn-right {
         float: right;
     }
+
+</style>
+<style>
     .clear-float {
         clear: both;
         height: 10px;
     }
-</style>
-<style>
     .common-crud {
         width: calc(100% - 10px);
     }

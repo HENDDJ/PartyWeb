@@ -414,9 +414,6 @@
 </script>
 
 <style scoped>
-    .common-crud {
-        width: calc(100% - 10px);
-    }
     .btn-right {
         float: right;
     }
@@ -424,14 +421,17 @@
         clear: both;
         height: 10px;
     }
-    .handler-btn {
-        float: left;
+</style>
+<style>
+    .common-crud {
+        width: calc(100% - 10px);
     }
     .common-query {
         float: right;
     }
-</style>
-<style>
+    .handler-btn {
+        float: left;
+    }
     .common-query .el-form--inline .el-form-item {
         margin: 0;
     }

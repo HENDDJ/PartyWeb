@@ -34,15 +34,22 @@
                         <el-option v-for="opItem in districtTypeList" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="上级组织"  prop="attachTo">
+                <el-form-item label="审核组织"  prop="attachTo">
                     <el-select v-model="form.attachTo" :disabled="formDisabled">
                         <el-option
-                            v-for="option in zhenList"
+                            v-for="option in zhenReviewList"
                             :key="option.value"
                             :label="option.label"
                             :value="option.value">
                         </el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="上级组织"  prop="orgParent">
+                    <el-cascader
+                        v-model="form.orgParent"
+                        :options="zhenList"
+                        :props="{ value: 'districtId', label: 'districtName', children: 'orgChildren', checkStrictly: true }"
+                        clearable></el-cascader>
                 </el-form-item>
                 <el-form-item label="组织名称" prop="districtName">
                     <el-input v-model="form.districtName" :disabled="disabled"></el-input>
@@ -74,6 +81,7 @@
                 formDisabled:false,
                 submitLoading: false,
                 zhenList:[],
+                zhenReviewList: [], //审核列表
                 districtTypeList:[],
                 user: {},
                 rules: {
@@ -81,26 +89,37 @@
                         { required: true, message: '请选择类别', trigger: 'change' }
                     ],
                     attachTo: [
-                        { required: true, message: '请选择上级组织', trigger: 'change' }
+                        { required: true, message: '请选择审核组织', trigger: 'change' }
                     ],
                     districtName: [
                         { required: true, message: '请输入组织名称', trigger: 'blur'}
                     ],
+                    orgParent: [
+                        { required: true, message: '请选择上级组织', trigger: 'blur'}
+                    ]
                 },
                 sortQuery:[
                     {
-                        name:'attachTo',
+                        name:'orgParent',
                         type:'asc'
                     }
 
                 ],
                 queryColumns:[
                     {
-                        des: '所属组织',
+                        des: '审核组织',
                         name: 'attachTo',
                         type: 'select',
                         visible: true,
-                        options: ''
+                        options: []
+                    },
+                    {
+                        des: '上级组织',
+                        name: 'orgParent',
+                        type: 'cascader',
+                        visible: true,
+                        options: [],
+                        props: { value: 'districtId', label: 'districtName', children: 'orgChildren', checkStrictly: true }
                     },
                     {
                         des: '名称',
@@ -133,6 +152,15 @@
                     this.disabled = false;
                     this.formDisabled = true;
                     this.form = Object.assign({},this.$refs.table.selected[0]);
+                    let temp = [];
+                    let length = this.form.orgParent.length;
+                    if (length > 4) {
+                        for (let i = 4; i < length; i = i + 2) {
+                            temp.push(this.form.orgParent.substring(0,i))
+                        }
+                    }
+                    temp.push(this.form.orgParent)
+                    this.form.orgParent = temp;
                 }
 
             },
@@ -143,6 +171,15 @@
                     this.disabled = true;
                     this.formDisabled = true;
                     this.form =  Object.assign({},this.$refs.table.selected[0]);
+                    let temp = [];
+                    let length = this.form.orgParent.length;
+                    if (length > 4) {
+                        for (let i = 4; i < length; i + 2) {
+                            temp.push(this.form.orgParent.substring(0,i))
+                        }
+                    }
+                    temp.push(this.form.orgParent)
+                    this.form.orgParent = temp;
                 }
             },
             del(){
@@ -163,6 +200,7 @@
                 this.$refs.form.validate((valid) => {
                     if (valid) {
                         this.submitLoading = true;
+                        form.orgParent = form.orgParent[form.orgParent.length - 1];
                         //新增
                         if (form.id == null) {
                             this.$http('POST', `/identity/sysDistrict/`, form).then(() => {
@@ -220,21 +258,20 @@
             },*/
             //查询框下拉项
             showZhenList(user){
-                if(user.sysDistrict.districtLevel==1){
-                    //镇级组织
-                    this.zhenList = [];
-                    this.$http('POST',`identity/sysDistrict/list`,{districtLevel:2},false).then(data => {
-                        data.forEach( item => {
-                            this.zhenList.push( {value:item.districtId , label:item.districtName});
-                        });
-                        this.zhenList.push({value:'01',label:'句容市委'});
-                        this.queryColumns[0].options = this.zhenList;
-                        this.districtTypeList =  LookUp['DistrictType'];
+                let level = user.sysDistrict.districtLevel;
+                let districtId = user.sysDistrict.districtId
+                //镇级组织
+                this.zhenList = [];
+                this.$http('POST',`identity/sysDistrict/list`,{ districtLevel: level + 1, orgParent: districtId },false).then(data => {
+                    data.forEach(item => {
+                        this.zhenReviewList.push({value: item.districtId, label: item.districtName})
                     })
-                }else{
-                    this.queryColumns[0].visible = false;
-                }
-
+                    this.zhenList = data;
+                    this.zhenList.push({districtId: '01',districtName: '  句容市委'});
+                    this.queryColumns[0].options = this.zhenReviewList;
+                    this.queryColumns[1].options = this.zhenList;
+                    this.districtTypeList =  LookUp['DistrictType'];
+                })
             },
             handleTableData(data) {
                 let attachTos = data.map(item => item.attachTo);
@@ -297,8 +334,10 @@
                         colspan: 1
                     }
                 }
-            }
+            },
+            handleChange(value) {
 
+            }
         },
         components: {
             CommonCRUD
@@ -309,7 +348,7 @@
             this.user=JSON.parse(sessionStorage.getItem('userInfo'));
           /*  this.showParentList();*/
             this.showZhenList(this.user);
-            this.queryColumns[2].value = this.user.districtId;
+            this.queryColumns[3].value = this.user.districtId;
         }
     }
 </script>

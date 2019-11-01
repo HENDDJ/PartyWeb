@@ -164,11 +164,15 @@ export default {
         },
         {
             value :2,
-            label :'镇级组织'
+            label :'活动审核党组织'
         },
         {
             value :3,
-            label :'村级组织'
+            label :'活动执行党组织'
+        },
+        {
+            value :4,
+            label :'活动执行党组织'
         },
     ],
     'DistrictType': [

@@ -9,7 +9,7 @@
                         <el-option v-for="opItem in item.options" filterable :value="opItem.value" :label="opItem.label" :key="opItem.value" ></el-option>
                     </el-select>
                     <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'" clearable
-                                 :options="item.options"  @change="handleChange" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf',checkStrictly:true}">
+                                 :options="item.options"  @change="(val) => {handleChange(val, item.name)}" :show-all-levels="false"   :props="item.props">
                     </el-cascader>
                     <el-radio-group v-if="item.type === 'radio'" v-model="queryForm[item.name]"  clearable>
                         <el-radio :label="1">是</el-radio>
@@ -372,14 +372,14 @@
                 this.defaultRequestConfig(path);
                 this.loadTableData(path);
             },
-            handleChange(value) {
+            handleChange(value, fieldName) {
                 if (value.length>0) {
-                    this.form.districtId = value[value.length - 1];
+                    this.queryForm[fieldName] = value[value.length - 1];
                     this.queryFormColumns.filter(item => item.name == 'districtId')[0].value = value[value.length - 1];
                 } else {
-                    this.form.districtId = JSON.parse(sessionStorage.getItem('userInfo')).districtId;
-                    this.queryFormColumns.filter(item => item.name == 'districtId')[0].value =  JSON.parse(sessionStorage.getItem('userInfo')).districtId;
-                    console.log(JSON.parse(sessionStorage.getItem('userInfo')).districtId,"jjj");
+                    let districtId = JSON.parse(sessionStorage.getItem('userInfo')).districtId;
+                    this.queryForm[fieldName] = districtId;
+                    this.queryFormColumns.filter(item => item.name == 'districtId')[0].value = districtId;
                 }
             }
         },

@@ -1371,7 +1371,6 @@
             this.getTreeData();
             this.showTownList();
             this.initMap();
-            console.log(window,"12312");
         }
     }
 </script>

@@ -79,7 +79,8 @@
                             </el-row>
                             <el-row style="margin: 10px 0">
                                 <el-col :span="24">
-                                    <el-form-item label="反馈配置" prop="templateId">
+                                    <el-form-item label="反馈配置" prop="templateId"
+                                                  :rules="[{required: form.newObject.office, message: '请选择反馈材料模板', trigger: 'blur'}]">
                                         <el-select v-model="form.templateId" placeholder="请选择需要反馈的材料">
                                             <el-option
                                                 v-for="item in feedBackOpt"
@@ -193,7 +194,7 @@
         <el-dialog title="配置反馈文件" :visible.sync="feedListVisible" append-to-body :before-close="closeListDia">
             <CommonCRUD ref="table"  :columns="columns" api-root="/identity/feedbackTemplate"  :formColumns="columns">
                 <template slot="header-btn" slot-scope="slotProps">
-                    <el-button class="slot-btn" type="info" plain @click="showTemplateConfig(slotProps.selected)">属性配置</el-button>
+                    <el-button class="slot-btn" type="info" plain @click="showTemplateConfig(slotProps.selected)">反馈项配置</el-button>
                 </template>
             </CommonCRUD>
         </el-dialog>
@@ -217,12 +218,21 @@
 <script>
     import CommonFileUpload from '@/components/FileUpLoad';
     import CommonCRUD from '@/components/CommonCRUD';
+    import LookUp from '@/lookup';
+    import { tansfer } from "../../lookup/transfer";
     export default {
         name: "ParActivityRelease",
         data() {
             let validatePass = (rule, value, callback) => {
                 if (!value.countryside && !value.office) {
                     callback(new Error('请选择对象'));
+                } else {
+                    callback();
+                }
+            };
+            let validateDate = (rule, value, callback) => {
+                if (!this.monVal) {
+                    callback(new Error('请选择截止日期'));
                 } else {
                     callback();
                 }
@@ -269,6 +279,7 @@
                 rules: {
                     title: [{required: true, message: '请输入任务名称', trigger: 'blur'}],
                     type: [{required: true, message: '请输入任务类型', trigger: 'blur'}],
+                    monVal: [{required: true, validator: validateDate, trigger: 'blur'}],
                     newObject: [{validator: validatePass, trigger: 'blur'}]
                 },
                 actiityList:[],
@@ -283,7 +294,7 @@
                     {
                         name: "templateId",
                         type: 'string',
-                        des: '所属类ID',
+                        des: '所属模板ID',
                         width: '300',
                         disabled: true,
                         value: ''
@@ -300,8 +311,11 @@
                     },
                     {
                         name: "type",
-                        type: 'string',
+                        type: 'select',
                         des: "反馈项类型",
+                        options: LookUp['TemplateItemType'],
+                        transferType: 'lookup',
+                        lookupKey: 'TemplateItemType'
                     }
                 ],
                 queryColumns: [
@@ -517,6 +531,7 @@
         created() {
             this.getActivity();
             this.showFeedList();
+            tansfer(this.propertyColumns)
         },
     }
 </script>

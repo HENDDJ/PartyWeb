@@ -23,11 +23,9 @@
                 </el-timeline>
             </viewer>
         </el-col>
-
         <el-col :span="6" >
             <el-button  v-if="TvPic.length !== 0" type="text" @click="TvMore">更多</el-button>
         </el-col>
-
     </el-row>
     <el-row class="detail-row">
         <el-col :span="4">手机截图：</el-col>
@@ -122,7 +120,6 @@
                                     :key="index"
                                     style="width: 100%"
                                 >
-
                             </el-timeline-item>
                         </el-timeline>
                     </viewer>
@@ -204,8 +201,8 @@
                         type: 'error',
                         message: '手机截图拉取失败'+res
                     });
-                    console.log(res)
                 });
+
             },
             imgTF(val){
                 if (val.indexOf("http" )== -1) {

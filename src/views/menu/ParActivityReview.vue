@@ -56,7 +56,7 @@
                         <h1>任务详情</h1>
                     </div>
                     <transition name="el-zoom-in-center" mode="out-in">
-                        <div v-show="activityDetailLoading" class="right-detail" v-if="tableData.length!=0">
+                        <div v-if="activityDetailLoading" class="right-detail" v-show="tableData.length!=0">
                             <el-row class="detail-row">
                                 <el-col :span="4">任务名称：</el-col>
                                 <el-col :span="8" style="color: #25252582">{{activityDetail.title}}&nbsp;</el-col>
@@ -74,66 +74,21 @@
                                 <el-col :span="6" style="color: red;font-weight: bold">{{activityDetail.score || 0}}分&nbsp;</el-col>
                             </el-row>
                             <el-row class="detail-row">
+                                <el-col :span="4">附件清单：</el-col>
+                                <el-col :span="15">
+                                    <CommonFileUpload :value="activityDetail.fileUrls" @getValue="activityDetail.fileUrls = $event" :disabled="true"></CommonFileUpload>
+                                </el-col>
+                            </el-row>
+                            <el-row class="detail-row">
                                 <el-col :span="4">工作要求：</el-col>
                                 <el-col :span="16" style="color: #25252582">{{activityDetail.context}}&nbsp;</el-col>
                             </el-row>
-                            <el-row class="detail-row">
-                                <el-col :span="4">电视截图：</el-col>
-                                <el-col :span="8" v-if="TvPic.length === 0" style="color: rgba(37, 37, 37, 0.51)">
-                                    暂无截图记录！
-                                </el-col>
-                                <el-col :span="8" v-else style="padding-top: 8px;">
-                                    <viewer :images="TvPicFull">
-                                        <el-timeline>
-                                            <el-timeline-item
-                                                v-for="(activity, index) in TvPic"
-                                                :key="index"
-                                                :timestamp="activity.timestamp|dateFormat"
-                                                placement="top"
-                                                v-if="index<2">
-                                                <img
-                                                    :src="TvPicFull[index]"
-                                                    :key="index"
-                                                    style="width: 220px"
-                                                >
-                                            </el-timeline-item>
-                                        </el-timeline>
-                                    </viewer>
-
-                                </el-col>
-                                <el-col :span="6" >
-                                    <el-button  v-if="TvPic.length !== 0" type="text" @click="TvMore" style="padding-left: 95px">更多</el-button>
-                                </el-col>
-
+                            <el-row class="detail-row"  v-if="activityDetail.objectType==='2'">
+                                <el-col :span="4">反馈要求：</el-col>
+                                <el-col :span="16" style="color: #25252582">{{activityDetail.templateItem}}&nbsp;</el-col>
                             </el-row>
-                            <el-row class="detail-row">
-                                <el-col :span="4">手机截图：</el-col>
-                                <el-col :span="8" v-if="PhonePic.length === 0" style="color: rgba(37, 37, 37, 0.51)">
-                                    暂无截图记录！
-                                </el-col>
-                                <el-col :span="8" v-else style="padding-top: 8px;">
-                                    <viewer :images="PhonePicFull">
-                                        <el-timeline>
-                                            <el-timeline-item
-                                                v-for="(activity, index) in PhonePic"
-                                                :key="index"
-                                                :timestamp="activity.timestamp|dateFormat"
-                                                placement="top"
-                                                v-if="index<2">
-                                                <img
-                                                    :src="PhonePicFull[index]"
-                                                    :key="index"
-                                                    style="width: 220px;height: 150px"
-                                                >
-                                            </el-timeline-item>
-                                        </el-timeline>
-                                    </viewer>
-                                </el-col>
-                                <el-col :span="6" >
-                                    <el-button  v-if="PhonePic.length !== 0" type="text" @click="PhonePicShow" style="padding-left: 95px">更多</el-button>
-                                </el-col>
-                            </el-row>
-
+                            <PictureShot :picData="picQuery" v-if="activityDetail.objectType==='1'"></PictureShot>
+                            <FeedBackFile :fileData="fileQuery" v-if="activityDetail.objectType==='2'"></FeedBackFile>
                             <el-row class="detail-row">
                                 <el-col :span="4">审核意见：</el-col>
                                 <el-col :span="18">
@@ -152,7 +107,6 @@
                                 </el-col>
                             </el-row>
 
-                            <!--<PictureShot :picData="this.activityDetail"></PictureShot>-->
                         </div >
                         <div v-if="tableData.length===0">暂无待审核任务</div>
                     </transition>
@@ -160,77 +114,14 @@
                 <div style="width: 2%"></div>
             </el-row>
         </div>
-
-        <el-dialog
-            v-if="picDetail"
-            title="更多图片"
-            :visible.sync="picDetail"
-            width="820px"
-            align="left"
-            :modal-append-to-body='false'
-            :append-to-body="true"
-            :before-close="picDetailClose">
-            <el-row>
-                <el-col :span="3">
-                    &nbsp;
-                </el-col>
-                <el-col :span="18">
-                    <viewer :images="TvPicFull">
-                    <el-timeline>
-                        <el-timeline-item
-                            v-for="(activity, index) in TvPic"
-                            :key="index"
-                            :timestamp="activity.timestamp|dateFormat"
-                            placement="top">
-                            <img
-                                :src="TvPicFull[index]"
-                                :key="index"
-                                style="width: 100%"
-                            >
-
-                        </el-timeline-item>
-                    </el-timeline>
-                    </viewer>
-                </el-col>
-            </el-row>
-
-        </el-dialog>
-        <el-dialog
-            v-if="picPhoneDetail"
-            title="更多图片"
-            :visible.sync="picPhoneDetail"
-            width="820px"
-            align="left"
-            :modal-append-to-body='false'
-            :append-to-body="true"
-            :before-close="picPhoneDetailClose">
-            <el-row>
-                <el-col :span="3">
-                    &nbsp;
-                </el-col>
-                <el-col :span="18">
-                    <viewer :images="PhonePicFull">
-                        <el-timeline>
-                            <el-timeline-item
-                                v-for="(activity, index) in PhonePic"
-                                :key="index"
-                                :timestamp="activity.timestamp|dateFormat"
-                                placement="top">
-                                <img :src="PhonePicFull[index]"
-                                    :key="index"
-                                    style="width: 100%;">
-                            </el-timeline-item>
-                        </el-timeline>
-                    </viewer>
-                </el-col>
-            </el-row>
-
-        </el-dialog>
-
     </section>
 </template>
 
 <script>
+    import FeedBackFile from '@/components/FeedBackFile';
+    import PictureShot from '@/components/PictureShot';
+    import CommonFileUpload from '@/components/FileUpLoad';
+
     export default {
         name: "ParActivityReview",
         data(){
@@ -246,12 +137,6 @@
                 activityDetailLoading:false,
                 queryForm:{attachTo: ""},
                 activityDetail: {title:''},
-                TvPic: [],
-                TvPicFull:[],
-                picDetail:false,
-                PhonePic:[],
-                PhonePicFull:[],
-                picPhoneDetail:false,
                 //审核页面
                 checkShow:false,
                 //审核数据
@@ -296,158 +181,50 @@
                         if(this.tableData[0]){
                             this.details(this.tableData[0])
                         }
-
                     }
                 ).catch(res => {
                     this.loading = false;
+                });
+                this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
+                    this.$store.commit("getCheckNumber",data);
                 });
             },
             details(item){
                 this.activityDetailLoading = false;
                 this.activityDetail = item;
-                this.TvPic = [];
-                this.PhonePic = [];
-                this.PhonePicFull = [];
-                this.TvPicFull = [];
-                let path = `/identity/parPictureInfro/page?page=0&size=100&sort=CreateTime,desc`;
-                let form = {organizationId:item.districtId,studyContent:item.activityId};
-                let phonePath = `/identity/parActivityFeedback/phonePage?page=0&size=100&sort=time,desc`;
-                let phoneForm = {userId:item.districtId,snId:item.activityId};
-                this.$http("Post",path,form,false).then(data=>{
-                    data.content.forEach(item=>{
-                        let formItem = {};
-                        formItem.timestamp =item.createTime;
-                        formItem.imgurl = item.imageURL;
-                        this.TvPic.push(formItem);
-                        this.TvPicFull.push(this.imgTF(item.imageURL));
-                    })
-                    //拉取手机端截图
-                    this.$http("Post",phonePath,phoneForm,false).then((data)=>{
-                        if (data.content.length && data.content.length > 0) {
-                            for (let i = 0; i < data.content.length; i++) {
-
-                            if (data.content[i].imageUrl) {
-                                data.content[i].imageUrl.forEach((item) => {
-                                    item.time = data.content[i].time;
-                                    let formItem = {};
-                                    formItem.timestamp = data.content[i].time;
-                                    formItem.imgurl = data.content[i].imageUrl;
-                                    this.PhonePic.push(formItem);
-                                    this.PhonePicFull.push(this.imgTFPhone(item));
-                                });
-                            }
-                        }}
-
-                        this.activityDetailLoading = true;
-                    });
-                }).catch(()=>{
-                    this.$message({
-                        type: 'warning',
-                        message: '电视截图拉取失败'
-                    })
-                });
-
-                this.checkForm = {}
+                setTimeout(()=>{
+                    this.activityDetailLoading = true;
+                },200);
+                this.checkForm = {};
                 //审核内容赋值
-                this.checkForm.activityID = item.activityId
+                this.checkForm.activityID = item.activityId;
                 //长ID
-                this.checkForm.organizationId = item.districtId
+                this.checkForm.organizationId = item.districtId;
                 //短ID
-                this.checkForm.districtId = item.organizationId
+                this.checkForm.districtId = item.organizationId;
 
-                this.checkForm.activityTime = item.month
-                this.checkForm.score = item.score
-                this.checkForm.type = '基本活动'
-                this.checkForm.createTime = new Date().Format('yyyy-MM-ddTHH:mm:ss')
+                this.checkForm.activityTime = item.month;
+                this.checkForm.score = item.score;
+                this.checkForm.type = '基本活动';
+                this.checkForm.createTime = new Date().Format('yyyy-MM-ddTHH:mm:ss');
             },
-            imgTF(val){
-                if (val.indexOf("http" )== -1) {
-                    return `http://122.97.218.162:18106/JRPartyService/JRPartyScreenshot/${val}`
-                }else {
-                    return val;
-                }
-            },
-            imgTFPhone(item){
-                let imgUrl = item.imageUrl;
-                if (imgUrl.indexOf("http" )== -1) {
-                    if(imgUrl[0] === '.'){
-                        if(new Date(item.time)<new Date("2018-11-23T00:00:00")){
-                            return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTake/${item.imageUrl}`
-                        }else {
-                            return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
-                        }
-                    }else {
-                        let time1 = item.time.toString().split("T")[0]
-                        let time2 =  Number(time1.split("-")[0])
-                        let time3 = Number(time1.split("-")[1])
-                        let time4 = Number(time1.split("-")[2])
-                        let time5 = time3.toString()+time4.toString()
-                        if(new Date(item.time)<new Date("2018-11-23T00:00:00")){
-                            return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTake/${item.imageUrl}`
-                        }else {
-                            return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${time2}/${time5}/${item.userId}/${imgUrl}`
-                        }
-                    }
-                }else {
-                    return item.imageUrl
-                }
-            },
-            TvMore(){
-                this.picDetail = true
-            },
-            PhonePicShow(){
-                this.picPhoneDetail = true
-            },
-            //关闭详情
-            picDetailClose() {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        this.picDetail = false;
-                        done();
-                    })
-                    .catch(_ => {
-                    });
-            },
-            //关闭详情
-            picPhoneDetailClose() {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        this.picPhoneDetail = false;
-                        done();
-                    })
-                    .catch(_ => {
-                    });
-            },
-            //关闭详情
-            checkShowClose() {
-                this.$confirm('确认关闭？')
-                    .then(_ => {
-                        this.checkShow = false;
-                        done();
-                    })
-                    .catch(_ => {
 
-                    });
-            },
             //审核
             exam(){
                 this.textarea = ''
                 this.checkShow = true
-
             },
             pass(){
-                this.checkForm.status = "2"
+                this.checkForm.status = "2";
                 let path = `/identity/parActivityPerform/check`;
                 this.$http("Post",path,this.checkForm,false).then((data)=>{
                     this.$message({
                         type: 'success',
                         message: '审核通过成功'
-                    })
+                    });
                     let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                     this.loadTableData(path);
-                    this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
-                        this.$store.commit("getCheckNumber",data);
-                    });
+
                 }).catch(_=>{
                     this.$message({
                         type: 'warning',
@@ -462,12 +239,10 @@
                     this.$message({
                         type: 'success',
                         message: '审核未通过成功'
-                    })
+                    });
                     let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                     this.loadTableData(path);
-                    this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
-                        this.$store.commit("getCheckNumber",data);
-                    });
+
                 }).catch(_=>{
                     this.$message({
                         type: 'warning',
@@ -476,14 +251,34 @@
                 })
             },
             passClose(){
-                this.textarea = ''
+                this.textarea = '';
                 this.checkShow = false
             }
         },
-        created() {
-                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
-                this.loadTableData(path)
+        components:{
+            FeedBackFile,
+            CommonFileUpload,
+            PictureShot
         },
+        computed:{
+            fileQuery() {
+                return {
+                    activityObject:this.activityDetail,
+                }
+            },
+            picQuery() {
+                return {
+                    activityId: this.activityDetail.activityId,
+                    districtId: this.activityDetail.districtId,
+                }
+
+            },
+        },
+        created() {
+             let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+            this.loadTableData(path)
+        },
+
         filters:{
             dateFormat(val){
                 return val.split("T")[0]+" "+val.split("T")[1]

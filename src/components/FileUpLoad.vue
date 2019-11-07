@@ -33,17 +33,14 @@
                 handler: function () {
                     if (!this.value) {
                         this.files = [];
-                        console.log("不处理文件字符串")
-
                         return;
                     }
-                    console.log("处理文件字符串")
                     this.files = [];
                     this.value.split(',').forEach(item => {
                         if (!item.split("&")[1]) {
-                            this.files.push({name: item, res: `http://122.97.218.162:18006/JRPartyService/Upload/Activity/${item}`, active: false})
+                            this.files.push({name: item, path: `http://122.97.218.162:18006/JRPartyService/Upload/Activity/${item}`, res: `http://122.97.218.162:18006/JRPartyService/Upload/Activity/${item}`, active: false})
                         } else {
-                            this.files.push({name: item.split("&")[1], res: item.split("&")[0], active: false})
+                            this.files.push({name: item.split("&")[1],path: item.split("&")[0], res: item.split("&")[0], active: false});
                         }
                     })
                 }
@@ -70,13 +67,13 @@
                 this.$http('POST', '/zuul/identity/accessory/', formData, false).then(
                     res => {
                         this.files.push({name: res.name, path: res.path, active: false});
-                        this.$emit('getValue', this.files.map(item => item.path + '&' +item.name).join(','));
+                        let value = this.files.map(item => {return item.path + '&' +item.name}).join(",");
+                        this.$emit('getValue', value);
                     }
                 );
             },
             remove(file, files) {
                 let str = files.map(item => item.path + '&' +item.name).join(',');
-                console.log("更新的文件字符串", str);
                 this.$emit('getValue', str || null);
             },
             downLoad(file){

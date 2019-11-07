@@ -74,33 +74,37 @@
                                 <el-col :span="6" style="color: red;font-weight: bold">{{activityDetail.score || 0}}分&nbsp;</el-col>
                             </el-row>
                             <el-row class="detail-row">
+                                <el-col :span="4">附件清单：</el-col>
+                                <el-col :span="15">
+                                    <CommonFileUpload :value="activityDetail.fileUrls" @getValue="activityDetail.fileUrls = $event" :disabled="true"></CommonFileUpload>
+                                </el-col>
+                            </el-row>
+                            <el-row class="detail-row">
                                 <el-col :span="4">工作要求：</el-col>
                                 <el-col :span="16" style="color: #25252582">{{activityDetail.context}}&nbsp;</el-col>
                             </el-row>
-                            <el-row class="detail-row">
+                            <el-row class="detail-row"  v-if="activityDetail.objectType==='2'">
                                 <el-col :span="4">反馈要求：</el-col>
                                 <el-col :span="16" style="color: #25252582">{{activityDetail.templateItem}}&nbsp;</el-col>
                             </el-row>
-                            <el-row class="detail-row" v-for="item in feedBackItemList">
+                            <el-row class="detail-row" v-for="item in feedBackItemList" :key="item.id"  v-if="activityDetail.objectType==='2'">
                                 <el-col :span="4">{{item.name}}：</el-col>
-                                <el-col :span="16" style="color: #25252582" v-if="item.type === 'String' ">{{item.value}}</el-col>
+                                <el-col :span="16" style="color: #25252582" v-if="item.type === 'String' ">
+                                    <el-input  v-model="item.value" @change="updateFile(item,item.value)">{{item.value}}</el-input>
+                                </el-col>
                                 <el-col :span="16" style="color: #25252582" v-if="item.type === 'File' ">
                                     <CommonFileUpload :value="item.value" @getValue="($event) => {updateFile(item, $event)}"></CommonFileUpload>
                                 </el-col>
                                 <el-col :span="16" style="color: #25252582" v-if="item.type === 'Image' ">
-                                    <CommonImageUpload :value="item.value"   @getValue="($event) => {updateFile(item, $event)}">
-
-                                    </CommonImageUpload>
+                                    <CommonImageUpload :value="item.value"   @getValue="($event) => {updateFile(item, $event)}"></CommonImageUpload>
                                 </el-col>
                             </el-row>
-
-                            <el-row>
+                            <PictureShot :picData="picQuery" v-if="activityDetail.objectType==='1'"></PictureShot>
+                            <el-row v-if="activityDetail.objectType==='2'">
                                 <el-col :span="22" style="text-align: right">
-                                    <el-button type="primary" @click="pass">通过</el-button>
-                                    <el-button type="danger" @click="unPass">驳回</el-button>
+                                    <el-button type="primary" @click="submit">提交</el-button>
                                 </el-col>
                             </el-row>
-
                         </div >
                         <div v-if="tableData.length===0">暂无待执行任务</div>
                     </transition>
@@ -108,15 +112,13 @@
                 <div style="width: 2%"></div>
             </el-row>
         </div>
-
-
-
     </section>
 </template>
 
 <script>
     import CommonFileUpload from '@/components/FileUpLoad';
     import CommonImageUpload from '@/components/UpLoad';
+    import PictureShot from '@/components/PictureShot';
 
     export default {
         name: "ParActivityReview",
@@ -133,9 +135,6 @@
                 activityDetailLoading:false,
                 queryForm:{},
                 activityDetail: {title:''},
-                //审核数据
-                checkForm:{},
-                test:{},
                 user:{},
                 feedBackItemList:[],
             }
@@ -185,67 +184,27 @@
             details(item){
                 this.activityDetailLoading = false;
                 this.activityDetail = item;
-                this.activityDetailLoading = true;
-                this.checkForm = {};
-                //审核内容赋值
-                this.checkForm.activityID = item.activityId;
-                //长ID
-                this.checkForm.organizationId = item.districtId;
-                //短ID
-                this.checkForm.districtId = item.organizationId;
-
-                this.checkForm.activityTime = item.month;
-                this.checkForm.score = item.score;
-                this.checkForm.type = '基本活动';
-                this.checkForm.createTime = new Date().Format('yyyy-MM-ddTHH:mm:ss');
-                this.showFeedBackItem(item.id);
+                if(item.objectType==='2'){
+                    this.showFeedBackItem(item.id);
+                }
+                setTimeout(()=>{
+                    this.activityDetailLoading = true;
+                },200);
             },
-            //审核
-            exam(){
-                this.textarea = ''
-            },
-            pass(){
-                this.checkForm.status = "2"
-                let path = `/identity/parActivityPerform/check`;
-                this.$http("Post",path,this.checkForm,false).then((data)=>{
+            submit(){
+                this.$http("Post",`/identity/parActivityObject/officeExecute/${this.activityDetail.id}id`,false).then((data)=>{
                     this.$message({
                         type: 'success',
-                        message: '审核通过成功'
-                    })
+                        message: '提交成功'
+                    });
                     let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                     this.loadTableData(path);
-                    this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
-                        this.$store.commit("getCheckNumber",data);
-                    });
                 }).catch(_=>{
                     this.$message({
                         type: 'warning',
-                        message: '审核通过失败，请检查网络'
+                        message: '提交失败，请重新提交！'
                     })
                 })
-            },
-            unPass(){
-                this.checkForm.status = "3";
-                let path = `/identity/parActivityPerform/check`;
-                this.$http("Post",path,this.checkForm,false).then((data)=>{
-                    this.$message({
-                        type: 'success',
-                        message: '审核未通过成功'
-                    })
-                    let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
-                    this.loadTableData(path);
-                    this.$http("get",`identity/parActivityObject/checkNumber/organizationId${JSON.parse(sessionStorage.getItem("userInfo")).districtId}`,false).then( data=>{
-                        this.$store.commit("getCheckNumber",data);
-                    });
-                }).catch(_=>{
-                    this.$message({
-                        type: 'warning',
-                        message: '审核未通过失败，请检查网络'
-                    })
-                })
-            },
-            passClose(){
-                this.textarea = ''
             },
             //显示反馈内容
             showFeedBackItem(objectId){
@@ -255,15 +214,22 @@
             },
             updateFile(item, value){
                 item.value = value;
-                console.log(value);
                 this.$http('PUT',`/identity/feedbackItemValue/${item.id}id`,item,false).then({
-
                 })
             }
         },
         components:{
             CommonFileUpload,
-            CommonImageUpload
+            CommonImageUpload,
+            PictureShot
+        },
+        computed:{
+            picQuery() {
+                return {
+                    districtId: this.activityDetail.districtId,
+                    activityId: this.activityDetail.activityId
+                }
+            },
         },
         created() {
             this.user = JSON.parse(sessionStorage.getItem('userInfo'));

@@ -82,8 +82,9 @@
                 item.active = false;
             },
             deleteImg(index) {
-                this.images.splice(index);
-                this.$emit('getValue', this.images.map(item => item.path).join(','));
+                this.images.splice(index,1);
+                let value = this.images.map(item => item.path).join(',');
+                this.$emit('getValue', value);
             },
             zoomIn(path) {
                 this.dialogUrl = path;

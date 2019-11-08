@@ -82,7 +82,8 @@
         },
         mounted() {
             if (this.disabled) {
-                document.getElementsByClassName('el-upload--text')[0].style.display = 'none';
+                let upload = document.getElementsByClassName('el-upload--text')[0];
+                upload.parentNode.removeChild(upload)
             }
         }
     }

@@ -369,7 +369,8 @@
                             <el-table-column
                                 prop="districtName"
                                 label="组织名称"
-                                align="center">
+                                align="center"
+                                width="105">
                             </el-table-column>
                             <el-table-column
                                 label="状态"
@@ -674,7 +675,7 @@
             //镇详情
             townDetailClick(val) {
                 this.townTitle = val.tn
-                let path = `${this.apiRootObject}/list`;
+                let path = `${this.apiRootObject}/list?sort=status,desc&organizationId,asc`;
                 let query = {
                     attachTo: val.townCode,
                     activityId: this.detailForm.id
@@ -693,7 +694,6 @@
                         }
                     }
                 });
-
             },
             handleClose() {
                 this.$confirm('确认关闭？')
@@ -784,6 +784,11 @@
                 this.$http('POST', path, query, false).then(
                     data => {
                         this.trackTable = data;
+                        if(this.detailForm.objectType==="2"){
+                            this.trackTable.forEach(item=>{
+                                item.finishRatio = this.detailForm.activityOfficeProgresses[item.townCode];
+                            })
+                        }
                         this.pageableTrack.total = data.totalElements;
                         setTimeout(() => {
                             this.detailLoading = true;

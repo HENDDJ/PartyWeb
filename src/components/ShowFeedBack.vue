@@ -1,19 +1,19 @@
 <template>
     <div class="showFeedBack">
-        <el-card v-for="item in feedBackItemList" :key="item.id"  shadow="hover" >
+        <el-card v-for="item in feedBackItemList" :key="item.id"  shadow="hover" style="margin-bottom: 5px;">
             <div slot="header" class="clearfix">
                 <span style="font-size: 15px;font-weight: bold">{{item.name}}</span>
             </div>
-            <CommonFileUpload :value="item.value" @getValue="item.value = $event" :disabled = "true"  v-if="item.type === 'File'&&item.value " style="margin-top: -20px;margin-bottom: 15px"></CommonFileUpload>
-            <div v-if="item.type === 'Image'&&item.value  ">
+            <CommonFileUpload :value="item.value" @getValue="item.value = $event" :disabled = "true"  v-if="item.type === 'File'&&item.value" ></CommonFileUpload>
+            <div v-if="item.type === 'Image'&& item.value  ">
                 <el-carousel  type="card" arrow="always" height="150px" :autoplay=false>
-                    <el-carousel-item v-for="sub in item.value.indexOf(',')>0 ? item.value.split(',') : item.value " :key="sub" v-if="item.value">
+                    <el-carousel-item v-for="sub in item.value.split(',')" :key="sub" v-if="item.value">
                         <img :src=sub style="width: 100%;height: 100%;">
                     </el-carousel-item>
                 </el-carousel>
             </div>
             <div v-if="item.type === 'String'&&item.value " style="margin: 20px;" >{{item.value}}</div>
-            <div v-if="!item.value"  style="margin: 20px;">暂无内容</div>
+            <div v-if="!item.value"  style="margin: 10px 20px;">暂无内容</div>
         </el-card>
     </div>
 </template>

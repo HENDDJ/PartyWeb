@@ -185,4 +185,14 @@ export default {
             label :'机关'
         }
     ],
+    'TemplateItemType': [{
+        label: '常规(标题、时间等)',
+        value: 'String'
+    },{
+        label: '图片',
+        value: 'Image'
+    },{
+        label: '文件(Word、Pdf等)',
+        value: 'File'
+    }]
 }

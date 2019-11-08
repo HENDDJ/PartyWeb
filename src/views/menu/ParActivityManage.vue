@@ -206,8 +206,13 @@
                                     </template>
                                 </el-col>
                             </el-row>
+                            <el-row class="detail-row"  v-if="detailForm.objectType==='2'">
+                                <el-col :span="4">反馈要求：</el-col>
+                                <el-col :span="16" style="color: #25252582">{{detailForm.templateItem}}&nbsp;</el-col>
+                            </el-row>
+                            <PictureShot :picData="picQuery" v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.objectType==='1')"  ></PictureShot>
+                            <FeedBackFile :fileData="fileQuery" v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.objectType==='2')"></FeedBackFile>
                             <el-row class="detail-row">
-                                <PictureShot v-if="roleCode === 'COUNTRY_SIDE_ACTOR'"  :picData="picQuery"></PictureShot>
                                 <el-col v-if="roleCode !== 'COUNTRY_SIDE_ACTOR'" :span="4" >进度跟踪：</el-col>
                                 <el-col v-if="roleCode === 'CITY_LEADER'" :span="18">
                                     <el-table
@@ -317,7 +322,7 @@
                                         <el-table-column
                                             label="截图"
                                             align="center"
-                                            :show-overflow-tooltip="true">
+                                            :show-overflow-tooltip="true" v-if="detailForm.objectType==='1'">
                                             <template slot-scope="scope">
                                                 <el-tooltip class="item" effect="dark" content="电视截图" placement="top" :hide-after="1000" :enterable="false">
                                                     <el-button type="text" icon="el-icon-monitor" @click="getTV(scope.row)"></el-button>
@@ -325,6 +330,14 @@
                                                 <el-tooltip class="item" effect="dark" content="手机截图" placement="top" :hide-after="1000" :enterable="false">
                                                     <el-button type="text" icon="el-icon-mobile" @click="getPhone(scope.row)"></el-button>
                                                 </el-tooltip>
+                                            </template>
+                                        </el-table-column>
+                                        <el-table-column
+                                            label="文件"
+                                            align="center"
+                                            :show-overflow-tooltip="true" v-if="detailForm.objectType==='2'">
+                                            <template slot-scope="scope">
+                                                <el-link type="primary" :underline="false" @click="getFeedBack(scope.row)">详情</el-link>
                                             </template>
                                         </el-table-column>
                                     </el-table>
@@ -378,7 +391,7 @@
                             <el-table-column
                                 label="截图"
                                 align="center"
-                                :show-overflow-tooltip="true">
+                                :show-overflow-tooltip="true" v-if="detailForm.objectType==='1'">
                                 <template slot-scope="scope">
                                     <el-tooltip class="item" effect="dark" content="电视截图" placement="top" :hide-after="1000" :enterable="false">
                                         <el-button type="text" icon="el-icon-monitor" @click="getTV(scope.row)"></el-button>
@@ -386,6 +399,14 @@
                                     <el-tooltip class="item" effect="dark" content="手机截图" placement="top" :hide-after="1000" :enterable="false">
                                         <el-button type="text" icon="el-icon-mobile" @click="getPhone(scope.row)"></el-button>
                                     </el-tooltip>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                label="文件"
+                                align="center"
+                                :show-overflow-tooltip="true" v-if="detailForm.objectType==='2'">
+                                <template slot-scope="scope">
+                                    <el-link type="primary" :underline="false" @click="getFeedBack(scope.row)">详情</el-link>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -396,7 +417,7 @@
                         <h4 style="text-align: left;line-height: 2;display: inline-block" v-if="timeLines[0] || timeLines[1] ">会议时间：<a style="font-weight: 100;color: #73767c">{{timeLines[1]|dateServer}} — {{timeLines[0]|dateServer}}</a></h4>
                         <h4 style="text-align: right;line-height: 2;display: inline-block;margin-left: 12%" v-if="timeLines[0] && timeLines[1] ">时长：<a style="font-weight: 100;color: #73767c">{{timeLength}}</a></h4>
                         </div>
-                        <viewer :images="PicFull">
+                        <viewer :images="PicFull" v-if="detailForm.objectType==='1'">
                             <el-timeline
                                 v-loading="picLoading"
                                 element-loading-text="图片加载中"
@@ -413,10 +434,11 @@
                                 </el-timeline-item>
                             </el-timeline>
                         </viewer>
-                        <div v-if="PicFull.length === 0 && !picLoading" style="text-align: center">
+                        <div v-if="PicFull.length === 0 && !picLoading && (detailForm.objectType==='1')" style="text-align: center">
                             <img style="margin: 0 auto" src="/static/img/nodata.png" width="300" height="300" />
                             <p style="text-align: center">&emsp;&emsp;&emsp;暂无图片</p>
                         </div>
+                        <ShowFeedBack :fileData="showFileQuery" v-if="detailForm.objectType==='2'&& feedFile"></ShowFeedBack>
                     </el-col>
                 </el-row>
             </el-dialog>
@@ -429,6 +451,8 @@
     import LookUp from '@/lookup';
     import CommonFileUpload from '@/components/FileUpLoad';
     import PictureShot from '@/components/PictureShot';
+    import FeedBackFile from '@/components/FeedBackFile';
+    import ShowFeedBack from '@/components/ShowFeedBack';
 
     export default {
         name: "ParActivityManage",
@@ -555,7 +579,9 @@
                 //图片时间
                 timeLines:[],
                 //手机截图或电视截图，判断时间是否显示
-                phoneOrTv:true
+                phoneOrTv:true,
+                feedFile:true,//用于显示机关详情时，无法动态触发组件内的方法
+                feedBackObject:{},
             }
         },
         watch: {
@@ -575,13 +601,22 @@
                     activityId: this.detailForm.activityId
                 }
             },
+            fileQuery() {
+                return {
+                    objectId:this.detailForm.id,
+                }
+            },
+            showFileQuery(){
+                return {
+                    objectId:this.feedBackObject.id,
+                }
+            },
             //会议时常
             timeLength(){
                 if(this.timeLines[0]&&this.timeLines[1]){
                     let sec1=parseInt(this.timeLines[0].substr(11,2))*60*60+parseInt(this.timeLines[0].substr(14,2))*60+parseInt(this.timeLines[0].substr(17,2));
                     let sec2=parseInt(this.timeLines[1].substr(11,2))*60*60+parseInt(this.timeLines[1].substr(14,2))*60+parseInt(this.timeLines[0].substr(17,2));
                     let interval = Math.abs(sec2-sec1)
-                    console.log(interval)
                     let length = ''
                     if(interval/3600>=1){
                         length = length+parseInt(interval/3600)+':'+parseInt((interval%3600)/60)
@@ -595,11 +630,12 @@
         },
         components: {
             CommonFileUpload,
-            PictureShot
+            PictureShot,
+            FeedBackFile,
+            ShowFeedBack
         },
         methods: {
             showVideo(data) {
-                console.log(data)
             },
             //选择radio时触发
             radioChoose(val) {
@@ -624,7 +660,6 @@
 
                     }
                 ).catch((res) => {
-                    console.log(res)
                     this.$message({
                         type: 'warning',
                         message: '视频信息拉取失败'
@@ -651,9 +686,14 @@
                 this.PicFull = [];
                 this.loadTownTable(path, query).then(data => {
                     if (data.length > 0) {
-                        this.getTV(data[0]);
+                        if(this.detailForm.objectType==='1'){
+                            this.getTV(data[0]);
+                        }else if(this.detailForm.objectType==='2'){
+                            this.getFeedBack(data[0]);
+                        }
                     }
-                })
+                });
+
             },
             handleClose() {
                 this.$confirm('确认关闭？')
@@ -698,7 +738,6 @@
                         activityId: this.detailForm.activityId
                     };
                     this.$http("POST", path, query, false).then(data => {
-                        console.log(data,"ss");
                         this.detailForm.status = data.status;
                         setTimeout(() => {
                             this.detailLoading = true;
@@ -944,7 +983,6 @@
 
                             }).catch(res => {
                             this.dialogVisible = true;
-                            console.log(res)
                             this.$message({
                                 type: 'error',
                                 message: '上传文件失败'
@@ -1001,7 +1039,7 @@
                 return Math.floor(distance/(24*3600*1000))
             },
             getTV(item){
-                this.phoneOrTv = true
+                this.phoneOrTv = true;
                 if (!this.townDetailVis) {
                     this.townDetailVis = true;
                 }
@@ -1052,7 +1090,6 @@
                     }
                     if (data.content.length && data.content.length > 0) {
                         for (let i = 0; i < data.content.length; i++) {
-
                             if (data.content[i].imageUrl) {
                                 data.content[i].imageUrl.forEach((item) => {
                                     item.time = data.content[i].time;
@@ -1065,13 +1102,26 @@
                             }
                         }}
                     this.picLoading = false;
-
                 }).catch(()=>{
                     this.$message({
                         type: 'error',
                         message: '手机截图拉取失败'
                     });
                     this.picLoading = false;
+                });
+            },
+            getFeedBack(item){
+                this.phoneOrTv = false;
+                this.feedFile = false;
+                if (!this.townDetailVis) {
+                    this.townDetailVis = true;
+                }
+                this.picTitle = `${item.districtName}--${this.detailForm.title}`;
+                this.picLoading = true;
+                this.feedBackObject = item;
+               // this.detailForm = item;
+                setTimeout(()=>{
+                    this.feedFile = true;
                 });
             },
             imgTF(val){
@@ -1107,9 +1157,11 @@
                     return item.imageUrl
                 }
             },
+
             dateFormatter(row, cell, value) {
                 return new Date(value).toLocaleDateString() || '暂无';
-            }
+            },
+
         },
         created() {
             this.handleSelectOptions();

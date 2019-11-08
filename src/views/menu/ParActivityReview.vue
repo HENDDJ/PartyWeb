@@ -263,7 +263,7 @@
         computed:{
             fileQuery() {
                 return {
-                    activityObject:this.activityDetail,
+                    objectId:this.activityDetail.id,
                 }
             },
             picQuery() {

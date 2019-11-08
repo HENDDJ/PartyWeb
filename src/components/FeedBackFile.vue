@@ -3,7 +3,7 @@
         <el-row class="detail-row" v-for="item in feedBackItemList" :key="item.id">
             <el-col :span="4">{{item.name}}：</el-col>
             <el-col :span="16" style="color: #25252582" v-if="item.type === 'String' ">
-                <el-input  v-model="item.value" @change="updateFile(item,item.value)" :disabled = "true">{{item.value}}</el-input>
+                <el-input  v-model="item.value" :disabled = "true">{{item.value}}</el-input>
             </el-col>
             <el-col :span="16" style="color: #25252582" v-if="item.type === 'File' ">
                 <CommonFileUpload :value="item.value" @getValue="item.value = $event" :disabled = "true"></CommonFileUpload>
@@ -28,7 +28,7 @@
         data(){
             return {
                 feedBackItemList:[],
-                activityDetail:{},
+               // activityDetail:{},
             }
         },
         components:{
@@ -43,8 +43,8 @@
             },
         },
         created(){
-            this.showFeedBackItem(this.fileData.activityObject.id);
-            this.activityDetail = this.fileData.activityObject;
+            this.showFeedBackItem(this.fileData.objectId);
+           // this.activityDetail = this.fileData.activityObject;
         }
     }
 </script>

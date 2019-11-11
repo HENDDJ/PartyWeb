@@ -335,6 +335,20 @@
                     this.radioChoose(newVal);
                 }
             },
+            'form.newObject.office': {
+                handler: function (newVal, oldVal) {
+                    if (newVal) {
+                        this.form.newObject.countryside = false;
+                    }
+                }
+            },
+            'form.newObject.countryside': {
+                handler: function (newVal, oldVal) {
+                    if (newVal) {
+                        this.form.newObject.office = false;
+                    }
+                }
+            },
             'actiityList': {
                 handler: function (newVal, oldVal) {
                     if(newVal.length>0){

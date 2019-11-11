@@ -23,7 +23,7 @@
             <el-button style="padding: 4px 10px;position: relative;top: 2px;" type="primary" icon="el-icon-printer" size="mini" @click="print()">打印</el-button>
         </div>
         <div>
-            <el-button  @click="controlPicture(!pictureCollapse)" style="position: absolute;right: -30px;top: 80px;">截图</el-button>
+            <el-button  @click="controlPicture(!pictureCollapse)" style="position: absolute;right: -30px;top: 80px;">反馈</el-button>
         </div>
 
         <div class='wholeContent' >
@@ -68,11 +68,12 @@
                 </div>
             </div>
             <div class="pictureshow" style="border: 1px rgba(227,213,213,0.55) solid" v-show="pictureVisible">
-                <p class="titleContent">{{countryName+"活动执行截图"}}</p><br/>
+                <p class="titleContent">{{countryName+"活动执行情况"}}</p><br/>
                 <div v-if="tipShow">请选择需要查看的任务记录！</div>
                 <div id="div-with-loading" class="vs-con-loading__container" v-show="!pictureShow"></div>
-                <div v-if="pictureShow">
-                    <el-row class="detail-row" >
+                <div v-if="!feedBackVis">
+                    <div v-if="pictureShow">
+                    <el-row class="detail-row">
                         <div v-if="TvPic.length != 0" class="detail-time">
                             <p>{{"时间："+new Date(TvPic[TvPic.length-1].timestamp).Format('yyyy-MM-dd HH:mm:ss')+" --  "+new Date(TvPic[0].timestamp).Format('yyyy-MM-dd HH:mm:ss')}}</p>
                             <p style="margin-bottom: 10px">{{"时长："+ meetDuration}}</p>
@@ -123,6 +124,27 @@
                         </el-col>
                     </el-row>
                 </div>
+                </div>
+                <div v-if="feedBackVis">
+                    <el-row v-for="item in feedBackItemList" :key="item.id" v-if="pictureShow">
+                        <el-col :span="4">{{item.name}}：</el-col>
+                        <el-col :span="16" style="color: #25252582" v-if="item.type === 'String' ">
+                            <span>{{item.value}}</span>
+                        </el-col>
+                        <el-col :span="16" style="color: #25252582" v-if="item.type === 'File' ">
+                            <CommonFileUpload :value="item.value" @getValue="item.value = $event" :disabled = "true" style="width: 100%;"></CommonFileUpload>
+                        </el-col>
+                        <el-col :span="16" style="color: #25252582" v-if="item.type === 'Image' ">
+                            <span v-if="!item.value">暂无图片</span>
+                            <viewer v-if="item.value">
+                                <img v-for="sub in item.value.split(',')" style="margin-bottom: 20px;width: 100%"
+                                    :src="sub"
+                                    :key="sub">
+                            </viewer>
+                        </el-col>
+                    </el-row>
+                  <!--  <FeedBackFile :fileData="fileQuery" style="text-align: left!important;"></FeedBackFile>-->
+                </div>
             </div>
         </div>
     </section>
@@ -130,6 +152,10 @@
 
 <script>
     import PictureShot from '@/components/PictureShot';
+    import FeedBackFile from '@/components/FeedBackFile';
+    import CommonFileUpload from '@/components/FileUpLoad';
+
+
     export default {
         name: "Statistics",
         data(){
@@ -156,9 +182,15 @@
                 objectType: '',
                 districtType:'',
                 radioName:'',
+                feedBackVis:'',
+                objectId:'',
+                feedBackItemList:[],
             }
         },
         methods:{
+            aa(sub){
+              alert("12");
+            },
             queryTable(objectType,districtType){
                 this.objectType = objectType;
                 this.districtType = districtType;
@@ -213,25 +245,38 @@
                 this.controlPicture(true);
                 this.$nextTick(()=>{
                     this.tipShow = false;
-                    this.pictureShow=false;
+                    if(item.objectType === '1'){
+                        this.feedBackVis = false;
+                        this.pictureShow=false;
+                        this.details(item);
+                    }else if(item.objectType === '2'){
+                        this.feedBackVis = false; //销毁组件，重新渲染
+                        setTimeout(()=>{
+                            this.feedBackVis = true;
+                            this.objectId = item.objectId;
+                            this.$http('POST',`/identity/feedbackItemValue/list`,{objectId:item.objectId},false).then((data)=>{
+                                this.feedBackItemList = data;
+                            });
+
+                        },50);
+                    }
                     this.$vs.loading({
                         container: '#div-with-loading',
                         scale: 0.9
-                    })
+                    });
                     this.countryName = item.districtName;
                     this.organizationId = item.organizationId;
                     this.activityId = item.activityId;
-                    this.details(item);
                     this.$nextTick( () => {
+                        this.$vs.loading.close('#div-with-loading > .con-vs-loading');
                         setTimeout( ()=> {
-                            this.$vs.loading.close('#div-with-loading > .con-vs-loading');
                             this.$nextTick( ()=>{
                                 this.pictureShow = true;
                             })
                         }, 1000);
                     })
-                });
 
+                });
             },
             details(item){
                 this.TvPic = [];
@@ -362,7 +407,6 @@
                     document.getElementsByClassName("contentDiv")[0].style.marginLeft='0';
                     document.getElementsByClassName("wholeContent")[0].style.width='99%';
                     this.pictureCollapse = value;
-
                 }
 
             },
@@ -391,6 +435,17 @@
                     console.log('类型错误')
                 }
             }
+        },
+        components:{
+            FeedBackFile,
+            CommonFileUpload
+        },
+        computed:{
+            fileQuery() {
+                return {
+                    objectId:this.objectId,
+                }
+            },
         },
         created() {
             this.user = JSON.parse(sessionStorage.getItem("userInfo"));
@@ -522,6 +577,12 @@
     .wholeContent{
         width: 99%;
     }
+    .pictureshow .el-col {
+        margin: 15px 10px;
+        font-weight: bold;
+        text-align: left!important;
+        font-size: 16px;
+    }
 </style>
 <style>
     .pictureshow .con-vs-loading{
@@ -534,4 +595,5 @@
     .activity-label::-webkit-scrollbar {
         width: 0;
     }
+
 </style>

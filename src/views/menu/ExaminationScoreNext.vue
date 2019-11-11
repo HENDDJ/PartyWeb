@@ -3,54 +3,41 @@
         <div class="blockData">
             <div style="text-align: left">
                 <span style="display:inline-block;margin-left: 10px">年份：</span>
-                <vs-select
-                    class="selectExample"
-                    style="display: inline-block;margin-left: -5px"
-                    label=""
-                    v-model="chooseYear"
-                    width="120px"
-                    @change="selectYear"
-                >
+                <vs-select style="display: inline-block;margin-left: -5px" label="" v-model="chooseYear" width="120px" @change="selectYear">
                     <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in yearOptions"/>
                 </vs-select>
-
                 <span style="display: inline-block;margin-left: 50px" v-if="regionOptionsShow">区域：</span>
-                <vs-select
-                    v-if="regionOptionsShow"
-                    class="selectExample"
-                    style="display: inline-block;margin-left: -5px"
-                    label=""
-                    v-model="chooseRegion"
-                    width="120px"
-                    @change="selectRegion"
-                >
+                <vs-select v-if="regionOptionsShow" style="display: inline-block;margin-left: -5px" label="" v-model="chooseRegion" width="120px" @change="selectRegion">
                     <vs-select-item :key="index" :value="item.value" :text="item.text" v-for="item,index in regionOptions"/>
                 </vs-select>
-
+                <el-radio-group v-model="radioName" size="medium" style="display: inline-block;margin-left: 50px"  @change="handleRadioGroup" v-if="regionOptionsShow">
+                    <el-radio-button label="农村"></el-radio-button>
+                    <el-radio-button label="机关" ></el-radio-button>
+                </el-radio-group>
             </div>
 
-            <div v-for="item in arrangedData" class="blockZhen">
+            <div v-for="item in examList" class="blockZhen">
                 <div class="blockZhenItem">
                     <div class="itemUp">{{item.town}}</div>
                     <div class="itemDown">
-                        <a>{{item.cun[0].townExam}}分
-                            <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 17px">({{item.cun[0].townScore|percent}}%)</span>
-                            <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 17px">({{item.cun[0].townScore|percent}}%)</span>
-                            <span v-else-if="item.cun[0].townScore<0.8" style="color:rgba(78,103,179,0.7);font-size: 17px">({{item.cun[0].townScore|percent}}%)</span>
-                            <span v-else style="color:#1bc821;font-size: 17px">({{item.cun[0].townScore|percent}}%)</span>
+                        <a>{{item.townExam}}分
+                            <span v-if="item.townScore<0.1" style="color:red;font-size: 17px">({{item.townScore|percent}}%)</span>
+                            <span v-else-if="item.townScore<0.5" style="color:rgb(237, 156, 5);font-size: 17px">({{item.townScore|percent}}%)</span>
+                            <span v-else-if="item.townScore<0.8" style="color:rgba(78,103,179,0.7);font-size: 17px">({{item.townScore|percent}}%)</span>
+                            <span v-else style="color:#1bc821;font-size: 17px">({{item.townScore|percent}}%)</span>
                             </a>
                     </div>
                 </div>
                 <div class="blockCunList">
-                    <template v-for="(val,index) in item.cun">
-                        <div class="blockCunItem" @click="showDialog(val.cun)">
-                            <div class="itemUp">{{val.cun}}</div>
+                    <template v-for="sub in item.children">
+                        <div class="blockCunItem" @click="showDialog(sub.town)">
+                            <div class="itemUp">{{sub.town}}</div>
                             <div class="itemDown">
-                                <a>{{val.exam}}分
-                                    <span v-if="item.cun[0].townScore<0.1" style="color:red;font-size: 17px">({{val.score|percent}}%)</span>
-                                    <span v-else-if="item.cun[0].townScore<0.5" style="color:rgb(237, 156, 5);font-size: 17px">({{val.score|percent}}%)</span>
-                                    <span v-else-if="item.cun[0].townScore<0.8" style="color:rgba(78,103,179,0.7);font-size: 17px">({{val.score|percent}}%)</span>
-                                    <span v-else style="color:#1bc821;font-size: 17px">({{val.score|percent}}%)</span>
+                                <a>{{sub.townExam}}分
+                                    <span v-if="sub.townScore<0.1" style="color:red;font-size: 17px">({{sub.townScore|percent}}%)</span>
+                                    <span v-else-if="sub.townScore<0.5" style="color:rgb(237, 156, 5);font-size: 17px">({{sub.townScore|percent}}%)</span>
+                                    <span v-else-if="sub.townScore<0.8" style="color:rgba(78,103,179,0.7);font-size: 17px">({{sub.townScore|percent}}%)</span>
+                                    <span v-else style="color:#1bc821;font-size: 17px">({{sub.townScore|percent}}%)</span>
                                 </a>
                             </div>
                         </div>
@@ -59,38 +46,29 @@
             </div>
         </div>
 
-        <el-dialog
-            title="完成情况"
-            width="880px"
-            :visible.sync="diaShow"
-            align="left"
-            :append-to-body="true"
-            >
+        <el-dialog title="完成情况" width="880px" :visible.sync="diaShow" align="left" :append-to-body="true">
             <vs-list class="esStyle">
                 <vs-list-header icon="offline_pin" title="已完成" style="font-size: 20px"></vs-list-header>
                 <vs-list-item>
                     <div style="margin-left: 0px" v-for="item in detailOk">
-                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="#24c1a0">
-                            {{item.title}}
-                        </vs-chip></div>
+                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="#24c1a0">{{item.title}}</vs-chip>
+                    </div>
                 </vs-list-item>
             </vs-list>
             <vs-list class="esStyle">
                 <vs-list-header icon="hourglass_full" title="待审核" style="font-size: 20px;color: #fabe49"></vs-list-header>
                 <vs-list-item>
                     <div style="margin-left: 0px" v-for="item in detailWait">
-                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="rgb(173, 159, 92)">
-                           {{item.title}}
-                        </vs-chip></div>
+                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="rgb(173, 159, 92)">{{item.title}}</vs-chip>
+                    </div>
                 </vs-list-item>
             </vs-list>
             <vs-list class="esStyle">
                 <vs-list-header icon="info" title="未完成" style="font-size: 20px;color: #b94a48"></vs-list-header>
                 <vs-list-item>
                     <div style="margin-left: 0px" v-for="item in detailNot">
-                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="rgb(199, 89, 47)">
-                            {{item.title}}
-                        </vs-chip></div>
+                        <vs-chip style="display:flex;flex-wrap: wrap;margin-left: 5px" color="rgb(199, 89, 47)">{{item.title}}</vs-chip>
+                    </div>
                 </vs-list-item>
             </vs-list>
         </el-dialog>
@@ -110,102 +88,101 @@
                 chooseYear: 2019,
                 chooseRegion: '',
                 regionOptionsShow: true,
-                noRepeatTown: [],
-                arrangedData: [],
                 diaShow:false,
                 detailNot:[],
                 detailOk:[],
-                detailWait:[]
-
+                detailWait:[],
+                user:{},
+                radioName:'农村',
+                radioValue:'Party',
+                examList:[],
             }
         },
         methods: {
             selectYear(val) {
-                this.chooseYear = val
+                this.chooseYear = val;
                 this.getStaticsData();
             },
             selectRegion(val) {
-                this.chooseRegion = val
+                this.chooseRegion = val;
                 this.getStaticsData();
             },
             authority() {
-                let user = JSON.parse(sessionStorage.getItem('userInfo'))
-                if (user.sysDistrict.districtLevel == 1) {
-                    this.chooseRegion = ''
+                this.user = JSON.parse(sessionStorage.getItem('userInfo'));
+                if (this.user.sysDistrict.districtLevel === 1) {
+                    this.chooseRegion = '';
                     this.regionOptionsShow = true
                 } else {
-                    this.chooseRegion = user.organizationName
+                    this.chooseRegion = this.user.organizationName;
                     this.regionOptionsShow = false
                 }
             },
-            //整理数据
-            dataArrange(val) {
-                this.noRepeatTown = []
-                val.forEach(item => {
-                    if (this.noRepeatTown.indexOf(item.town) == -1) {
-                        this.noRepeatTown.push(item.town)
-                    }
-                })
-            },
+
             //取得参数数据
             getStaticsData() {
-                let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=${this.chooseRegion}&year=${this.chooseYear}`
+                let path = `identity/exaScore/examScoreAll?page=0&size=1000&search=${this.chooseRegion}&year=${this.chooseYear}&districtType=${this.radioValue}`;
                 return this.$http('Post', path, false).then((data) => {
-                    this.dataArrange(data);
-                    this.arrangedData = []
-                    this.noRepeatTown.forEach(val => {
-                        let list = {town: val, cun: []}
-                        data.forEach(item => {
-                            if (item.town == val) {
-                                list.cun.push(item)
-                            }
-                        })
-                        this.arrangedData.push(list)
-                    })
+                    this.examList = data;
                 })
             },
             showDialog(val){
                this.$http('Post','identity/parActivityObject/examScoreDetail?districtName='+val+"&year="+this.chooseYear).then((data)=>{
-                   this.detailOk = []
-                   this.detailWait = []
-                   this.detailNot = []
+                   this.detailOk = [];
+                   this.detailWait = [];
+                   this.detailNot = [];
                    data.forEach(item=>{
-                       if(item.sta == 2){
+                       if(item.sta === 2){
                            this.detailOk.push(item)
-                       }else if(item.sta == 1){
+                       }else if(item.sta === 1){
                            this.detailWait.push(item)
                        }else {
                            this.detailNot.push(item)
                        }
                    })
-               })
+               });
                 this.diaShow = true
+            },
+            handleRadioGroup(value) {
+                this.chooseRegion = '';
+                if (value === '农村') {
+                    this.radioName = '农村';
+                    this.radioValue = 'Party' ;
+                    this.loadList(this.radioValue);
+                } else if (value=== '机关') {
+                    this.radioName = '机关';
+                    this.radioValue = 'Office' ;
+                    this.loadList(this.radioValue);
+                } else {
+                    console.log('类型错误')
+                }
+            },
+            loadList(value){
+                let nowYear = new Date().Format('yyyy');
+                let interval = Number(nowYear) - 2017;
+                for (let i = 0; i <= interval; i++) {
+                    this.yearOptions.push({text: i + 2017, value: i + 2017})
+                }
+                this.chooseYear = Number(nowYear);
+                this.$http('Post', 'identity/sysDistrict/list', {attachTo: '01', districtLevel: 2, districtType: value, isDelete: 0}, false).then(
+                    data => {
+                        this.regionOptions = data.map(item => {
+                            return {text: item.districtName, value: item.districtName}
+                        });
+                        this.regionOptions.splice(0, 0, {text: '全市', value: ''});
+                        this.getStaticsData();
+                    }
+                )
             }
         },
         created() {
             this.authority();
-
-            let nowYear = new Date().Format('yyyy')
-            let interval = Number(nowYear) - 2017
-            for (let i = 0; i <= interval; i++) {
-                this.yearOptions.push({text: i + 2017, value: i + 2017})
+            if(this.user.sysDistrict.districtLevel === 1){
+                this.loadList('Party');
+            }else{
+                this.loadList();
             }
-            this.chooseYear = Number(nowYear)
 
-            this.$http('Post', 'identity/sysDistrict/list', {
-                attachTo: '01',
-                districtLevel: 2,
-                districtType: 'Party',
-                isDelete: 0
-            }, false).then(
-                data => {
-                    this.regionOptions = data.map(item => {
-                        return {text: item.districtName, value: item.districtName}
-                    })
-                    this.regionOptions.splice(0, 0, {text: '全市', value: ''})
-                    this.getStaticsData();
-                }
-            )
+
         },
         filters: {
             percent(val) {

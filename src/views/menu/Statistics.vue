@@ -37,7 +37,7 @@
                         </div>
                         <table id="org-label-key" style="overflow-x: scroll;overflow-y: hidden;max-height: 620px;margin-top: 1px;" class="tableCol">
                             <tr v-for="(value,key) in activityList" v-if="key!='title'">
-                                <td class="tableColContent"> {{key}}</td>
+                                <td class="tableColContent" :title="key"> {{key}}</td>
                             </tr>
                         </table>
                     </div>
@@ -522,13 +522,20 @@
     }
     .tableColContent{
         background-color: #f3f3f3;
-        width: 110px;
+        width: 100px;
         font-family:' 黑体';
         font-weight:bold;
         line-height:25px;
         font-size: 12px!important;
         height: 25px!important;
         text-align: center;
+        overflow:hidden;
+        text-overflow:ellipsis;
+        display:-webkit-box;
+        -webkit-line-clamp:1;
+        -webkit-box-orient:vertical;
+        padding-left: 5px;
+        padding-right: 5px;
     }
     .tableCol::-webkit-scrollbar {
         width: 0;
@@ -581,7 +588,7 @@
         margin: 15px 10px;
         font-weight: bold;
         text-align: left!important;
-        font-size: 16px;
+        font-size: 14px;
     }
 </style>
 <style>

@@ -152,7 +152,7 @@
                                     </div>
                                     <div style="display: inline-block;font-size: 36px;">
                                         <template>
-                                            <CountTo :startVal="0" :endVal="0" :duration="1300"></CountTo>
+                                            <CountTo :startVal="0" :endVal="streamTotal" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
                                             基本阵地当日总人流量
@@ -166,7 +166,7 @@
                                     </div>
                                     <div style="display: inline-block;font-size: 36px;">
                                         <template>
-                                            <CountTo :startVal="0" suffix="%" :decimals="1" :endVal="0" :duration="1300"></CountTo>
+                                            <CountTo :startVal="0"  :endVal="streamRate" :duration="1300"></CountTo>
                                         </template>
                                         <p style="font-size: 18px;color: #6d6d6d">
                                             基本阵地平均人流量
@@ -181,7 +181,7 @@
                     <vs-card class="card-sat">
                         <div slot="header" style="vertical-align: bottom">
                             <h4 style="float: left">
-                                近24小时实时人流量统计图
+                                近8小时实时人流量统计图
                             </h4>
                             <span style="float: right;position: relative;top:6px;font-size: 14px;color: #c0c4cc">更新于{{currentDate.toLocaleDateString() + ' ' + currentDate.toLocaleTimeString()}}</span>
                             <p style="clear: both">&nbsp;</p>
@@ -357,90 +357,8 @@
                 organizationNumber:0,//党组织数量
                 parMemberNumber:0,//党员数量
                 villageSecretaryNumber:0,//村书记数量
-                rank: {
-                    tooltip : {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        data:['蒸发量','降水量']
-                    },
-                    toolbox: {
-                        show : true,
-                    },
-                    calculable : true,
-                    xAxis : [
-                        {
-                            type : 'category',
-                            data : ['XX村','XX村','XX村','XX村','XX村','XX村','XX村','XX村','XX村','XX村']
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type : 'value',
-                            max: 200
-                        }
-                    ],
-                    series : [
-                        {
-                            name:'积分',
-                            type:'bar',
-                            data:[150,150,145,140,135,135,130,128,115,110],
-                            markPoint : {
-                                data : [
-                                    {type : 'max', name: '最大值'},
-                                    {type : 'min', name: '最小值'}
-                                ]
-                            },
-                            markLine : {
-                                data : [
-                                    {type : 'average', name: '平均值'}
-                                ]
-                            }
-                        }
-                    ]
-                },
-                flow: {
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        data:['党员教育室','党内关爱室','党群工作室','组织议事室']
-                    },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: ['8: 00','8: 30','9: 00','9: 30','10: 00','10: 30','11: 00']
-                    },
-                    yAxis: {
-                        type: 'value'
-                    },
-                    series: [
-                        {
-                            name:'党员教育室',
-                            type:'line',
-                            stack: '总量',
-                            data:[120, 132, 101, 134, 90, 230, 210]
-                        },
-                        {
-                            name:'党内关爱室',
-                            type:'line',
-                            stack: '总量',
-                            data:[220, 182, 191, 234, 290, 330, 310]
-                        },
-                        {
-                            name:'党群工作室',
-                            type:'line',
-                            stack: '总量',
-                            data:[150, 232, 201, 154, 190, 330, 410]
-                        },
-                        {
-                            name:'组织议事室',
-                            type:'line',
-                            stack: '总量',
-                            data:[320, 332, 301, 334, 390, 330, 320]
-                        }
-                    ]
-                },
+                streamTotal:0,//当日阵地人流量
+                streamRate:0,//当日平均人流量
                 currentDate: new Date(),
                 currentActivityList: [],
                 swiperOption: {
@@ -457,7 +375,8 @@
                         shadowOffset: 20,
                         shadowScale: 0.94
                     },
-                }
+                },
+                user:{},
             }
         },
         methods:{
@@ -471,6 +390,8 @@
                     this.positionNumber =data.positionNumber;
                     this.villageSecretaryNumber = data.villageSecretaryNumber;
                     this.activityCompleteRate = ((data.activityCompleteRate*1000).toFixed())/10;
+                    this.streamTotal = data.streamTotal;
+                    this.streamRate = data.streamRate;
                 })
             },
             hot(){
@@ -619,38 +540,34 @@
                 });
             },
             initOntime() {
+                let districtId = (this.user.sysDistrict.districtType==='Party') ? this.user.districtId : '01' ;
                 let chart = null;
-                chart = Highcharts.chart('intime', {
-                        chart: {
+                this.$http('Post',`identity/positionChart/realLineChart?districtId=`+districtId,false).then( data => {
+                    let hours = [];
+                    let sumData = [];
+                    for(let i = 0 ; i < 8 ; i++){
+                        sumData.push(data.MEMBER_EDUCATION[i]+data.PARTY_CARE[i]+data.ORGANIZATIONAL_CONFERENCE[i]+data.PARTY_STUDIO[i])
+                    }
+                    data.monthDay.forEach(item =>{
+                        hours.push(item.substr(11,5))
+                    });
+                    chart = Highcharts.chart('intime', {
+                        /*chart: {
                             zoomType: 'x'
+                        },*/
+                        chart: {
+                            type: 'spline'
                         },
                         title: {
                             text: null
                         },
                         xAxis: {
-                            type: 'datetime',
-                            dateTimeLabelFormats: {
-                                millisecond: '%H:%M:%S.%L',
-                                second: '%H:%M:%S',
-                                minute: '%H:%M',
-                                hour: '%H:%M',
-                                day: '%m-%d',
-                                week: '%m-%d',
-                                month: '%Y-%m',
-                                year: '%Y'
-                            }
+                            type: 'category',
+                            boundaryGap: false,
+                            categories: hours,
                         },
                         tooltip: {
-                            dateTimeLabelFormats: {
-                                millisecond: '%H:%M:%S.%L',
-                                second: '%H:%M:%S',
-                                minute: '%H:%M',
-                                hour: '%H:%M',
-                                day: '%Y-%m-%d',
-                                week: '%m-%d',
-                                month: '%Y-%m',
-                                year: '%Y'
-                            }
+                            trigger: 'axis'
                         },
                         yAxis: {
                             title: {
@@ -686,14 +603,12 @@
                                 threshold: null
                             }
                         },
-                        series:[{
+                        series: [{
                             name: '人数',
-                            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175,43934, 52503, 57177,43934,
-                                52503, 57177, 69658, 97031, 119931, 137133, 154175,43934, 52503, 57177,43934, 52503,
-                                57177, 69658, 97031, 119931, 137133, 154175,43934, 52503, 57177,43934, 52503, 57177,
-                                69658, 97031, 119931, 137133, 154175,43934, 52503, 57177]
+                            data: sumData
                         }]
                     });
+                });
             },
             getCurrentActivity() {
                 this.$http('POST',`/identity/parActivity/currentMonth/list`,false).then(
@@ -739,7 +654,9 @@
 
         },
         created(){
+            this.user = JSON.parse(sessionStorage.getItem('userInfo'));
             this.totalStatistics();
+
         }
     }
 </script>

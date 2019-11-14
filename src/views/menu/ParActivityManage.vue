@@ -786,7 +786,7 @@
                         this.trackTable = data;
                         if(this.detailForm.objectType==="2"){
                             this.trackTable.forEach(item=>{
-                                item.finishRatio = this.detailForm.activityOfficeProgresses[item.townCode];
+                                item.finishRatio = this.detailForm.activityOfficeProgresses[item.townCode] || 0;
                             })
                         }
                         this.pageableTrack.total = data.totalElements;

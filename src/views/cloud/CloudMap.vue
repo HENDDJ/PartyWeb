@@ -2,7 +2,7 @@
     <section id="example-map">
         <div id="allmap"></div>
         <el-button type="text" @click="showTown" style="position: absolute; top: 120px; left: 800px">统计</el-button>
-        <el-button type="text" @click="showWorking" style="position: absolute; top: 120px; left: 750px">实时活动</el-button>
+        <el-button type="text" @click="showWorking" style="position: absolute; top: 120px; left: 850px">实时活动</el-button>
     </section>
 </template>
 

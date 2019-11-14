@@ -1,6 +1,8 @@
 <template>
     <section id="example-map">
         <div id="allmap"></div>
+        <el-button type="text" @click="showTown" style="position: absolute; top: 20px; left: 600px">统计</el-button>
+        <el-button type="text" @click="showWorking" style="position: absolute; top: 20px; left: 600px">实时活动</el-button>
     </section>
 </template>
 
@@ -80,6 +82,9 @@
             },
               //展示正在执行
             showWorking(){
+                if (this.timer) {
+                    window.clearInterval(this.timer)
+                }
              /*  // let allOverlay = this.map.getOverlays();
                 this.activityWorkList.forEach(item=>{
                     this.map.removeOverlay(item);
@@ -99,7 +104,7 @@
                 this.$nextTick(()=>{
                     this.workingDataList();
                 });
-                setInterval(()=>{
+                this.timer = setInterval(()=>{
                     this.activityWorkList.forEach(item=>{
                         this.map.removeOverlay(item);
                     });

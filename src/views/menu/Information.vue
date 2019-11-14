@@ -17,6 +17,7 @@
                 <el-button @click="query" type="primary" size="mini" icon="el-icon-search">搜索</el-button>
             </el-form>
         </div>
+        <p class="clear-float">&nbsp;</p>
         <el-table :data="informationList" v-loading="loading" border align="center" stripe
                   @selection-change="handleSelectionChange"
                   :header-cell-style="{'background-color': '#fafafa','color': 'rgb(80, 80, 80)','border-bottom': '1px solid #dee2e6'}">

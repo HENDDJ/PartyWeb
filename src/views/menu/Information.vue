@@ -1,11 +1,13 @@
 <template>
-    <section class="common-crud">
+    <section class="commonCrud">
         <div class="handler-btn">
             <el-button type="primary" v-if="authorityControl" plain @click="add()" class="self-add self-btn">&nbsp;
             </el-button>
             <el-button type="success" v-if="authorityControl" plain class="self-btn self-edit" @click="edit()">&nbsp;
             </el-button>
-            <el-button type="success" plain class="self-btn self-look" @click="look()">&nbsp;</el-button>
+            <el-button type="success" v-if="authorityControl" plain class="self-btn self-look" @click="look()">&nbsp;
+            </el-button>
+            <el-button type="success" v-if="!authorityControl" plain class="self-btn self-look" @click="look()" style="margin-left: 3px!important;">&nbsp;</el-button>
             <el-button type="danger" v-if="authorityControl" plain @click="del()" class="self-del self-btn">&nbsp;
             </el-button>
         </div>
@@ -286,4 +288,69 @@
 </script>
 
 <style scoped>
+    .commonCrud .clear-float {
+        clear: both;
+        height: 10px;
+    }
+    .commonCrud {
+        width: calc(100% - 10px);
+    }
+    .commonCrud .common-query {
+        float: right;
+    }
+    .commonCrud .handler-btn {
+        float: left;
+    }
+    .commonCrud .common-query .el-form--inline .el-form-item {
+        margin: 0;
+    }
+    .commonCrud i {
+        font-size: 12px;
+    }
+    .commonCrud .el-checkbox.is-bordered.el-checkbox--mini {
+        padding : 5px 15px 5px 10px !important;
+        margin-left: 10px;
+    }
+    .commonCrud .el-pagination__sizes .el-input--mini .el-input__inner {
+        width: 120px !important;
+    }
+    .commonCrud .el-pagination__sizes .el-select {
+        width: 120px !important;
+    }
+    .commonCrud .self-btn {
+        width: 56px !important;
+        height: 28px !important;
+        border-radius: 5px !important;
+        transform: scale(1.1);
+    }
+    .commonCrud .self-add {
+        margin-left: 3px !important;
+        background: url('../../../static/img/add.png') !important;
+        background-size: cover !important;
+    }
+    .commonCrud .self-del {
+        background: url('../../../static/img/del.png') !important;
+        background-size: cover !important;
+    }
+    .commonCrud .self-back {
+        background: url('../../../static/img/back.png') !important;
+        background-size: cover !important;
+    }
+    .commonCrud .self-edit {
+        background: url('../../../static/img/edit.png') !important;
+        background-size: cover !important;
+    }
+    .commonCrud .self-look {
+        background: url('../../../static/img/look.png') !important;
+        background-size: cover !important;
+    }
+    .commonCrud .footer-position {
+        margin-right: 86px;
+    }
+    .commonCrud .common-textarea .el-textarea__inner {
+        width: 585px !important;
+    }
+    #mceu_47 {
+        width: calc(100% - 1px) !important;
+    }
 </style>

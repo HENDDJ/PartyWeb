@@ -131,9 +131,9 @@
                    this.detailWait = [];
                    this.detailNot = [];
                    data.forEach(item=>{
-                       if(item.sta === 2){
+                       if(item.sta === '2'){
                            this.detailOk.push(item)
-                       }else if(item.sta === 1){
+                       }else if(item.sta === '1'){
                            this.detailWait.push(item)
                        }else {
                            this.detailNot.push(item)

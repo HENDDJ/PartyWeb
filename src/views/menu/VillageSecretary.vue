@@ -9,260 +9,268 @@
                                  style="margin-right: -28px;" @change="selValue" clearable></el-cascader>
                 </el-form-item>
             </template>
+            <template slot="Handle" slot-scope="scope">
+                <el-tag v-if="scope.row.state==='0'"
+                        close-transition type="danger"  effect="dark">未提交</el-tag>
+                <el-tag v-if="scope.row.state==='1'"
+                        close-transition  type="warning"  effect="dark">待审核</el-tag>
+                <el-tag v-if="scope.row.state==='2'"
+                        close-transition  type=""  effect="dark">镇审通过</el-tag>
+                <el-tag v-if="scope.row.state==='3'"
+                        close-transition  type=""  effect="dark">市审通过</el-tag>
+            </template>
         </CommonCRUD>
     </section>
 </template>
 
 <script>
-    import CommonCRUD from '@/components/CommonCRUD';
-    export default {
-        name: "VillageSecretary",
-        data(){
-            return {
-                columns:[],
-                formColumns:[],
-                districtList:[],
-                user:{},
-                queryForm:[
-                    {
-                        des: '姓名',
-                        name: 'name',
-                        type: 'string',
-                        value: '',
-                        visible: true,
-                    },
-                    {
-                        name: 'post',
-                        type: 'string',
-                        value: '',
-                        visible: false
-                    },
-                    {
-                        des: '组织',
-                        name: 'districtId',
-                        type: 'string',
-                        value: '',
-                        visible: false,
-                    },
-                ],
-                user:{},
-                propsOne: {
-                    lazy: true,
-                    checkStrictly:true,
-                    lazyLoad:(node, resolve)=>{
-                        if(this.userAuthority ==1){
-                            if(node.level==0){
-                                let nodes = [];
-                                this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
-                                    data.forEach(item=>{
-                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
-                                    });
-                                    resolve(nodes);
-                                })
-                            }else {
-                                let nodes = [];
-                                this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
-                                    data.forEach(item=>{
-                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
-                                    });
-                                    resolve(nodes);
-                                })
-                            }
-                        }
-                        if(this.userAuthority==2){
-                            if(node.level==0){
-                                let nodes = [];
-                                this.$http('GET', `/identity/sysDistrict/${this.user.districtId}tree`, false).then((data) => {
-                                    data.forEach(item=>{
-                                        nodes.push({label:item.label,value:item.id,leaf:item.leaf})
-                                    });
-                                    resolve(nodes);
-                                })
-                            }
-                        }
-                    }
+import CommonCRUD from '@/components/CommonCRUD';
+export default {
+    name: 'VillageSecretary',
+    data () {
+        return {
+            columns: [],
+            formColumns: [],
+            districtList: [],
+            user: {},
+            queryForm: [
+                {
+                    des: '姓名',
+                    name: 'name',
+                    type: 'string',
+                    value: '',
+                    visible: true
                 },
-                userAuthority:1,
-                spanParentObject: new Map(),
-                spanObject: new Map(),
-                sortColumns: [
-                    {
-                        name: 'districtId',
-                        type: 'asc'
+                {
+                    name: 'post',
+                    type: 'string',
+                    value: '',
+                    visible: false
+                },
+                {
+                    des: '组织',
+                    name: 'districtId',
+                    type: 'string',
+                    value: '',
+                    visible: false
+                }
+            ],
+            user: {},
+            propsOne: {
+                lazy: true,
+                checkStrictly: true,
+                lazyLoad: (node, resolve) => {
+                    if (this.userAuthority == 1) {
+                        if (node.level == 0) {
+                            let nodes = [];
+                            this.$http('GET', `/identity/sysDistrict/01tree`, false).then((data) => {
+                                data.forEach(item => {
+                                    nodes.push({label: item.label, value: item.id, leaf: item.leaf});
+                                });
+                                resolve(nodes);
+                            });
+                        } else {
+                            let nodes = [];
+                            this.$http('GET', `/identity/sysDistrict/${node.value}tree`, false).then((data) => {
+                                data.forEach(item => {
+                                    nodes.push({label: item.label, value: item.id, leaf: item.leaf});
+                                });
+                                resolve(nodes);
+                            });
+                        }
                     }
-                ],
-            }
-        },
-        methods:{
-            selValue(val){
-                if(val.length>0){
-                    this.queryForm[2].value = val[val.length-1];
-                }else{
-                    this.queryForm[2].value = this.user.districtId;
+                    if (this.userAuthority == 2) {
+                        if (node.level == 0) {
+                            let nodes = [];
+                            this.$http('GET', `/identity/sysDistrict/${this.user.districtId}tree`, false).then((data) => {
+                                data.forEach(item => {
+                                    nodes.push({label: item.label, value: item.id, leaf: item.leaf});
+                                });
+                                resolve(nodes);
+                            });
+                        }
+                    }
                 }
             },
-            handleTableData(data) {
-                let parentDistrictIds = data.map(item => item.parentDistrictId);
-                parentDistrictIds = new Set(parentDistrictIds);
-                let order = 0;
-                this.spanParentObject.clear();
-                parentDistrictIds.forEach((item) => {
-                    if (item === null) {
-                        item = 'null'
+            userAuthority: 1,
+            spanParentObject: new Map(),
+            spanObject: new Map(),
+            sortColumns: [
+                {
+                    name: 'districtId',
+                    type: 'asc'
+                }
+            ]
+        };
+    },
+    methods: {
+        selValue (val) {
+            if (val.length > 0) {
+                this.queryForm[2].value = val[val.length - 1];
+            } else {
+                this.queryForm[2].value = this.user.districtId;
+            }
+        },
+        handleTableData (data) {
+            let parentDistrictIds = data.map(item => item.parentDistrictId);
+            parentDistrictIds = new Set(parentDistrictIds);
+            let order = 0;
+            this.spanParentObject.clear();
+            parentDistrictIds.forEach((item) => {
+                if (item === null) {
+                    item = 'null';
+                }
+                data.forEach((subItem, subIndex) => {
+                    if (String(subItem.parentDistrictId) == item) {
+                        this.spanParentObject.set(item, {index: order, end: subIndex});
                     }
-                    data.forEach((subItem, subIndex) => {
-                        if (String(subItem.parentDistrictId) == item) {
-                            this.spanParentObject.set(item, {index: order, end: subIndex})
-                        }
-                    })
-                    order ++;
-                })
+                });
+                order++;
+            });
 
-                let districtIds = data.map(item => item.districtId);
-                districtIds = new Set(districtIds);
-                order = 0;
-                this.spanObject.clear()
-                districtIds.forEach(item => {
-                    if (item === null) {
-                        item = 'null'
+            let districtIds = data.map(item => item.districtId);
+            districtIds = new Set(districtIds);
+            order = 0;
+            this.spanObject.clear();
+            districtIds.forEach(item => {
+                if (item === null) {
+                    item = 'null';
+                }
+                data.forEach((subItem, subIndex) => {
+                    if (String(subItem.districtId) == item) {
+                        this.spanObject.set(item, {index: order, end: subIndex});
                     }
-                    data.forEach((subItem, subIndex) => {
-                        if (String(subItem.districtId) == item) {
-                            this.spanObject.set(item, {index: order, end: subIndex})
+                });
+                order++;
+            });
+        },
+        objectSpanMethod ({row, column, rowIndex, columnIndex}) {
+            if (columnIndex === 1) {
+                if (this.spanParentObject.size === 0) {
+                    return;
+                }
+                let key;
+                if (row.parentDistrictId === null) {
+                    key = 'null';
+                } else {
+                    key = row.parentDistrictId;
+                }
+                let index = this.spanParentObject.get(key).index;
+                let end = this.spanParentObject.get(key).end;
+                let start = 0;
+                if (index !== 0) {
+                    this.spanParentObject.forEach((v, key) => {
+                        if (v.index === (index - 1)) {
+                            start = v.end + 1;
                         }
-                    })
-                    order ++;
-                })
-            },
-            objectSpanMethod({row, column, rowIndex, columnIndex}) {
-                if (columnIndex === 1) {
-                    if (this.spanParentObject.size === 0) {
-                        return ;
-                    }
-                    let key;
-                    if (row.parentDistrictId === null) {
-                        key = 'null';
-                    } else {
-                        key = row.parentDistrictId;
-                    }
-                    let index = this.spanParentObject.get(key).index;
-                    let end = this.spanParentObject.get(key).end;
-                    let start = 0;
-                    if (index !== 0) {
-                        this.spanParentObject.forEach((v,key) => {
-                            if (v.index === (index - 1)) {
-                                start = v.end + 1;
-                            }
-                        })
-                    }
-                    if (rowIndex === start) {
-                        return {
-                            rowspan: end - start + 1,
-                            colspan: 1
-                        }
-                    }
-                    else if (start < rowIndex <= end) {
-                        return {
-                            rowspan: 0,
-                            colspan: 0
-                        }
-                    } else {
-                        return {
-                            rowspan: 1,
-                            colspan: 1
-                        }
-                    }
-                } else if (columnIndex === 2) {
-                    if (this.spanObject.size === 0) {
-                        return ;
-                    }
-                    let key;
-                    if (row.districtId === null) {
-                        key = 'null';
-                    } else {
-                        key = row.districtId;
-                    }
-                    let index = this.spanObject.get(key).index;
-                    let end = this.spanObject.get(key).end;
-                    let start = 0;
-                    if (index !== 0) {
-                        this.spanObject.forEach((v,key) => {
-                            if (v.index === (index - 1)) {
-                                start = v.end + 1;
-                            }
-                        })
-                    }
-                    if (rowIndex === start) {
-                        return {
-                            rowspan: end - start + 1,
-                            colspan: 1
-                        }
-                    }
-                    else if (start < rowIndex <= end) {
-                        return {
-                            rowspan: 0,
-                            colspan: 0
-                        }
-                    } else {
-                        return {
-                            rowspan: 1,
-                            colspan: 1
-                        }
-                    }
+                    });
+                }
+                if (rowIndex === start) {
+                    return {
+                        rowspan: end - start + 1,
+                        colspan: 1
+                    };
+                } else if (start < rowIndex <= end) {
+                    return {
+                        rowspan: 0,
+                        colspan: 0
+                    };
                 } else {
                     return {
                         rowspan: 1,
                         colspan: 1
-                    }
+                    };
                 }
-            },
-            handelOrg(){
-                //层级组织请求
-                this.$http('GET',`identity/sysDistrict/${this.user.districtId}alltree`,false).then( data => {
-                    this.districtList = data[0].children;
-                    this.handleOrgLeaf(this.districtList);
-                    this.formColumns.filter(item => item.name === 'districtId')[0].options = this.districtList;
-                    if(this.userAuthority == 3){
-                        this.formColumns.filter(item => item.name === 'districtId')[0].options = [{label:this.user.organizationName,leaf:true,value:this.user.districtId}]
-                    }
-                });
-            },
-            //处理村级组织children为空的情况
-            handleOrgLeaf(districtList){
-                districtList.forEach(item => {
-                    if( this.userAuthority == 2){
-                        delete item.children;
-                    }else{
-                        item.children.forEach(subitem => {
-                            delete subitem.children;
-                        })
-                    }
-                })
-            },
-            handleAuthority(){
-                this.queryForm[1].value = 'SECRETARY';
-                this.queryForm[2].value = this.user.districtId;
-                if(this.user.sysDistrict.districtLevel == 3){
-                    this.userAuthority = 3;
-                }else  if(this.user.sysDistrict.districtLevel == 2){
-                    this.userAuthority = 2;
-                }else{
-                    this.userAuthority = 1;
+            } else if (columnIndex === 2) {
+                if (this.spanObject.size === 0) {
+                    return;
                 }
+                let key;
+                if (row.districtId === null) {
+                    key = 'null';
+                } else {
+                    key = row.districtId;
+                }
+                let index = this.spanObject.get(key).index;
+                let end = this.spanObject.get(key).end;
+                let start = 0;
+                if (index !== 0) {
+                    this.spanObject.forEach((v, key) => {
+                        if (v.index === (index - 1)) {
+                            start = v.end + 1;
+                        }
+                    });
+                }
+                if (rowIndex === start) {
+                    return {
+                        rowspan: end - start + 1,
+                        colspan: 1
+                    };
+                } else if (start < rowIndex <= end) {
+                    return {
+                        rowspan: 0,
+                        colspan: 0
+                    };
+                } else {
+                    return {
+                        rowspan: 1,
+                        colspan: 1
+                    };
+                }
+            } else {
+                return {
+                    rowspan: 1,
+                    colspan: 1
+                };
             }
         },
-        components: {
-            CommonCRUD
+        handelOrg () {
+            // 层级组织请求
+            this.$http('GET', `identity/sysDistrict/${this.user.districtId}alltree`, false).then(data => {
+                this.districtList = data[0].children;
+                this.handleOrgLeaf(this.districtList);
+                this.formColumns.filter(item => item.name === 'districtId')[0].options = this.districtList;
+                if (this.userAuthority == 3) {
+                    this.formColumns.filter(item => item.name === 'districtId')[0].options = [{label: this.user.organizationName, leaf: true, value: this.user.districtId}];
+                }
+            });
         },
-        created(){
-            this.user = JSON.parse(sessionStorage.getItem('userInfo'))
-            this.columns = this.$store.state.classInfo.properties;
-            this.formColumns =this.$store.state.classInfo.properties;
-            this.handleAuthority();
-            this.handelOrg();
-
+        // 处理村级组织children为空的情况
+        handleOrgLeaf (districtList) {
+            districtList.forEach(item => {
+                if (this.userAuthority == 2) {
+                    delete item.children;
+                } else {
+                    item.children.forEach(subitem => {
+                        delete subitem.children;
+                    });
+                }
+            });
+        },
+        handleAuthority () {
+            this.queryForm[1].value = 'SECRETARY';
+            this.queryForm[2].value = this.user.districtId;
+            if (this.user.sysDistrict.districtLevel == 3) {
+                this.userAuthority = 3;
+            } else if (this.user.sysDistrict.districtLevel == 2) {
+                this.userAuthority = 2;
+            } else {
+                this.userAuthority = 1;
+            }
         }
+    },
+    components: {
+        CommonCRUD
+    },
+    created () {
+        this.user = JSON.parse(sessionStorage.getItem('userInfo'));
+        this.columns = this.$store.state.classInfo.properties;
+        this.formColumns = this.$store.state.classInfo.properties;
+        this.columns.push({slot: true, name: 'emergencyAccidentResult', des: '状态', slotName: 'Handle'});
+        this.handleAuthority();
+        this.handelOrg();
     }
+};
 </script>
 
 <style scoped>

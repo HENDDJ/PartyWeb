@@ -8,6 +8,7 @@
                                 :queryFormColumns="cadreQuery" :sortColumns="sortColumns"
                                 :objectSpanMethod="objectSpanMethod"
                                 @getTableData="handleTableData">
+
                         <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                             <el-form-item label="所属组织">
                                 <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
@@ -513,4 +514,5 @@
     .vs-tabs--btn {
         font-size: 14px !important;
     }
+
 </style>

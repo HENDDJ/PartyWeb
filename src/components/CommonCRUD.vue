@@ -9,7 +9,7 @@
                         <el-option v-for="opItem in item.options" filterable :value="opItem.value" :label="opItem.label" :key="opItem.value" ></el-option>
                     </el-select>
                     <el-cascader v-model="queryForm[item.name]" v-else-if="item.type === 'cascader'" clearable
-                                 :options="item.options"  @change="(val) => {handleChange(val, item.name)}" :show-all-levels="false"   :props="item.props">
+                                 :options="item.options"  @change="(val) => {handleChange(val,queryForm, item.name, 'query')}" :show-all-levels="false"   :props="item.props">
                     </el-cascader>
                     <el-radio-group v-if="item.type === 'radio'" v-model="queryForm[item.name]"  clearable>
                         <el-radio :label="1">是</el-radio>
@@ -90,7 +90,7 @@
                 </el-select>
                 <!--层级clearable属性只用于绑定值为districtId-->
                 <el-cascader v-model="form[item.name]" v-else-if="item.type === 'cascader'" :disabled="item.disabled || disabled" clearable
-                             :options="item.options"  @change="handleChange" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf'}">
+                             :options="item.options"  @change="(val) => {handleChange(val, form, item.name, 'crud')}" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf'}">
                 </el-cascader>
                 <el-radio-group v-if="item.type === 'radio'" v-model="form[item.name]" :disabled="item.disabled || disabled" style="width: 178px" >
                     <el-radio v-for="opItem in item.options" :label="opItem.value" :key="opItem.value"> {{opItem.label}}</el-radio>
@@ -116,10 +116,11 @@
                 <CommonUpload v-if="item.type === 'image'" :value="form[item.name]" :disabled="item.disabled || disabled"  :limit="item.limit" @getValue="form[item.name] = $event"></CommonUpload>
                 <MapLocation v-if="item.type === 'location'" :value="form[item.name]" :disabled="item.disabled || disabled" @getValue="form[item.name] = $event"></MapLocation>
             </el-form-item>
+            <slot v-if="formAfterVis" name="form-after"></slot>
         </el-form>
-        <div slot="footer" class="dialog-footer  footer-position">
+        <div slot="footer" class="dialog-footer  footer-position" v-if="buttonVis">
             <el-button type="primary" :loading="submitLoading" @click="submit('form')">确 定</el-button>
-            <el-button @click="handleClose">取 消</el-button>
+            <el-button @click="handleClose">返 回</el-button>
         </div>
     </el-dialog>
     </div>
@@ -151,6 +152,11 @@
                 type: Boolean,
                 default: true
             },
+            //表单提交返回按钮
+            buttonVis:{
+                type: Boolean,
+                default: true
+            },
             // 表格字段显示配置
             columns: Array,
             // 请求根路径，对应后台Controller @RequestMapping注解的值
@@ -177,6 +183,11 @@
             },
             objectSpanMethod: {
                 type: Function
+            },
+            // form-after 是否显示
+            formAfterVis: {
+                type: Boolean,
+                default: false
             }
         },
         data () {
@@ -257,6 +268,7 @@
             add() {
                 this.title='新增'
                 this.dialogVisible = true;
+                this.buttonVis = true;
                 this.form = {};
                 this.formColumns.forEach((item) => {
                     if (item.value) {
@@ -269,6 +281,7 @@
                 if (this.validateRows()) {
                     this.form = Object.assign({}, this.selected[0]);
                     this.dialogVisible = true;
+                    this.buttonVis = true;
                 }
             },
             look() {
@@ -277,6 +290,7 @@
                 if (this.validateRows()) {
                     this.form = Object.assign({}, this.selected[0]);
                     this.dialogVisible = true;
+                    this.buttonVis = true;
                 }
             },
             deleteRow() {
@@ -320,6 +334,7 @@
                 this.disabled = false;
                 this.dialogVisible = false;
                 this.submitLoading = false;
+                this.$emit('handleClose');
             },
             handleAvatarSuccess (res, file) {
                 this.imageUrl = URL.createObjectURL(file.raw);
@@ -372,14 +387,20 @@
                 this.defaultRequestConfig(path);
                 this.loadTableData(path);
             },
-            handleChange(value, fieldName) {
+            handleChange(value, obj, fieldName, type) {
+                console.log(value);
                 if (value.length>0) {
-                    this.queryForm[fieldName] = value[value.length - 1];
-                    this.queryFormColumns.filter(item => item.name == 'districtId')[0].value = value[value.length - 1];
+                    obj[fieldName] = value[value.length - 1];
+                    if (type === 'query') {
+                        this.queryFormColumns.filter(item => item.name == 'districtId')[0].value = value[value.length - 1];
+                    }
                 } else {
-                    let districtId = JSON.parse(sessionStorage.getItem('userInfo')).districtId;
-                    this.queryForm[fieldName] = districtId;
-                    this.queryFormColumns.filter(item => item.name == 'districtId')[0].value = districtId;
+                     obj[fieldName] = "";
+                     if (type === 'query') {
+                        let districtId = JSON.parse(sessionStorage.getItem('userInfo')).districtId;
+                        this.queryFormColumns.filter(item => item.name == 'districtId')[0].value = districtId;
+                    }
+
                 }
             }
         },
@@ -460,6 +481,7 @@
         background: url('../../static/img/add.png') !important;
         background-size: cover !important;
     }
+
     .self-del {
         background: url('../../static/img/del.png') !important;
         background-size: cover !important;

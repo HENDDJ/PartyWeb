@@ -486,6 +486,10 @@
                         let path = "/home/information";
                         this.$router.push({path: path});
                     }
+                    if(item.type==='villageCadres'){
+                        let path = "/baseTeam/villageSecretary";
+                        this.$router.push({path: path});
+                    }
 
                 })
             },

@@ -56,8 +56,8 @@
                     </el-form-item>
                 </el-form>
                 <div  style="margin-right: 86px;">
-                    <el-button type="danger" :loading="passLoading" @click="review('FAILED')" style="float: right">驳回</el-button>
-                    <el-button type="primary" :loading="rejectLoading" @click="review('SUCCESS')" style="float: right;margin-right: 10px">通过</el-button>
+                    <el-button type="danger" :loading="rejectLoading" @click="review('FAILED')" style="float: right">驳回</el-button>
+                    <el-button type="primary" :loading="passLoading" @click="review('SUCCESS')" style="float: right;margin-right: 10px">通过</el-button>
                 </div>
             </template>
 

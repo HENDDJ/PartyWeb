@@ -1,5 +1,5 @@
 <template>
-    <section>
+    <section class="statistics">
         <div style="position: absolute;right: 0;top: 6px;">
             <el-date-picker
                 size="mini"
@@ -601,6 +601,9 @@
     }
     .activity-label::-webkit-scrollbar {
         width: 0;
+    }
+    .statistics td {
+        padding: 0px !important;
     }
 
 </style>

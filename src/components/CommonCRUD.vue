@@ -43,10 +43,10 @@
         <div class="handler-btn">
             <!--<el-button type="success" plain @click="$router.go(-1)" class="self-back self-btn">&nbsp;</el-button>-->
             <el-button v-if="addBtnVis" type="primary" plain @click="add" class="self-add self-btn">&nbsp;</el-button>
-            <el-button v-if="editBtnVis" type="success" plain class="self-btn self-edit" @click="edit">&nbsp;</el-button>
-            <el-button v-if="lookBtnVis" type="success" plain class="self-btn self-look" @click="look">&nbsp;</el-button>
-            <el-button v-if="delBtnVis" type="danger" plain @click="deleteRow" class="self-del self-btn">&nbsp;</el-button>
-            <slot name="header-btn" :selected="selected"></slot>
+            <el-button v-if="editBtnVis" :style="{marginLeft: addBtnVis ? '10px' : '3px'}" type="success" plain class="self-btn self-edit" @click="edit">&nbsp;</el-button>
+            <el-button v-if="lookBtnVis" :style="{marginLeft: addBtnVis && editBtnVis ? '10px' : '3px'}" type="success" plain class="self-btn self-look" @click="look">&nbsp;</el-button>
+            <el-button v-if="delBtnVis" :style="{marginLeft: addBtnVis && editBtnVis && lookBtnVis ? '10px' : '3px'}" type="danger" plain @click="deleteRow" class="self-del self-btn">&nbsp;</el-button>
+            <slot :style="{marginLeft: addBtnVis && editBtnVis && lookBtnVis && delBtnVis ? '10px' : '3px'}" name="header-btn" :selected="selected"></slot>
         </div>
         <p class="clear-float">&nbsp;</p>
         <el-table :data="tableData" v-loading="loading" border
@@ -62,7 +62,18 @@
                 align="center">
             </el-table-column>
             <el-table-column v-for="item in columns" v-if="item.notShow !== 'true' && !item.slot" :key="item.name" :prop="item.aliasName || item.name" :label="item.des"
-                             :width="item.width || ''" :formatter="item.formatter" align="center" :show-overflow-tooltip="true"></el-table-column>
+                             :width="item.width || ''"
+                             :formatter="(row, cell,val,index) => {
+                                 if (item.formatter) {
+                                    return item.formatter(row, cell,val,index);
+                                 } else if (item.lookupKey) {
+                                    if (LookUp[item.lookupKey].filter(subitem => subitem.value === val)[0]) {
+                                        return LookUp[item.lookupKey].filter(subitem => subitem.value === val)[0].label;
+                                    }
+                                 }
+                                 return val;
+                             }"
+                             align="center" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column v-for="item in columns" v-if="item.slot" :label="item.des" :key="item.name" align="center" >
                 <template slot-scope="scope">
                     <slot :name="item.slotName" :row="scope.row"></slot>
@@ -86,14 +97,15 @@
             <el-form-item v-for="item in formColumns"  :key="item.des" :label="item.des" :prop="item.name" v-if="item.formShow !== 'false'">
                 <el-input v-model="form[item.name]" v-if="item.type === 'string'" :disabled="item.disabled || disabled"></el-input>
                 <el-select v-model="form[item.name]" v-else-if="item.type === 'select'" filterable :disabled="item.disabled || disabled">
-                    <el-option v-for="opItem in item.options" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
+                    <el-option v-if="item.options" v-for="opItem in item.options" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
+                    <el-option v-if="item.lookupKey" v-for="opItem in LookUp[item.lookupKey]" :value="opItem.value" :label="opItem.label" :key="opItem.value"></el-option>
                 </el-select>
                 <!--层级clearable属性只用于绑定值为districtId-->
                 <el-cascader v-model="form[item.name]" v-else-if="item.type === 'cascader'" :disabled="item.disabled || disabled" clearable
                              :options="item.options"  @change="(val) => {handleChange(val, form, item.name, 'crud')}" :show-all-levels="false"   :props="{value: 'id',label: 'label',children: 'children',leaf: 'leaf'}">
                 </el-cascader>
                 <el-radio-group v-if="item.type === 'radio'" v-model="form[item.name]" :disabled="item.disabled || disabled" style="width: 178px" >
-                    <el-radio v-for="opItem in item.options" :label="opItem.value" :key="opItem.value"> {{opItem.label}}</el-radio>
+                    <el-radio v-if="item.opinions" v-for="opItem in item.options" :label="opItem.value" :key="opItem.value"> {{opItem.label}}</el-radio>
                 </el-radio-group>
                 <el-date-picker v-if="item.type === 'date'"
                                 v-model="form[item.name]"
@@ -109,11 +121,11 @@
                                 placeholder="选择日期"
                 >
                 </el-date-picker>
-                <el-input v-model="form[item.name]" class="common-textarea" type="textarea" :rows="2" v-if="item.type === 'textarea'" :disabled="item.disabled || disabled"></el-input>
+                <el-input v-model="form[item.name]" class="common-textarea" type="textarea" :rows="4" v-if="item.type === 'textarea'" :disabled="item.disabled || disabled"></el-input>
                 <!--预留富文本编辑-->
                 <Tinymce v-if="item.type === 'rich-editor'" v-model="form[item.name]"></Tinymce>
                 <CommonFileUpload v-if="item.type === 'file'" :value="form[item.name]" :disabled="item.disabled || disabled" @getValue="form[item.name] = $event"></CommonFileUpload>
-                <CommonUpload v-if="item.type === 'image'" :value="form[item.name]" :disabled="item.disabled || disabled"  :limit="item.limit" @getValue="form[item.name] = $event"></CommonUpload>
+                <CommonUpload v-if="item.type === 'image'" :value="form[item.name]" :disabled="item.disabled || disabled"  :limit="genLimit(item)" @getValue="form[item.name] = $event"></CommonUpload>
                 <MapLocation v-if="item.type === 'location'" :value="form[item.name]" :disabled="item.disabled || disabled" @getValue="form[item.name] = $event"></MapLocation>
             </el-form-item>
             <slot v-if="formAfterVis" name="form-after"></slot>
@@ -132,6 +144,7 @@
     import Tinymce from '@/components/Tinymce';
     import CommonFileUpload from '@/components/FileUpLoad';
     import MapLocation from '@/components/MapLocation';
+    import LookUp from '@/lookup';
     export default {
         name: 'CommonCRUD',
         props: {
@@ -188,7 +201,8 @@
             formAfterVis: {
                 type: Boolean,
                 default: false
-            }
+            },
+            editEvent: null
         },
         data () {
             return {
@@ -209,7 +223,8 @@
                 submitLoading: false,
                 rules: {},
                 title: '',
-                disabled: false
+                disabled: false,
+                LookUp: LookUp
             };
         },
         computed: {
@@ -227,6 +242,17 @@
             MapLocation
         },
         methods: {
+            genLimit(item) {
+                if (item.limit) {
+                    return item.limit;
+                } else {
+                    if (item.max) {
+                        return Number(item.max)
+                    } else {
+                        return 10;
+                    }
+                }
+            },
             rowClick(row) {
                 this.$refs.table.toggleRowSelection(row)
             },
@@ -279,9 +305,15 @@
             edit() {
                 this.title='编辑'
                 if (this.validateRows()) {
-                    this.form = Object.assign({}, this.selected[0]);
-                    this.dialogVisible = true;
-                    this.buttonVis = true;
+                    let isGoing = true;
+                    if (this.editEvent) {
+                        isGoing = this.editEvent(this.selected[0]);
+                    }
+                    if (isGoing) {
+                        this.form = Object.assign({}, this.selected[0]);
+                        this.dialogVisible = true;
+                        this.buttonVis = true;
+                    }
                 }
             },
             look() {
@@ -363,6 +395,16 @@
                 this.formColumns.forEach((item) => {
                     this.rules[item.name] = [];
                     if (item.triggerCheck) {
+                        if (item.type === 'image' && item.required) {
+                            this.rules[item.name].push({required: true, validator: (rule, value, callback) => {
+                                    if (!value) {
+                                        callback(new Error('请至少上传一张图片'));
+                                    } else {
+                                        callback();
+                                    }
+                                }, trigger: 'change'});
+                            return;
+                        }
                         if (item.required){
                             this.rules[item.name].push({required: true, message: `请输入${item.des}`, trigger: item.triggerCheck});
                         }

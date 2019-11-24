@@ -2,7 +2,8 @@
     <section>
         <CommonCRUD
             ref="father" :columns="columns" api-root="identity/villageCadres" :formColumns="formColumns"
-                    :queryFormColumns="queryForm" :objectSpanMethod="objectSpanMethod"
+                :buttonVis="confirmBtnVis"    :queryFormColumns="queryForm" :objectSpanMethod="objectSpanMethod"
+            :addBtnVis="addBtnVis" :editBtnVis="editBtnVis" :delBtnVis="delBtnVis" :editEvent="doEdit"
                     @getTableData="handleTableData" :sortColumns="sortColumns" :formAfterVis="formAfterVis" @handleClose="formAfterVis = false">
             <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                 <el-form-item label="所属组织">
@@ -12,13 +13,13 @@
             </template>
             <template slot="Handle" slot-scope="scope">
                 <el-tag v-if="scope.row.state==='0'"
-                        close-transition type="danger"  effect="dark">未提交</el-tag>
+                        close-transition type="danger"  effect="dark">待提交</el-tag>
                 <el-tag v-if="scope.row.state==='1'"
-                        close-transition  type="warning"  effect="dark">待审核</el-tag>
+                        close-transition  type="warning"  effect="dark">待镇党委审核</el-tag>
                 <el-tag v-if="scope.row.state==='2'"
-                        close-transition  type=""  effect="dark">镇审通过</el-tag>
+                        close-transition  type="primary"  effect="dark">待市委审核</el-tag>
                 <el-tag v-if="scope.row.state==='3'"
-                        close-transition  type="success"  effect="dark">市审通过</el-tag>
+                        close-transition  type="success"  effect="dark">市委审核通过</el-tag>
             </template>
 
             <template slot="header-btn" slot-scope="slotProps" >
@@ -27,22 +28,36 @@
             </template>
 
             <template slot="form-after">
-                <h4>审核信息</h4>
+                <div v-if="currentRow.state == '2'">
+                    <h4 style="margin-left: 50px;">镇级审核信息</h4>
+                    <br>
+                    <el-form ref="reviewInfo" :inline="true" :model="currentRow" class="demo-form-inline  common-textarea  " label-width="170px">
+                        <el-form-item label="镇级审核人">
+                            <el-input type="textarea" v-model="currentRow.auditor" :rows="2" disabled></el-input>
+                        </el-form-item>
+                        <br>
 
+                        <el-form-item label="审核意见">
+                            <el-input type="textarea" :rows="2" v-model="currentRow.auditAdvice" disabled></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
 
+                <h4 style="margin-left: 50px;">审核信息</h4>
+                <br>
                 <el-form ref="reviewForm" :inline="true" :model="reviewForm" class="demo-form-inline  common-textarea  " label-width="170px">
-                    <el-form-item label="审核人">
+                    <el-form-item label="审核人" prop="auditor" :rules="{required: true, message: '审核人不能为空', trigger: 'blur'}">
                         <el-input type="textarea" v-model="reviewForm.auditor" :rows="2"></el-input>
                     </el-form-item>
                     <br>
 
-                    <el-form-item label="审核意见">
+                    <el-form-item label="审核意见" prop="auditAdvice" :rules="{required: true, message: '审核意见不能为空', trigger: 'blur'}">
                         <el-input type="textarea" :rows="2" v-model="reviewForm.auditAdvice"></el-input>
                     </el-form-item>
                 </el-form>
                 <div  style="margin-right: 86px;">
-                    <el-button type="danger" @click="review('FAILED')" style="float: right">驳回</el-button>
-                    <el-button type="primary" @click="review('SUCCESS')" style="float: right;margin-right: 10px">通过</el-button>
+                    <el-button type="danger" :loading="passLoading" @click="review('FAILED')" style="float: right">驳回</el-button>
+                    <el-button type="primary" :loading="rejectLoading" @click="review('SUCCESS')" style="float: right;margin-right: 10px">通过</el-button>
                 </div>
             </template>
 
@@ -59,7 +74,6 @@
                 columns:[],
                 formColumns:[],
                 districtList:[],
-                user:{},
                 queryForm:[
                     {
                         des: '姓名',
@@ -128,9 +142,28 @@
                         type: 'asc'
                     }
                 ],
-                reviewForm: {},
+                reviewForm: {
+                    auditor: null,
+                    auditAdvice: null
+                },
                 formAfterVis: false,
-                currentRow: {}
+                currentRow: {},
+                addBtnVis: true,
+                editBtnVis: true,
+                delBtnVis: true,
+                doEdit: (row) => {
+                    if (row.state !== '0') {
+                        this.$message({
+                            type: 'warning',
+                            message: '已提交、待审核等状态不可修改'
+                        });
+                        return false;
+                    }
+                    return true;
+                },
+                confirmBtnVis: true,
+                passLoading: false,
+                rejectLoading: false,
             }
         },
         methods:{
@@ -257,6 +290,15 @@
                 }
             },
             handelOrg(){
+                this.queryForm[1].value = 'SECRETARY';
+                this.queryForm[2].value = this.user.districtId;
+                if(this.user.sysDistrict.districtLevel == 3){
+                    this.userAuthority = 3;
+                }else  if(this.user.sysDistrict.districtLevel == 2){
+                    this.userAuthority = 2;
+                }else{
+                    this.userAuthority = 1;
+                }
                 //层级组织请求
                 this.$http('GET',`identity/sysDistrict/${this.user.districtId}alltree`,false).then( data => {
                     this.districtList = data[0].children;
@@ -280,17 +322,6 @@
                         })
                     }
                 })
-            },
-            handleAuthority(){
-                this.queryForm[1].value = 'SECRETARY';
-                this.queryForm[2].value = this.user.districtId;
-                if(this.user.sysDistrict.districtLevel == 3){
-                    this.userAuthority = 3;
-                }else  if(this.user.sysDistrict.districtLevel == 2){
-                    this.userAuthority = 2;
-                }else{
-                    this.userAuthority = 1;
-                }
             },
             submit(row) {
                 if (row.length !== 1) {
@@ -327,8 +358,8 @@
                      if((this.userAuthority==2&&selected[0].state==1)||(this.userAuthority==1&&selected[0].state==2)){
                          this.formAfterVis = true;
                          this.currentRow = selected[0];
+                         this.confirmBtnVis = false;
                          this.$refs.father.look();
-                         this.$refs.father.buttonVis = false;
                      }else {
                          let message;
                          if(selected[0].state==0){
@@ -348,18 +379,45 @@
                 }
             },
             review(code) {
-                this.$http('PUT', `identity/villageCadres/verify/${this.currentRow.id}/${code}`, this.reviewForm,false).then(content => {
-
-                    this.$message({
-                        type: 'success',
-                        message: code==='SUCCESS' ?'审核通过':'审核不通过'
-                    });
-                    this.formAfterVis=false;
-                    this.$refs.father.dialogVisible = false;
-                    this.$refs.father.refreshTableData();
-                }).catch(()=> {
-
+                this.$refs['reviewForm'].validate((valid) => {
+                    if (valid) {
+                        console.log(valid, 'dada')
+                        if (code === 'SUCCESS') {
+                            this.passLoading = true;
+                        } else {
+                            this.rejectLoading = true;
+                        }
+                        this.$http('PUT', `identity/villageCadres/verify/${this.currentRow.id}/${code}`, this.reviewForm,false).then(content => {
+                            this.$message({
+                                type: 'success',
+                                message: code==='SUCCESS' ?'审核通过':'审核不通过'
+                            });
+                            this.formAfterVis=false;
+                            this.$refs.father.dialogVisible = false;
+                            this.$refs.father.refreshTableData();
+                            this.passLoading = false;
+                            this.rejectLoading = false;
+                        }).catch(()=> {
+                            this.$message({
+                                type: 'error',
+                                message: '网络错误'
+                            });
+                        });
+                    }
                 });
+            },
+            loadPost() {
+                let param = {
+                    districtId: this.user.districtId
+                };
+                this.$http('POST', `identity/cadrePosition/list`, param, false).then( content => {
+                    let list = [];
+                    content.forEach(item => {
+                        list.push({value: item.id, label: item.name});
+                    })
+                    let filterElement = this.formColumns.filter(item => item.name === 'post')[0];
+                    filterElement.options = list;
+                })
             }
 
 
@@ -376,8 +434,13 @@
             this.columns = temp
             this.user = JSON.parse(sessionStorage.getItem('userInfo'));
             this.columns.push({slot: true, name: 'state', des: '状态', slotName: 'Handle'});
-            this.handleAuthority();
             this.handelOrg();
+            this.loadPost();
+            if (this.user.roleCode !== 'COUNTRY_SIDE_ACTOR') {
+                this.addBtnVis = false;
+                this.editBtnVis = false;
+                this.delBtnVis = false;
+            }
         }
     }
 </script>
@@ -401,7 +464,5 @@
     }
     .self-submit {
         background-size: cover !important;
-        background-color: palegreen;
-
     }
 </style>

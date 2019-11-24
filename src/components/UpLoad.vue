@@ -4,15 +4,17 @@
             class="avatar-uploader"
             action=""
             :limit="limit"
+            :file-list="images"
             :show-file-list="false"
             :auto-upload="true"
             :aria-disabled="disabled"
             :http-request="uploadFile">
             <div v-for="(item,index) in images" class="img-container" @click.stop="stopEvent" @mouseover="moveIn(item)" @mouseout="moveOut(item)">
                 <img class="img-pre" :src="item.path">
-                <div v-show="item.active" style="background-color: rgba(255,255,255,.6);position: relative;top: -77px;width: 70px;height: 70px">
+                <div v-show="item.active" style="background-color: rgba(255,255,255,.6);position: relative;top: -78px;width: 70px;height: 70px">
                     <i class="el-icon-delete ico-po-del" v-if="!disabled" @click.stop="deleteImg(index)"></i>
                     <i class="el-icon-zoom-in ico-po-zoom" @click.stop="zoomIn(item.path)"></i>
+                    <i class="el-icon-download ico-po-zoom" @click.stop="window.open(item.path)"></i>
                 </div>
             </div>
             <i class="el-icon-plus avatar-uploader-icon" v-if="images.length < limit && !disabled" ></i>
@@ -61,6 +63,7 @@
                 images: [],
                 dialogUrl: '',
                 dialogVisible: false,
+                window: window
             };
         },
         methods: {
@@ -83,6 +86,7 @@
             },
             deleteImg(index) {
                 this.images.splice(index,1);
+                console.log(this.images, 'ss')
                 let value = this.images.map(item => item.path).join(',');
                 this.$emit('getValue', value);
             },

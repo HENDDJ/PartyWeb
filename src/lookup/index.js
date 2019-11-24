@@ -194,5 +194,28 @@ export default {
     },{
         label: '文件(Word、Pdf等)',
         value: 'File'
+    }],
+    'SecretaryClassType': [{
+        label: '一级',
+        value: 'FIRST_CLASS'
+    },{
+        label: '二级',
+        value: 'SECOND_CLASS'
+    },{
+        label: '三级',
+        value: 'THIRD_CLASS'
+    },{
+        label: '四级',
+        value: 'FOUR_CLASS'
+    }, {
+        label: '五级',
+        value: 'FIRTH_CLASS'
+    }],
+    'SecretaryType': [{
+        label: '员额村书记',
+        value: 'YUAN_E'
+    }, {
+        label: '单列村书记',
+        value: 'DAN_LIE'
     }]
 }

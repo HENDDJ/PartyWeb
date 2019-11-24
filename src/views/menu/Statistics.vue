@@ -603,7 +603,7 @@
         width: 0;
     }
     .statistics td {
-        padding: 0px !important;
+        padding: 0px;
     }
 
 </style>

@@ -183,6 +183,10 @@ export default {
         {
             value :'Office',
             label :'机关'
+        },
+        {
+            value: 'PartyCommittee',
+            label: '党委'
         }
     ],
     'TemplateItemType': [{

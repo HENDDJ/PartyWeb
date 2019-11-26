@@ -13,6 +13,7 @@ import CloudVideo from '@/views/cloud/CloudVideo';
 import CloudSwiper from '@/views/cloud/CloudSwiper';
 import CloudPictures from '@/views/cloud/CloudPictures'
 import ParActivityManage from '@/views/menu/ParActivityManage';
+import VillageSecretaryDisplay from '@/views/menu/VillageSecretaryDisplay';
 
 Vue.use(Router);
 
@@ -111,6 +112,11 @@ const router = new Router({
             path: '/cloudSwiper',
             name: 'CloudSwiper',
             component: CloudSwiper
+        },
+        {
+            path: '/villageSecretaryDisplay',
+            name: 'VillageSecretaryDisplay',
+            component: VillageSecretaryDisplay
         }
 
     ]
@@ -146,6 +152,10 @@ router.beforeEach((to, from, next) => {
         return;
     }
     if(to.path === '/cloudSwiper'){
+        next();
+        return;
+    }
+    if(to.path === '/villageSecretaryDisplay'){
         next();
         return;
     }

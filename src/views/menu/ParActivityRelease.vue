@@ -80,7 +80,7 @@
                             <el-row style="margin: 10px 0" v-if="this.user.sysDistrict.districtType==='Office'">
                                 <el-col :span="24">
                                     <el-form-item label="反馈配置" prop="templateId"
-                                                  :rules="[{required: form.newObject.office, message: '请选择反馈材料模板', trigger: 'blur'}]">
+                                                  :rules="[{required: true, message: '请选择反馈材料模板', trigger: 'blur'}]">
                                         <el-select v-model="form.templateId" placeholder="请选择需要反馈的材料">
                                             <el-option
                                                 v-for="item in feedBackOpt"
@@ -94,7 +94,7 @@
                                 </el-col>
                             </el-row>
                             <el-row style="margin: 10px 0">
-                                <el-col :span="11">
+                                <el-col :span="24">
                                     <!--<el-form-item label="任务对象" prop="taskObject">-->
                                     <!--<el-tree-->
                                     <!--:props="props"-->
@@ -108,9 +108,9 @@
                                     <!--</el-form-item>-->
                                     <el-form-item label="任务对象" prop="objectType">
                                         <vs-radio v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-radio>
-                                        <vs-radio v-model="form.objectType" vs-value="2" v-if="this.user.sysDistrict.districtType==='Office'">全部机关</vs-radio>
-                                        <vs-radio v-model="form.objectType" vs-value="3" v-if="this.user.sysDistrict.districtType==='Office'">机关党委</vs-radio>
-                                        <vs-radio v-model="form.objectType" vs-value="4" v-if="this.user.sysDistrict.districtType==='Office'">机关</vs-radio>
+                                        <vs-radio v-model="form.objectType" vs-value="2-1" v-if="this.user.sysDistrict.districtType==='Office'">所有机关党组织</vs-radio>
+                                        <vs-radio v-model="form.objectType" vs-value="2-2" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党组织</vs-radio>
+                                        <vs-radio v-model="form.objectType" vs-value="2-3" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党组织及各局委机关党支部</vs-radio>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -336,20 +336,6 @@
                     this.radioChoose(newVal);
                 }
             },
-           /* 'form.newObject.office': {
-                handler: function (newVal, oldVal) {
-                    if (newVal) {
-                        this.form.newObject.countryside = false;
-                    }
-                }
-            },
-            'form.newObject.countryside': {
-                handler: function (newVal, oldVal) {
-                    if (newVal) {
-                        this.form.newObject.office = false;
-                    }
-                }
-            },*/
             'actiityList': {
                 handler: function (newVal, oldVal) {
                     if(newVal.length>0){
@@ -382,8 +368,7 @@
         },
         methods: {
             reWrite() {
-                this.form = {taskType: 'Party', score: 10, newObject: {countryside: true, office: false}}
-                // this.$refs.tree.setChecked([]);
+                this.form = {taskType: 'Party', score: 10}
             },
             //给taskObject赋值
             ss() {
@@ -471,7 +456,6 @@
                                 this.form = {
                                     taskType: 'Party',
                                     score: 10,
-                                    newObject: {countryside: true, office: false}
                                 };
                                 this.dialogVisible = false;
                             }).catch(res => {

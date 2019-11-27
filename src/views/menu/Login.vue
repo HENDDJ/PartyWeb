@@ -68,7 +68,37 @@ export default {
             loading: false,
             showDialog: false,
             btnText: '登' + '\xa0\xa0\xa0\xa0\xa0\xa0\xa0' + '录',
-            pwdLabel: '密' + '\xa0\xa0\xa0' + '码'
+            pwdLabel: '密' + '\xa0\xa0\xa0' + '码',
+            releaseMenu: {
+                children: [],
+                classId: "e6d40f56-f7f1-4c72-9c41-a43f1asfaf",
+                componentName: "ParActivityRelease",
+                createdAt: "2019-05-23T16:02:12.374",
+                createdBy: "1fea8eb2-c5dd-4dc0-b815-c0da34ad58fa",
+                des: "活动任务发布",
+                id: "ca2d25e0-316d-4403-888e-e8e1a23440b4",
+                isDelete: 0,
+                level: 2,
+                meta: {
+                    createdAt: "2019-05-23T16:02:12.411",
+                    createdBy: "1",
+                    icon: "release",
+                    id: "a81aa5f2-2a20-45bf-ab0d-93d318a71ae8",
+                    isDelete: 0,
+                    modifiedAt: "2019-05-23T16:02:12.411",
+                    modifiedBy: "1",
+                    routeId: "ca2d25e0-316d-4403-888e-e8e1a23440b4",
+                    title: "任务发布",
+                    version: 0,
+                },
+                modifiedAt: "2019-05-23T16:02:12.374",
+                modifiedBy: "1fea8eb2-c5dd-4dc0-b815-c0da34ad58fa",
+                name: "parActivityRelease",
+                parentId: "b93485f5-2b0f-453e-9ac4-d39f69bc97ae",
+                path: "parActivityRelease",
+                version: 0,
+                visible: 1,
+            }
         };
     },
     methods: {
@@ -82,9 +112,17 @@ export default {
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('user', this.loginForm.userName);
                 sessionStorage.setItem('userInfo',JSON.stringify(data.user));
-                return 'success';
-            }).then(() => {
+                return data.user;
+            }).then((user) => {
                 this.$http('GET', `/identity/roleMenu/menu`, false).then(data => {
+                    // 处理句容市委市级机关工委 特殊角色处理菜单
+                    if (user.sysDistrict.districtId === '0118') {
+                        data.forEach(item => {
+                            if (item.name === 'Activity') {
+                                item.children.push(this.releaseMenu);
+                            }
+                        })
+                    }
                     sessionStorage.setItem("menu",JSON.stringify(data));
                     this.$store.commit("getMenu",data);
                     DynamicRoutes.transfer(data);

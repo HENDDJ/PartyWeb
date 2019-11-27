@@ -766,9 +766,13 @@
                         this.loading = false;
                         this.activityLoading = true;
                         if(!this.detailLoading || statusChange) {
-                            this.detailForm = this.tableData[0];
-                            this.handleFile(this.detailForm);
-                            this.handleDifferentRole();
+                            if (this.tableData[0]) {
+                                this.detailForm = this.tableData[0];
+                                this.handleFile(this.detailForm);
+                                this.handleDifferentRole();
+                            } else {
+                                this.detailLoading = false;
+                            }
                         }
                     }
                 ).catch(res => {

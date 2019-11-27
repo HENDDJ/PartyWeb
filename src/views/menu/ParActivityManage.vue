@@ -14,6 +14,10 @@
                                 <!--:value="item.value">-->
                             <!--</el-option>-->
                         <!--</el-select>-->
+                        <el-radio-group v-model="radioName" @change="loadByObjectType" v-if="this.user.districtId==='01'">
+                            <el-radio-button label="农村"></el-radio-button>
+                            <el-radio-button label="机关"></el-radio-button>
+                        </el-radio-group>
                         <div style="flex: 1;text-align: right">
                             <vs-button style="float: right" color="primary" type="flat" icon="assignment" @click="loadByStatus('PLAN')">计划中</vs-button>
                             <vs-button style="float: right" color="success" type="flat" icon="alarm" @click="loadByStatus('ACTIVE')">进行中</vs-button>
@@ -475,7 +479,7 @@
                     },
                 ],
                 addVideo: false,
-                queryForm: {taskType: '', currentStatus: 'ACTIVE'},
+                queryForm: {taskType: '', currentStatus: 'ACTIVE',objectType:''},
                 queryFormTrack: {ActivityID: ''},
                 //视频添加
                 addVideoList: [],
@@ -556,6 +560,7 @@
                 }],
                 activityLoading: false,
                 detailLoading: false,
+                user:JSON.parse(sessionStorage.getItem('userInfo')),
                 sysDistrict: JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict,
                 roleCode: JSON.parse(sessionStorage.getItem('userInfo')).roleCode,
                 TownCodeKey: {
@@ -583,6 +588,8 @@
                 phoneOrTv:true,
                 feedFile:true,//用于显示机关详情时，无法动态触发组件内的方法
                 feedBackObject:{},
+                //句容市委区分农村任务和机关任务
+                radioName:'农村',
             }
         },
         watch: {
@@ -744,7 +751,6 @@
                         }, 200);
                     })
                 }
-
             },
             // 获取表格数据
             loadTableData(path, statusChange) {
@@ -830,6 +836,14 @@
                 this.pageable.currentPage = 1;
                 let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
                 this.queryForm.currentStatus = val;
+                this.loadTableData(path, true);
+            },
+            //列表显示机关和农村任务
+            loadByObjectType(){
+                let objectType = this.radioName==='农村'?'1':'2';
+                this.pageable.currentPage = 1;
+                let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+                this.queryForm.objectType = objectType;
                 this.loadTableData(path, true);
             },
             handleFile(val) {
@@ -1171,6 +1185,13 @@
         created() {
             this.handleSelectOptions();
             let path = `${this.apiRoot}/page?page=${this.pageable.currentPage - 1}&size=${this.pageable.pageSize}`;
+            //句容市委进入页面，初始化时，列表显示农村的任务
+            if(this.user.districtId==='01'){
+                this.queryForm.objectType = "1";
+            }
+            if(this.user.organizationName==='句容市委市级机关工委'){
+                this.queryForm.objectType = "2";
+            }
             this.loadTableData(path);
             this.progressType = document.body.clientWidth/1920 <= 0.73 ? 'dashboard' : 'line';
             window.onresize = () => {

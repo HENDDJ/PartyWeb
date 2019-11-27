@@ -17,6 +17,12 @@
                 <el-button type="success" plain class="self-btn self-look" @click="look()">&nbsp;</el-button>
                 <el-button type="danger" plain @click="del()" v-if="false" class="self-del self-btn">&nbsp;</el-button>
             </template>
+            <template  slot="query" v-if="this.user.organizationName==='句容市委'||this.user.organizationName==='句容市委市级机关工委'">
+                <el-radio-group v-model="radioName" @change="handleQuery">
+                    <el-radio-button label="农村"></el-radio-button>
+                    <el-radio-button label="机关"></el-radio-button>
+                </el-radio-group>
+            </template>
         </CommonCRUD>
 
         <el-dialog
@@ -132,9 +138,16 @@
                         name: 'districtId',
                         type: 'string',
                         visible: false,
+                    },
+                    {
+                        des: '组织类型',
+                        name: 'districtType',
+                        type: 'string',
+                        visible: false,
                     }
                 ],
-                spanObject: new Map()
+                spanObject: new Map(),
+                radioName:'',
             };
         },
         methods: {
@@ -259,18 +272,22 @@
             //查询框下拉项
             showZhenList(user){
                 let level = user.sysDistrict.districtLevel;
-                let districtId = user.sysDistrict.districtId
-                //镇级组织
-                this.zhenList = [];
-                this.$http('POST',`identity/sysDistrict/list`,{ districtLevel: level + 1, orgParent: districtId },false).then(data => {
+                let districtId = user.sysDistrict.districtId;
+                let districtType = this.radioName==='农村'?'Party':'Office';
+                this.queryColumns[0].value = "";
+                this.queryColumns[1].value = "";
+                this.$http('POST',`identity/sysDistrict/list`,{ districtLevel: level + 1,orgParent: districtId,districtType:districtType},false).then(data => {
+                    this.zhenList = [];
+                    this.zhenReviewList = [];
                     data.forEach(item => {
                         this.zhenReviewList.push({value: item.districtId, label: item.districtName})
-                    })
+                    });
                     this.zhenList = data;
-                    this.zhenList.push({districtId: '01',districtName: '  句容市委'});
+                    if(this.user.districtName==='句容市委'||this.user.districtName==='机关工委'){
+                        this.zhenList.push({districtId: '01',districtName: '  句容市委'});
+                    }
                     this.queryColumns[0].options = this.zhenReviewList;
                     this.queryColumns[1].options = this.zhenList;
-                    this.districtTypeList =  LookUp['DistrictType'];
                 })
             },
             handleTableData(data) {
@@ -337,6 +354,10 @@
             },
             handleChange(value) {
 
+            },
+            handleQuery(){
+                this.showZhenList(this.user);
+                this.queryColumns.filter(item=>item.name==='districtType')[0].value = (this.radioName==='农村' ? 'Party':'Office');
             }
         },
         components: {
@@ -346,9 +367,12 @@
             this.columns = this.$store.state.classInfo.properties;
             tansfer(this.columns);
             this.user=JSON.parse(sessionStorage.getItem('userInfo'));
+            this.radioName = this.user.sysDistrict.districtType==='Party'?'农村':'机关';
           /*  this.showParentList();*/
             this.showZhenList(this.user);
             this.queryColumns[3].value = this.user.districtId;
+            this.handleQuery();
+            this.districtTypeList =  LookUp['DistrictType'];
         }
     }
 </script>

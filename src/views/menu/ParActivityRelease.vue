@@ -77,7 +77,7 @@
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row style="margin: 10px 0">
+                            <el-row style="margin: 10px 0" v-if="this.user.sysDistrict.districtType==='Office'">
                                 <el-col :span="24">
                                     <el-form-item label="反馈配置" prop="templateId"
                                                   :rules="[{required: form.newObject.office, message: '请选择反馈材料模板', trigger: 'blur'}]">
@@ -106,9 +106,11 @@
                                     <!--@check="ss">-->
                                     <!--</el-tree>-->
                                     <!--</el-form-item>-->
-                                    <el-form-item label="任务对象" prop="newObject" class="is-required">
-                                        <vs-checkbox v-model="form.newObject.countryside">农村</vs-checkbox>
-                                        <vs-checkbox v-model="form.newObject.office">机关</vs-checkbox>
+                                    <el-form-item label="任务对象" prop="objectType">
+                                        <vs-radio v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-radio>
+                                        <vs-radio v-model="form.objectType" vs-value="2" v-if="this.user.sysDistrict.districtType==='Office'">全部机关</vs-radio>
+                                        <vs-radio v-model="form.objectType" vs-value="3" v-if="this.user.sysDistrict.districtType==='Office'">机关党委</vs-radio>
+                                        <vs-radio v-model="form.objectType" vs-value="4" v-if="this.user.sysDistrict.districtType==='Office'">机关</vs-radio>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -224,7 +226,7 @@
         name: "ParActivityRelease",
         data() {
             let validatePass = (rule, value, callback) => {
-                if (!value.countryside && !value.office) {
+                if (!value) {
                     callback(new Error('请选择对象'));
                 } else {
                     callback();
@@ -247,7 +249,6 @@
                     },
                     taskType: 'Party',
                     score: 10,
-                    newObject: {countryside: true, office: false},
                     templateId:'',
                 },
                 feedListVisible:false,
@@ -261,7 +262,6 @@
                 loading: false,
                 addVideo: false,
                 apiRoot: '/identity/parActivity',
-                checkboxGroup: 'Party',
                 options: [],
                 //视频添加
                 addVideoList: [],
@@ -280,7 +280,7 @@
                     title: [{required: true, message: '请输入任务名称', trigger: 'blur'}],
                     type: [{required: true, message: '请输入任务类型', trigger: 'blur'}],
                     monVal: [{required: true, validator: validateDate, trigger: 'blur'}],
-                    newObject: [{validator: validatePass, trigger: 'blur'}]
+                    objectType: [{required: true,validator: validatePass, trigger: 'blur'}]
                 },
                 actiityList:[],
                 scroll:{
@@ -289,6 +289,7 @@
                 labelWidth:document.body.clientWidth/1920*170+'px',
                 inputWidth:document.body.clientWidth/1920*200+'px',
                 feedBackOpt: [],
+                user:JSON.parse(sessionStorage.getItem('userInfo')),
                 columns: [{name: 'name', des: '标题',type: 'string',}],
                 propertyColumns: [
                     {
@@ -335,7 +336,7 @@
                     this.radioChoose(newVal);
                 }
             },
-            'form.newObject.office': {
+           /* 'form.newObject.office': {
                 handler: function (newVal, oldVal) {
                     if (newVal) {
                         this.form.newObject.countryside = false;
@@ -348,7 +349,7 @@
                         this.form.newObject.office = false;
                     }
                 }
-            },
+            },*/
             'actiityList': {
                 handler: function (newVal, oldVal) {
                     if(newVal.length>0){
@@ -399,8 +400,6 @@
                     }
                 })
                 this.form.taskObject = ids
-
-
             },
             loadNode(node, resolve) {
                 if (node.level === 0) {

@@ -83,11 +83,11 @@
                                 <el-col :span="4">工作要求：</el-col>
                                 <el-col :span="16" style="color: #25252582">{{activityDetail.context}}&nbsp;</el-col>
                             </el-row>
-                            <el-row class="detail-row"  v-if="activityDetail.objectType==='2'">
+                            <el-row class="detail-row"  v-if="activityDetail.objectType.indexOf('2')===0">
                                 <el-col :span="4">反馈要求：</el-col>
                                 <el-col :span="16" style="color: #25252582">{{activityDetail.templateItem}}&nbsp;</el-col>
                             </el-row>
-                            <el-row class="detail-row" v-for="item in feedBackItemList" :key="item.id"  v-if="activityDetail.objectType==='2'">
+                            <el-row class="detail-row" v-for="item in feedBackItemList" :key="item.id"  v-if="activityDetail.objectType.indexOf('2')===0">
                                 <el-col :span="4">{{item.name}}：</el-col>
                                 <el-col :span="16" style="color: #25252582" v-if="item.type === 'String' ">
                                     <el-input  v-model="item.value" @change="updateFile(item,item.value)">{{item.value}}</el-input>
@@ -100,7 +100,7 @@
                                 </el-col>
                             </el-row>
                             <PictureShot :picData="picQuery" v-if="activityDetail.objectType==='1'"></PictureShot>
-                            <el-row v-if="activityDetail.objectType==='2'">
+                            <el-row v-if="activityDetail.objectType.indexOf('2')===0">
                                 <el-col :span="22" style="text-align: right">
                                     <el-button type="primary" @click="submit">提交</el-button>
                                 </el-col>
@@ -184,7 +184,7 @@
             details(item){
                 this.activityDetailLoading = false;
                 this.activityDetail = item;
-                if(item.objectType==='2'){
+                if(item.objectType.indexOf('2')===0){
                     this.showFeedBackItem(item.id);
                 }
                 setTimeout(()=>{

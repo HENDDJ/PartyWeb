@@ -210,12 +210,12 @@
                                     </template>
                                 </el-col>
                             </el-row>
-                            <el-row class="detail-row"  v-if="detailForm.objectType==='2'">
+                            <el-row class="detail-row"  v-if="detailForm.objectType.indexOf('2')===0">
                                 <el-col :span="4">反馈要求：</el-col>
                                 <el-col :span="16" style="color: #25252582">{{detailForm.templateItem}}&nbsp;</el-col>
                             </el-row>
                             <PictureShot :picData="picQuery" v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.objectType==='1')"  ></PictureShot>
-                            <FeedBackFile :fileData="fileQuery" v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.objectType==='2')"></FeedBackFile>
+                            <FeedBackFile :fileData="fileQuery" v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.objectType.indexOf('2')===0)"></FeedBackFile>
                             <el-row class="detail-row">
                                 <el-col v-if="roleCode !== 'COUNTRY_SIDE_ACTOR'" :span="4" >进度跟踪：</el-col>
                                 <el-col v-if="roleCode === 'CITY_LEADER'" :span="18">
@@ -339,7 +339,7 @@
                                         <el-table-column
                                             label="文件"
                                             align="center"
-                                            :show-overflow-tooltip="true" v-if="detailForm.objectType==='2'">
+                                            :show-overflow-tooltip="true" v-if="detailForm.objectType.indexOf('2')===0">
                                             <template slot-scope="scope">
                                                 <el-link type="primary" :underline="false" @click="getFeedBack(scope.row)">详情</el-link>
                                             </template>
@@ -409,7 +409,7 @@
                             <el-table-column
                                 label="文件"
                                 align="center"
-                                :show-overflow-tooltip="true" v-if="detailForm.objectType==='2'">
+                                :show-overflow-tooltip="true" v-if="detailForm.objectType.indexOf('2')===0">
                                 <template slot-scope="scope">
                                     <el-link type="primary" :underline="false" @click="getFeedBack(scope.row)">详情</el-link>
                                 </template>
@@ -443,7 +443,7 @@
                             <img style="margin: 0 auto" src="/static/img/nodata.png" width="300" height="300" />
                             <p style="text-align: center">&emsp;&emsp;&emsp;暂无图片</p>
                         </div>
-                        <ShowFeedBack :fileData="showFileQuery" v-if="detailForm.objectType==='2'&& feedFile"></ShowFeedBack>
+                        <ShowFeedBack :fileData="showFileQuery" v-if="detailForm.objectType.indexOf('2')===0&& feedFile"></ShowFeedBack>
                     </el-col>
                 </el-row>
             </el-dialog>
@@ -696,7 +696,7 @@
                     if (data.length > 0) {
                         if(this.detailForm.objectType==='1'){
                             this.getTV(data[0]);
-                        }else if(this.detailForm.objectType==='2'){
+                        }else if(this.detailForm.objectType.indexOf('2')===0){
                             this.getFeedBack(data[0]);
                         }
                     }
@@ -790,7 +790,7 @@
                 this.$http('POST', path, query, false).then(
                     data => {
                         this.trackTable = data;
-                        if(this.detailForm.objectType==="2"){
+                        if(this.detailForm.objectType.indexOf('2')===0){
                             this.trackTable.forEach(item=>{
                                 item.finishRatio = this.detailForm.activityOfficeProgresses[item.townCode] || 0;
                             })

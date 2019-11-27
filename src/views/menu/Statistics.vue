@@ -249,7 +249,7 @@
                         this.feedBackVis = false;
                         this.pictureShow=false;
                         this.details(item);
-                    }else if(item.objectType === '2'){
+                    }else if(item.objectType.indexOf('2')===0){
                         this.feedBackVis = false; //销毁组件，重新渲染
                         setTimeout(()=>{
                             this.feedBackVis = true;

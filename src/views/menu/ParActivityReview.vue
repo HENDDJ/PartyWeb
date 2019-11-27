@@ -83,12 +83,12 @@
                                 <el-col :span="4">工作要求：</el-col>
                                 <el-col :span="16" style="color: #25252582">{{activityDetail.context}}&nbsp;</el-col>
                             </el-row>
-                            <el-row class="detail-row"  v-if="activityDetail.objectType==='2'">
+                            <el-row class="detail-row"  v-if="activityDetail.objectType.indexOf('2')===0">
                                 <el-col :span="4">反馈要求：</el-col>
                                 <el-col :span="16" style="color: #25252582">{{activityDetail.templateItem}}&nbsp;</el-col>
                             </el-row>
                             <PictureShot :picData="picQuery" v-if="activityDetail.objectType==='1'"></PictureShot>
-                            <FeedBackFile :fileData="fileQuery" v-if="activityDetail.objectType==='2'"></FeedBackFile>
+                            <FeedBackFile :fileData="fileQuery" v-if="activityDetail.objectType.indexOf('2')===0"></FeedBackFile>
                             <el-row class="detail-row">
                                 <el-col :span="4">审核意见：</el-col>
                                 <el-col :span="18">

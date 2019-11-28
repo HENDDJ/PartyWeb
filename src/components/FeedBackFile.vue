@@ -3,7 +3,7 @@
         <el-row class="detail-row" v-for="item in feedBackItemList" :key="item.id">
             <el-col :span="4">{{item.name}}：</el-col>
             <el-col :span="16" style="color: #25252582" v-if="item.type === 'String' ">
-                <el-input  v-model="item.value" :disabled = "true">{{item.value}}</el-input>
+                {{item.value}}
             </el-col>
             <el-col :span="16" style="color: #25252582" v-if="item.type === 'File' ">
                 <CommonFileUpload :value="item.value" @getValue="item.value = $event" :disabled = "true"></CommonFileUpload>

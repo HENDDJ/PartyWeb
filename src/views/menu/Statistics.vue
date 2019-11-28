@@ -37,7 +37,10 @@
                         </div>
                         <table id="org-label-key" style="overflow-x: scroll;overflow-y: hidden;max-height: 620px;margin-top: 1px;" class="tableCol">
                             <tr v-for="(value,key) in activityList" v-if="key!='title'">
-                                <td class="tableColContent" :title="key"> {{key}}</td>
+                                <span v-show="false">{{keys = key.split(",")}}</span>
+                                <td :class="`tableColContent level${keys[2]}`" :title="key">
+                                    {{keys[1]}}
+                                </td>
                             </tr>
                         </table>
                     </div>
@@ -464,7 +467,7 @@
     }
     .tableline{
         position:relative;
-        width:100px;
+        width:150px;
         height:100px;
         box-sizing:border-box;
         border:1px solid rgba(227,213,213,0.55);
@@ -480,13 +483,13 @@
         content:"";
         position:absolute;
         left:0;
-        top:0;
-        width:100%;
+        top:-5px;
+        width:132px;
         height:50px;
         box-sizing:border-box;
         border-bottom:1px solid rgba(227,213,213,0.55);
         transform-origin:bottom center;
-        transform:rotateZ(45deg) scale(1.414);
+        transform:rotateZ(33deg) scale(1.5);
     }
     #div-with-loading{
         background-color: transparent!important;
@@ -510,7 +513,7 @@
         display: inline-block;
     }
     .tableCol{
-        width:106px;
+        width:160px;
         display: inline-block;
         vertical-align: top;
         margin-top: -3px;
@@ -522,7 +525,7 @@
     }
     .tableColContent{
         background-color: #f3f3f3;
-        width: 100px;
+        width: 150px;
         font-family:' 黑体';
         font-weight:bold;
         line-height:25px;
@@ -537,6 +540,16 @@
         padding-left: 5px;
         padding-right: 5px;
     }
+    .level2 {
+        color: red;
+    }
+
+    .level3 {
+        color: #b0b000;
+
+    }
+
+
     .tableCol::-webkit-scrollbar {
         width: 0;
     }

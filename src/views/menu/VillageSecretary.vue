@@ -314,12 +314,10 @@
             //处理村级组织children为空的情况
             handleOrgLeaf(districtList){
                 districtList.forEach(item => {
-                    if( this.userAuthority == 2){
+                    if (item.children.length === 0) {
                         delete item.children;
-                    }else{
-                        item.children.forEach(subitem => {
-                            delete subitem.children;
-                        })
+                    } else {
+                        this.handleOrgLeaf(item.children)
                     }
                 })
             },

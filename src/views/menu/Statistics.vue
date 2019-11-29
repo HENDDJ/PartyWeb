@@ -29,11 +29,11 @@
         <div class='wholeContent' >
             <div class="contentDiv" style="border: 1px rgba(227,213,213,0.55) solid" >
                 <p class="titleContent">{{toneName+"活动完成情况一览表"}}</p>
-                <div style="display: flex">
+                <div v-show="!listLoading" style="display: flex">
                     <div>
                         <div class="tableline">
                             <p style="line-height: 50px; text-align: right;padding-right: 10px;">任务</p>
-                            <p style="line-height: 50px; text-align: left;padding-left: 10px;">村名</p>
+                            <p style="line-height: 50px; text-align: left;padding-left: 10px;">任务名</p>
                         </div>
                         <table id="org-label-key" style="overflow-x: scroll;overflow-y: hidden;max-height: 620px;margin-top: 1px;" class="tableCol">
                             <tr v-for="(value,key) in activityList" v-if="key!='title'">
@@ -68,6 +68,9 @@
                             </tr>
                         </table>
                     </div>
+                </div>
+                <div v-show="listLoading" style="min-height: 400px;background: white">
+                    <div style="height: 400px;background: url('../../../static/img/listLoading.gif') center center no-repeat;background-size: 400px 300px"></div>
                 </div>
             </div>
             <div class="pictureshow" style="border: 1px rgba(227,213,213,0.55) solid" v-show="pictureVisible">
@@ -188,12 +191,10 @@
                 feedBackVis:'',
                 objectId:'',
                 feedBackItemList:[],
+                listLoading: true
             }
         },
         methods:{
-            aa(sub){
-              alert("12");
-            },
             queryTable(objectType,districtType){
                 this.objectType = objectType;
                 this.districtType = districtType;
@@ -226,6 +227,7 @@
                 }
                 this.$http('post',`identity/parActivity/list/completion?year=${new Date(this.year).Format("yyyy")}&districtId=${this.districtId}&objectType=${this.objectType}&districtType=${this.districtType}`,false).then( data => {
                     this.activityList = data;
+                    this.listLoading = false;
                 });
             },
             //查询框下拉项
@@ -428,6 +430,7 @@
                 }
             },
             handleRadioGroup(value) {
+                this.listLoading = true;
                 if (value === '农村') {
                     this.radioName = '农村';
                     this.queryTable('1', 'Party');
@@ -435,7 +438,8 @@
                     this.radioName = '机关';
                     this.queryTable('2', 'Office')
                 } else {
-                    console.log('类型错误')
+                    console.log('类型错误');
+                    this.listLoading = false;
                 }
             }
         },

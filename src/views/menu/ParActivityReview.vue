@@ -29,7 +29,7 @@
                                         <p style="border-right: 1px solid #888">&nbsp;</p>
                                     </div>
                                     <div class="left-time">
-                                        <template v-if="calcLeftDays(item.month)">
+                                        <template v-if="calcLeftDays(item.month) >= 0">
                                             <icon name="miaobiao" scale="3"></icon>
                                             <p><span>{{calcLeftDays(item.month)}}</span>天</p>
                                         </template>
@@ -146,14 +146,12 @@
         },
         methods:{
             calcLeftDays(date){
+                date += ' 23:59:59'
                 //开始时间
                 let stop = new Date(date);
                 //结束时间
                 let now = new Date();
                 let distance = stop.getTime()-now.getTime();
-                if (distance < 0) {
-                    return false
-                }
                 //计算出相差天数
                 return Math.floor(distance/(24*3600*1000))
             },

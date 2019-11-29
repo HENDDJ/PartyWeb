@@ -29,6 +29,7 @@
                                         <p style="border-right: 1px solid #888">&nbsp;</p>
                                     </div>
                                     <div class="left-time">
+                                        2234234
                                         <template v-if="calcLeftDays(item.month) >= 0">
                                             <icon name="miaobiao" scale="3"></icon>
                                             <p><span>{{calcLeftDays(item.month)}}</span>天</p>

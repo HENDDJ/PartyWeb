@@ -499,7 +499,7 @@
                     this.workingDataList();
                     this.getCurrentSituation();
                     this.getRealTimeLog();
-                }, 5000)
+                }, 30000)
             },
             //展示正在执行内的封装方法
             workingDataList() {
@@ -1363,6 +1363,11 @@
                     this.map.addOverlay(myCompOverlay);
                     this.cunPointList.push(myCompOverlay);
                 }
+            }
+        },
+        beforeDestroy() {
+            if (this.realTimer) {
+                window.clearInterval(this.realTimer)
             }
         },
         mounted() {

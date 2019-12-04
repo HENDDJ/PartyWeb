@@ -187,7 +187,8 @@ export default {
         },
         // 处理句容市委市级机关工委 特殊角色处理菜单
         handleSpecialRole(data, user) {
-            data.forEach(item => {
+            for (let i = 0;i < data.length;i++) {
+                let item = data[i];
                 if (item.name === 'Activity') {
                     let isWorkingCommittee = user.sysDistrict.districtId === '0118';
                     if (isWorkingCommittee) {
@@ -196,13 +197,21 @@ export default {
                     this.$store.commit("updateIsWorkingCommittee", isWorkingCommittee);
                     sessionStorage.setItem("isWorkingCommittee", isWorkingCommittee);
 
-                    if (user.sysDistrict.districtId > '0118') {
+                    if (user.sysDistrict.districtId > '0118' && user.sysDistrict.districtType === '2') {
                         item.children.push(this.actMenu)
                     }
                 }
-            })
-
-
+                if (item.name === 'basePosition') {
+                    if (user.sysDistrict.districtId > '0118') {
+                        data.splice(i--, 1)
+                    }
+                }
+                if (item.name === 'baseTeam') {
+                    if (user.sysDistrict.districtId > '0118') {
+                        data.splice(i--, 1)
+                    }
+                }
+            }
         }
     },
     created () {

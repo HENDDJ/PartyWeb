@@ -20,33 +20,48 @@
             <span>员额村书记：</span>
             <CountTo :startVal="0"  :endVal="15" :duration="1300"></CountTo>
         </el-card>
-        <el-card class="box-card" style="width: 45%;margin: 20px;float: left;">
+        <el-card style="width: 45%;margin: -10px 20px 20px ;float: left;">
             <div slot="header" class="clearfix">
                 <span>XXX饼图</span>
             </div>
-            <div id="pieChart" style="height:250px;width: 98%;"></div>
+            <div id="pieChart" style="height:200px;width: 98%;"></div>
         </el-card>
-        <el-card class="box-card" style="width: 45%;margin: 20px;float: left;">
+        <el-card style="width: 45%;margin: -10px 20px 20px ;float: left;">
             <div slot="header" class="clearfix">
                 <span>XXX饼图</span>
             </div>
-            <div id="pieChart1" style="height:250px;width: 98%;"></div>
+            <div id="pieChart1" style="height:200px;width: 98%;"></div>
         </el-card>
-        <el-card style="width: 92%;margin: 20px;height: 350px;">
+        <el-card style="width: 92%;margin: 20px;height: 440px;">
             <div>
-                <span style="width: 10%;">详细信息</span>
-                <el-input style="margin-left: 80%;width: 10%" v-model="queryName" placeholder="请输入村书记姓名"></el-input>
+                <el-col :span="5" style="text-align: left" >详细信息</el-col>
+                <el-col :span="19">
+                    <el-input style="text-align: right;right: 33px" v-model="queryName" placeholder="请输入村书记姓名"></el-input>
+                </el-col>
             </div>
-            <el-card v-for="item in secretaryList" :key="item.name" style="width: 17%;margin: 20px;height: 100px;float: left;">
-                <el-col :span="15">
-                    <el-image style="width: 60px; height: 60px" :src="item.image"></el-image>
-                </el-col>
-                <el-col :span="8">
-                    <div style="font-size: 12px;">{{item.name}}</div>
-                    <div style="font-size: 12px;">{{item.districtId}}</div>
-                </el-col>
-            </el-card>
+            <div>
+                <el-card v-for="item in secretaryList" :key="item.name" style="width: 17%;margin: 10px 25px;height: 150px;float: left;" @click.native="showDetailSecretary(item)">
+                    <el-col :span="12">
+                        <el-image style="width: 72px; height: 108px;border-radius: 5px;border: 1px white solid;" :src="item.image"></el-image>
+                    </el-col>
+                    <el-col :span="10" style="text-align: left;margin-top: 10px">
+                        <div style="font-size: 14px;margin: 5px;">
+                            <span style="width: 50px;display: inline-block">姓名:</span>{{item.name}}
+                        </div>
+                        <div style="font-size: 14px;margin: 5px;">
+                            <span style="width: 50px;display: inline-block">组织：</span>{{item.districtId}}
+                        </div>
+                    </el-col>
+                    <el-image style="width: 70px; height: 70px;margin-top:-10px ;" :src="item.image"></el-image>
+                </el-card>
+            </div>
+            <div style="clear: both;text-align: right;margin-right: 20px" >
+                <el-pagination background layout="prev, pager, next" :total=secretaryList.length+10 ></el-pagination>
+            </div>
         </el-card>
+        <el-dialog title="村书记信息" :visible.sync="dialogVis" style="text-align: left">
+
+        </el-dialog>
     </section>
 </template>
 
@@ -92,8 +107,25 @@
                         name:'张三6',
                         image:'111',
                         districtId:'宝华村'
+                    },
+                    {
+                        name:'张三7',
+                        image:'111',
+                        districtId:'宝华村'
+                    },
+                    {
+                        name:'张三8',
+                        image:'111',
+                        districtId:'宝华村'
+                    },
+                    {
+                        name:'张三9',
+                        image:'111',
+                        districtId:'宝华村'
                     }
                 ],
+                dialogVis:false,
+                form:{},
             }
         },
         methods:{
@@ -101,8 +133,8 @@
                 let pieChart = echarts.init(document.getElementById("pieChart"));
                 let option = {
                     title : {
-                        text: '某站点用户访问来源',
-                        subtext: '纯属虚构',
+                        text: '',
+                        subtext: '',
                         x:'center'
                     },
                     tooltip : {
@@ -143,8 +175,8 @@
                 let pieChart = echarts.init(document.getElementById("pieChart1"));
                 let option = {
                     title : {
-                        text: '某站点用户访问来源',
-                        subtext: '纯属虚构',
+                        text: '',
+                        subtext: '',
                         x:'center'
                     },
                     tooltip : {
@@ -180,6 +212,10 @@
                     ]
                 };
                 pieChart.setOption(option);
+            },
+            showDetailSecretary(item){
+                this.dialogVis = true;
+                this.form = item;
             }
         },
         components:{
@@ -200,7 +236,13 @@
         width: 17%;
         margin: 20px;
         float: left;
-        height:120px;
+        height:100px;
         border-radius:15px;
+    }
+    .typeNumberCard span{
+        color: #fff;
+        position:relative;
+        text-align:center;
+        top: 15px;
     }
 </style>

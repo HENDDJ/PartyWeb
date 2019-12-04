@@ -62,5 +62,8 @@ export default {
             }
         })
         store.commit("getClassInfo", classInfo);
+
+        let isWorkingCommittee = sessionStorage.getItem("isWorkingCommittee") === 'true';
+        store.commit("updateIsWorkingCommittee", isWorkingCommittee);
     }
 }

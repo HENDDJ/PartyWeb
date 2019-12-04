@@ -46,7 +46,7 @@
                                                 <el-tag v-if="item.status === '2'" type="success" effect="dark"  name="已完成">已完成</el-tag>
                                                 <el-tag v-else-if="item.status === '1'" type="warning" effect="dark"  name="待审核">待审核</el-tag>
                                                 <template v-else>
-                                                    <template v-if="calcLeftDays(item.month)">
+                                                    <template v-if="calcLeftDays(item.month) >= 0">
                                                         <icon name="miaobiao" scale="3"></icon>
                                                         <p><span>{{calcLeftDays(item.month)}}</span>天</p>
                                                     </template>
@@ -300,7 +300,13 @@
                                         <el-table-column
                                             prop="districtName"
                                             label="组织名称"
-                                            align="center">
+                                            align="center"
+                                            width="210">
+                                            <template slot-scope="scope">
+                                                <p :class="`level${scope.row.organizationId.length/2}`">
+                                                    {{scope.row.districtName}}
+                                                </p>
+                                            </template>
                                         </el-table-column>
                                         <el-table-column
                                             prop="modifiedAt"
@@ -728,15 +734,16 @@
                     let path = `${this.apiRootTrack}/${this.detailForm.id}perList`;
                     this.loadTrackTable(path, {});
                 } else if (this.roleCode === 'TOWN_REVIEWER') {
-                    let path = `${this.apiRootObject}/list`;
+                    let path = `${this.apiRootObject}/list?sort=organizationId,asc`;
                     let query = {
                         attachTo: this.sysDistrict.districtId,
                         activityId: this.detailForm.id
                     };
+                    if (this.$store.state.isWorkingCommittee) {
+                        delete query.attachTo;
+                    }
                     this.loadTownTable(path, query).then(() => {
-                        setTimeout(() => {
-                            this.detailLoading = true;
-                        }, 200);
+                        this.detailLoading = true;
                     })
                 } else if (this.roleCode === 'COUNTRY_SIDE_ACTOR') {
                     let path = `${this.apiRootObject}/findByOrganizationIdAndActivityId`;

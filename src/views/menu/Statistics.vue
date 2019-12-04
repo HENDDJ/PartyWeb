@@ -8,7 +8,7 @@
                 type="year"
                 placeholder="选择年" @change="loadTables()">
             </el-date-picker>
-            <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="mini" v-if="this.user.sysDistrict.districtLevel==1">
+            <el-select v-model="districtId" placeholder="请选择" @change="loadTables()" size="mini" v-if="this.user.sysDistrict.districtLevel==1 || this.$store.state.isWorkingCommittee">
                 <el-option
                     v-for="item in districtList"
                     :key="item.value"
@@ -208,13 +208,16 @@
                     this.objectType = this.user.sysDistrict.districtType=='Party' ? '1':'2';
                     this.radioName = this.user.sysDistrict.districtType=='Party' ? '农村':'机关';
                 }
-                if(this.user.sysDistrict.districtLevel==3){
+                if(this.user.sysDistrict.districtLevel==3 || this.user.sysDistrict.districtLevel==4){
                     this.districtId = this.user.districtId;
                     this.toneName = this.user.organizationName;
                 }else{
                     if(!this.districtId){
                         if(this.districtList.length>1){
                             this.districtId = this.user.districtId;
+                            if (this.$store.state.isWorkingCommittee) {
+                                this.districtId = '01';
+                            }
                         }else{
                             this.districtId = this.districtList[0].value;
                         }
@@ -342,7 +345,7 @@
                 let imgUrl = item.imageUrl.toString()
                 if (imgUrl.indexOf("http" )== -1) {
                     if(imgUrl[0] === '.'){
-                        if(new Date(item.time)<new Date("2018-11-23T00:00:00")){
+                        if(new Date(item.time) < new Date("2018-11-23T00:00:00")){
                             return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTake/${item.imageUrl}`
                         }else {
                             return `http://jrweixin.zj96296.com:18006/JRPartyService/Upload/PhotoTakeUpload/${item.imageUrl}`
@@ -544,15 +547,6 @@
         padding-left: 5px;
         padding-right: 5px;
     }
-    .level2 {
-        color: red;
-    }
-
-    .level3 {
-        color: #b0b000;
-
-    }
-
 
     .tableCol::-webkit-scrollbar {
         width: 0;
@@ -622,5 +616,4 @@
     .statistics td {
         padding: 0px;
     }
-
 </style>

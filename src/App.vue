@@ -149,6 +149,12 @@
     .common-crud .el-button--mini, .el-button--mini.is-round {
         padding: 6px 15px !important;
     }
+    .level2 {
+        color: red;
+    }
+    .level3 {
+        color: #b0b000;
+    }
 </style>
 <style>
     @keyframes an-dialog{

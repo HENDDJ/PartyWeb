@@ -98,6 +98,47 @@ export default {
                 path: "parActivityRelease",
                 version: 0,
                 visible: 1,
+            },
+            actMenu: {
+                children: [],
+                classId: null,
+                componentName: "ParActivityAct",
+                createdAt: "2019-11-04T15:16:10.36",
+                createdBy: "ad1f07fc-beb3-41ed-8173-1514ca4691ab",
+                des: "执行活动",
+                id: "c31fc587-f4ea-4304-92a7-7c541d61e747",
+                isDelete: 0,
+                level: null,
+                meta: {
+                    createdAt: "2019-11-04T15:16:10.374",
+                    createdBy: "ad1f07fc-beb3-41ed-8173-1514ca4691ab",
+                    icon: "review",
+                    id: "4f5d1c13-145d-44ad-8ae3-13867b36ff49",
+                    isDelete: 0,
+                    modifiedAt: "2019-11-04T15:16:10.374",
+                    modifiedBy: "ad1f07fc-beb3-41ed-8173-1514ca4691ab",
+                    routeId: "c31fc587-f4ea-4304-92a7-7c541d61e747",
+                    title: "活动执行",
+                    version: 0
+                },
+                createdAt: "2019-11-04T15:16:10.374",
+                createdBy: "ad1f07fc-beb3-41ed-8173-1514ca4691ab",
+                icon: "review",
+                id: "4f5d1c13-145d-44ad-8ae3-13867b36ff49",
+                isDelete: 0,
+                modifiedAt: "2019-11-04T15:16:10.374",
+                modifiedBy: "ad1f07fc-beb3-41ed-8173-1514ca4691ab",
+                routeId: "c31fc587-f4ea-4304-92a7-7c541d61e747",
+                title: "活动执行",
+                version: 0,
+                modifiedAt: "2019-11-04T15:16:10.36",
+                modifiedBy: "ad1f07fc-beb3-41ed-8173-1514ca4691ab",
+                name: "ParActivityAct",
+                parentId: "b93485f5-2b0f-453e-9ac4-d39f69bc97ae",
+                path: "parActivityAct",
+                sysClass: null,
+                version: 0,
+                visible: null,
             }
         };
     },
@@ -115,14 +156,7 @@ export default {
                 return data.user;
             }).then((user) => {
                 this.$http('GET', `/identity/roleMenu/menu`, false).then(data => {
-                    // 处理句容市委市级机关工委 特殊角色处理菜单
-                    if (user.sysDistrict.districtId === '0118') {
-                        data.forEach(item => {
-                            if (item.name === 'Activity') {
-                                item.children.push(this.releaseMenu);
-                            }
-                        })
-                    }
+                    this.handleSpecialRole(data, user);
                     sessionStorage.setItem("menu",JSON.stringify(data));
                     this.$store.commit("getMenu",data);
                     DynamicRoutes.transfer(data);
@@ -148,8 +182,27 @@ export default {
                 }, 1000);
             });
         },
-        handleValue(){
+        handleValue() {
             console.log(this.versionSwitch)
+        },
+        // 处理句容市委市级机关工委 特殊角色处理菜单
+        handleSpecialRole(data, user) {
+            data.forEach(item => {
+                if (item.name === 'Activity') {
+                    let isWorkingCommittee = user.sysDistrict.districtId === '0118';
+                    if (isWorkingCommittee) {
+                        item.children.push(this.releaseMenu);
+                    }
+                    this.$store.commit("updateIsWorkingCommittee", isWorkingCommittee);
+                    sessionStorage.setItem("isWorkingCommittee", isWorkingCommittee);
+
+                    if (user.sysDistrict.districtId > '0118') {
+                        item.children.push(this.actMenu)
+                    }
+                }
+            })
+
+
         }
     },
     created () {

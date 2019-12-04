@@ -1,6 +1,8 @@
 <template>
     <section>
-        <CommonCRUD
+        <vs-tabs :color="colorx">
+            <vs-tab @click="colorx = 'success'" label="村书记信息" >
+                <CommonCRUD
             ref="father" :columns="columns" api-root="identity/villageCadres" :formColumns="formColumns"
                 :buttonVis="confirmBtnVis"    :queryFormColumns="queryForm" :objectSpanMethod="objectSpanMethod"
             :addBtnVis="addBtnVis" :editBtnVis="editBtnVis" :delBtnVis="delBtnVis" :editEvent="doEdit"
@@ -62,15 +64,158 @@
             </template>
 
         </CommonCRUD>
+            </vs-tab>
+            <vs-tab @click="showDisplay()" label="村书记统计" >
+                <div class="villageDisplay">
+                    <el-card class="typeNumberCard" style="background-color: #1e6abc">
+                        <span>一级员额村书记：</span>
+                        <CountTo :startVal="0"  :endVal=secretaryNumber.levelOne :duration="1300"></CountTo>
+                    </el-card>
+                    <el-card class="typeNumberCard" style="background-color: #1e6abc">
+                        <span>二级员额村书记：</span>
+                        <CountTo :startVal="0"  :endVal=secretaryNumber.levelTwo :duration="1300"></CountTo>
+                    </el-card>
+                    <el-card class="typeNumberCard" style="background-color: #1e6abc">
+                        <span>三级员额村书记：</span>
+                        <CountTo :startVal="0"  :endVal=secretaryNumber.levelThree :duration="1300"></CountTo>
+                    </el-card>
+                    <el-card class="typeNumberCard" style="background-color: #1e6abc">
+                        <span>四级员额村书记：</span>
+                        <CountTo :startVal="0"  :endVal=secretaryNumber.levelFour :duration="1300"></CountTo>
+                    </el-card>
+                    <el-card class="typeNumberCard" style="background-color: #1e6abc">
+                        <span>五级员额村书记：</span>
+                        <CountTo :startVal="0"  :endVal=secretaryNumber.levelFive :duration="1300"></CountTo>
+                    </el-card>
+                    <el-card class="pieStyle">
+                        <div slot="header" class="clearfix">
+                            <span>XXX饼图</span>
+                        </div>
+                        <div id="pieChart" style="height:200px;width: 98%;"></div>
+                    </el-card>
+                    <el-card class="pieStyle">
+                        <div slot="header" class="clearfix">
+                            <span>XXX饼图</span>
+                        </div>
+                        <div id="pieChart1" style="height:200px;width: 98%;"></div>
+                    </el-card>
+                    <el-card class="showSecretary" >
+                        <div>
+                            <el-col :span="4" style="text-align: left" >详细信息</el-col>
+                            <el-col :span="15" style="text-align: right;">
+                                <el-select v-model="displayType" placeholder="请选择村书记类型" @change="showSecretaryList">
+                                    <el-option
+                                        v-for="item in displayTypeQuery"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                    </el-option>
+                                </el-select>
+                            </el-col>
+                            <el-col :span="4" style="text-align: right;right: 1%">
+                                <el-input  v-model="displayNameQuery" placeholder="请输入村书记姓名" @input="showSecretaryList"></el-input>
+                            </el-col>
+                        </div>
+                        <div style="height: 370px;">
+                            <el-card v-for="item in secretaryList" :key="item.name" class="detailSecretary" @click.native="showDetailSecretary(item)" >
+                                <el-col :span="10">
+                                    <el-image style="width: 72px; height: 108px;border-radius: 5px;border: 1px white solid;" :src="item.headSculpture"></el-image>
+                                </el-col>
+                                <el-col :span="14" style="text-align: left;margin-top: 10px;">
+                                    <div style="font-size: 14px;margin-top: 6px;">
+                                        <span style="display: inline-block">{{item.name}}</span>
+                                    </div>
+                                    <div style="font-size: 14px;margin-top: 6px;">
+                                        <span style="display: inline-block">{{item.districtName}}</span>
+                                    </div>
+                                </el-col>
+                                <el-image class="sealStyle" src="../../../static/img/levelOne.png" v-if="item.quasiAssessmentRank==='FIRST_CLASS'"></el-image>
+                                <el-image class="sealStyle" src="../../../static/img/levelTwo.png" v-if="item.quasiAssessmentRank==='SECOND_CLASS'"></el-image>
+                                <el-image class="sealStyle" src="../../../static/img/levelThree.png" v-if="item.quasiAssessmentRank==='THIRD_CLASS'"></el-image>
+                                <el-image class="sealStyle" src="../../../static/img/levelFour.png" v-if="item.quasiAssessmentRank==='FOUR_CLASS'"></el-image>
+                                <el-image class="sealStyle" src="../../../static/img/levelFive.png" v-if="item.quasiAssessmentRank==='FIRTH_CLASS'"></el-image>
+                            </el-card>
+                        </div>
+                        <div style="clear: both;text-align: right;margin-right: 1%" >
+                            <el-pagination background  @current-change="currentChange"
+                                           layout="total,prev, pager, next"
+                                           :total="pageable.total"
+                                           :current-page.sync="pageable.currentPage"
+                                           :page-size.sync="pageable.pageSize"></el-pagination>
+                        </div>
+                    </el-card>
+                    <el-dialog :visible.sync="dialogVis"  style="text-align: left" :modal-append-to-body='false' >
+                        <el-col :span="8" style="margin-top: 50px;">
+                            <div style="width: 100%;text-align: center;margin-bottom: 30px">
+                                <el-image class="headPicture" :src=form.headSculpture>
+                                </el-image>
+                                <div style="font-size: 20px;margin: 10px 0;font-weight: bold">{{form.name}}</div>
+                            </div>
+                            <div class="diaDivTitle">&nbsp;&nbsp;基 本 信 息</div>
+                            <div class="dialogDivStyle">
+                                <div><span>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：</span>{{form.sex||"暂无"}}</div>
+                                <div><span>出生日期：</span>{{form.birth}}</div>
+                                <div><span>民&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;族：</span>{{form.nation||"暂无"}}</div>
+                                <div><span>籍&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;贯：</span>{{form.nativePlace||"暂无"}}</div>
+                                <div><span>文化程度：</span>{{form.education}}</div>
+                            </div>
+                            <div class="diaDivTitle">&nbsp;&nbsp;其 他 信 息 </div>
+                            <div class="dialogDivStyle">
+                                <div><span>入党时间：</span>{{form.partyTime||"暂无"}}</div>
+                                <div><span>参加工作时间：</span>{{form.workTime||"暂无"}}</div>
+                                <div><span>担任村书记时长：</span>{{form.onDutyTime||"暂无"}}</div>
+                                <div><span>专业职称：</span>{{form.professionalTitle||"暂无"}}</div>
+                                <div><span>健康情况：</span>{{form.health||"暂无"}}</div>
+                            </div>
+                        </el-col>
+                        <el-col :span="16"  class="baseInfo">
+                            <div style="margin:25px 0;">
+                                <el-image class="smallTitle"  style="width: 13px;height: 23px;" src="../../../static/img/post.png"></el-image>
+                                <span>工作单位及职务</span>
+                                <hr style="margin:10px 0;background-color: #171111a8" size="5px">
+                                <div style="color: #f93737;font-size: 16px;font-weight: bold;margin-left: 5px;" >{{form.postName||"暂无"}}</div>
+                            </div>
+                            <div style="margin:25px 0;">
+                                <el-image class="smallTitle" style="width: 17px;height: 21px;"  src="../../../static/img/level.png"></el-image>
+                                <span>拟评定职称</span>
+                                <hr style="margin:10px 0;background-color: #171111a8" size="5px">
+                                <div style="font-size: 16px;font-weight: bold;margin-left: 5px;">{{form.name||"暂无"}}</div>
+                            </div>
+                            <div style="margin:25px 0;">
+                                <el-image  class="smallTitle" style="width: 16px;height: 18px;" src="../../../static/img/workExperience.png"></el-image>
+                                <span >工作简历</span>
+                                <hr style="margin:10px 0;background-color: #171111a8" size="5px">
+                                <pre>{{form.workExperience||"暂无"}}</pre>
+                            </div>
+                            <div style="margin:25px 0;">
+                                <el-image  class="smallTitle" style="width: 18px;height: 19px;" src="../../../static/img/reward.png"></el-image>
+                                <span >曾受综合表彰情况</span>
+                                <hr style="margin:10px 0;background-color: #171111a8" size="5px">
+                                <pre>{{form.comprehensiveCommendation||"暂无"}}</pre>
+                            </div>
+                            <div style="margin:25px 0;">
+                                <el-image class="smallTitle"  style="width: 21px;height: 21px;" src="../../../static/img/check.png"></el-image>
+                                <span>年度考核情况</span>
+                                <hr style="margin:10px 0;background-color: #171111a8" size="5px">
+                                <pre>{{form.annualAssessment||"暂无"}}</pre>
+                            </div>
+                        </el-col>
+                    </el-dialog>
+                </div>
+            </vs-tab>
+        </vs-tabs>
     </section>
 </template>
 
 <script>
     import CommonCRUD from '@/components/CommonCRUD';
+    import CountTo from 'vue-count-to';
+    import LookUp from '@/lookup';
     export default {
         name: "VillageSecretary",
         data(){
             return {
+                colorx:'success',
                 columns:[],
                 formColumns:[],
                 districtList:[],
@@ -164,6 +309,18 @@
                 confirmBtnVis: true,
                 passLoading: false,
                 rejectLoading: false,
+                secretaryList:[],
+                dialogVis:false,
+                form:{},
+                pageable: {
+                    total: 0,
+                    currentPage: 1,
+                    pageSize: 10
+                },
+                displayTypeQuery:LookUp["SecretaryClassType"],
+                displayNameQuery:'',
+                displayType:LookUp["SecretaryClassType"][0].value,
+                secretaryNumber:{},
             }
         },
         methods:{
@@ -416,20 +573,136 @@
                     let filterElement = this.formColumns.filter(item => item.name === 'post')[0];
                     filterElement.options = list;
                 })
+            },
+            showDisplay(){
+                this.colorx = 'danger';
+                setTimeout(()=>{
+                    this.showPie();
+                    this.showPie1();
+                },0);
+                this.showSecretaryList();
+                this.showSecretaryNumber();
+            },
+            currentChange(currentPage){
+                this.pageable.currentPage = currentPage;
+                this.showSecretaryList();
+                this.indexValue = (this.pageable.currentPage-1)* this.pageable.pageSize +1 ;
+            },
+            showPie(){
+                let pieChart = echarts.init(document.getElementById("pieChart"));
+                let option = {
+                    title : {
+                        text: '',
+                        subtext: '',
+                        x:'center'
+                    },
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+                    },
+                    series : [
+                        {
+                            name: '访问来源',
+                            type: 'pie',
+                            radius : '55%',
+                            center: ['50%', '60%'],
+                            data:[
+                                {value:335, name:'直接访问'},
+                                {value:310, name:'邮件营销'},
+                                {value:234, name:'联盟广告'},
+                                {value:135, name:'视频广告'},
+                                {value:1548, name:'搜索引擎'}
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                pieChart.setOption(option);
+            },
+            showPie1(){
+                let pieChart = echarts.init(document.getElementById("pieChart1"));
+                let option = {
+                    title : {
+                        text: '',
+                        subtext: '',
+                        x:'center'
+                    },
+                    tooltip : {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: ['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+                    },
+                    series : [
+                        {
+                            name: '访问来源',
+                            type: 'pie',
+                            radius : '55%',
+                            center: ['50%', '60%'],
+                            data:[
+                                {value:335, name:'直接访问'},
+                                {value:310, name:'邮件营销'},
+                                {value:234, name:'联盟广告'},
+                                {value:135, name:'视频广告'},
+                                {value:1548, name:'搜索引擎'}
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            }
+                        }
+                    ]
+                };
+                pieChart.setOption(option);
+            },
+            showDetailSecretary(item){
+                this.dialogVis = true;
+                this.form = item;
+            },
+            showSecretaryList(){
+                this.$http('POST',`identity/villageCadres/page?page=${this.pageable.currentPage-1}&size=${this.pageable.pageSize}`,
+                    {post: "SECRETARY",quasiAssessmentRank:this.displayType,name:this.displayNameQuery},false).then(data => {
+                    this.secretaryList = data.content;
+                    this.pageable = {total:data.totalElements,currentPage: 1, pageSize: 10};
+                });
+            },
+            showSecretaryNumber(){
+                this.$http('POST',`identity/villageCadres/secretaryNumber`,false).then(data => {
+                    this.secretaryNumber = data;
+                    console.log(this.secretaryNumber);
+                });
             }
-
 
         },
         components: {
-            CommonCRUD
+            CommonCRUD,
+            CountTo,
+            LookUp
         },
         created () {
-            this.columns = []
+            this.columns = [];
             this.columns.length = 0;
             let temp = JSON.parse(JSON.stringify(this.$store.state.classInfo.properties));
             let temp1 = JSON.parse(JSON.stringify(this.$store.state.classInfo.properties));
-            this.formColumns = temp1
-            this.columns = temp
+            this.formColumns = temp1;
+            this.columns = temp;
             this.user = JSON.parse(sessionStorage.getItem('userInfo'));
             this.columns.push({slot: true, name: 'state', des: '状态', slotName: 'Handle'});
             this.handelOrg();
@@ -447,13 +720,11 @@
     .common-textarea .el-textarea__inner {
         width: 585px !important;
     }
-
     .r{
         position:absolute;
         right:5px;
         bottom:5px;
     }
-
     .self-btn {
         width: 56px !important;
         height: 28px !important;
@@ -462,5 +733,105 @@
     }
     .self-submit {
         background-size: cover !important;
+    }
+    .villageDisplay .typeNumberCard{
+        width: 18%;
+        margin-right: 2%;
+        float: left;
+        height:100px;
+        border-radius:15px;
+    }
+    .villageDisplay .typeNumberCard span{
+        color: #fff;
+        position:relative;
+        text-align:center;
+        top: 15px;
+    }
+    .villageDisplay .pieStyle {
+        width: 47%;
+        margin: 10px 30px 10px 10px ;
+        float: left;
+    }
+    .villageDisplay .showSecretary{
+        width: 97%;
+        margin: 10px;
+        height: 440px;
+    }
+    .villageDisplay .detailSecretary{
+        width: 18%;
+        margin: 10px 1%;
+        height: 150px;
+        float: left;
+    }
+    .dialogDivStyle{
+        margin: 15px;
+    }
+    .dialogDivStyle div{
+        font-size: 15px;
+        line-height: 30px;
+        font-weight: bold;
+    }
+    .dialogDivStyle span {
+        width: 50%;
+        text-align: right;
+        display: inline-block;
+    }
+    .villageDisplay pre {
+        font-size:15px;
+        font-weight: bold;
+        line-height: 26px;
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    }
+    .diaDivTitle {
+        width: 181px;
+        height: 26px;
+        background-image: url('../../../static/img/titleContentBg.png');
+        color: white;
+        font-size: 16px;
+        line-height: 28px;
+        margin: 20px 0;
+    }
+    .villageDisplay .baseInfo {
+        margin-top: 50px;
+    }
+    .villageDisplay .headPicture {
+        width: 150px;
+        height: 150px;
+        border-radius: 75px;
+        border: 2px white solid;
+        box-shadow: 0 0 0 3px #f5ad40;
+        overflow: hidden;
+    }
+    .villageDisplay .baseInfo .smallTitle {
+        vertical-align: middle;
+        margin-right: 5px;
+    }
+    .villageDisplay .baseInfo span {
+        color: #ce0505;
+        font-weight: bold;
+        font-size: 16px;
+        vertical-align:middle
+    }
+    .showSecretary .sealStyle {
+        width: 100px;
+        height: 100px;
+        margin-top:-30px ;
+        margin-left: 30px;
+        transform:rotate(-30deg) !important;
+    }
+
+</style>
+<style>
+    .villageDisplay .el-dialog {
+        width: 850px;
+        height: 852px;
+        background-image: url("../../../static/img/secretarybg.png") !important;
+    }
+    .villageDisplay .el-dialog__header {
+        padding: 0 !important;
+        height: 0 !important;
+    }
+    .villageDisplay .el-image__inner{
+        height: auto;
     }
 </style>

@@ -202,12 +202,12 @@ export default {
                     }
                 }
                 if (item.name === 'basePosition') {
-                    if (user.sysDistrict.districtId > '0118') {
+                    if (user.sysDistrict.districtId >= '0118') {
                         data.splice(i--, 1)
                     }
                 }
                 if (item.name === 'baseTeam') {
-                    if (user.sysDistrict.districtId > '0118') {
+                    if (user.sysDistrict.districtId >= '0118') {
                         data.splice(i--, 1)
                     }
                 }

@@ -182,6 +182,7 @@
             details(item){
                 this.activityDetailLoading = false;
                 this.activityDetail = item;
+                this.handleFile(this.activityDetail);
                 if(item.objectType.indexOf('2')===0){
                     this.showFeedBackItem(item.id);
                 }
@@ -214,7 +215,18 @@
                 item.value = value;
                 this.$http('PUT',`/identity/feedbackItemValue/${item.id}id`,item,false).then({
                 })
-            }
+            },
+            handleFile(val) {
+                let fileStr = '';
+                for (let i in val.urls) {
+                    if (i == val.urls.length - 1) {
+                        fileStr = fileStr + val.urls[i].url
+                    } else {
+                        fileStr = fileStr + val.urls[i].url + ','
+                    }
+                }
+                this.activityDetail.fileUrls = fileStr;
+            },
         },
         components:{
             CommonFileUpload,

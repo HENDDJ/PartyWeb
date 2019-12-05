@@ -163,10 +163,11 @@
                 <el-card style="height: 500px; margin-top: -50px;padding:50px 0;text-align: left;overflow: hidden">
                     <div id="inner" class="inner-container" style="width: 100%" :style="scroll" ref="scl">
                             <div style="background-color: #ecf5ff;;border-radius: 4px;width: 100%;padding: 5px 0 5px 3px;margin-bottom: 8px" v-for="item in actiityList">
-                                <el-tooltip :content="item.title" placement="left" v-if="item.title.length>=14">
+                               <!-- <el-tooltip :content="item.title" placement="left" v-if="item.title.length>=14">
                                     <p style="font-size: 18px;padding: 5px 0 5px 3px">{{item.title.substring(0,13)}}...</p>
-                                </el-tooltip>
-                                <p style="font-size: 18px;padding: 5px 0 5px 3px" v-else>{{item.title}}</p>
+                                </el-tooltip>-->
+                                <p style="font-size: 18px;padding: 5px 0 5px 3px">{{item.title}}
+                                    <span style="font-size: 14px;">[{{item.objectType==='1'?'农村任务':'机关任务'}}]</span></p>
 
                                 <a style="display: inline-block;font-size: 14px;padding: 1px 0 1px 3px;width: 122px">任务类型:
                                     <el-tooltip :content="item.type" placement="top" v-if="item.type.length>4">

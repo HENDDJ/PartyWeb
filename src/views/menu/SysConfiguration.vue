@@ -73,13 +73,14 @@
         watch: {
             'shotScreen.codeValue': {
                 handler(newNumber, oldNumber) {
-                    this.updateShotTime();
+                    newNumber = Number(newNumber);
+                    oldNumber = Number(oldNumber);
+                    if(newNumber!==oldNumber &&oldNumber!==0){
+                        this.updateShotTime();
+                    }
                 },
-            }
+            },
         },
-        created(){
-            this.showConfigList();
-        }
     }
 </script>
 

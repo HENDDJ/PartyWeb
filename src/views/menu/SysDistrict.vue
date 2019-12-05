@@ -281,12 +281,19 @@
                 this.$http('POST', `identity/sysDistrict/list`, {districtLevel: 2,districtType: districtType}, false).then( data => {
                     data.forEach(item => {
                         this.zhenReviewList.push({value: item.districtId, label: item.districtName});
-                        this.queryColumns[0].options = this.zhenReviewList;
                     });
+                    this.zhenReviewList.push({value: '01', label: '句容市委'});
+                    this.queryColumns[0].options = this.zhenReviewList;
                 });
-                this.$http('POST',`identity/sysDistrict/list`,{ districtLevel: level + 1,orgParent: districtId,districtType:districtType},false).then(data => {
+                let param = {districtType: districtType, districtLevel: level, districtId: districtId};
+                if (districtId === '0118') {
+                    param.districtId = '01';
+                }
+                this.$http('POST', `identity/sysDistrict/list`, param, false).then(data => {
                     this.zhenList = data;
-                    this.zhenList.push(this.user.sysDistrict);
+                    if (districtId === '0118') {
+                        this.zhenList.push({districtId: '01', districtName: '句容市委'})
+                    }
                     this.queryColumns[1].options = this.zhenList;
                 })
             },

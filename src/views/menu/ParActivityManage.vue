@@ -67,7 +67,7 @@
                                         </div>
                                         <div class="processing">
                                             <template v-if="roleCode === 'COUNTRY_SIDE_ACTOR'">
-                                                <el-progress :type="progressType" :width="50" :percentage="((item.status || 0)/2) * 100" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" :percentage="item.status === '3' ? 0 : ((item.status || 0)/2) * 100" :stroke-width="5"></el-progress>
                                             </template>
                                             <template v-else>
                                                 <el-progress :type="progressType" :width="50" v-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>

@@ -93,6 +93,7 @@
                 this.title = "新增";
                 this.dialogVisible = true;
                 this.disabled = false;
+                this.form = {};
             },
             edit(){
                if(this.$refs.table.validateRows()){

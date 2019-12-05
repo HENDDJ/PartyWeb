@@ -197,7 +197,7 @@ export default {
                     this.$store.commit("updateIsWorkingCommittee", isWorkingCommittee);
                     sessionStorage.setItem("isWorkingCommittee", isWorkingCommittee);
 
-                    if (user.sysDistrict.districtId > '0118' && user.sysDistrict.districtType === '2') {
+                    if (user.sysDistrict.districtId > '0118' && user.sysDistrict.districtLevel == '2') {
                         item.children.push(this.actMenu)
                     }
                 }

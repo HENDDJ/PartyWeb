@@ -17,7 +17,7 @@
                 <el-button type="success" plain class="self-btn self-look" @click="look()">&nbsp;</el-button>
                 <el-button type="danger" plain @click="del()" v-if="false" class="self-del self-btn">&nbsp;</el-button>
             </template>
-            <template  slot="query" v-if="this.user.organizationName==='句容市委'||this.user.organizationName==='句容市委市级机关工委'">
+            <template  slot="query" v-if="this.user.organizationName==='句容市委'">
                 <el-radio-group v-model="radioName" @change="handleQuery">
                     <el-radio-button label="农村"></el-radio-button>
                     <el-radio-button label="机关"></el-radio-button>
@@ -44,7 +44,7 @@
                     <el-select v-model="form.attachTo" :disabled="formDisabled">
                         <el-option
                             v-for="option in zhenReviewList"
-                            :key="option.value"
+                            :key="option.value + 'review'"
                             :label="option.label"
                             :value="option.value">
                         </el-option>
@@ -55,7 +55,8 @@
                         v-model="form.orgParent"
                         :options="zhenList"
                         :props="{ value: 'districtId', label: 'districtName', children: 'orgChildren', checkStrictly: true }"
-                        clearable></el-cascader>
+                        clearable
+                        :disabled="formDisabled"></el-cascader>
                 </el-form-item>
                 <el-form-item label="组织名称" prop="districtName">
                     <el-input v-model="form.districtName" :disabled="disabled"></el-input>
@@ -106,10 +107,9 @@
                 },
                 sortQuery:[
                     {
-                        name:'orgParent',
+                        name:'districtId',
                         type:'asc'
                     }
-
                 ],
                 queryColumns:[
                     {
@@ -221,7 +221,7 @@
                                 this.dialogVisible = false;
                                 this.$refs.table.refreshTableData();
                                 this.form = {};
-                                this.showZhenList();
+                                this.showZhenList(this.user);
                             }).catch(() =>{
                                 this.submitLoading = false;
                             });
@@ -233,7 +233,7 @@
                                 this.dialogVisible = false;
                                 this.$refs.table.refreshTableData();
                                 this.form = {};
-                                this.showZhenList();
+                                this.showZhenList(this.user);
                             }).catch(() =>{
                                 this.submitLoading = false;
                             });
@@ -273,20 +273,27 @@
             showZhenList(user){
                 let level = user.sysDistrict.districtLevel;
                 let districtId = user.sysDistrict.districtId;
-                let districtType = this.radioName==='农村'?'Party':'Office';
+                let districtType = user.sysDistrict.districtType;
                 this.queryColumns[0].value = "";
                 this.queryColumns[1].value = "";
-                this.$http('POST',`identity/sysDistrict/list`,{ districtLevel: level + 1,orgParent: districtId,districtType:districtType},false).then(data => {
-                    this.zhenList = [];
-                    this.zhenReviewList = [];
+                this.zhenList = [];
+                this.zhenReviewList = [];
+                this.$http('POST', `identity/sysDistrict/list`, {districtLevel: 2,districtType: districtType}, false).then( data => {
                     data.forEach(item => {
-                        this.zhenReviewList.push({value: item.districtId, label: item.districtName})
+                        this.zhenReviewList.push({value: item.districtId, label: item.districtName});
                     });
-                    this.zhenList = data;
-                    if(this.user.districtName==='句容市委'||this.user.districtName==='机关工委'){
-                        this.zhenList.push({districtId: '01',districtName: '  句容市委'});
-                    }
+                    this.zhenReviewList.push({value: '01', label: '句容市委'});
                     this.queryColumns[0].options = this.zhenReviewList;
+                });
+                let param = {districtType: districtType, districtLevel: level, districtId: districtId};
+                if (districtId === '0118') {
+                    param.districtId = '01';
+                }
+                this.$http('POST', `identity/sysDistrict/list`, param, false).then(data => {
+                    this.zhenList = data;
+                    if (districtId === '0118') {
+                        this.zhenList.push({districtId: '01', districtName: '句容市委'})
+                    }
                     this.queryColumns[1].options = this.zhenList;
                 })
             },
@@ -356,7 +363,6 @@
 
             },
             handleQuery(){
-                this.showZhenList(this.user);
                 this.queryColumns.filter(item=>item.name==='districtType')[0].value = (this.radioName==='农村' ? 'Party':'Office');
             }
         },
@@ -370,7 +376,10 @@
             this.radioName = this.user.sysDistrict.districtType==='Party'?'农村':'机关';
           /*  this.showParentList();*/
             this.showZhenList(this.user);
-            this.queryColumns[3].value = this.user.districtId;
+            // 如果是句容市委市级机关工委
+            if (this.user.districtId !== '0118') {
+                this.queryColumns[3].value = this.user.districtId;
+            }
             this.handleQuery();
             this.districtTypeList =  LookUp['DistrictType'];
         }

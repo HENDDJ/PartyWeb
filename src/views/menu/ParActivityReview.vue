@@ -88,7 +88,22 @@
                                 <el-col :span="16" style="color: #25252582">{{activityDetail.templateItem}}&nbsp;</el-col>
                             </el-row>
                             <PictureShot :picData="picQuery" v-if="activityDetail.objectType==='1'"></PictureShot>
-                            <FeedBackFile :fileData="fileQuery" v-if="activityDetail.objectType.indexOf('2')===0"></FeedBackFile>
+                            <el-row class="detail-row" v-for="item in feedBackItemList" :key="item.id"  v-if="activityDetail.objectType.indexOf('2')===0">
+                                <el-col :span="4">{{item.name}}：</el-col>
+                                <el-col :span="16" style="color: #25252582" v-if="item.type === 'Image'&& item.value ">
+                                    <viewer>
+                                        <img v-for="sub in item.value.split(',')" style="margin-bottom: 20px;width: 60%"
+                                             :src="sub"
+                                             :key="sub">
+                                    </viewer>
+                                </el-col>
+                                <el-col :span="16" style="color: #25252582" v-if="item.type === 'String' ">
+                                    {{item.value}}
+                                </el-col>
+                                <el-col :span="16" style="color: #25252582" v-if="item.type === 'File' ">
+                                    <CommonFileUpload :value="item.value" @getValue="item.value = $event"  :disabled="true"></CommonFileUpload>
+                                </el-col>
+                            </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="4">审核意见：</el-col>
                                 <el-col :span="18">
@@ -118,7 +133,6 @@
 </template>
 
 <script>
-    import FeedBackFile from '@/components/FeedBackFile';
     import PictureShot from '@/components/PictureShot';
     import CommonFileUpload from '@/components/FileUpLoad';
 
@@ -141,7 +155,8 @@
                 checkShow:false,
                 //审核数据
                 checkForm:{},
-                test:{}
+                test:{},
+                feedBackItemList:[],
             }
         },
         methods:{
@@ -189,8 +204,10 @@
             },
             details(item){
                 this.activityDetailLoading = false;
+                this.showFeedBackItem(item.id);
                 this.activityDetail = item;
                 this.handleFile(this.activityDetail);
+
                 setTimeout(()=>{
                     this.activityDetailLoading = true;
                 },200);
@@ -264,18 +281,23 @@
                 }
                 this.activityDetail.fileUrls = fileStr;
             },
+            //显示反馈内容
+            showFeedBackItem(objectId){
+                this.$http('POST',`/identity/feedbackItemValue/list`,{objectId:objectId},false).then((data)=>{
+                    this.feedBackItemList = data;
+                });
+            },
         },
         components:{
-            FeedBackFile,
             CommonFileUpload,
             PictureShot
         },
         computed:{
-            fileQuery() {
+           /* fileQuery() {
                 return {
                     objectId:this.activityDetail.id,
                 }
-            },
+            },*/
             picQuery() {
                 return {
                     activityId: this.activityDetail.activityId,

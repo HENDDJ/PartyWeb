@@ -69,11 +69,25 @@
                                             <template v-if="roleCode === 'COUNTRY_SIDE_ACTOR'">
                                                 <el-progress :type="progressType" :width="50" :percentage="item.status === '3' ? 0 : ((item.status || 0)/2) * 100" :stroke-width="5"></el-progress>
                                             </template>
-                                            <template v-else>
+                                            <template v-else-if="sysDistrict.districtId === '0118' || sysDistrict.districtId === '01'">
+                                                <el-progress :type="progressType" :width="50" v-if="(item.totalPercent || 0) < 0.3" :percentage="Math.round((item.totalPercent || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-else-if="(item.totalPercent || 0) < 0.7" :percentage="Math.round((item.totalPercent || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-else-if="(item.totalPercent || 0) < 1" :percentage="Math.round((item.totalPercent || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-else-if="(item.totalPercent || 0) === 1" :percentage="Math.round((item.totalPercent || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                                <span v-else>ERROR</span>
+                                            </template>
+                                            <template v-else-if="item.objectType.indexOf('1') !== -1">
                                                 <el-progress :type="progressType" :width="50" v-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
                                                 <el-progress :type="progressType" :width="50" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 0.7" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
                                                 <el-progress :type="progressType" :width="50" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) < 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
                                                 <el-progress :type="progressType" :width="50" v-else-if="(item[TownCodeKey[sysDistrict.districtId]] || 0) === 1" :percentage="Math.round((item[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                                <span v-else>ERROR</span>
+                                            </template>
+                                            <template v-else-if="item.objectType.indexOf('2') !== -1">
+                                                <el-progress :type="progressType" :width="50" v-if="(item.activityOfficeProgresses[sysDistrict.districtId] || 0) < 0.3" :percentage="Math.round((item.activityOfficeProgresses[sysDistrict.districtId] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-else-if="(item.activityOfficeProgresses[sysDistrict.districtId] || 0) < 0.7" :percentage="Math.round((item.activityOfficeProgresses[sysDistrict.districtId] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-else-if="(item.activityOfficeProgresses[sysDistrict.districtId] || 0) < 1" :percentage="Math.round((item.activityOfficeProgresses[sysDistrict.districtId] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                                <el-progress :type="progressType" :width="50" v-else-if="(item.activityOfficeProgresses[sysDistrict.districtId] || 0) === 1" :percentage="Math.round((item.activityOfficeProgresses[sysDistrict.districtId] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
                                                 <span v-else>ERROR</span>
                                             </template>
                                         </div>
@@ -167,13 +181,27 @@
                                             未完成
                                         </p>
                                     </template>
-                                    <div v-else style="margin-top: 3px">
-                                        <el-progress v-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
-                                        <el-progress v-else-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) < 0.7" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
-                                        <el-progress v-else-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) < 1" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
-                                        <el-progress v-else-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) === 1" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                    <template v-else-if="sysDistrict.districtId === '0118' || sysDistrict.districtId === '01'">
+                                        <el-progress :type="progressType" :width="50" v-if="(detailForm.totalPercent || 0) < 0.3" :percentage="Math.round((detailForm.totalPercent || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                        <el-progress :type="progressType" :width="50" v-else-if="(detailForm.totalPercent || 0) < 0.7" :percentage="Math.round((detailForm.totalPercent || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                        <el-progress :type="progressType" :width="50" v-else-if="(detailForm.totalPercent || 0) < 1" :percentage="Math.round((detailForm.totalPercent || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                        <el-progress :type="progressType" :width="50" v-else-if="(detailForm.totalPercent || 0) === 1" :percentage="Math.round((detailForm.totalPercent || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
                                         <span v-else>ERROR</span>
-                                    </div>
+                                    </template>
+                                    <template v-else-if="detailForm.objectType.indexOf('1') !== -1">
+                                        <el-progress :type="progressType" :width="50" v-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) < 0.3" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                        <el-progress :type="progressType" :width="50" v-else-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) < 0.7" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                        <el-progress :type="progressType" :width="50" v-else-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) < 1" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                        <el-progress :type="progressType" :width="50" v-else-if="(detailForm[TownCodeKey[sysDistrict.districtId]] || 0) === 1" :percentage="Math.round((detailForm[TownCodeKey[sysDistrict.districtId]] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                        <span v-else>ERROR</span>
+                                    </template>
+                                    <template v-else-if="detailForm.objectType.indexOf('2') !== -1">
+                                        <el-progress :type="progressType" :width="50" v-if="(detailForm.activityOfficeProgresses[sysDistrict.districtId] || 0) < 0.3" :percentage="Math.round((detailForm.activityOfficeProgresses[sysDistrict.districtId] || 0) * 1000)/10" color="#951200" :stroke-width="5"></el-progress>
+                                        <el-progress :type="progressType" :width="50" v-else-if="(detailForm.activityOfficeProgresses[sysDistrict.districtId] || 0) < 0.7" :percentage="Math.round((detailForm.activityOfficeProgresses[sysDistrict.districtId] || 0) * 1000)/10" color="#e6a23c" :stroke-width="5"></el-progress>
+                                        <el-progress :type="progressType" :width="50" v-else-if="(detailForm.activityOfficeProgresses[sysDistrict.districtId] || 0) < 1" :percentage="Math.round((detailForm.activityOfficeProgresses[sysDistrict.districtId] || 0) * 1000)/10" color="#0c89c2" :stroke-width="5"></el-progress>
+                                        <el-progress :type="progressType" :width="50" v-else-if="(detailForm.activityOfficeProgresses[sysDistrict.districtId] || 0) === 1" :percentage="Math.round((detailForm.activityOfficeProgresses[sysDistrict.districtId] || 0) * 1000)/10" color="#67c23a" :stroke-width="5"></el-progress>
+                                        <span v-else>ERROR</span>
+                                    </template>
                                 </el-col>
                             </el-row>
                             <el-row class="detail-row">

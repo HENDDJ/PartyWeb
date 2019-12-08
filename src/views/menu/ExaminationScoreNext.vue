@@ -86,7 +86,7 @@
                 yearOptions: [],
                 regionOptions: [],
                 chooseYear: 2019,
-                chooseRegion: '',
+                chooseRegion: '01',
                 regionOptionsShow: true,
                 diaShow:false,
                 detailNot:[],
@@ -110,10 +110,10 @@
             authority() {
                 this.user = JSON.parse(sessionStorage.getItem('userInfo'));
                 if (this.user.sysDistrict.districtLevel === 1) {
-                    this.chooseRegion = '';
+                    this.chooseRegion = '01';
                     this.regionOptionsShow = true
                 } else {
-                    this.chooseRegion = this.user.organizationName;
+                    this.chooseRegion = this.user.sysDistrict.districtId;
                     this.regionOptionsShow = false
                 }
             },
@@ -143,7 +143,7 @@
                 this.diaShow = true
             },
             handleRadioGroup(value) {
-                this.chooseRegion = '';
+                this.chooseRegion = '01';
                 if (value === '农村') {
                     this.radioName = '农村';
                     this.radioValue = 'Party' ;
@@ -166,9 +166,9 @@
                 this.$http('Post', 'identity/sysDistrict/list', {attachTo: '01', districtLevel: 2, districtType: value, isDelete: 0}, false).then(
                     data => {
                         this.regionOptions = data.map(item => {
-                            return {text: item.districtName, value: item.districtName}
+                            return {text: item.districtName, value: item.districtId}
                         });
-                        this.regionOptions.splice(0, 0, {text: '全市', value: ''});
+                        this.regionOptions.splice(0, 0, {text: '全市', value: '01'});
                         this.getStaticsData();
                     }
                 )

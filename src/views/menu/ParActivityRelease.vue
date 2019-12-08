@@ -428,23 +428,26 @@
                 this.$refs[form].validate((valid) => {
                     if (valid) {
                         this.isVisible = true;
-                        this.form.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId
+                        this.form.districtID = JSON.parse(sessionStorage.getItem('userInfo')).sysDistrict.districtId;
                         this.form.status = '0';
                         this.form.month = this.monVal.Format("yyyy-MM-dd");
                         this.form.releaseTime = new Date().Format("yyyy-MM-ddTHH:mm:ss");
+                        let params = {};
+                        Object.assign(params, this.form);
                         if (this.form.fileUrls) {
-                            var ss = this.form.fileUrls.toString().split(",");
-                            this.form.fileUrls = ss;
+                            let arr = this.form.fileUrls.toString().split(",");
+                            params.fileUrls = arr;
                         }
                         if (this.form.video) {
-                            var video = this.form.video;
-                            var videoList = [];
+                            let video = this.form.video;
+                            let videoList = [];
                             video.forEach(item => {
                                 videoList.push(JSON.parse(item))
                             });
-                            this.form.video = videoList
+                            params.video = videoList
                         }
-                        this.$http('Post', '/identity/parActivity/', this.form, false).then(
+
+                        this.$http('Post', '/identity/parActivity/', params, false).then(
                             (data) => {
                                 setTimeout(() => {
                                     this.isVisible = false

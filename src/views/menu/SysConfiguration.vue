@@ -81,6 +81,9 @@
                 },
             },
         },
+        created(){
+            this.showConfigList()
+        }
     }
 </script>
 

@@ -230,7 +230,7 @@
         name: "ParActivityRelease",
         data() {
             let validatePass = (rule, value, callback) => {
-                if (!value) {
+                if (value.length===0) {
                     callback(new Error('请选择对象'));
                 } else {
                     callback();

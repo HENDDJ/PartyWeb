@@ -33,7 +33,7 @@
                     <div>
                         <div class="tableline">
                             <p style="line-height: 50px; text-align: right;padding-right: 10px;">任务</p>
-                            <p style="line-height: 50px; text-align: left;padding-left: 10px;">任务名</p>
+                            <p style="line-height: 50px; text-align: left;padding-left: 10px;">组织</p>
                         </div>
                         <table id="org-label-key" style="overflow-x: scroll;overflow-y: hidden;max-height: 620px;margin-top: 1px;" class="tableCol">
                             <tr v-for="(value,key) in activityList" v-if="key!='title'">

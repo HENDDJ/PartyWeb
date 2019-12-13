@@ -7,7 +7,8 @@
             active-text-color="#FCF42F"
             class="top_bar_content">
             <div slot="title">
-                <div class="header-title"></div>
+                <div class="header-title" style="background: url('/static/header/title.png') no-repeat;" v-if="user.sysDistrict.districtType === 'Party'"></div>
+                <div class="header-title" style="background: url('/static/header/officeTitle.png') no-repeat;" v-if="user.sysDistrict.districtType === 'Office'" ></div>
 <!--                <div class="three_level">-->
 <!--                    <template v-if="user.roleCode === 'CITY_LEADER'">市级平台</template>-->
 <!--                    <template v-else-if="user.roleCode === 'TOWN_REVIEWER'">镇级平台</template>-->
@@ -537,7 +538,6 @@
         height: calc(56 * 100vw/1920 * 0.82);
         min-width: 774px;
         min-height: 56px;
-        background: url("/static/header/title.png") no-repeat;
         background-size: 100% 100%;
         position: relative;
         left: 20px;

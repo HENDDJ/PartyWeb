@@ -18,7 +18,12 @@
 
             <div v-for="item in examList" class="blockZhen">
                 <div class="blockZhenItem">
-                    <div class="itemUp">{{item.town}}</div>
+                    <div class="itemUp">
+                        <el-tooltip :content="item.town" placement="top" v-if="item.town.length>7">
+                            <div>{{item.town.substring(0,6)}}...</div>
+                        </el-tooltip>
+                        <div v-else>{{item.town}}</div>
+                    </div>
                     <div class="itemDown">
                         <a>{{item.townExam}}分
                             <span v-if="item.townScore<0.1" style="color:red;font-size: 17px">({{item.townScore|percent}}%)</span>
@@ -31,7 +36,12 @@
                 <div class="blockCunList">
                     <template v-for="sub in item.children">
                         <div class="blockCunItem" @click="showDialog(sub.town)">
-                            <div class="itemUp">{{sub.town}}</div>
+                            <div class="itemUp">
+                                <el-tooltip :content="sub.town" placement="top" v-if="sub.town.length>7">
+                                    <div>{{sub.town.substring(0,6)}}...</div>
+                                </el-tooltip>
+                                <div v-else>{{sub.town}}</div>
+                            </div>
                             <div class="itemDown">
                                 <a>{{sub.townExam}}分
                                     <span v-if="sub.townScore<0.1" style="color:red;font-size: 17px">({{sub.townScore|percent}}%)</span>

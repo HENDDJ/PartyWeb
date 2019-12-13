@@ -107,10 +107,13 @@
                                     <!--</el-tree>-->
                                     <!--</el-form-item>-->
                                     <el-form-item label="任务对象" prop="objectType">
-                                        <vs-radio v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-radio>
+                                        <vs-checkbox v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="2-2" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党委</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="2-3" v-if="this.user.sysDistrict.districtType==='Office'">党委下属所有机关</vs-checkbox>
+                                       <!-- <vs-radio v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-radio>
                                         <vs-radio v-model="form.objectType" vs-value="2-1" v-if="this.user.sysDistrict.districtType==='Office'">所有机关党组织</vs-radio>
                                         <vs-radio v-model="form.objectType" vs-value="2-2" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党组织</vs-radio>
-                                        <vs-radio v-model="form.objectType" vs-value="2-3" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党组织及各局委机关党支部</vs-radio>
+                                        <vs-radio v-model="form.objectType" vs-value="2-3" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党组织及各局委机关党支部</vs-radio>-->
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -251,6 +254,7 @@
                     taskType: 'Party',
                     score: 10,
                     templateId:'',
+                    objectType:[],
                 },
                 feedListVisible:false,
                 feedVisible:false,
@@ -369,7 +373,20 @@
         },
         methods: {
             reWrite() {
-                this.form = {taskType: 'Party', score: 10}
+                this.initForm();
+            },
+            initForm(){
+                this.form ={
+                    taskObject: {
+                        id: '',
+                            label: '',
+                            children: '',
+                    },
+                    taskType: 'Party',
+                        score: 10,
+                        templateId:'',
+                        objectType:[],
+                };
             },
             //给taskObject赋值
             ss() {
@@ -438,6 +455,11 @@
                             let arr = this.form.fileUrls.toString().split(",");
                             params.fileUrls = arr;
                         }
+                        if(params.objectType.length>1){
+                            params.objectType = '2-1';
+                        }else{
+                            params.objectType = params.objectType[0];
+                        }
                         if (this.form.video) {
                             let video = this.form.video;
                             let videoList = [];
@@ -457,10 +479,7 @@
                                     message: '上传成功'
                                 });
                                 this.$refs[form].resetFields();
-                                this.form = {
-                                    taskType: 'Party',
-                                    score: 10,
-                                };
+                                this.initForm();
                                 this.dialogVisible = false;
                             }).catch(res => {
                             this.dialogVisible = true;

@@ -108,8 +108,8 @@
                                     <!--</el-form-item>-->
                                     <el-form-item label="任务对象" prop="objectType">
                                         <vs-checkbox v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-checkbox>
-                                        <vs-checkbox v-model="form.objectType" vs-value="2-2" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党委</vs-checkbox>
-                                        <vs-checkbox v-model="form.objectType" vs-value="2-3" v-if="this.user.sysDistrict.districtType==='Office'">党委下属所有机关</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="2-2" v-if="this.user.sysDistrict.districtType==='Office'">机关党委</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="2-3" v-if="this.user.sysDistrict.districtType==='Office'">机关支部</vs-checkbox>
                                        <!-- <vs-radio v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-radio>
                                         <vs-radio v-model="form.objectType" vs-value="2-1" v-if="this.user.sysDistrict.districtType==='Office'">所有机关党组织</vs-radio>
                                         <vs-radio v-model="form.objectType" vs-value="2-2" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党组织</vs-radio>

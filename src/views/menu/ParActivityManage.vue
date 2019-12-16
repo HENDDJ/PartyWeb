@@ -243,7 +243,23 @@
                                 <el-col :span="16" style="color: #25252582">{{detailForm.templateItem}}&nbsp;</el-col>
                             </el-row>
                             <PictureShot :picData="picQuery" v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.objectType==='1')"  ></PictureShot>
-                            <FeedBackFile :fileData="fileQuery" v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.objectType.indexOf('2')===0)"></FeedBackFile>
+                          <!--  <FeedBackFile :fileData="fileQuery" v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.objectType.indexOf('2')===0)"></FeedBackFile>-->
+                            <el-row class="detail-row" v-for="item in feedBackItemList" :key="item.id"  v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.objectType.indexOf('2')===0)">
+                                <el-col :span="4">{{item.name}}：</el-col>
+                                <el-col :span="16" style="color: #25252582" v-if="item.type === 'Image'&& item.value ">
+                                    <viewer>
+                                        <img v-for="sub in item.value.split(',')" style="margin-bottom: 20px;width: 60%"
+                                             :src="sub"
+                                             :key="sub">
+                                    </viewer>
+                                </el-col>
+                                <el-col :span="16" style="color: #25252582" v-if="item.type === 'String' ">
+                                    {{item.value}}
+                                </el-col>
+                                <el-col :span="16" style="color: #25252582" v-if="item.type === 'File' ">
+                                    <CommonFileUpload :value="item.value" @getValue="item.value = $event"  :disabled="true"></CommonFileUpload>
+                                </el-col>
+                            </el-row>
                             <el-row class="detail-row">
                                 <el-col v-if="roleCode !== 'COUNTRY_SIDE_ACTOR'" :span="4" >进度跟踪：</el-col>
                                 <el-col v-if="roleCode === 'CITY_LEADER'" :span="18">
@@ -624,6 +640,7 @@
                 feedBackObject:{},
                 //句容市委区分农村任务和机关任务
                 radioName:'农村',
+                feedBackItemList:[]
             }
         },
         watch: {
@@ -803,6 +820,7 @@
                         if(!this.detailLoading || statusChange) {
                             if (this.tableData[0]) {
                                 this.detailForm = this.tableData[0];
+                                this.showFeedBackItem(this.detailForm.id);
                                 this.handleFile(this.detailForm);
                                 this.handleDifferentRole();
                             } else {
@@ -904,6 +922,7 @@
                 this.detailLoading = false;
                 this.row = val;
                 this.detailForm = JSON.parse(JSON.stringify(val));
+                this.showFeedBackItem(this.detailForm.id);
                 if(this.detailForm.urls){
                     this.detailForm.fileUrls = this.detailForm.urls.map(item => item.url).join(",");
                 }
@@ -1216,6 +1235,12 @@
 
             dateFormatter(row, cell, value) {
                 return new Date(value).toLocaleDateString() || '暂无';
+            },
+            //显示反馈内容
+            showFeedBackItem(objectId){
+                this.$http('POST',`/identity/feedbackItemValue/list`,{objectId:objectId},false).then((data)=>{
+                    this.feedBackItemList = data;
+                });
             },
 
         },

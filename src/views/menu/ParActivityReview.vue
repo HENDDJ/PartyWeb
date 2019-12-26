@@ -104,6 +104,14 @@
                                     <CommonFileUpload :value="item.value" @getValue="item.value = $event"  :disabled="true"></CommonFileUpload>
                                 </el-col>
                             </el-row>
+                            <el-row v-if="activityDetail.objectType.indexOf('2')===0">
+                                <el-col :span="4">实际得分：</el-col>
+                                <el-col :span="18" style="text-align: left">
+                                    <div class="temp">
+                                        <el-input-number v-model="actualScore"></el-input-number>
+                                    </div>
+                                </el-col>
+                            </el-row>
                             <el-row class="detail-row">
                                 <el-col :span="4">审核意见：</el-col>
                                 <el-col :span="18">
@@ -157,6 +165,7 @@
                 checkForm:{},
                 test:{},
                 feedBackItemList:[],
+                actualScore:10,
             }
         },
         methods:{
@@ -203,6 +212,7 @@
                 });
             },
             details(item){
+                console.log(item,"123")
                 this.activityDetailLoading = false;
                 this.showFeedBackItem(item.id);
                 this.activityDetail = item;
@@ -232,8 +242,12 @@
             },
             pass(){
                 this.checkForm.status = "2";
+                let params = Object.assign({}, this.checkForm);
+                if (this.activityDetail.objectType.indexOf('2')===0){
+                    params.score = this.actualScore;
+                }
                 let path = `/identity/parActivityPerform/check`;
-                this.$http("Post",path,this.checkForm,false).then((data)=>{
+                this.$http("Post",path,params,false).then((data)=>{
                     this.$message({
                         type: 'success',
                         message: '审核通过成功'
@@ -482,6 +496,12 @@
     }
     .el-timeline .el-loading-mask {
         height: 300px;
+    }
+    .temp .el-input--mini .el-input__inner {
+        width: 100% !important;
+        font-size: 18px;
+        color: red;
+        font-weight: 700;
     }
 
     /*.activity-management .el-textarea__inner {*/

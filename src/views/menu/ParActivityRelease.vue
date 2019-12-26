@@ -108,12 +108,12 @@
                                     <!--</el-form-item>-->
                                     <el-form-item label="任务对象" prop="objectType">
                                         <vs-checkbox v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-checkbox>
-                                        <vs-checkbox v-model="form.objectType" vs-value="2-2" v-if="this.user.sysDistrict.districtType==='Office'">机关党委</vs-checkbox>
-                                        <vs-checkbox v-model="form.objectType" vs-value="2-3" v-if="this.user.sysDistrict.districtType==='Office'">机关支部</vs-checkbox>
-                                       <!-- <vs-radio v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-radio>
-                                        <vs-radio v-model="form.objectType" vs-value="2-1" v-if="this.user.sysDistrict.districtType==='Office'">所有机关党组织</vs-radio>
-                                        <vs-radio v-model="form.objectType" vs-value="2-2" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党组织</vs-radio>
-                                        <vs-radio v-model="form.objectType" vs-value="2-3" v-if="this.user.sysDistrict.districtType==='Office'">机关工委下属所有党组织及各局委机关党支部</vs-radio>-->
+                                        <vs-checkbox v-model="form.objectType" vs-value="3" v-if="this.user.sysDistrict.districtType==='Office'">机关工委所属党委</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="4" v-if="this.user.sysDistrict.districtType==='Office'">机关工委所属总支</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="5" v-if="this.user.sysDistrict.districtType==='Office'">机关工委所属支部</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="6" v-if="this.user.sysDistrict.districtType==='Office'">各局党委</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="7" v-if="this.user.sysDistrict.districtType==='Office'">各局总支</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="8" v-if="this.user.sysDistrict.districtType==='Office'">各局支部</vs-checkbox>
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -456,9 +456,11 @@
                             params.fileUrls = arr;
                         }
                         if(params.objectType.length>1){
-                            params.objectType = '2-1';
-                        }else{
+                            params.objectType = "2"+"-"+params.objectType.join("-");
+                        }else if(params.objectType.length===1&&params.objectType[0]==="1"){
                             params.objectType = params.objectType[0];
+                        }else if(params.objectType.length===1&&params.objectType[0]!=="1"){
+                            params.objectType = "2"+"-"+params.objectType[0]
                         }
                         if (this.form.video) {
                             let video = this.form.video;

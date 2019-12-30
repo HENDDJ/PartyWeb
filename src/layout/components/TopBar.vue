@@ -490,8 +490,8 @@
                 this.$http("PUT",`identity/messageCenter/${item.id}id`,item,false).then( () => {
                     this.handleClose();
                     this.handleMessageNumber();
-                    if(item.type==='party'||'distLearning'){
-                        let path = "/activity/parActivityReview"
+                    if(item.type==='party'||item.type==='distLearning'){
+                        let path = "/activity/parActivityReview";
                         this.$router.push({path: path});
                     }
                     if(item.type==='information'){
@@ -502,7 +502,6 @@
                         let path = "/baseTeam/villageSecretary";
                         this.$router.push({path: path});
                     }
-
                 })
             },
             refreshList(){

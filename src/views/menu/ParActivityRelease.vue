@@ -108,12 +108,30 @@
                                     <!--</el-form-item>-->
                                     <el-form-item label="任务对象" prop="objectType">
                                         <vs-checkbox v-model="form.objectType" vs-value="1" v-if="this.user.sysDistrict.districtType==='Party'">农村</vs-checkbox>
-                                        <vs-checkbox v-model="form.objectType" vs-value="3" v-if="this.user.sysDistrict.districtType==='Office'">机关工委所属党委</vs-checkbox>
+                                        <!--<vs-checkbox v-model="form.objectType" vs-value="3" v-if="this.user.sysDistrict.districtType==='Office'">机关工委所属党委</vs-checkbox>
                                         <vs-checkbox v-model="form.objectType" vs-value="4" v-if="this.user.sysDistrict.districtType==='Office'">机关工委所属总支</vs-checkbox>
                                         <vs-checkbox v-model="form.objectType" vs-value="5" v-if="this.user.sysDistrict.districtType==='Office'">机关工委所属支部</vs-checkbox>
                                         <vs-checkbox v-model="form.objectType" vs-value="6" v-if="this.user.sysDistrict.districtType==='Office'">各局党委</vs-checkbox>
                                         <vs-checkbox v-model="form.objectType" vs-value="7" v-if="this.user.sysDistrict.districtType==='Office'">各局总支</vs-checkbox>
-                                        <vs-checkbox v-model="form.objectType" vs-value="8" v-if="this.user.sysDistrict.districtType==='Office'">各局支部</vs-checkbox>
+                                        <vs-checkbox v-model="form.objectType" vs-value="8" v-if="this.user.sysDistrict.districtType==='Office'">各局支部</vs-checkbox>-->
+                                        <div style="float: left;" v-if="this.user.sysDistrict.districtType==='Office'">
+                                            <el-tree
+                                                :data="officeSelectOne"
+                                                show-checkbox
+                                                :props="defaultProps"
+                                                @check="oneCheckChange">
+                                            </el-tree>
+                                        </div>
+                                        <div style="float: left;" v-if="this.user.sysDistrict.districtType==='Office'">
+                                            <el-tree
+                                                :data="officeSelectTwo"
+                                                show-checkbox
+                                                :props="defaultProps"
+                                                @check="twoCheckChange">
+                                            </el-tree>
+                                        </div>
+
+
                                     </el-form-item>
                                 </el-col>
                             </el-row>
@@ -230,9 +248,11 @@
         name: "ParActivityRelease",
         data() {
             let validatePass = (rule, value, callback) => {
-                if (value.length===0) {
+                if (value.length===0&&this.user.sysDistrict.districtType==='Party') {
                     callback(new Error('请选择对象'));
-                } else {
+                }else if(this.user.sysDistrict.districtType==='Office'&&this.officeOne.length===0&&this.officeTwo.length===0){
+                    callback(new Error('请选择对象'));
+                }else{
                     callback();
                 }
             };
@@ -332,8 +352,48 @@
                         value: '',
                     }
                 ],
+                officeSelectOne:[{
+                    id: 1,
+                    label: '机关工委',
+                    children: [
+                        {
+                            id: 3,
+                            label: '党委'
+                        },
+                        {
+                            id: 4,
+                            label: '总支'
+                        },
+                        {   id: 5,
+                            label: '支部'
+                        },
+                    ]
+                }],
+                officeSelectTwo:[{
+                    id: 2,
+                    label: '党委',
+                    children: [
+                        {
+                            id: 6,
+                            label: '本级党委'
+                        },
+                        {
+                            id: 7,
+                            label: '总支'
+                        },
+                        {   id: 8,
+                            label: '支部'
+                        },
+                    ]
+                }],
+                defaultProps: {
+                    children: 'children',
+                    label: 'label'
+                },
+                officeOne:[],
+                officeTwo:[],
+            };
 
-            }
         },
         watch: {
             'form.taskType': {
@@ -383,9 +443,49 @@
                             children: '',
                     },
                     taskType: 'Party',
-                        score: 10,
-                        templateId:'',
-                        objectType:[],
+                    score: 10,
+                    templateId:'',
+                    objectType:[],
+                };
+                this.officeOne = [];
+                this.officeTwo = [];
+                this.officeSelectOne = [{
+                    id: 1,
+                    label: '机关工委',
+                    children: [
+                        {
+                            id: 3,
+                            label: '党委'
+                        },
+                        {
+                            id: 4,
+                            label: '总支'
+                        },
+                        {   id: 5,
+                            label: '支部'
+                        },
+                    ]
+                }];
+                this.officeSelectTwo=[{
+                    id: 2,
+                    label: '党委',
+                    children: [
+                        {
+                            id: 6,
+                            label: '本级党委'
+                        },
+                        {
+                            id: 7,
+                            label: '总支'
+                        },
+                        {   id: 8,
+                            label: '支部'
+                        },
+                    ]
+                }];
+                this.defaultProps= {
+                    children: 'children',
+                        label: 'label'
                 };
             },
             //给taskObject赋值
@@ -455,13 +555,12 @@
                             let arr = this.form.fileUrls.toString().split(",");
                             params.fileUrls = arr;
                         }
-                        if(params.objectType.length>1){
-                            params.objectType = "2"+"-"+params.objectType.join("-");
-                        }else if(params.objectType.length===1&&params.objectType[0]==="1"){
-                            params.objectType = params.objectType[0];
-                        }else if(params.objectType.length===1&&params.objectType[0]!=="1"){
-                            params.objectType = "2"+"-"+params.objectType[0]
+                        if(params.objectType.length===1&&params.objectType[0]==="1") {
+                            params.objectType = params.objectType[0]
+                        }else{
+                            params.objectType = '2-'+this.officeOne.concat(this.officeTwo).join('-');
                         }
+                        console.log(params.objectType);
                         if (this.form.video) {
                             let video = this.form.video;
                             let videoList = [];
@@ -544,6 +643,26 @@
                          this.feedBackOpt.push({value:item.id,label:item.name});
                      })
                 });
+            },
+            oneCheckChange(data,val){
+                this.officeOne = [];
+                if(val.checkedNodes.length<4&&val.checkedNodes.length>0){
+                    val.checkedNodes.forEach(item =>{
+                        this.officeOne.push(item.id);
+                    });
+                }else if(val.checkedNodes.length===4){
+                    this.officeOne = [3,4,5];
+                }
+            },
+            twoCheckChange(data,val){
+                this.officeTwo = [];
+                if(val.checkedNodes.length<4&&val.checkedNodes.length>0){
+                    val.checkedNodes.forEach(item =>{
+                        this.officeTwo.push(item.id);
+                    });
+                }else if(val.checkedNodes.length===4){
+                    this.officeTwo = [6,7,8];
+                }
             }
 
         },
@@ -635,7 +754,6 @@
     .activity-release .el-tree {
         padding-top: 5px;
         width: 200px !important;
-        border: 1px solid #DCDFE6 !important;
         background: #fff !important;
         border-radius: 3px;
     }

@@ -426,7 +426,18 @@
                 sessionStorage.removeItem('token');
                 sessionStorage.removeItem("userInfo");
                 sessionStorage.removeItem("user");
-                location.reload();
+                this.active = false;
+                this.$nextTick(()=>{
+                    if(this.user.sysDistrict.districtType === 'Office'){
+                        let path = "/login?type=office";
+                        this.$router.push({path: path});
+                    }else {
+                        let path = "/login";
+                        this.$router.push({path: path});
+                    }
+                });
+
+
             },
             currentChange(currentPage){
                 this.pageable.currentPage = currentPage;

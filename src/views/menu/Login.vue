@@ -1,29 +1,46 @@
 <template>
-    <div id="login" class="login-container">
+    <!--机关登录页面-->
+    <div class="login-container" v-if="this.$route.query.type==='office'">
+        <div class="filter-display2" >
+            <el-form  class="login-form1" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm">
+                <div class="login-form2">
+                    <el-form-item label="用户名" >
+                        <el-input name="code" size="medium " type="text" v-model="loginForm.userName" autoComplete="on" placeholder="请输入用户名"></el-input>
+                    </el-form-item>
+                    <el-form-item :label="pwdLabel">
+                        <el-input  name="password" size="medium " :type="passwordType" @keyup.enter.prevent="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="请输入密码"></el-input>
+                    </el-form-item>
+                </div>
+                <vs-button ref="loadableButton"  id="button-with-loading" class="vs-con-loading__container login-btn1" type="gradient" vslor="primary" @click.native.prevent="handleLogin" @keyup.enter.prevent="handleLogin">{{btnText}}</vs-button>
+            </el-form>
+        </div>
+    </div>
+    <!--农村登录页面-->
+    <div id="login" class="login-container" v-else>
         <el-switch v-model="versionSwitch"  active-value=false  inactive-value=true inactive-color="#ff4949"  active-color="#7bb0ea" class="switchPosition" @change="handleValue()"></el-switch>
         <div class="filter-display" v-if="versionSwitch==='false'">
-        <div class="login-title"></div>
-        <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" >
-            <el-form-item prop="userName">
-                <el-input style="line-height: 60px;font-size: 16px;"   name="code" size="medium " type="text" v-model="loginForm.userName" autoComplete="on" placeholder="请输入用户名">
-                   <icon name="user1" scale="2.5" slot="prepend" style="position: absolute;top: 4px;left: 15px;"></icon>
-                    <!--<span solt="perpend" class="svg-container svg-container_login">
-                      <icon name="user" scale="2.5"></icon>
-                    </span>-->
-                </el-input>
-                <hr/>
-            </el-form-item>
-            <el-form-item prop="password">
-                <el-input style="line-height: 45px;font-size: 16px;"  name="password" size="medium " :type="passwordType" @keyup.enter.prevent="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="请输入密码">
-                    <icon name="password1" scale="2.5" slot="prepend" style="position: absolute;top: 4px;left: 15px;"></icon>
-                </el-input>
-                <span class="show-pwd" @click="showPwd">
-                    <icon name="eye" scale="2"/>
-                </span>
-                <hr/>
-            </el-form-item>
-            <vs-button ref="loadableButton"  id="button-with-loading" class="vs-con-loading__container login-btn" type="gradient" vslor="primary" @click.native.prevent="handleLogin" @keyup.enter.prevent="handleLogin">{{btnText}}</vs-button>
-        </el-form>
+            <div class="login-title"></div>
+            <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" >
+                <el-form-item prop="userName">
+                    <el-input style="line-height: 60px;font-size: 16px;"   name="code" size="medium " type="text" v-model="loginForm.userName" autoComplete="on" placeholder="请输入用户名">
+                       <icon name="user1" scale="2.5" slot="prepend" style="position: absolute;top: 4px;left: 15px;"></icon>
+                        <!--<span solt="perpend" class="svg-container svg-container_login">
+                          <icon name="user" scale="2.5"></icon>
+                        </span>-->
+                    </el-input>
+                    <hr/>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input style="line-height: 45px;font-size: 16px;"  name="password" size="medium " :type="passwordType" @keyup.enter.prevent="handleLogin" v-model="loginForm.password" autoComplete="on" placeholder="请输入密码">
+                        <icon name="password1" scale="2.5" slot="prepend" style="position: absolute;top: 4px;left: 15px;"></icon>
+                    </el-input>
+                    <span class="show-pwd" @click="showPwd">
+                        <icon name="eye" scale="2"/>
+                    </span>
+                    <hr/>
+                </el-form-item>
+                <vs-button ref="loadableButton"  id="button-with-loading" class="vs-con-loading__container login-btn" type="gradient" vslor="primary" @click.native.prevent="handleLogin" @keyup.enter.prevent="handleLogin">{{btnText}}</vs-button>
+            </el-form>
         </div>
         <div class="filter-display1" v-if="versionSwitch==='true'">
             <el-form  class="login-form1" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm">
@@ -39,6 +56,7 @@
             </el-form>
         </div>
     </div>
+
 </template>
 
 <script>
@@ -142,6 +160,10 @@ export default {
             }
         };
     },
+    created () {
+
+        // window.addEventListener('hashchange', this.afterQRScan)
+    },
     methods: {
         showPwd () {
             this.passwordType = this.passwordType === 'password' ? '' : 'password';
@@ -213,9 +235,6 @@ export default {
                 }
             }
         }
-    },
-    created () {
-        // window.addEventListener('hashchange', this.afterQRScan)
     },
     mounted() {
     },
@@ -447,6 +466,17 @@ export default {
         background: url("/static/img/login/bg2.png") no-repeat 0 -60px ;
         background-size: cover;
     }
+    .filter-display2 {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        /*filter: blur(4px);*/
+        /*background-size: 100% 100%;*/
+        z-index: 1;
+        background: url("/static/img/login/bg3.png") no-repeat 0 -60px ;
+        background-size: cover;
+    }
+
     .login-btn {
       /*  background: url("/static/img/login/loginbtn1.png");*/
         background-size: cover;

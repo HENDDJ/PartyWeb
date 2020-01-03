@@ -19,8 +19,8 @@
             <div v-for="item in examList" class="blockZhen">
                 <div class="blockZhenItem">
                     <div class="itemUp">
-                        <el-tooltip :content="item.town" placement="top" v-if="item.town.length>7">
-                            <div>{{item.town.substring(0,6)}}...</div>
+                        <el-tooltip :content="item.town" placement="top" v-if="item.town.length>8">
+                            <div>{{item.town.substring(0,7)}}...</div>
                         </el-tooltip>
                         <div v-else>{{item.town}}</div>
                     </div>
@@ -37,8 +37,8 @@
                     <template v-for="sub in item.children">
                         <div class="blockCunItem" @click="showDialog(sub.town)">
                             <div class="itemUp">
-                                <el-tooltip :content="sub.town" placement="top" v-if="sub.town.length>7">
-                                    <div>{{sub.town.substring(0,6)}}...</div>
+                                <el-tooltip :content="sub.town" placement="top" v-if="sub.town.length>8">
+                                    <div>{{sub.town.substring(0,7)}}...</div>
                                 </el-tooltip>
                                 <div v-else>{{sub.town}}</div>
                             </div>
@@ -169,6 +169,7 @@
             loadList(value){
                 let nowYear = new Date().Format('yyyy');
                 let interval = Number(nowYear) - 2017;
+                this.yearOptions =[];
                 for (let i = 0; i <= interval; i++) {
                     this.yearOptions.push({text: i + 2017, value: i + 2017})
                 }
@@ -239,7 +240,7 @@
 
     .blockCunItem {
         margin-left: 15px;
-        width: 125px;
+        width: 145px;
         height: 80px;
         border: 1px solid black;
         margin-top: 20px;
@@ -266,7 +267,7 @@
     }
 
     .blockZhenItem .itemUp {
-        width: 130px;
+        width: 145px;
     }
 
     .itemDown {

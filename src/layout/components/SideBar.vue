@@ -64,13 +64,13 @@
             },
             changeMenuBg(){
                 let user = JSON.parse(sessionStorage.getItem("userInfo"));
-                if(user.roleCode === 'CITY_LEADER'){
-                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage = "url('/static/img/menusideshi.png')";
-                }else if(user.roleCode === 'TOWN_REVIEWER') {
-                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/menusidezhen.png')";
-                }else{
-                    document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/menusidecun.jpg')";
-                }
+                // if(user.roleCode === 'CITY_LEADER'){
+                //     document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage = "url('/static/img/menusideshi.png')";
+                // }else if(user.roleCode === 'TOWN_REVIEWER') {
+                //     document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/menusidezhen.png')";
+                // }else{
+                //     document.getElementsByClassName("el-menu-personal")[0].style.backgroundImage="url('/static/img/menusidecun.jpg')";
+                // }
                 document.getElementsByClassName("el-menu-personal")[0].style.backgroundSize= `100% ${document.body.clientHeight - 70}px`
             }
         /*    handleCheckNumber(){

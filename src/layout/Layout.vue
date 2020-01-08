@@ -50,10 +50,16 @@
         },
         mounted() {
             let user = JSON.parse(sessionStorage.getItem("userInfo"));
-            if(user.roleCode === 'CITY_LEADER'){
-                document.getElementsByClassName("sidebar-container")[0].style.backgroundImage = "url('/static/img/menusideshi.png')";
-            }else if(user.roleCode === 'TOWN_REVIEWER') {
-                document.getElementsByClassName("sidebar-container")[0].style.backgroundImage="url('/static/img/menusidezhen.png')";
+            if(user.sysDistrict.districtType==='Office'){
+                document.getElementsByClassName("sidebar-container")[0].style.backgroundImage = "url('/static/img/menusideoffice.png')";
+            }else if(user.sysDistrict.districtType==='Party'){
+                if(user.roleCode === 'CITY_LEADER'){
+                    document.getElementsByClassName("sidebar-container")[0].style.backgroundImage = "url('/static/img/menusideshi.png')";
+                }else if(user.roleCode === 'TOWN_REVIEWER') {
+                    document.getElementsByClassName("sidebar-container")[0].style.backgroundImage="url('/static/img/menusidezhen.png')";
+                }else{
+                    document.getElementsByClassName("sidebar-container")[0].style.backgroundImage="url('/static/img/menusidecun.jpg')";
+                }
             }else{
                 document.getElementsByClassName("sidebar-container")[0].style.backgroundImage="url('/static/img/menusidecun.jpg')";
             }

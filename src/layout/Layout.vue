@@ -102,10 +102,8 @@
         bottom: 0;
         left: 0;
         overflow: hidden;
-        background: url('/static/img/menusideshi.png') no-repeat;
-        background-size: cover;
     }
-    @media screen and (max-width: 1370px){
+    @media screen and (max-width: 1600px){
         .sidebar-container {
             top: 50px;
         }

@@ -47,6 +47,22 @@
         computed: {
         },
         methods: {
+        },
+        mounted() {
+            let user = JSON.parse(sessionStorage.getItem("userInfo"));
+            if(user.sysDistrict.districtType==='Office'){
+                document.getElementsByClassName("sidebar-container")[0].style.backgroundImage = "url('/static/img/menusideoffice.png')";
+            }else if(user.sysDistrict.districtType==='Party'){
+                if(user.roleCode === 'CITY_LEADER'){
+                    document.getElementsByClassName("sidebar-container")[0].style.backgroundImage = "url('/static/img/menusideshi.png')";
+                }else if(user.roleCode === 'TOWN_REVIEWER') {
+                    document.getElementsByClassName("sidebar-container")[0].style.backgroundImage="url('/static/img/menusidezhen.png')";
+                }else{
+                    document.getElementsByClassName("sidebar-container")[0].style.backgroundImage="url('/static/img/menusidecun.jpg')";
+                }
+            }else{
+                document.getElementsByClassName("sidebar-container")[0].style.backgroundImage="url('/static/img/menusidecun.jpg')";
+            }
         }
     }
 </script>
@@ -86,8 +102,10 @@
         bottom: 0;
         left: 0;
         overflow: hidden;
+        background: url('/static/img/menusideshi.png') no-repeat;
+        background-size: cover;
     }
-    @media screen and (max-width: 1600px){
+    @media screen and (max-width: 1370px){
         .sidebar-container {
             top: 50px;
         }

@@ -465,6 +465,7 @@ export default {
         z-index: 1;
         background: url("/static/img/login/bg2.png") no-repeat 0 -60px ;
         background-size: cover;
+        background-position: center;
     }
     .filter-display2 {
         position: fixed;
@@ -475,6 +476,7 @@ export default {
         z-index: 1;
         background: url("/static/img/login/bg3.png") no-repeat 0 -60px ;
         background-size: cover;
+        background-position: center;
     }
 
     .login-btn {

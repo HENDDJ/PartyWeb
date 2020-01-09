@@ -57,6 +57,7 @@
             return {
                 files:[],
                 dialogUrl: '',
+                onlinePreviewUrl: "http://122.97.218.162:18006/kkFileView/onlinePreview?url="
             };
         },
         methods: {
@@ -77,7 +78,17 @@
                 this.$emit('getValue', str || null);
             },
             downLoad(file){
-                window.open(file.res,'_self');
+                this.$confirm('您需要在线预览还是下载？', '确认信息', {
+                    distinguishCancelAndClose: true,
+                    confirmButtonText: '预览',
+                    cancelButtonText: '下载'
+                }).then(() => {
+                    window.open(this.onlinePreviewUrl + file.res,'_blank');
+                }).catch(action => {
+                    if (action === 'cancel') {
+                        window.open(file.res,'_blank');
+                    }
+                });
             }
         },
         mounted() {

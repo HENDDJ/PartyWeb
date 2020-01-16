@@ -28,7 +28,7 @@
                 this.TvPic = [];
                 let path = `/identity/parPictureInfro/list?sort=CreateTime,asc`;
                 let form = {organizationId:this.currentVal.districtId,studyContent:this.currentVal.activityId};
-                this.$http("Post",path,form,false).then(data=>{
+                this.$httpCloud("Post",path,form,false).then(data=>{
                     data.forEach(item=>{
                         this.TvPic.push(this.imgTF(item.imageURL));
                     });

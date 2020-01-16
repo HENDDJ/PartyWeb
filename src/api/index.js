@@ -120,7 +120,7 @@ export const common = new Proxy({}, {
             }
             // 控制成功是否需要彈框
             let showMessage = args.pop() !== false;
-            return service({method, url, data, showMessage});;
+            return service({method, url, data, showMessage});
         };
     }
 });

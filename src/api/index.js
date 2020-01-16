@@ -114,9 +114,13 @@ export const common = new Proxy({}, {
             let method = args[0] || {};
             let url = args[1] || {};
             let data = args[2] || {};
+            let headers = args[3] || {};
+            for (let key in headers) {
+                service.defaults.headers.common[key] = headers[key];
+            }
             // 控制成功是否需要彈框
             let showMessage = args.pop() !== false;
-            return service({method, url, data, showMessage});
+            return service({method, url, data, showMessage});;
         };
     }
 });

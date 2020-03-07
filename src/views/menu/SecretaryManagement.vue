@@ -8,24 +8,33 @@
             </el-tab-pane>
             <el-tab-pane label="考核详情">考核详情</el-tab-pane>
             <el-tab-pane label="员额详情">员额详情</el-tab-pane>
+            <el-tab-pane label="评级标准">
+                <CommonCRUD :columns="columns" api-root="identity/ratingStandard" :formColumns="columns" >
+
+                </CommonCRUD>
+            </el-tab-pane>
         </el-tabs>
     </section>
 </template>
 
 <script>
+    import CommonCRUD from '@/components/CommonCRUD';
+    import StandardStrcutre from '../data/StandardStrcutre';
     import SecretaryDetail from "@/components/SecretaryDetail";
     import SecretaryList from "@/components/SecretaryList";
     export default {
         name: "SecretaryManagement",
         data(){
             return{
+                columns:StandardStrcutre.columns,
             }
         },
         methods:{
         },
         components:{
             SecretaryDetail,
-            SecretaryList
+            SecretaryList,
+            CommonCRUD
         },
         created() {
         }

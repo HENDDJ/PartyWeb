@@ -184,6 +184,7 @@ export default {
                     DynamicRoutes.transfer(data);
                     this.$router.addRoutes(data);
                     let userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+                    this.$store.commit("getUserInfo",userInfo);
                     if(userInfo.roleCode==='COUNTRY_SIDE_ACTOR'){
                         this.$router.push({path: '/activity/parActivityManage/'});
                     }else{

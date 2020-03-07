@@ -18,7 +18,8 @@ export default new Vuex.Store({
         isCollapse: false,
         checkNumber:0,
         // 是否是机关工委的账号
-        isWorkingCommittee: false
+        isWorkingCommittee: false,
+        userInfo: {}
     },
     mutations: {
         getMenu(state, data) {
@@ -49,7 +50,10 @@ export default new Vuex.Store({
         },
         updateIsWorkingCommittee(state, data) {
             state.isWorkingCommittee = data;
-        }
+        },
+        getUserInfo(state, data) {
+            state.userInfo = data;
+        },
 
     }
 })

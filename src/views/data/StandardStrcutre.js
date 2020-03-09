@@ -33,14 +33,14 @@ export default {
             des: "年度考核获得“称职”及以上等次连续次数",
         },
         {
-            name: "aGradeLastTimes",
+            name: "agradeLastTimes",
             type: 'string',
             notShow:'true',
             des: "年度考核获得“优秀”等次连续次数",
         },
 
         {
-            name: "aGradeTimes",
+            name: "agradeTimes",
             type: 'string',
             notShow:'true',
             des: "年度考核获得“优秀”等次的累计次数",

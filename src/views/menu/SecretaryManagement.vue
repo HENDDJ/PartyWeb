@@ -7,7 +7,9 @@
                 <SecretaryList v-else></SecretaryList>
             </el-tab-pane>
             <el-tab-pane label="考核详情">考核详情</el-tab-pane>
-            <el-tab-pane label="员额详情">员额详情</el-tab-pane>
+            <el-tab-pane label="员额详情">
+                <RankDetails></RankDetails>
+            </el-tab-pane>
             <el-tab-pane label="评级标准">
                 <CommonCRUD :columns="columns" api-root="identity/ratingStandard" :formColumns="columns" >
 
@@ -22,6 +24,7 @@
     import StandardStrcutre from '../data/StandardStrcutre';
     import SecretaryDetail from "@/components/SecretaryDetail";
     import SecretaryList from "@/components/SecretaryList";
+    import RankDetails from "@/components/RankDetails";
     export default {
         name: "SecretaryManagement",
         data(){
@@ -34,7 +37,8 @@
         components:{
             SecretaryDetail,
             SecretaryList,
-            CommonCRUD
+            CommonCRUD,
+            RankDetails
         },
         created() {
         }

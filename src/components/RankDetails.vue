@@ -1,5 +1,8 @@
 <template>
     <section class="rankDetails">
+        <div style="text-align: right;padding-right: 25px">
+            <el-button  type="warning" @click="() => {this.$emit('back')}"> 返回</el-button>
+        </div>
         <div>
             <el-card class="standard">
                 <div style="font-weight: bold;font-size: 20px;">选任标准</div>
@@ -58,14 +61,14 @@
                     <el-tag :type= "Number(sub.workDuration)<=Number(currentInfo.workDuration) ?'success':'danger'" effect="dark">{{sub.workDuration}}</el-tag>
                 </td>
                 <td>
-                    <el-tag v-if="index==0" :type= "currentInfo.abilityJudgement!='不合格' ?'success':'danger'" effect="dark"> {{sub.abilityJudgement}}</el-tag>
-                    <el-tag v-if="index==1" :type= "currentInfo.abilityJudgement=='良好'||currentInfo.abilityJudgement=='优秀' ?'success':'danger'" effect="dark"> {{sub.abilityJudgement}}</el-tag>
-                    <el-tag v-if="index==2" :type= "currentInfo.abilityJudgement=='良好'||currentInfo.abilityJudgement=='优秀' ?'success':'danger'" effect="dark"> {{sub.abilityJudgement}}</el-tag>
-                    <el-tag v-if="index==3" :type= "currentInfo.abilityJudgement=='优秀' ?'success':'danger'" effect="dark"> {{sub.abilityJudgement}}</el-tag>
-                    <el-tag v-if="index==4" :type= "currentInfo.abilityJudgement=='优秀' ?'success':'danger'" effect="dark"> {{sub.abilityJudgement}}</el-tag>
+                    <el-tag v-if="index==0" :type= "currentInfo.abilityJudgement>=1 ?'success':'danger'" effect="dark"> {{sub.abilityJudgementLabel}}</el-tag>
+                    <el-tag v-if="index==1" :type= "currentInfo.abilityJudgement>=2 ?'success':'danger'" effect="dark"> {{sub.abilityJudgementLabel}}</el-tag>
+                    <el-tag v-if="index==2" :type= "currentInfo.abilityJudgement>=2 ?'success':'danger'" effect="dark"> {{sub.abilityJudgementLabel}}</el-tag>
+                    <el-tag v-if="index==3" :type= "currentInfo.abilityJudgement==3 ?'success':'danger'" effect="dark"> {{sub.abilityJudgementLabel}}</el-tag>
+                    <el-tag v-if="index==4" :type= "currentInfo.abilityJudgement==3 ?'success':'danger'" effect="dark"> {{sub.abilityJudgementLabel}}</el-tag>
                 </td>
                 <td>
-                    <el-tag v-if="index==0" :type= "currentInfo.lastGrade=='称职'||currentInfo.lastGrade=='优秀' ?'success':'danger'" effect="dark"> {{sub.lastGrade}}</el-tag>
+                    <el-tag v-if="index==0" :type= "currentInfo.lastGrade>=2 ?'success':'danger'" effect="dark"> {{sub.lastGradeLabel}}</el-tag>
                     <span v-else>-</span>
                 <td>
                     <el-tag v-if="sub.gradeTimes" :type= "Number(sub.gradeTimes)<=Number(currentInfo.gradeTimes) ?'success':'danger'" effect="dark">{{sub.gradeTimes}}</el-tag>
@@ -96,15 +99,15 @@
                     <span v-else>-</span>
                 </td>
                 <td>
-                    <el-tag v-if="sub.honoursType" :type= "currentInfo.honoursType.indexOf(sub.honoursType)!=-1 ?'success':'danger'" effect="dark">{{sub.honoursType}}</el-tag>
+                    <el-tag v-if="sub.honoursType" :type= "currentInfo.honoursType?(currentInfo.honoursType.indexOf(sub.honoursType)!=-1 ?'success':'danger'):'danger'" effect="dark">{{sub.honoursType}}</el-tag>
                     <span v-else>-</span>
                 </td>
             </tr>
             <tr style="font-weight: bold">
                 <td>目前情况</td>
                 <td>{{currentInfo.workDuration}}</td>
-                <td>{{currentInfo.abilityJudgement}}</td>
-                <td>{{currentInfo.lastGrade||'-'}}</td>
+                <td>{{currentInfo.abilityJudgementLabel}}</td>
+                <td>{{currentInfo.lastGradeLabel||'-'}}</td>
                 <td>{{currentInfo.gradeTimes||'-'}}</td>
                 <td>{{currentInfo.gradeLastTimes||'-'}}</td>
                 <td>{{currentInfo.agradeLastTimes||'-'}}</td>
@@ -120,8 +123,12 @@
 </template>
 
 <script>
+    import LookUp from  '@/lookup';
     export default {
         name: "RankDetails",
+        props:{
+            currentRankForm:{},
+        },
         data(){
             return{
                 secretaryMsg:'宝华村书记张三，担任村书记5年，年龄45周岁，文化程度大专，符合员额准入，可申请员额村书记职级评定',
@@ -146,13 +153,31 @@
         },
         methods:{
             showStandardList(){
-                this.$http('POST',`identity/ratingStandard/list?sort=createdAt,asc`,false).then(data => {
+                this.$http('POST',`identity/ratingStandard/list?sort=createdAt,asc`,{isStandard:'1'},false).then(data => {
                     this.standardList = data;
+                    this.standardList.forEach(item =>{
+                        if(item.abilityJudgement){
+                            item.abilityJudgementLabel = LookUp["AbilityJudgement"].filter(sub => sub.value===item.abilityJudgement)[0].label;
+                        }
+                        if(item.lastGrade){
+                            item.lastGradeLabel =  LookUp["CheckGrade"].filter(sub => sub.value===item.lastGrade)[0].label;
+                        }
+                    });
                 });
+            },
+            showCurrentInfo(){
+                this.currentInfo = this.currentRankForm;
+                this.currentInfo.abilityJudgementLabel = LookUp["AbilityJudgement"].filter(item => item.value===this.currentInfo.abilityJudgement)[0].label;
+                this.currentInfo.lastGradeLabel =  LookUp["CheckGrade"].filter(item => item.value===this.currentInfo.lastGrade)[0].label;
             }
         },
+        components:{
+            LookUp,
+        },
         created(){
+
             this.showStandardList();
+            this.showCurrentInfo();
         }
     }
 </script>

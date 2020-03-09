@@ -16,10 +16,11 @@
             </el-tab-pane>
             <el-tab-pane label="考核详情">考核详情</el-tab-pane>
             <el-tab-pane label="员额详情">
-                <RankDetails></RankDetails>
+                <RankDetails v-if="rankDetailVis" :currentRankForm="currentRankForm" @back="() => {this.rankDetailVis = false;}"></RankDetails>
+                <RankList  v-else @handleRank="handleRank"></RankList>
             </el-tab-pane>
             <el-tab-pane label="评级标准">
-                <CommonCRUD :columns="columns" api-root="identity/ratingStandard" :formColumns="columns" >
+                <CommonCRUD :columns="columns" api-root="identity/ratingStandard" :formColumns="columns" :queryFormColumns="rankQueryForm" >
                 </CommonCRUD>
             </el-tab-pane>
         </el-tabs>
@@ -32,6 +33,7 @@
     import SecretaryDetail from "@/components/SecretaryDetail";
     import SecretaryList from "@/components/SecretaryList";
     import RankDetails from "@/components/RankDetails";
+    import RankList from "@/components/RankList";
     export default {
         name: "SecretaryManagement",
         data(){
@@ -42,6 +44,17 @@
                 currentDetailDistrictId: '',
                 isFromList: false,
                 user: {},
+                rankDetailVis: true,
+                currentRankForm:{},
+                rankQueryForm:[
+                    {
+                        des: '是否是标准',
+                        name: 'isStandard',
+                        type: 'string',
+                        value: '1',
+                        visible: false,
+                    },
+                ]
             }
         },
         methods:{
@@ -50,19 +63,27 @@
                 this.secretaryDetailReview = data.type === 'review';
                 this.isFromList = true;
                 this.secretaryDetailVis = true;
+            },
+            handleRank(data) {
+                this.currentRankForm = data;
+                this.rankDetailVis = true;
             }
         },
         components:{
             SecretaryDetail,
             SecretaryList,
             CommonCRUD,
-            RankDetails
+            RankDetails,
+            RankList
         },
         created() {
             this.user = this.$store.state.userInfo;
             this.secretaryDetailVis = this.user.roleCode === 'COUNTRY_SIDE_ACTOR';
+            this.rankDetailVis = this.user.roleCode === 'COUNTRY_SIDE_ACTOR';
             if (this.user.roleCode === 'COUNTRY_SIDE_ACTOR') {
                 this.currentDetailDistrictId = this.user.districtId;
+               /* this.$http('Post',`identity/ratingStandard/list`,{})
+                this.currentRankForm = */
             }
         }
     }

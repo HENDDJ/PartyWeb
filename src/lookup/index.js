@@ -217,5 +217,41 @@ export default {
     }, {
         label: '单列村书记',
         value: 'DAN_LIE'
-    }]
+    }],
+    'AbilityJudgement': [
+        {
+            value :'0',
+            label :'不合格'
+        },
+        {
+            value :'1',
+            label :'合格'
+        },
+        {
+            value :'2',
+            label :'良好'
+        },
+        {
+            value :'3',
+            label :'优秀'
+        },
+    ],
+    'CheckGrade': [
+        {
+            value :'0',
+            label :'不称职'
+        },
+        {
+            value :'1',
+            label :'基本称职'
+        },
+        {
+            value :'2',
+            label :'称职'
+        },
+        {
+            value :'3',
+            label :'优秀'
+        },
+    ],
 }

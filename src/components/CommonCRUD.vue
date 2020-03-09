@@ -489,6 +489,7 @@
     }
     .common-crud {
         width: calc(100% - 10px);
+        padding-top: 3px;
     }
     .common-query {
         float: right;

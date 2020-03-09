@@ -6,9 +6,10 @@
             <el-tag v-else-if="form.state === '2'" close-transition  type="primary"  effect="dark">待市委审核</el-tag>
             <el-tag v-else-if="form.state === '3'" close-transition  type="success"  effect="dark">市委审核通过</el-tag>
             <div style="float: right;padding-right: 25px">
-                <el-button type="primary" plain @click="editInfo()" v-show="form.state === '0' || form.state === '3'">编辑</el-button>
+                <el-button type="primary" plain @click="editInfo()" v-show="user.roleCode === 'COUNTRY_SIDE_ACTOR' && (form.state === '0' || form.state === '3')">编辑</el-button>
                 <el-button type="success" plain @click="saveBaseInfo()" v-show="!disabled">保存</el-button>
-                <el-button type="primary" @click="submit" v-show="form.state === '0'"> 提交</el-button>
+                <el-button type="primary" @click="submit" v-show="user.roleCode === 'COUNTRY_SIDE_ACTOR' && form.state === '0'"> 提交</el-button>
+                <el-button type="warning" @click="() => {this.$emit('back')}" v-show="isFromList"> 返回</el-button>
             </div>
         </div>
         <div v-loading="loading">
@@ -66,9 +67,9 @@
                                 value-format="yyyy-MM-dd"></el-date-picker>
                             <span v-show="disabled">{{form.workTime||"暂无"}}</span>
                         </el-form-item>
-                        <el-form-item label="担任村书记时长">
-                            <el-input v-model="form.onDutyTime" v-show="!disabled"></el-input>
-                            <span v-show="disabled">{{form.onDutyTime||"暂无"}}</span>
+                        <el-form-item label="村书记时长(年)">
+                            <el-input v-model="form.onDutyTime" v-show="!disabled" type="number"></el-input>
+                            <span v-show="disabled">{{form.onDutyTime ? form.onDutyTime + '年' : '暂无'}}</span>
                         </el-form-item>
                         <el-form-item label="专业职称">
                             <el-input v-model="form.professionalTitle" v-show="!disabled"></el-input>
@@ -91,7 +92,7 @@
                         </div>
                         <div style="margin:25px 0;">
                             <el-image class="smallTitle" style="width: 17px;height: 21px;"  src="../../../static/img/level.png"></el-image>
-                            <span>拟评定等级</span>
+                            <span>职级</span>
                             <hr style="margin:10px 0;background-color: #171111a8" size="5px">
                             <div style="font-size: 16px;font-weight: bold;margin-left: 5px;">{{form.name||"暂无"}}</div>
                         </div>
@@ -219,6 +220,26 @@
                     </div>
                 </div>
                 <div style="clear: both"></div>
+                <div style="text-align: left;margin-bottom: 50px;" v-show="isReview">
+                    <h4>&nbsp;审核信息</h4>
+                    <hr/>
+                    <br/>
+                    <br/>
+                    <el-form ref="reviewForm" :inline="true" :model="reviewForm" class="demo-form-inline  common-textarea  " label-width="170px">
+                        <el-form-item label="审核人" prop="auditor" :rules="{required: true, message: '审核人不能为空', trigger: 'blur'}">
+                            <el-input type="textarea" v-model="reviewForm.auditor" :rows="1"></el-input>
+                        </el-form-item>
+                        <br>
+                        <el-form-item label="审核意见" prop="auditAdvice" :rules="{required: true, message: '审核意见不能为空', trigger: 'blur'}">
+                            <el-input type="textarea" :rows="2" v-model="reviewForm.auditAdvice"></el-input>
+                        </el-form-item>
+                        <br>
+                        <el-form-item label=" ">
+                            <el-button type="primary" @click="review('SUCCESS')">通过</el-button>
+                            <el-button type="danger" @click="review('FAILED')">驳回</el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
             </el-form>
         </div>
 <!--        <el-button type="primary" plain @click="verify(slotProps.selected)"   class="self-btn self-submit" v-if="userAuthority!=3"  >审核</el-button>-->
@@ -234,6 +255,18 @@
             districtId: {
                 type: String,
                 default: ''
+            },
+            isReview: {
+                type: Boolean,
+                default: false
+            },
+            isLook: {
+                type: Boolean,
+                default: false
+            },
+            isFromList: {
+               type: Boolean,
+               default: false
             }
         },
         data(){
@@ -246,7 +279,9 @@
                 isHonoursEdit:true,
                 rewardsList:[],
                 isRewardsEdit:true,
-                loading: false
+                loading: false,
+                reviewForm: {},
+                user: {}
             }
         },
         methods:{
@@ -266,10 +301,11 @@
                 this.isRewardsEdit=true;
             },
             showBaseInfo(){
+                this.loading = true;
                 this.honoursList = [];
                 this.rewardsList = [];
                 this.$http('POST',`identity/villageCadres/list`,
-                    {post: "SECRETARY",quasiAssessmentRank:"FIRTH_CLASS"},false).then(data => {
+                    {post: "SECRETARY",districtId: this.districtId },false).then(data => {
                     this.form = data[0];
                     this.honoursList = data[0].honours;
                     this.rewardsList = data[0].rewards;
@@ -355,13 +391,34 @@
                     })
                     .catch(_ => {});
             },
+            review(code) {
+                this.$refs['reviewForm'].validate((valid) => {
+                    if (valid) {
+                        this.loading = true;
+                        this.$http('PUT', `identity/villageCadres/verify/${this.form.id}/${code}`, this.reviewForm,false).then(content => {
+                            this.$message({
+                                type: 'success',
+                                message: code==='SUCCESS' ?'审核通过':'审核不通过'
+                            });
+                            this.$emit('reviewFinish')
+                            this.showBaseInfo();
+                        }).catch(()=> {
+                            this.$message({
+                                type: 'error',
+                                message: '网络错误'
+                            });
+                        });
+                    }
+                });
+            },
 
         },
         components:{
             CommonFileUpload,
         },
-        created() {
-            this.showBaseInfo()
+        mounted() {
+            this.user = this.$store.state.userInfo;
+            this.showBaseInfo();
         }
     }
 </script>

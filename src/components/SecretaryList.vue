@@ -1,10 +1,11 @@
 <template>
-    <section>
+    <section class="S">
         <CommonCRUD
             ref="father" :columns="columns" api-root="identity/villageCadres" :formColumns="formColumns"
                 :buttonVis="confirmBtnVis"    :queryFormColumns="queryForm" :objectSpanMethod="objectSpanMethod"
-            :addBtnVis="addBtnVis" :editBtnVis="editBtnVis" :delBtnVis="delBtnVis" :editEvent="doEdit"
-                    @getTableData="handleTableData" :sortColumns="sortColumns" :formAfterVis="formAfterVis" @handleClose="formAfterVis = false">
+            :addBtnVis="addBtnVis" :editBtnVis="editBtnVis" :delBtnVis="delBtnVis" :lookBtnVis="false" :editEvent="doEdit"
+                    @getTableData="handleTableData" :sortColumns="sortColumns" :formAfterVis="formAfterVis"
+             @handleClose="formAfterVis = false">
             <template slot="query" slot-scope="slotProps" v-if="userAuthority!=3">
                 <el-form-item label="所属组织">
                     <el-cascader :props="propsOne"  placeholder="请选择组织" size="mini"
@@ -23,7 +24,7 @@
             </template>
 
             <template slot="header-btn" slot-scope="slotProps" >
-                <el-button type="danger" plain @click="submit(slotProps.selected)"  class="self-btn self-submit" v-if="userAuthority==3"> 提交</el-button>
+                <el-button type="info" plain @click="emit(slotProps.selected)" style="margin-left: 3px"  class="self-btn"> 查看</el-button>
                 <el-button type="primary" plain @click="verify(slotProps.selected)"   class="self-btn self-submit" v-if="userAuthority!=3"  >审核</el-button>
             </template>
 
@@ -324,6 +325,18 @@
                     }
                 }
             },
+            emit(selected) {
+                if (selected.length !== 1) {
+                    this.$message({
+                        type: 'warning',
+                        message: selected.length > 1 ? '仅能选择一行记录' : '请选择一行记录'
+                    });
+                    return false;
+                }else {
+                    this.currentRow = selected[0];
+                    this.$emit('handleReview', {type: 'look', districtId: this.currentRow.districtId})
+                }
+            },
             verify(selected) {
                 if (selected.length !== 1) {
                     this.$message({
@@ -332,11 +345,12 @@
                     });
                     return false;
                 }else {
-                     if((this.userAuthority==2&&selected[0].state==1)||(this.userAuthority==1&&selected[0].state==2)){
+                    this.currentRow = selected[0];
+                    if(( this.userAuthority == 2 && this.currentRow.state == 1)
+                         || (this.userAuthority == 1 && this.currentRow.state == 2)){
                          this.formAfterVis = true;
-                         this.currentRow = selected[0];
                          this.confirmBtnVis = false;
-                         this.$refs.father.look();
+                         this.$emit('handleReview', {type: 'review', districtId: this.currentRow.districtId})
                      }else {
                          let message;
                          if(selected[0].state==0){
@@ -383,12 +397,46 @@
                     }
                 });
             },
+            handelOrg(){
+                this.queryForm[1].value = 'SECRETARY';
+                this.queryForm[2].value = this.user.districtId;
+                if(this.user.sysDistrict.districtLevel == 3){
+                    this.userAuthority = 3;
+                }else  if(this.user.sysDistrict.districtLevel == 2){
+                    this.userAuthority = 2;
+                }else{
+                    this.userAuthority = 1;
+                }
+                //层级组织请求
+                this.$http('GET',`identity/sysDistrict/${this.user.districtId}alltree`,false).then( data => {
+                    this.districtList = data[0].children;
+                    this.handleOrgLeaf(this.districtList);
+                    this.formColumns.filter(item => item.name === 'districtId')[0].options = this.districtList;
+                    if(this.userAuthority == 3){
+                        let filterElement = this.formColumns.filter(item => item.name === 'districtId')[0];
+                        filterElement.value = this.user.districtId;
+                        filterElement.formShow = 'false';
+                    }
+                });
+            },
+            //处理村级组织children为空的情况
+            handleOrgLeaf(districtList){
+                districtList.forEach(item => {
+                    if (item.children.length === 0) {
+                        delete item.children;
+                    } else {
+                        this.handleOrgLeaf(item.children)
+                    }
+                })
+            },
         },
         components: {
             CommonCRUD,
             LookUp
         },
         created () {
+            console.log(this.$store.state)
+            this.user = this.$store.state.userInfo;
             this.columns = [];
             this.columns.length = 0;
             let temp = JSON.parse(JSON.stringify(this.$store.state.classInfo.properties));
@@ -396,7 +444,8 @@
             this.formColumns = temp1;
             this.columns = temp;
             this.columns.push({slot: true, name: 'state', des: '状态', slotName: 'Handle'});
-            if (this.$store.state.userInfo.roleCode !== 'COUNTRY_SIDE_ACTOR') {
+            this.handelOrg();
+            if (this.user.roleCode !== 'COUNTRY_SIDE_ACTOR') {
                 this.addBtnVis = false;
                 this.editBtnVis = false;
                 this.delBtnVis = false;

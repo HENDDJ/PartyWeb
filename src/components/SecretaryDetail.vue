@@ -1,14 +1,21 @@
 <template>
     <div class="secretary-detail">
         <div style="text-align: left;font-size: 18px;font-weight: bold;margin-bottom: 10px;">当前状态：
-            <el-tag type="success">已通过</el-tag>
-            <el-button type="primary" @click="editInfo()">编辑</el-button>
-            <el-button @click="saveBaseInfo()" v-if="!disabled">保存</el-button>
+            <el-tag v-if="form.state === '0'" close-transition type="danger"  effect="dark">待提交</el-tag>
+            <el-tag v-else-if="form.state === '1'" close-transition  type="warning"  effect="dark">待镇党委审核</el-tag>
+            <el-tag v-else-if="form.state === '2'" close-transition  type="primary"  effect="dark">待市委审核</el-tag>
+            <el-tag v-else-if="form.state === '3'" close-transition  type="success"  effect="dark">市委审核通过</el-tag>
+            <div style="float: right;padding-right: 25px">
+                <el-button type="primary" plain @click="editInfo()" v-show="form.state === '0' || form.state === '3'">编辑</el-button>
+                <el-button type="success" plain @click="saveBaseInfo()" v-show="!disabled">保存</el-button>
+                <el-button type="primary" @click="submit" v-show="form.state === '0'"> 提交</el-button>
+            </div>
         </div>
-        <div>
+        <div v-loading="loading">
             <el-form label-position="right" label-width="120px" :model="form">
                 <div style="width: 20%;float: left;margin-left: 40px">
                     <div style="width: 100%;text-align: center;margin-bottom: 30px">
+                        <br/>
                         <el-image class="headPicture" :src=form.headSculpture>
                         </el-image>
                         <div style="font-size: 20px;margin: 10px 0;font-weight: bold">{{form.name||"暂无"}}</div>
@@ -211,7 +218,7 @@
                         </div>
                     </div>
                 </div>
-                <el-button type="primary" plain @click="submit"  class="self-btn self-submit"> 提交</el-button>
+                <div style="clear: both"></div>
             </el-form>
         </div>
 <!--        <el-button type="primary" plain @click="verify(slotProps.selected)"   class="self-btn self-submit" v-if="userAuthority!=3"  >审核</el-button>-->
@@ -239,6 +246,7 @@
                 isHonoursEdit:true,
                 rewardsList:[],
                 isRewardsEdit:true,
+                loading: false
             }
         },
         methods:{
@@ -265,6 +273,7 @@
                     this.form = data[0];
                     this.honoursList = data[0].honours;
                     this.rewardsList = data[0].rewards;
+                    this.loading = false;
                 });
             },
             edit(type,scope){
@@ -309,6 +318,7 @@
                 row.totalReward = parseFloat(row.basicReward)+ parseFloat(row.reviewReward) + parseFloat(row.otherReward);
             },
             saveBaseInfo(){
+                this.loading = true;
                 this.honoursList.forEach(item =>{
                     delete item.id;
                     delete item.version;
@@ -337,8 +347,10 @@
             submit() {
                 this.$confirm('确认提交？')
                     .then(_ => {
+                        this.loading = true;
                         this.$http('PUT', 'identity/villageCadres/submit/' + this.form.id, false).then(content => {
-                            this.$forceUpdate();
+                            this.disabled = true;
+                            this.showBaseInfo();
                         });
                     })
                     .catch(_ => {});

@@ -254,4 +254,22 @@ export default {
             label :'优秀'
         },
     ],
+    'HonoursType': [
+        {
+            value :'其他',
+            label :'其他'
+        },
+        {
+            value :'千名领先',
+            label :'千名领先'
+        },
+        {
+            value :'省委、省政府表彰或百名示范',
+            label :'省委、省政府表彰或百名示范'
+        },
+        {
+            value :'党中央、国务院表彰',
+            label :'党中央、国务院表彰'
+        },
+    ],
 }

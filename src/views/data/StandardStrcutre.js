@@ -1,3 +1,4 @@
+import LookUp from '@/lookup';
 export default {
     columns: [
         {
@@ -12,13 +13,17 @@ export default {
         },
         {
             name: "abilityJudgement",
-            type: 'string',
+            type: 'select',
             des: "能力研判",
+            transferType:"lookup",
+            lookupKey:"AbilityJudgement"
         },
         {
             name: "lastGrade",
-            type: 'string',
+            type: 'select',
             des: "上年度专职村书记考核等次",
+            transferType:"lookup",
+            lookupKey:"CheckGrade"
         },
         {
             name: "gradeTimes",
@@ -65,9 +70,11 @@ export default {
         },
         {
             name: "honoursType",
-            type: 'string',
+            type: 'select',
             notShow:'true',
             des: "获得表彰类型",
+            transferType:"lookup",
+            lookupKey:"HonoursType"
         },
 
     ]

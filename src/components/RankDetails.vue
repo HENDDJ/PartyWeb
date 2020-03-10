@@ -1,6 +1,6 @@
 <template>
     <section class="rankDetails">
-        <div style="text-align: right;padding-right: 25px">
+        <div style="text-align: right;padding-right: 25px" v-show="user.roleCode !== 'COUNTRY_SIDE_ACTOR'">
             <el-button  type="warning" @click="() => {this.$emit('back')}"> 返回</el-button>
         </div>
         <div>
@@ -49,7 +49,7 @@
             </el-card>
         </div>
         <h3 style="clear:both;text-align: left">目前情况</h3>
-        <div style="text-align: left">{{secretaryMsg}}</div>
+       <!-- <div style="text-align: left">{{secretaryMsg}}</div>-->
         <table class="tableDetails">
             <tr>
                 <td style="width: 130px">职级评定</td>
@@ -131,7 +131,7 @@
         },
         data(){
             return{
-                secretaryMsg:'宝华村书记张三，担任村书记5年，年龄45周岁，文化程度大专，符合员额准入，可申请员额村书记职级评定',
+                secretaryMsg:'宝华村村书记张三，担任村书记5年，年龄45周岁，文化程度大专，符合员额准入，可申请员额村书记职级评定',
                 standardList:[],
                 standardItem:["担任村书记时长","能力研判","上年度专职村书记考核等次","年度考核获得“称职”及以上等次的累计次数",
                     "年度考核获得“称职”及以上等次连续次数","年度考核获得“优秀”等次连续次数","年度考核获得“优秀”等次的累计次数",
@@ -149,6 +149,7 @@
                     agradeLastTimes: '0',
                     agradeTimes: '0'
                 },
+                user:JSON.parse(sessionStorage.getItem("userInfo")),
             }
         },
         methods:{
@@ -169,13 +170,14 @@
                 this.currentInfo = this.currentRankForm;
                 this.currentInfo.abilityJudgementLabel = LookUp["AbilityJudgement"].filter(item => item.value===this.currentInfo.abilityJudgement)[0].label;
                 this.currentInfo.lastGradeLabel =  LookUp["CheckGrade"].filter(item => item.value===this.currentInfo.lastGrade)[0].label;
+                this.secretaryMsg = this.currentInfo.villageName+"村书记"+this.currentInfo.cadresName+"，担任村书记"+this.currentInfo.workDuration
+                    +"年，文化程度"+this.currentInfo.education+"，符合员额准入，可申请员额村书记职级评定";
             }
         },
         components:{
             LookUp,
         },
         created(){
-
             this.showStandardList();
             this.showCurrentInfo();
         }

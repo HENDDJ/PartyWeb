@@ -34,6 +34,8 @@
     import SecretaryList from "@/components/SecretaryList";
     import RankDetails from "@/components/RankDetails";
     import RankList from "@/components/RankList";
+    import { tansfer } from "@/lookup/transfer";
+
     export default {
         name: "SecretaryManagement",
         data(){
@@ -85,6 +87,7 @@
                /* this.$http('Post',`identity/ratingStandard/list`,{})
                 this.currentRankForm = */
             }
+            tansfer(this.columns);
         }
     }
 </script>

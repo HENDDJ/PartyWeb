@@ -94,7 +94,7 @@
                             <el-image class="smallTitle" style="width: 17px;height: 21px;"  src="../../../static/img/level.png"></el-image>
                             <span>职级</span>
                             <hr style="margin:10px 0;background-color: #171111a8" size="5px">
-                            <div style="font-size: 16px;font-weight: bold;margin-left: 5px;">{{form.name||"暂无"}}</div>
+                            <div style="font-size: 16px;font-weight: bold;margin-left: 5px;">{{form.quasiAssessmentRank||"暂无"}}</div>
                         </div>
                         <div style="margin:25px 0;">
                             <el-image  class="smallTitle" style="width: 16px;height: 18px;" src="../../../static/img/workExperience.png"></el-image>

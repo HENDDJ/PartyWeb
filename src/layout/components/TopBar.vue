@@ -499,7 +499,7 @@
                         this.$router.push({path: path});
                     }
                     if(item.type==='villageCadres'){
-                        let path = "/baseTeam/villageSecretary";
+                        let path = "/baseTeam/secretaryManagement";
                         this.$router.push({path: path});
                     }
                 })

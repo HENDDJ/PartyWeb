@@ -435,8 +435,7 @@
             LookUp
         },
         created () {
-            console.log(this.$store.state)
-            this.user = this.$store.state.userInfo;
+            this.user = JSON.parse(sessionStorage.getItem("userInfo"));
             this.columns = [];
             this.columns.length = 0;
             let temp = JSON.parse(JSON.stringify(this.$store.state.classInfo.properties));

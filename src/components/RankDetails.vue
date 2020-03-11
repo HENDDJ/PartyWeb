@@ -3,7 +3,7 @@
         <div style="text-align: right;padding-right: 25px" v-show="user.roleCode !== 'COUNTRY_SIDE_ACTOR'">
             <el-button  type="warning" @click="() => {this.$emit('back')}"> 返回</el-button>
         </div>
-        <div>
+      <!--  <div>
             <el-card class="standard">
                 <div style="font-weight: bold;font-size: 20px;">选任标准</div>
                 <br>
@@ -47,7 +47,7 @@
                     </div>
                 </div>
             </el-card>
-        </div>
+        </div>-->
         <h3 style="clear:both;text-align: left">目前情况</h3>
        <!-- <div style="text-align: left">{{secretaryMsg}}</div>-->
         <table class="tableDetails">
@@ -149,7 +149,7 @@
                     agradeLastTimes: '0',
                     agradeTimes: '0'
                 },
-                user:JSON.parse(sessionStorage.getItem("userInfo")),
+                user:{},
             }
         },
         methods:{
@@ -167,17 +167,29 @@
                 });
             },
             showCurrentInfo(){
-                this.currentInfo = this.currentRankForm;
-                this.currentInfo.abilityJudgementLabel = LookUp["AbilityJudgement"].filter(item => item.value===this.currentInfo.abilityJudgement)[0].label;
-                this.currentInfo.lastGradeLabel =  LookUp["CheckGrade"].filter(item => item.value===this.currentInfo.lastGrade)[0].label;
-                this.secretaryMsg = this.currentInfo.villageName+"村书记"+this.currentInfo.cadresName+"，担任村书记"+this.currentInfo.workDuration
-                    +"年，文化程度"+this.currentInfo.education+"，符合员额准入，可申请员额村书记职级评定";
+                if(this.user.roleCode === 'COUNTRY_SIDE_ACTOR'){
+                    this.$http('POST',`identity/ratingStandard/list`,{districtId:this.user.districtId},false).then(data=>{
+                        if(data.length>0){
+                            this.currentInfo = data[0];
+                        }else{
+
+                        }
+                    })
+                }else{
+                    this.currentInfo = this.currentRankForm;
+                    this.currentInfo.abilityJudgementLabel = LookUp["AbilityJudgement"].filter(item => item.value===this.currentInfo.abilityJudgement)[0].label;
+                    this.currentInfo.lastGradeLabel =  LookUp["CheckGrade"].filter(item => item.value===this.currentInfo.lastGrade)[0].label;
+                    this.secretaryMsg = this.currentInfo.villageName+"村书记"+this.currentInfo.cadresName+"，担任村书记"+this.currentInfo.workDuration
+                        +"年，文化程度"+this.currentInfo.education+"，符合员额准入，可申请员额村书记职级评定";
+                }
+
             }
         },
         components:{
             LookUp,
         },
         created(){
+            this.user = JSON.parse(sessionStorage.getItem("userInfo"));
             this.showStandardList();
             this.showCurrentInfo();
         }

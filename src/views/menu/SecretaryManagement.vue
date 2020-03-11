@@ -14,6 +14,7 @@
                                  :districtId="currentDetailDistrictId"></SecretaryDetail>
                 <SecretaryList v-else @handleReview="handleReview"></SecretaryList>
             </el-tab-pane>
+            <el-tab-pane label="统计分析">统计分析</el-tab-pane>
             <el-tab-pane label="考核详情">考核详情</el-tab-pane>
             <el-tab-pane label="员额详情">
                 <RankDetails v-if="rankDetailVis" :currentRankForm="currentRankForm" @back="() => {this.rankDetailVis = false;}"></RankDetails>
@@ -79,13 +80,12 @@
             RankList
         },
         created() {
-            this.user = this.$store.state.userInfo;
+           // this.user = this.$store.state.userInfo;
+            this.user = JSON.parse(sessionStorage.getItem("userInfo"))
             this.secretaryDetailVis = this.user.roleCode === 'COUNTRY_SIDE_ACTOR';
             this.rankDetailVis = this.user.roleCode === 'COUNTRY_SIDE_ACTOR';
             if (this.user.roleCode === 'COUNTRY_SIDE_ACTOR') {
                 this.currentDetailDistrictId = this.user.districtId;
-               /* this.$http('Post',`identity/ratingStandard/list`,{})
-                this.currentRankForm = */
             }
             tansfer(this.columns);
         }

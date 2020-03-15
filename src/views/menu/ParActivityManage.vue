@@ -238,6 +238,32 @@
                                     </template>
                                 </el-col>
                             </el-row>
+                            <el-row class="detail-row" v-if="(roleCode === 'COUNTRY_SIDE_ACTOR')&&(detailForm.taskType === 'DistLearning')">
+                                <el-col :span="4" >签到情况：</el-col>
+                                <el-col :span="18">
+                                    <div v-if="videoSignList.length>0" v-for="item in videoSignList">
+                                        <el-row>
+                                            <vs-chip>
+                                                <vs-avatar icon="videocam" transparent  color="#6cd3bd"></vs-avatar>
+                                                {{item.videoName}}
+                                            </vs-chip>
+                                        </el-row>
+                                        <el-row>
+                                            <vs-chip>
+                                                <vs-avatar text="签到" />
+                                                {{item.signInRecord||'暂无'}}
+                                            </vs-chip>
+                                        </el-row>
+                                        <el-row>
+                                            <vs-chip>
+                                                <vs-avatar text="签退"/>
+                                                {{item.signOutRecord||'暂无'}}
+                                            </vs-chip>
+                                        </el-row>
+                                    </div>
+                                    <div v-if="videoSignList.length===0" style="font-size: 14px;font-weight: bold" >暂无签到情况</div>
+                                </el-col>
+                            </el-row>
                             <el-row class="detail-row"  v-if="detailForm.objectType.indexOf('2')===0">
                                 <el-col :span="4">反馈要求：</el-col>
                                 <el-col :span="16" style="color: #25252582">{{detailForm.templateItem}}&nbsp;</el-col>
@@ -467,6 +493,30 @@
                         </el-table>
                     </el-col>
                     <el-col :span="16">
+                        <div v-if="detailForm.taskType === 'DistLearning'">
+                            <h3 style="text-align: center;line-height: 1.1">{{signTitle}}</h3>
+                            <div v-if="videoSignList.length>0" v-for="item in videoSignList">
+                                <el-row>
+                                    <vs-chip>
+                                        <vs-avatar icon="videocam" transparent  color="#6cd3bd"></vs-avatar>
+                                        {{item.videoName}}
+                                    </vs-chip>
+                                </el-row>
+                                <el-row>
+                                    <vs-chip>
+                                        <vs-avatar text="签到" />
+                                        {{item.signInRecord||'暂无'}}
+                                    </vs-chip>
+                                </el-row>
+                                <el-row>
+                                    <vs-chip>
+                                        <vs-avatar text="签退"/>
+                                        {{item.signOutRecord||'暂无'}}
+                                    </vs-chip>
+                                </el-row>
+                            </div>
+                            <div v-if="videoSignList.length===0" style="font-size: 14px;font-weight: bold" >暂无签到情况</div>
+                        </div>
                         <h3 style="text-align: center;line-height: 1.1">{{picTitle}}</h3>
                         <div style="width: 100%" v-if="phoneOrTv">
                         <h4 style="text-align: left;line-height: 2;display: inline-block" v-if="timeLines[0] || timeLines[1] ">会议时间：<a style="font-weight: 100;color: #73767c">{{timeLines[1]|dateServer}} — {{timeLines[0]|dateServer}}</a></h4>
@@ -631,6 +681,8 @@
                 Pic: [],
                 picLoading: false,
                 picTitle: '',
+                signTitle:'',
+                videoSignList:[],
                 progressType: 'line',
                 //图片时间
                 timeLines:[],
@@ -796,6 +848,9 @@
                         organizationId: this.sysDistrict.districtId,
                         activityId: this.detailForm.activityId
                     };
+                    if(this.detailForm.taskType === 'DistLearning'){
+                        this.getSignRecord(query);
+                    }
                     this.$http("POST", path, query, false).then(data => {
                         this.detailForm.status = data.status;
                         setTimeout(() => {
@@ -1113,7 +1168,16 @@
                 //计算出相差天数
                 return Math.floor(distance/(24*3600*1000))
             },
+            getSignRecord(item){
+                this.signTitle = `${item.districtName}签到情况`;
+                this.$http('POSt',`identity/tVSignIn/list`,{activityId:item.activityId,organizationId:item.organizationId},false).then(data=>{
+                    this.videoSignList = data;
+                });
+            },
             getTV(item){
+                if(this.detailForm.taskType === 'DistLearning'){
+                    this.getSignRecord(item)
+                }
                 this.phoneOrTv = true;
                 if (!this.townDetailVis) {
                     this.townDetailVis = true;
@@ -1148,6 +1212,9 @@
                 });
             },
             getPhone(item) {
+                if(this.detailForm.taskType === 'DistLearning'){
+                    this.getSignRecord(item)
+                }
                 this.phoneOrTv = false
                 if (!this.townDetailVis) {
                     this.townDetailVis = true;
@@ -1192,6 +1259,7 @@
                     this.townDetailVis = true;
                 }
                 this.picTitle = `${item.districtName}--${this.detailForm.title}`;
+                this.signTitle = `${item.districtName}--${this.detailForm.title}`;
                 this.picLoading = true;
                 this.feedBackObject = item;
                // this.detailForm = item;

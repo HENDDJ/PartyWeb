@@ -116,7 +116,7 @@
             },
             //展示正在执行内的封装方法
             workingDataList(){
-                this.$http('Post','identity/parActivityObject/list',{isWorking:1},false).then(
+                this.$httpCloud('Post','identity/parActivityObject/list',{isWorking:1},false).then(
                     (data)=>{
                         let orgId = [];
                         data.forEach(item=>{
@@ -199,19 +199,25 @@
             },
             // 自定义覆盖物,point为添加覆盖物的点位置
             showTown() {
-                this.$http('POST', `identity/cloudStatistics/townMonthRate`, {}, false).then(data => {
+                this.$httpCloud('POST', `identity/cloudStatistics/townMonthRate`, {}, false).then(data => {
                     data.forEach(item => {
                         let count = Math.round(item.rate * 25) + 15;
                         let rate = Math.round(item.rate * 100);
-                        this.townPointList.push({
-                            geometry: {
-                                type: 'Point',
-                                coordinates: [item.location.split(",")[0], item.location.split(",")[1]]
-                            },
-                            count: count,
-                            text: item.districtName + rate + "%",
-                            item: item,
-                        });
+                        if(item.location){
+                            let tempArray = item.location.split(",")
+                            if(tempArray.length===2){
+                                this.townPointList.push({
+                                    geometry: {
+                                        type: 'Point',
+                                        coordinates: tempArray
+                                    },
+                                    count: count,
+                                    text: item.districtName + rate + "%",
+                                    item: item,
+                                });
+                            }
+                        }
+
                     });
                     let dataSet = new mapv.DataSet(this.townPointList);
                     let circleOptions = {
@@ -286,7 +292,7 @@
                     });
                     return;
                 }
-                this.$http('POST', `identity/cloudStatistics/cunMonthObject?attachTo=` + item.item.attachTo, false).then(data => {
+                this.$httpCloud('POST', `identity/cloudStatistics/cunMonthObject?attachTo=` + item.item.attachTo,{}, false).then(data => {
                     this.attachToCache.set(item.item.attachTo, data);
                     data.forEach(subItem => {
                         this.drawBar(subItem);

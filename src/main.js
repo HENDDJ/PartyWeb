@@ -42,6 +42,9 @@ Vue.use(store);
 Vue.component('icon', Icon);
 
 Vue.prototype.$http = common.http;
+let token = 'eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJBVVRIX1NVR0FSX1RPS0VOIiwiaWF0IjoxNTc5MTU1MjE0LCJpc3MiOiJ3d3cuY2xvdWRrZWVwZXIuY29tIiwic3ViIjoic2VydmljZUBjbG91ZGtlZXBlci5jbiIsImV4cCI6MTU3OTE5MTIxNH0.i3AKV_VPP4_Iko1VOD1PUNKfHfWftVevNFcWKiFOaTY';
+let headerAuth = {authorization: token};
+Vue.prototype.$httpCloud = (method, url, data, showMessage) => common.http(method, url, data, headerAuth, showMessage);
 Vue.prototype.$genHttp = generate;
 Vue.prototype.$copy = (target) => Object.assign({}, target);
 Vue.prototype.$validate = (selected) => {

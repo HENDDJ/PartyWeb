@@ -37,7 +37,7 @@
         },
         methods:{
             showPositionRank(){
-                this.$http('POST',`identity/positionInformation/list?sort=hotDegree,desc`,false).then(data => {
+                this.$httpCloud('POST',`identity/positionInformation/list?sort=hotDegree,desc`,{},false).then(data => {
                     data.forEach(item =>{
                         if(this.positionRankList.length<21){
                            this.positionRankList.push(item);

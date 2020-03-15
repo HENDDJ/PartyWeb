@@ -159,7 +159,7 @@
         },
         methods:{
             getCurrentActivity() {
-                this.$http('POST',`/identity/parActivity/currentMonth/list`,false).then(
+                this.$httpCloud('POST',`/identity/parActivity/currentMonth/list`,{}, false).then(
                     data => {
                         this.currentActivityList = data;
                     }

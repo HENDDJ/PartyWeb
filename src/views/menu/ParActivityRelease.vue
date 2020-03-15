@@ -24,8 +24,7 @@
                                 <el-col :span="24">
                                     <el-form-item label="任务分类" prop="taskType">
                                         <vs-radio color="success" v-model="form.taskType" vs-value="Party">党建任务</vs-radio>
-                                        <vs-radio color="success" v-model="form.taskType" vs-value="DistLearning"
-                                                  disabled="true">远教任务
+                                        <vs-radio color="success" v-model="form.taskType" vs-value="DistLearning">远教任务
                                         </vs-radio>
                                         <!--<vs-checkbox icon="flag" color="danger"   v-model="form.taskType" vs-value="Party">党建任务</vs-checkbox>-->
                                         <!--<vs-checkbox icon="cast" color="success" v-model="form.taskType" vs-value="DistLearning">远教任务</vs-checkbox>-->
@@ -136,7 +135,7 @@
                                 </el-col>
                             </el-row>
 
-                           <!-- <el-row style="margin: 10px 0">
+                            <el-row style="margin: 10px 0">
                                 <el-col :span="20">
                                     <el-form-item label="上传视频" prop="video" v-if="addVideo">
                                         <el-transfer
@@ -148,7 +147,7 @@
                                         </el-transfer>
                                     </el-form-item>
                                 </el-col>
-                            </el-row>-->
+                            </el-row>
                             <el-row style="text-align: right;">
                                 <el-col :span="11">
                                     <div>&nbsp;</div>
